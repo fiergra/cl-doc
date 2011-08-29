@@ -38,6 +38,17 @@ html, body {
 	width: 90%;
 }
 
+.valueBagSummaryRenderer {
+	font: 14px/100% Tahoma, Helvetica, sans-serif;
+	border: solid 3px #cce1ba;
+	border-radius: 10px;
+	box-shadow: 5px 5px 5px #777;
+	padding: .5em;
+	color: #606060;
+	background: #fff;
+	width: 90%;
+}
+
 .personRenderer:hover {
 	border: solid 3px #42a62a;
 }
