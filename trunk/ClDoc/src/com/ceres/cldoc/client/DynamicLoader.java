@@ -1,9 +1,9 @@
 package com.ceres.cldoc.client;
 
+import com.ceres.cldoc.client.views.HistoryView;
 import com.ceres.cldoc.client.views.Home;
 import com.ceres.cldoc.client.views.Styler;
 import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
