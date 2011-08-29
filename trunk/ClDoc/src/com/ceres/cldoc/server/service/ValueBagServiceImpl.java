@@ -47,14 +47,16 @@ public class ValueBagServiceImpl extends RemoteServiceServlet implements
 		Objectify ofy = ObjectifyService.begin();
 		ofy.put(valueBag);
 		
-		for (Participation p : valueBag.getParticipations()) {
-			if (p.id == null) {
-				p.pkEntity = new Key<RealWorldEntity>(RealWorldEntity.class, p.entity.id);
-				p.pkValueBag = new Key<ValueBag>(ValueBag.class, valueBag.getId());
-				ofy.put(p);
-			}
-		}
+		if (valueBag.getParticipations() != null) {
 		
+			for (Participation p : valueBag.getParticipations()) {
+				if (p.id == null) {
+					p.pkEntity = new Key<RealWorldEntity>(RealWorldEntity.class, p.entity.id);
+					p.pkValueBag = new Key<ValueBag>(ValueBag.class, valueBag.getId());
+					ofy.put(p);
+				}
+			}
+		}		
 		return valueBag;
 	}
 
@@ -66,7 +68,7 @@ public class ValueBagServiceImpl extends RemoteServiceServlet implements
 
 
 	@Override
-	public Collection<ValueBag> findByEntity(RealWorldEntity entity) {
+	public List<ValueBag> findByEntity(RealWorldEntity entity) {
 		Objectify ofy = ObjectifyService.begin();
 		List<Participation> participations = ofy.query(Participation.class).filter("pkEntity", new Key<RealWorldEntity>(RealWorldEntity.class, entity.id)).list();
 		List<Key<ValueBag>> keys = new ArrayList<Key<ValueBag>>(participations.size());

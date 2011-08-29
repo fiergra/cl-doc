@@ -9,8 +9,10 @@ import java.util.List;
 
 import javax.persistence.Embedded;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Transient;
 
+import com.google.gwt.thirdparty.guava.common.annotations.Beta;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Serialized;
 
@@ -28,11 +30,30 @@ public class ValueBag implements Serializable {
 	private List<Participation> participations;
 	private String canonicalName;
 
+	private Date modified;
+	private Date created;
+	
 	public ValueBag() {
 	}
 
 	public ValueBag(String canonicalName) {
 		this.canonicalName = canonicalName;
+	}
+
+	@PrePersist
+	private void setDates() {
+		if (created == null) {
+			created = new Date();
+		}
+		modified = new Date();
+	}
+	
+	public Date getModified() {
+		return modified;
+	}
+
+	public Date getCreated() {
+		return created;
 	}
 
 	public String getCanonicalName() {

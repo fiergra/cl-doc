@@ -9,14 +9,14 @@ public class PersonEditor extends Form<ValueBag> {
 
 	@Override
 	protected void setup() {
-		addLine("FirstName", "firstName", Form.STRING, 50, true);
-		addLine("LastName", "lastName", Form.STRING, 50);
+		addLine("FirstName", "firstName", Form.DataTypes.String, 50, true);
+		addLine("LastName", "lastName", Form.DataTypes.String, 50);
 //		addLine("BirthDate", "dateOfBirth", Form.DATE);
-		addLine("Street", "primaryAddress.street", Form.STRING, 50);
-		addLine("No", "primaryAddress.number", Form.STRING, 3);
-		addLine("c/o", "primaryAddress.co", Form.STRING, 50);
-		addLine("PostCode", "primaryAddress.postCode", Form.STRING, 6);
-		addLine("City", "primaryAddress.city", Form.STRING, 50);
+		addLine("Street", "primaryAddress.street", Form.DataTypes.String, 50);
+		addLine("No", "primaryAddress.number", Form.DataTypes.String, 3);
+		addLine("c/o", "primaryAddress.co", Form.DataTypes.String, 50);
+		addLine("PostCode", "primaryAddress.postCode", Form.DataTypes.String, 6);
+		addLine("City", "primaryAddress.city", Form.DataTypes.String, 50);
 	}
 
 

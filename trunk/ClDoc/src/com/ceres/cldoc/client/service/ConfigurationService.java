@@ -2,6 +2,7 @@ package com.ceres.cldoc.client.service;
 
 import java.util.List;
 
+import com.ceres.cldoc.shared.layout.FormDesc;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -10,5 +11,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("configuration")
 public interface ConfigurationService extends RemoteService {
+	FormDesc parse(String xml);
 	List<String> listChildren(String parent);
+	String getUploadUrl();
 }

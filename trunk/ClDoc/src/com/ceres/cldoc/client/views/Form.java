@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import com.ceres.cldoc.shared.domain.ValueBag;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.ui.Button;
@@ -22,6 +24,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
 public abstract class Form <T extends ValueBag> extends VerticalPanel {
+	
+	public enum DataTypes {String, Date, Integer};
+	
 	protected T model;
 	protected DateTimeFormat df = DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT);
 	
@@ -31,9 +36,6 @@ public abstract class Form <T extends ValueBag> extends VerticalPanel {
 	private static final int LABELWIDTH = 110;
 	private static final int SPACING = 3;
 	
-	public static final int STRING = 1;
-	public static final int DATE = 2;
-
 	public Form(T model) {
 		this.model = model;
 		setup();
@@ -43,9 +45,9 @@ public abstract class Form <T extends ValueBag> extends VerticalPanel {
 	private static class Field {
 		public String name;
 		public Widget widget;
-		public int dataType;
+		public DataTypes dataType;
 		
-		public Field(String name, Widget widget, int dataType) {
+		public Field(String name, Widget widget, DataTypes dataType) {
 			super();
 			this.name = name;
 			this.widget = widget;
@@ -77,10 +79,10 @@ public abstract class Form <T extends ValueBag> extends VerticalPanel {
 			ValueBag valueBag = model;//getValueBag(model, field);
 
 			switch (field.dataType) {
-			case STRING:
+			case String:
 				((TextBox)field.widget).setText(valueBag.getString(field.name));
 				break;
-			case DATE:
+			case Date:
 				Date value = valueBag.getDate(field.name);
 				if (value != null) {
 					((DatePicker)field.widget).setValue(value);
@@ -100,10 +102,10 @@ public abstract class Form <T extends ValueBag> extends VerticalPanel {
 			ValueBag valueBag = model;//getValueBag(model, field);
 			
 			switch (field.dataType) {
-			case STRING:
+			case String:
 				valueBag.set(qualifiedFieldName, ((TextBox)field.widget).getText());
 				break;
-			case DATE:
+			case Date:
 				valueBag.set(qualifiedFieldName, ((DatePicker)field.widget).getValue());
 				break;
 			}
@@ -112,7 +114,21 @@ public abstract class Form <T extends ValueBag> extends VerticalPanel {
 	}
 
 	private PopupPanel popup;
+	private boolean isModified = false;
 	
+	private KeyDownHandler keyDownHandler = new KeyDownHandler() {
+		
+		@Override
+		public void onKeyDown(KeyDownEvent event) {
+			isModified = true;
+		}
+	};
+	
+	
+	public boolean isModified() {
+		return isModified;
+	}
+
 	protected abstract void setup();
 	
 	private HorizontalPanel addButtons(final OnClick onClickSave, final OnClick onClickDelete, final OnClick onClickCancel) {
@@ -212,33 +228,35 @@ public abstract class Form <T extends ValueBag> extends VerticalPanel {
 	}
 
 	
-	protected FocusWidget addLine(String labelText, String fieldName, int dataType, int width, boolean focused) {
+	protected FocusWidget addLine(String labelText, String fieldName, DataTypes dataType, int width, boolean focused) {
 		FocusWidget w = addLine(labelText, fieldName, dataType, width);
 		w.setFocus(focused);
 		return w;
 	}
 
-	protected FocusWidget addLine(String labelText, String fieldName, int dataType, int width) {
+	protected FocusWidget addLine(String labelText, String fieldName, DataTypes dataType, int width) {
 		FocusWidget w = addLine(labelText, fieldName, dataType);
 		w.setWidth(width + "em");
 		return w;
 	}
 
-	protected FocusWidget addLine(String labelText, String fieldName, int dataType) {
+	protected FocusWidget addLine(String labelText, String fieldName, DataTypes dataType) {
 		FocusWidget widget = createWidgetForType(dataType);
 		addLine(labelText, widget);
 		fields.put(fieldName, new Field(fieldName, widget, dataType));
+		
 		return widget;
 	}
 
 	
 	
-	private FocusWidget createWidgetForType(int dataType) {
+	private FocusWidget createWidgetForType(DataTypes dataType) {
 		FocusWidget w = null;
 		
 		switch (dataType) {
-		case STRING: 
-			w = new TextBox(); 
+		case String: 
+			w = new TextBox();
+			w.addKeyDownHandler(keyDownHandler);
 			break;
 //		case DATE: 
 //			DatePicker dp = new DatePicker(); 
