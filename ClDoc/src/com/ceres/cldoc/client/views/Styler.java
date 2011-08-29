@@ -1,28 +1,15 @@
 package com.ceres.cldoc.client.views;
 
-import java.util.List;
-
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.HumanBeing;
 import com.ceres.cldoc.shared.domain.ValueBag;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ValueBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.ceres.cldoc.shared.layout.FormDesc;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
 
-public class Styler extends VerticalPanel {
+public class Styler extends SplitLayoutPanel {
 	private ClDoc clDoc;
 
 	public Styler(ClDoc clDoc) {
@@ -30,33 +17,35 @@ public class Styler extends VerticalPanel {
 		setup();
 	}
 
-	final TextBox attributeBox = new TextBox();
-	final TextBox valueBox = new TextBox();
-	final Button button = new Button("push");
-	final HTML results = new HTML("asdf!");
 
 	private void setup() {
+		final TextArea layoutDesc = new TextArea();
+		ValueBag dummy = new ValueBag("dummy");
+		final Form <ValueBag> form = new Form<ValueBag>(dummy){
+
+			@Override
+			protected void setup() {
+			}};
+			
+		layoutDesc.setText("<form><line label=\"label\" type=\"String\"/></form>");
+		addNorth(layoutDesc, 400);
+		add(form);
 		
-		add(new Label("attribute"));
-		add(attributeBox);
-		add(new Label("value"));
-		add(valueBox);
-		add(button);
-		add(results);
-		
-		button.addClickHandler(new ClickHandler() {
+		layoutDesc.addChangeHandler(new ChangeHandler() {
 			
 			@Override
-			public void onClick(ClickEvent event) {
-				doSetStyle();
+			public void onChange(ChangeEvent event) {
+				SRV.configurationService.parse(layoutDesc.getText(), new DefaultCallback<FormDesc>() {
+
+					@Override
+					public void onSuccess(FormDesc result) {
+						
+					}
+				});
 			}
 		});
 	}
 
 
-	protected void doSetStyle() {
-		DOM.setStyleAttribute(results.getElement(), attributeBox.getText(), valueBox.getText());
-	}
-	
 
 }

@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client.service;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.ceres.cldoc.shared.domain.RealWorldEntity;
 import com.ceres.cldoc.shared.domain.ValueBag;
@@ -12,7 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("valueBag")
 public interface ValueBagService extends RemoteService {
-	Collection<ValueBag> findByEntity(RealWorldEntity entity);
+	List<ValueBag> findByEntity(RealWorldEntity entity);
 	ValueBag findById(Number id);
 	ValueBag save(ValueBag humanBeing);
 	void delete(ValueBag person);

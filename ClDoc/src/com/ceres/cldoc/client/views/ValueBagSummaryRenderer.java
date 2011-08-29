@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.shared.domain.ValueBag;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -9,10 +10,11 @@ public class ValueBagSummaryRenderer extends FocusPanel {
 
 	private ValueBag valueBag;
 
-	public ValueBagSummaryRenderer(ValueBag valueBag) {
+	public ValueBagSummaryRenderer(ValueBag valueBag, ClickHandler clickHandler) {
 		this.valueBag = valueBag;
 		setup();
 		setStyleName("valueBagSummaryRenderer");
+		addClickHandler(clickHandler);
 	}
 
 	private void setup() {

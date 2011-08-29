@@ -12,11 +12,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class ClosableTab extends HorizontalPanel implements IsWidget {
 
 	public ClosableTab(final TabLayoutPanel maintab, final Widget tabChild, String label) {
-		add(new Label(label));
-		setWidth(label.length() + "em");
 		Image closeButton = new Image("Button Close-01.png");
-//		closeButton.setSize("10px", "10px");
+		closeButton.setSize("10px", "10px");
 		add(closeButton);
+		add(new Label(label));
 		closeButton.addClickHandler(new ClickHandler() {
 			
 			@Override

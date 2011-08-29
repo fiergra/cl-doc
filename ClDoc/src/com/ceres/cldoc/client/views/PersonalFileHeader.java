@@ -10,11 +10,12 @@ public class PersonalFileHeader extends HorizontalPanel {
 
 	public PersonalFileHeader(HumanBeing hb) {
 		this.hb = hb;
-		setStylePrimaryName("personHeader");
 		setup();
 	}
 
 	private void setup() {
+		setSpacing(5);
+		setVerticalAlignment(ALIGN_MIDDLE);
 		Label nameAndId = new Label(hb.id + " " + hb.lastName + ", " + hb.firstName);
 		nameAndId.setStylePrimaryName("nameAndId");
 		add(nameAndId);
