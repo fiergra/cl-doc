@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.ceres.cldoc.client.service.ValueBagService;
 import com.ceres.cldoc.shared.domain.GenericItem;
-import com.ceres.cldoc.shared.domain.INamedValueAccessor;
+import com.ceres.cldoc.shared.domain.IGenericItem;
 import com.ceres.cldoc.shared.domain.Participation;
 import com.ceres.cldoc.shared.domain.RealWorldEntity;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;

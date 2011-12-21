@@ -38,6 +38,39 @@ html, body {
 	width: 90%;
 }
 
+.viewer {
+	border: solid 3px #cce1ba;
+	padding: 1.5em;
+	border-radius: 10px;
+	background: -webkit-gradient(linear, left top, left bottom, from(#dadada), to(#b4b4b4));
+	background: -moz-linear-gradient(top,  #dadada,  #b4b4b4);
+}
+
+.formLabel {
+	font: 14px/100% Tahoma, Helvetica, sans-serif;
+	text-align: right;
+	width: 100px;
+}
+
+
+.invalid {
+	border-color: red;
+	border-style: solid;
+}
+
+.cataloglistbox {
+	width: 250px;
+}
+
+.humanBeingListBox {
+	width: 350px;
+}
+
+.catalogGrid {
+	width: 100%;
+}
+
+
 .historyEntry {
 	font: 14px/100% Tahoma, Helvetica, sans-serif;
 /*	border: solid 3px #cce1ba;
@@ -60,12 +93,13 @@ html, body {
 .buttonsPanel {
 	background-color: #cce1ba;
 	width: 100%;
+	padding-left: 5px;
+	padding-right: 5px;
 }
 
 .valueBagTitle {
 	width: 100%; 
 	font: 20px/100% Tahoma, Helvetica, sans-serif;
-	font-weight: bold;
 }
 
 .searchResults {
@@ -468,6 +502,9 @@ a, a:visited, a:hover {
   overflow: hidden;
 }
 
+.gwt-DialogBox {
+	border: medium;
+}
 .gwt-DialogBox .Caption {
   background: #42a62a url(images/hborder.png) repeat-x 0px -2003px;
   padding: 4px 4px 4px 8px;

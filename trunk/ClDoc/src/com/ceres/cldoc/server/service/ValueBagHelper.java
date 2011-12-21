@@ -7,10 +7,12 @@ import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.jdt.internal.compiler.env.IGenericField;
 import org.mortbay.log.Log;
 
 import com.ceres.cldoc.shared.domain.GenericItem;
 import com.ceres.cldoc.shared.domain.GenericItem;
+import com.ceres.cldoc.shared.domain.IGenericItemField;
 import com.googlecode.objectify.Key;
 
 public class ValueBagHelper {
@@ -57,8 +59,8 @@ public class ValueBagHelper {
 			Class<T> clazz = (Class<T>) Class.forName(valueBag.getClassName());
 			T result = clazz.newInstance();
 			
-			Set<Entry<String, Serializable>> fields = valueBag.getFields().entrySet();
-			for (Entry<String, Serializable> entry : fields) {
+			Set<Entry<String, IGenericItemField>> fields = valueBag.getFields().entrySet();
+			for (Entry<String, IGenericItemField> entry : fields) {
 				Field cf = clazz.getField(entry.getKey());
 				if (Modifier.isPublic(cf.getModifiers())) {
 					if (entry.getValue() instanceof GenericItem) {

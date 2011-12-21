@@ -10,7 +10,7 @@ import com.ceres.cldoc.client.controls.DateTextBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.shared.domain.Catalog;
 import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.INamedValueAccessor;
+import com.ceres.cldoc.shared.domain.IGenericItem;
 import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -39,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
 
 
-public abstract class Form<T extends INamedValueAccessor> extends FlexTable {
+public abstract class Form<T extends IGenericItem> extends FlexTable {
 
 	public enum DataTypes {
 		FT_STRING, FT_TEXT, FT_DATE, FT_INTEGER, FT_LIST_SELECTION, FT_BOOLEAN, FT_HUMANBEING
@@ -90,7 +90,7 @@ public abstract class Form<T extends INamedValueAccessor> extends FlexTable {
 
 		while (iter.hasNext()) {
 			final Field field = iter.next().getValue();
-			INamedValueAccessor valueBag = model;// getValueBag(model, field);
+			IGenericItem valueBag = model;// getValueBag(model, field);
 
 			switch (field.dataType) {
 			case FT_TEXT:
@@ -99,10 +99,10 @@ public abstract class Form<T extends INamedValueAccessor> extends FlexTable {
 						.setText(valueBag.getString(field.name));
 				break;
 			case FT_BOOLEAN:
-				((CheckBox) field.widget).setValue((Boolean) valueBag.get(field.name));
+				((CheckBox) field.widget).setValue(valueBag.getBoolean(field.name));
 				break;
 			case FT_LIST_SELECTION:
-				Catalog catalog = (Catalog) valueBag.get(field.name);
+				Catalog catalog = (Catalog) valueBag.getCatalog(field.name);
 				if (catalog != null) {
 					((IEntitySelector<Catalog>)field.widget).setSelected(catalog);
 				}
@@ -147,7 +147,7 @@ public abstract class Form<T extends INamedValueAccessor> extends FlexTable {
 		while (iter.hasNext()) {
 			Field field = iter.next().getValue();
 			String qualifiedFieldName = field.name;
-			INamedValueAccessor valueBag = model;// getValueBag(model, field);
+			IGenericItem valueBag = model;// getValueBag(model, field);
 
 			switch (field.dataType) {
 			case FT_TEXT:
@@ -390,7 +390,6 @@ public abstract class Form<T extends INamedValueAccessor> extends FlexTable {
 			break;
 
 		}
-
 		return w;
 	}
 	

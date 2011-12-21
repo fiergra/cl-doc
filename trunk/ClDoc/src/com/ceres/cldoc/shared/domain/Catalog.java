@@ -39,6 +39,7 @@ public class Catalog implements Serializable {
 	public String toString() {
 		return code;
 	}
+	
 
 	public void addChild(Catalog child) {
 		if (children == null) {
