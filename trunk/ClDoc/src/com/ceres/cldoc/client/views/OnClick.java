@@ -1,7 +1,6 @@
 package com.ceres.cldoc.client.views;
 
-import com.google.gwt.user.client.ui.PopupPanel;
 
-public interface OnClick {
-	void onClick(PopupPanel pp);
+public interface OnClick <T>{
+	void onClick(T pp);
 }

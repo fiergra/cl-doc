@@ -1,5 +1,6 @@
 package com.ceres.cldoc.server.service;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Date;
@@ -8,14 +9,14 @@ import java.util.Set;
 
 import org.mortbay.log.Log;
 
-import com.ceres.cldoc.shared.domain.ValueBag;
-import com.ceres.cldoc.shared.domain.ValueBag;
+import com.ceres.cldoc.shared.domain.GenericItem;
+import com.ceres.cldoc.shared.domain.GenericItem;
 import com.googlecode.objectify.Key;
 
 public class ValueBagHelper {
 
-	public static ValueBag convert(Object object) {
-		ValueBag vb = new ValueBag(object.getClass().getCanonicalName());
+	public static GenericItem convert(Object object) {
+		GenericItem vb = new GenericItem(object.getClass().getCanonicalName(), null);
 
 		Field[] dfs = object.getClass().getFields();
 
@@ -48,20 +49,20 @@ public class ValueBagHelper {
 		return vb;
 	}
 	
-	public static <T> T reconvert(ValueBag valueBag) {
-		if (valueBag == null || valueBag.getCanonicalName() == null) { 
+	public static <T> T reconvert(GenericItem valueBag) {
+		if (valueBag == null || valueBag.getClassName() == null) { 
 			return null; 
 		} 
 		try {
-			Class<T> clazz = (Class<T>) Class.forName(valueBag.getCanonicalName());
+			Class<T> clazz = (Class<T>) Class.forName(valueBag.getClassName());
 			T result = clazz.newInstance();
 			
-			Set<Entry<String, Object>> fields = valueBag.getFields().entrySet();
-			for (Entry<String, Object> entry : fields) {
+			Set<Entry<String, Serializable>> fields = valueBag.getFields().entrySet();
+			for (Entry<String, Serializable> entry : fields) {
 				Field cf = clazz.getField(entry.getKey());
 				if (Modifier.isPublic(cf.getModifiers())) {
-					if (entry.getValue() instanceof ValueBag) {
-						cf.set(result, reconvert((ValueBag)entry.getValue()));
+					if (entry.getValue() instanceof GenericItem) {
+						cf.set(result, reconvert((GenericItem)entry.getValue()));
 					} else {
 						cf.set(result, entry.getValue());
 					}

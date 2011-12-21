@@ -15,4 +15,17 @@ public class RealWorldEntity implements Serializable {
 	
 	public RealWorldEntity() {
 	}
+	
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object arg0) {
+		return (arg0 instanceof RealWorldEntity) ? hashCode() == arg0.hashCode() : super.equals(arg0);
+	}
+
+	
+	
 }
