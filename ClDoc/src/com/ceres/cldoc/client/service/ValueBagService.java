@@ -2,7 +2,7 @@ package com.ceres.cldoc.client.service;
 
 import java.util.List;
 
-import com.ceres.cldoc.shared.domain.INamedValueAccessor;
+import com.ceres.cldoc.shared.domain.IGenericItem;
 import com.ceres.cldoc.shared.domain.RealWorldEntity;
 import com.ceres.cldoc.shared.domain.GenericItem;
 import com.google.gwt.user.client.rpc.RemoteService;

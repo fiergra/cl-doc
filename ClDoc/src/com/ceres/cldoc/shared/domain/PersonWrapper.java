@@ -12,7 +12,7 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 	}
 	
 		@Override
-		public void set(String fieldName, Serializable value) {
+		public <T> void set(String fieldName, T value) {
 			if (fieldName.equals("firstName")) {
 				humanBeing.firstName = (String) value;
 			} else if (fieldName.equals("lastName")) {
@@ -33,23 +33,23 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 		}
 		
 		@Override
-		public Object get(String fieldName) {
+		public IGenericItemField get(String fieldName) {
 			if (fieldName.equals("firstName")) {
-				return humanBeing.firstName;
+				return new GenericItemField(fieldName, humanBeing.firstName);
 			} else if (fieldName.equals("lastName")) {
-				return humanBeing.lastName;
+				return new GenericItemField(fieldName, humanBeing.lastName);
 			} else if (fieldName.equals("dateOfBirth")) {
-				return humanBeing.dateOfBirth;
+				return new GenericItemField(fieldName, humanBeing.dateOfBirth);
 			} else if (fieldName.equals("primaryAddress.street")) {
-				return humanBeing.primaryAddress.street;
+				return new GenericItemField(fieldName, humanBeing.primaryAddress.street);
 			} else if (fieldName.equals("primaryAddress.number")) {
-				return humanBeing.primaryAddress.number;
+				return new GenericItemField(fieldName, humanBeing.primaryAddress.number);
 			} else if (fieldName.equals("primaryAddress.city")) {
-				return humanBeing.primaryAddress.city;
+				return new GenericItemField(fieldName, humanBeing.primaryAddress.city);
 			} else if (fieldName.equals("primaryAddress.co")) {
-				return humanBeing.primaryAddress.co;
+				return new GenericItemField(fieldName, humanBeing.primaryAddress.co);
 			} else if (fieldName.equals("primaryAddress.postCode")) {
-				return humanBeing.primaryAddress.postCode;
+				return new GenericItemField(fieldName, humanBeing.primaryAddress.postCode);
 			} else {
 				return null;
 			}

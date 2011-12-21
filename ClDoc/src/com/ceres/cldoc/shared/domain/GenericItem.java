@@ -1,6 +1,5 @@
 package com.ceres.cldoc.shared.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,15 +14,15 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Serialized;
 
 @Entity
-public class GenericItem implements Serializable, INamedValueAccessor {
+public class GenericItem extends AbstractNamedValueAccessor {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 5273635419946319483L;
 
 	@Id
 	private Long id;
 
 	@Serialized
-	private HashMap<String, Serializable> fields;
+	private HashMap<String, IGenericItemField> fields;
 	@Transient
 	private List<Participation> participations;
 	private String className;
@@ -54,6 +53,7 @@ public class GenericItem implements Serializable, INamedValueAccessor {
 		return (obj instanceof GenericItem) ? obj.hashCode() == hashCode() : super.equals(obj);
 	}
 
+	@SuppressWarnings("unused")
 	@PrePersist
 	private void setDates() {
 		if (created == null) {
@@ -78,7 +78,7 @@ public class GenericItem implements Serializable, INamedValueAccessor {
 		return id;
 	}
 
-	public HashMap<String, Serializable> getFields() {
+	public HashMap<String, IGenericItemField> getFields() {
 		return fields;
 	}
 	
@@ -103,106 +103,55 @@ public class GenericItem implements Serializable, INamedValueAccessor {
 	// }
 
 
-	/* (non-Javadoc)
-	 * @see com.ceres.cldoc.shared.domain.INamedValueAccessor#getValueBag(java.lang.String)
-	 */
-	@Override
-	public GenericItem getValueBag(String fieldName) {
-		return (GenericItem)get(fieldName);
+	private IGenericItem getGenericItem(String fieldName) {
+		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.ceres.cldoc.shared.domain.INamedValueAccessor#get(java.lang.String)
 	 */
 	@Override
-	public Object get(String fieldName) {
+	public IGenericItemField get(String fieldName) {
 		if (fields == null) { return null; }
 		
 		int index = fieldName.indexOf('.');
 
 		if (index != -1) {
-			INamedValueAccessor child = getValueBag(fieldName.substring(0, index));
-			return child != null ? child.getString(fieldName
-					.substring(index + 1)) : "";
+			IGenericItem child = getGenericItem(fieldName.substring(0, index));
+			return child != null ? child.get(fieldName.substring(index + 1)) : null;
 		} else {
 			return fields.get(fieldName);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.ceres.cldoc.shared.domain.INamedValueAccessor#getString(java.lang.String)
-	 */
+
 	@Override
-	public String getString(String fieldName) {
-		return (String) get(fieldName);
-		// int index = fieldName.indexOf('.');
-		//
-		// if (index != -1) {
-		// ValueBag child = getValueBag(fieldName.substring(0, index));
-		// return child != null ? child.getString(fieldName.substring(index +
-		// 1)) : "";
-		// } else {
-		// return strings.get(fieldName);
-		// }
-	}
-
-	public Number getNumber(String fieldName) {
-		return (Number) get(fieldName);
-		// int index = fieldName.indexOf('.');
-		//
-		// if (index != -1) {
-		// ValueBag child = getValueBag(fieldName.substring(0, index));
-		// return child.getNumber(fieldName.substring(index + 1));
-		// } else {
-		// return numbers.get(fieldName);
-		// }
-	}
-
-	/* (non-Javadoc)
-	 * @see com.ceres.cldoc.shared.domain.INamedValueAccessor#getLong(java.lang.String)
-	 */
-	@Override
-	public Long getLong(String fieldName) {
-		return (Long) get(fieldName);
-	}
-
-	public Date getDate(String fieldName) {
-		return (Date) get(fieldName);
-		// int index = fieldName.indexOf('.');
-		//
-		// if (index != -1) {
-		// ValueBag child = getValueBag(fieldName.substring(0, index));
-		// return child.getDate(fieldName.substring(index + 1));
-		// } else {
-		// return dates.get(fieldName);
-		// }
-	}
-
-	/* (non-Javadoc)
-	 * @see com.ceres.cldoc.shared.domain.INamedValueAccessor#set(java.lang.String, java.io.Serializable)
-	 */
-	@Override
-	public void set(String fieldName, Serializable value) {
+	public void set(String fieldName, Object value) {
 		if (fields == null) {
-			 fields = new HashMap<String, Serializable>();
+			 fields = new HashMap<String, IGenericItemField>();
 		}
 		
 		int index = fieldName.indexOf('.');
 
 		if (index != -1) {
 			String childName = fieldName.substring(0, index);
-			GenericItem child = getValueBag(childName);
+			IGenericItem child = getGenericItem(childName);
 			if (child == null) {
 				child = new GenericItem(null, null);
 				set(childName, child);
 			}
 			child.set(fieldName.substring(index + 1), value);
 		} else {
-			fields.put(fieldName, value);
+			IGenericItemField field = fields.get(fieldName);
+			if (field == null) {
+				field = new GenericItemField(null, fieldName, 0);
+				fields.put(fieldName, field);
+			}
+			field.setValue(value);
 		}
 
 	}
-
+	
 	/*
 	 * public void set(String fieldName, String value) { int index =
 	 * fieldName.indexOf('.');

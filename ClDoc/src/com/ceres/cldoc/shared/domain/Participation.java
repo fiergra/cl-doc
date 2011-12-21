@@ -21,12 +21,12 @@ public class Participation implements Serializable {
 	@Transient
 	public RealWorldEntity entity;
 	@Transient
-	public INamedValueAccessor valueBag;
+	public IGenericItem valueBag;
 
 	public Participation() {
 	}
 
-	public Participation(INamedValueAccessor valueBag, RealWorldEntity entity) {
+	public Participation(IGenericItem valueBag, RealWorldEntity entity) {
 		this.entity = entity;
 		this.valueBag = valueBag;
 	}

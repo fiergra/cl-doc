@@ -3,7 +3,7 @@ package com.ceres.cldoc.server.service;
 import com.ceres.cldoc.client.service.PersonService;
 import com.ceres.cldoc.shared.domain.Address;
 import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.INamedValueAccessor;
+import com.ceres.cldoc.shared.domain.IGenericItem;
 import com.ceres.cldoc.shared.domain.Person;
 import com.ceres.cldoc.shared.domain.RealWorldEntity;
 import com.ceres.cldoc.shared.domain.GenericItem;

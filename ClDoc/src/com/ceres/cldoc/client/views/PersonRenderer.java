@@ -1,7 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.INamedValueAccessor;
+import com.ceres.cldoc.shared.domain.IGenericItem;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class PersonRenderer extends FocusPanel {
-	private INamedValueAccessor valueBag;
+	private IGenericItem valueBag;
 	private OnClick<HumanBeing> onClickEdit;
 	private OnClick<HumanBeing> onClickOpen;
 	private HumanBeing person;
