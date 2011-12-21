@@ -1,15 +1,15 @@
 package com.ceres.cldoc.server.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import org.apache.bcel.generic.ARRAYLENGTH;
-
 import com.ceres.cldoc.client.service.ValueBagService;
+import com.ceres.cldoc.shared.domain.GenericItem;
+import com.ceres.cldoc.shared.domain.INamedValueAccessor;
 import com.ceres.cldoc.shared.domain.Participation;
 import com.ceres.cldoc.shared.domain.RealWorldEntity;
-import com.ceres.cldoc.shared.domain.ValueBag;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
@@ -23,14 +23,14 @@ public class ValueBagServiceImpl extends RemoteServiceServlet implements
 		ValueBagService {
 
 	static {
-		ObjectifyService.register(ValueBag.class);
+		ObjectifyService.register(GenericItem.class);
 		ObjectifyService.register(Participation.class);
 	}
 
 	@Override
-	public ValueBag findById(Number id) {
+	public GenericItem findById(Number id) {
 		Objectify ofy = ObjectifyService.begin();
-		ValueBag valueBag = ofy.get(new Key<ValueBag>(ValueBag.class, id.longValue()));
+		GenericItem valueBag = ofy.get(new Key<GenericItem>(GenericItem.class, id.longValue()));
 		valueBag.setParticipations(ofy.query(Participation.class).filter("valueBag", this).list());
 
 		for (Participation p: valueBag.getParticipations()) {
@@ -43,7 +43,7 @@ public class ValueBagServiceImpl extends RemoteServiceServlet implements
 
 
 	@Override
-	public ValueBag save(ValueBag valueBag) {
+	public GenericItem save(GenericItem valueBag) {
 		Objectify ofy = ObjectifyService.begin();
 		ofy.put(valueBag);
 		
@@ -52,7 +52,7 @@ public class ValueBagServiceImpl extends RemoteServiceServlet implements
 			for (Participation p : valueBag.getParticipations()) {
 				if (p.id == null) {
 					p.pkEntity = new Key<RealWorldEntity>(RealWorldEntity.class, p.entity.id);
-					p.pkValueBag = new Key<ValueBag>(ValueBag.class, valueBag.getId());
+					p.pkValueBag = new Key<GenericItem>(GenericItem.class, valueBag.getId());
 					ofy.put(p);
 				}
 			}
@@ -61,22 +61,31 @@ public class ValueBagServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void delete(ValueBag valueBag) {
+	public void delete(GenericItem item) {
 		Objectify ofy = ObjectifyService.begin();
-		ofy.delete(valueBag);
+		ofy.delete(item);
 	}
 
 
 	@Override
-	public List<ValueBag> findByEntity(RealWorldEntity entity) {
+	public List<GenericItem> findByEntity(RealWorldEntity entity) {
 		Objectify ofy = ObjectifyService.begin();
 		List<Participation> participations = ofy.query(Participation.class).filter("pkEntity", new Key<RealWorldEntity>(RealWorldEntity.class, entity.id)).list();
-		List<Key<ValueBag>> keys = new ArrayList<Key<ValueBag>>(participations.size());
+		List<Key<GenericItem>> keys = new ArrayList<Key<GenericItem>>(participations.size());
 		for (Participation participation : participations) {
 			keys.add(participation.pkValueBag);
 		}
 
-		ArrayList <ValueBag> result = new ArrayList<ValueBag>(ofy.get(keys).values());
+		ArrayList <GenericItem> result = new ArrayList<GenericItem>(ofy.get(keys).values());
+		
+		Collections.sort(result, new Comparator<GenericItem>() {
+
+			@Override
+			public int compare(GenericItem o1, GenericItem o2) {
+				return o2.getCreated().compareTo(o1.getCreated());
+			}
+		});
+		
 		return result;
 	}
 }

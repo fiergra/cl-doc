@@ -1,7 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.ValueBag;
+import com.ceres.cldoc.shared.domain.INamedValueAccessor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -12,19 +12,19 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class PersonRenderer extends FocusPanel {
-	private ValueBag valueBag;
-	private OnClick onClickEdit;
-	private OnClick onClickOpen;
+	private INamedValueAccessor valueBag;
+	private OnClick<HumanBeing> onClickEdit;
+	private OnClick<HumanBeing> onClickOpen;
 	private HumanBeing person;
 
-	public PersonRenderer(ValueBag p, OnClick onClickOpen, OnClick onClickEdit) {
-		this.valueBag = p;
-		this.onClickOpen = onClickOpen;
-		this.onClickEdit = onClickEdit;
-		setup();
-	}
+//	public PersonRenderer(GenericItem p, OnClick<HumanBeing> onClickOpen, OnClick<HumanBeing> onClickEdit) {
+//		this.valueBag = p;
+//		this.onClickOpen = onClickOpen;
+//		this.onClickEdit = onClickEdit;
+//		setup();
+//	}
 
-	public PersonRenderer(HumanBeing p, OnClick onClickOpen, OnClick onClickEdit) {
+	public PersonRenderer(HumanBeing p, OnClick<HumanBeing> onClickOpen, OnClick<HumanBeing> onClickEdit) {
 		this.person = p;
 		this.onClickOpen = onClickOpen;
 		this.onClickEdit = onClickEdit;
@@ -49,7 +49,7 @@ public class PersonRenderer extends FocusPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				event.stopPropagation();
-				onClickOpen.onClick(null);
+				onClickOpen.onClick(person);
 			}
 		});
 		
@@ -59,7 +59,7 @@ public class PersonRenderer extends FocusPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				event.stopPropagation();
-				onClickEdit.onClick(null);
+				onClickEdit.onClick(person);
 			}
 		});
 		hp.add(editButton);

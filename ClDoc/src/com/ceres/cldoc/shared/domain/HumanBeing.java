@@ -9,8 +9,8 @@ import com.googlecode.objectify.annotation.Subclass;
 
 @Subclass
 public class HumanBeing extends Person {
-	private static final long serialVersionUID = 1L;
 
+	private static final long serialVersionUID = -6144522368213126601L;
 	public String firstName;
 	public String lastName;
 	public String maidenName;
@@ -30,4 +30,5 @@ public class HumanBeing extends Person {
 		transcriptMaidenName = Strings.transcribe(maidenName);
 	}
 
+	
 }

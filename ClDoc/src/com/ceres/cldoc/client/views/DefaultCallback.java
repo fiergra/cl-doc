@@ -8,6 +8,7 @@ public abstract class DefaultCallback<T> implements AsyncCallback<T> {
 
 	@Override
 	public void onFailure(Throwable caught) {
+		caught.printStackTrace();
 		VerticalPanel vp = new VerticalPanel();
 		
 		vp.add(new HTML("<b>" + caught.getLocalizedMessage() + "</b>"));

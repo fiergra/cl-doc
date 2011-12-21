@@ -29,8 +29,8 @@ public class ClDoc implements EntryPoint {
 		
 		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
 		Image logo = new Image("dkglogo.png");
-		logo.setHeight("70px");
-		mainPanel.addNorth(logo, 80);
+		logo.setHeight("60px");
+		mainPanel.addNorth(logo, 60);
 		mainPanel.addSouth(statusMessage, 20);
 		mainPanel.add(mainTab);
 		RootLayoutPanel.get().add(mainPanel);

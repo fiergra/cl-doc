@@ -3,7 +3,7 @@ package com.ceres.cldoc.client.service;
 import java.util.List;
 
 import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.ValueBag;
+import com.ceres.cldoc.shared.domain.GenericItem;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -12,10 +12,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("humanbeing")
 public interface HumanBeingService extends RemoteService {
-	ValueBag findById(Number id);
-	ValueBag save(ValueBag humanBeing);
-	void delete(ValueBag person);
+	HumanBeing save(HumanBeing humanBeing);
+	void delete(HumanBeing person);
 	List<HumanBeing> search(String criteria);
-	List<ValueBag> findByString(String criteria);
 	HumanBeing findById(long id);
 }

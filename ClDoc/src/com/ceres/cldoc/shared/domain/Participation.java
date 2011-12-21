@@ -11,22 +11,22 @@ import com.googlecode.objectify.annotation.Entity;
 @Entity
 public class Participation implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 8017405646839706167L;
 
 	@Id
 	public Long id;
 
-	public transient Key<ValueBag> pkValueBag;
+	public transient Key<GenericItem> pkValueBag;
 	public transient Key<RealWorldEntity> pkEntity;
 	@Transient
 	public RealWorldEntity entity;
 	@Transient
-	public ValueBag valueBag;
+	public INamedValueAccessor valueBag;
 
 	public Participation() {
 	}
 
-	public Participation(ValueBag valueBag, RealWorldEntity entity) {
+	public Participation(INamedValueAccessor valueBag, RealWorldEntity entity) {
 		this.entity = entity;
 		this.valueBag = valueBag;
 	}

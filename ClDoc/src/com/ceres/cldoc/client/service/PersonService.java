@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client.service;
 
-import com.ceres.cldoc.shared.domain.ValueBag;
+import com.ceres.cldoc.shared.domain.Person;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -9,6 +9,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("person")
 public interface PersonService extends RemoteService {
-	ValueBag save(ValueBag person);
-	void delete(ValueBag person);
+	Person save(Person person);
+	void delete(Person person);
 }

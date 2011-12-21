@@ -3,9 +3,10 @@ package com.ceres.cldoc.server.service;
 import com.ceres.cldoc.client.service.PersonService;
 import com.ceres.cldoc.shared.domain.Address;
 import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.shared.domain.INamedValueAccessor;
 import com.ceres.cldoc.shared.domain.Person;
 import com.ceres.cldoc.shared.domain.RealWorldEntity;
-import com.ceres.cldoc.shared.domain.ValueBag;
+import com.ceres.cldoc.shared.domain.GenericItem;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
@@ -25,16 +26,14 @@ public class PersonServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public ValueBag save(ValueBag valueBag) {
-		Person person = ValueBagHelper.reconvert((ValueBag) valueBag);
+	public Person save(Person person) {
 		Objectify ofy = ObjectifyService.begin();
 		ofy.put(person);
-		return ValueBagHelper.convert(person);
+		return person;
 	}
 
 	@Override
-	public void delete(ValueBag valueBag) {
-		Person person = ValueBagHelper.reconvert((ValueBag) valueBag);
+	public void delete(Person person) {
 		Objectify ofy = ObjectifyService.begin();
 		ofy.delete(person);
 	}
