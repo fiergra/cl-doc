@@ -15,6 +15,7 @@ import com.ceres.cldoc.shared.domain.GenericItem;
 import com.ceres.cldoc.shared.domain.IGenericItemField;
 import com.googlecode.objectify.Key;
 
+
 public class ValueBagHelper {
 
 	public static GenericItem convert(Object object) {
