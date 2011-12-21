@@ -16,5 +16,4 @@ public abstract class SRV {
 	public static final ValueBagServiceAsync valueBagService = GWT
 	.create(ValueBagService.class);
 
-
 }
