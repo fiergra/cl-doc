@@ -1,74 +1,103 @@
 package com.ceres.cldoc.server.service;
 
 import java.io.IOException;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ceres.cldoc.shared.domain.GenericItem;
-import com.ceres.cldoc.shared.domain.Participation;
-import com.ceres.cldoc.shared.domain.RealWorldEntity;
-import com.google.appengine.api.blobstore.BlobKey;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.gwt.core.client.GWT;
-import com.googlecode.objectify.Key;
-import com.googlecode.objectify.Objectify;
-import com.googlecode.objectify.ObjectifyService;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+
+import com.ceres.cldoc.Locator;
+import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.GenericItem;
+import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.model.User;
 
 //The FormPanel must submit to a servlet that extends HttpServlet  
 //RemoteServiceServlet cannot be used
 @SuppressWarnings("serial")
 public class UploadService extends HttpServlet {
-	static {
-		ObjectifyService.register(GenericItem.class);
-		ObjectifyService.register(Participation.class);
-	}
-
-	// Start Blobstore and Objectify Sessions
-	BlobstoreService blobstoreService = BlobstoreServiceFactory
-			.getBlobstoreService();
-
 	// Override the doPost method to store the Blob's meta-data
-	public void doPost(HttpServletRequest req, HttpServletResponse res)
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Map<String, BlobKey> blobs = blobstoreService.getUploadedBlobs(req);
-		BlobKey blobKey = blobs.get("fup");
+		if (ServletFileUpload.isMultipartContent(req)) {
+			// Create a factory for disk-based file items
+			FileItemFactory factory = new DiskFileItemFactory();
 
-		GenericItem vb = new GenericItem("externalDoc", null);
-		String rweKey = req.getParameter("rweKey");
+			// Create a new file upload handler
+			ServletFileUpload upload = new ServletFileUpload(factory);
+
+			// Parse the request
+			try {
+				GenericItem item = new GenericItem("externalDoc");
+				Long entityId = null;
+				List<FileItem> items = upload.parseRequest(req);
+				for (FileItem fItem : items) {
+					// process only file upload - discard other form item types
+					if (fItem.isFormField()) { 
+						if (fItem.getFieldName().equals("entityId")) {
+							String sId = fItem.getString();
+							entityId = Long.valueOf(sId);
+						} else if (fItem.getFieldName().equals("userId")) {
+							
+						} else {
+							item.set(fItem.getFieldName(), fItem.getString());
+						}
+					} else {
+						String fileName = fItem.getName();
+						// get only the file name not whole path
+						if (fileName != null) {
+							fileName = FilenameUtils.getName(fileName);
+							item.set("fileName", fileName);
+							item.set("file", copyBytes(fItem.getInputStream()));
+						}
+					}
+				}
+				Session session = new Session(new User());
+				Person person = Locator.getEntityService().load(session, entityId);
+				item.addParticipant(person, new Date(), null);
+				Locator.getGenericItemService().save(session, item);
+			} catch (Exception e) {
+				resp.sendError(
+						HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+						"An error occurred while creating the file : "
+								+ e.getMessage());
+			}
+
+		} else {
+			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
+					"Request contents type is not supported by the servlet.");
+		}
+	}
+
+	private byte[] copyBytes(InputStream inputStream) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		byte[] buffer = new byte[2048];
+		int read = inputStream.read(buffer);
 		
-		vb.set("fileName", req.getParameter("fileName"));
-		vb.set("blob-key", blobKey.getKeyString());
-		vb.set("url", "/cldoc/uploadService?blob-key=" + blobKey.getKeyString());
-		
-		GWT.log("upload blob-key: " + blobKey.getKeyString());
-		
-		Objectify ofy = ObjectifyService.begin();
-		ofy.put(vb);
-		
-		if (rweKey != null) {
-			Participation p = new Participation();
-			p.pkEntity = new Key<RealWorldEntity>(RealWorldEntity.class, Long.valueOf(rweKey));
-			p.pkValueBag = new Key<GenericItem>(GenericItem.class, vb.getId());
-			ofy.put(p);
+		while (read > 0) {
+			out.write(buffer, 0, read);
+			read = inputStream.read(buffer);
 		}
 		
+		return out.toByteArray();
 	}
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		BlobKey blobKey = new BlobKey(req.getParameter("blob-key"));
-//		resp.setContentType("video/3gp");
-		GWT.log("serve blob-key: " + blobKey.getKeyString());
-		blobstoreService.serve(blobKey, resp);
-
+		String key = req.getParameter("blob-key");
 	}
 
-	
 }

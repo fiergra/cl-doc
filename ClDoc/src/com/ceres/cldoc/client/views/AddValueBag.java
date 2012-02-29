@@ -2,10 +2,11 @@ package com.ceres.cldoc.client.views;
 
 import java.util.List;
 
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.FormClassDesc;
-import com.ceres.cldoc.shared.domain.GenericItem;
-import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.model.GenericItem;
+import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,8 +26,10 @@ import com.google.gwt.user.client.ui.TextBox;
 public class AddValueBag extends DialogBox {
 
 	private OnOkHandler<GenericItem> onOk;
+	private Session session;
 
-	public AddValueBag(HumanBeing humanBeing, OnOkHandler<GenericItem> onOk) {
+	public AddValueBag(Session session, Person humanBeing, OnOkHandler<GenericItem> onOk) {
+		this.session = session;
 		this.onOk = onOk;
 		setup(humanBeing);
 	}
@@ -39,8 +42,8 @@ public class AddValueBag extends DialogBox {
 //	hp.add(addNew);
 //
 	
-	private void setup(HumanBeing humanBeing) {
-		setText("Add");
+	private void setup(Person humanBeing) {
+		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		final ListBox list = new ListBox();
 		HorizontalPanel filter = new HorizontalPanel();
@@ -48,7 +51,7 @@ public class AddValueBag extends DialogBox {
 		buttons.setSpacing(5);
 		
 		widget.setPixelSize(400, 550);
-		filter.add(new Label("type"));
+		filter.add(new Label(SRV.c.type()));
 		final TextBox filterText = new TextBox();
 		filter.add(filterText);
 		filterText.addKeyUpHandler(new KeyUpHandler() {
@@ -71,9 +74,9 @@ public class AddValueBag extends DialogBox {
 		});
 		populateList(null, list);
 		
-		Button pbOk = new Button("Ok");
-		pbOk.setStylePrimaryName("button");
-		pbOk.addStyleName("gray");
+		Button pbOk = new Button(SRV.c.ok());
+//		pbOk.setStylePrimaryName("button");
+//		pbOk.addStyleName("gray");
 		pbOk.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -83,13 +86,13 @@ public class AddValueBag extends DialogBox {
 		});
 		
 		
-		final Button pbCancel = new Button("Cancel");
+		final Button pbCancel = new Button(SRV.c.cancel());
 
 		buttons.add(pbOk);
 		buttons.add(pbCancel);
 		
-		pbCancel.setStylePrimaryName("button");
-		pbCancel.addStyleName("gray");
+//		pbCancel.setStylePrimaryName("button");
+//		pbCancel.addStyleName("gray");
 		pbCancel.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -112,11 +115,11 @@ public class AddValueBag extends DialogBox {
 	protected void onOk(ListBox list) {
 		int index = list.getSelectedIndex();
 		String selection = list.getValue(index);
-		SRV.configurationService.getFormClassDesc(selection, new DefaultCallback<FormClassDesc>() {
+		SRV.configurationService.getLayoutDefinition(session, selection, new DefaultCallback<LayoutDefinition>() {
 
 			@Override
-			public void onSuccess(FormClassDesc result) {
-				GenericItem vb = new GenericItem(result.name, result.xmlLayout);
+			public void onSuccess(LayoutDefinition result) {
+				GenericItem vb = new GenericItem(result.name/*, result.xmlLayout*/);
 				onOk.onOk(vb);
 				close();
 			}
@@ -128,14 +131,14 @@ public class AddValueBag extends DialogBox {
 	}
 
 	private void populateList(String filter, final ListBox list) {
-		SRV.configurationService.listClasses(null, filter, new DefaultCallback<List<FormClassDesc>>() {
+		SRV.configurationService.listLayoutDefinitions(session, filter, new DefaultCallback<List<LayoutDefinition>>() {
 
 			@Override
-			public void onSuccess(List<FormClassDesc> result) {
+			public void onSuccess(List<LayoutDefinition> result) {
 				list.clear();
 				int row = 0;
 				
-				for (FormClassDesc fds : result) {
+				for (LayoutDefinition fds : result) {
 					list.addItem(fds.name);
 //					list.setWidget(row++, 0, new Label(fds.name));
 				}
@@ -143,8 +146,8 @@ public class AddValueBag extends DialogBox {
 		});
 	}
 	
-	public static void addValueBag(HumanBeing humanBeing, OnOkHandler<GenericItem> onOk) {
-		AddValueBag avb = new AddValueBag(humanBeing, onOk);
+	public static void addValueBag(Session session, Person humanBeing, OnOkHandler<GenericItem> onOk) {
+		AddValueBag avb = new AddValueBag(session, humanBeing, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);
 		avb.center();

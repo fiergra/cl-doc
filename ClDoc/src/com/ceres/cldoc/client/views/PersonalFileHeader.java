@@ -1,14 +1,14 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class PersonalFileHeader extends HorizontalPanel {
 
-	private HumanBeing hb;
+	private Person hb;
 
-	public PersonalFileHeader(HumanBeing hb) {
+	public PersonalFileHeader(Person hb) {
 		this.hb = hb;
 		setup();
 	}

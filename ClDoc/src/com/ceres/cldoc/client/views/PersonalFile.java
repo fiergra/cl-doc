@@ -1,24 +1,25 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class PersonalFile extends DockLayoutPanel {
 
-	private HumanBeing humanBeing;
+	private Person humanBeing;
 
-	public PersonalFile(HumanBeing hb) {
+	public PersonalFile(Session session, Person hb) {
 		super(Unit.EM);
 		this.humanBeing = hb;
 		addNorth(new PersonalFileHeader(hb), 3);
-		TabLayoutPanel tab = new ConfiguredTabPanel<HumanBeing>("PERSONALFILE", humanBeing);
+		TabLayoutPanel tab = new ConfiguredTabPanel<Person>(session, "CLDOC.PERSONALFILE", humanBeing);
 		tab.addStyleName("personalFile");
 		add(tab);
 	}
 
-	public HumanBeing getHumanBeing() {
+	public Person getHumanBeing() {
 		return humanBeing;
 	}
 

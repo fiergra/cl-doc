@@ -1,7 +1,7 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.IGenericItem;
+import com.ceres.cldoc.model.IGenericItem;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -13,9 +13,9 @@ import com.google.gwt.user.client.ui.Label;
 
 public class PersonRenderer extends FocusPanel {
 	private IGenericItem valueBag;
-	private OnClick<HumanBeing> onClickEdit;
-	private OnClick<HumanBeing> onClickOpen;
-	private HumanBeing person;
+	private OnClick<Person> onClickEdit;
+	private OnClick<Person> onClickOpen;
+	private Person person;
 
 //	public PersonRenderer(GenericItem p, OnClick<HumanBeing> onClickOpen, OnClick<HumanBeing> onClickEdit) {
 //		this.valueBag = p;
@@ -24,7 +24,7 @@ public class PersonRenderer extends FocusPanel {
 //		setup();
 //	}
 
-	public PersonRenderer(HumanBeing p, OnClick<HumanBeing> onClickOpen, OnClick<HumanBeing> onClickEdit) {
+	public PersonRenderer(Person p, OnClick<Person> onClickOpen, OnClick<Person> onClickEdit) {
 		this.person = p;
 		this.onClickOpen = onClickOpen;
 		this.onClickEdit = onClickEdit;

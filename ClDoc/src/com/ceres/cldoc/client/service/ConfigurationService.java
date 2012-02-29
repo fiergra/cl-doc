@@ -3,10 +3,11 @@ package com.ceres.cldoc.client.service;
 import java.util.Collection;
 import java.util.List;
 
-import com.ceres.cldoc.shared.domain.Assignment;
-import com.ceres.cldoc.shared.domain.Catalog;
-import com.ceres.cldoc.shared.domain.FormClassDesc;
-import com.ceres.cldoc.shared.domain.RealWorldEntity;
+import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Assignment;
+import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -16,23 +17,25 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("configuration")
 public interface ConfigurationService extends RemoteService {
-	LayoutElement parse(String xml);
-	List<String> listChildren(String parent);
-	String getUploadUrl();
+	LayoutElement parse(Session session, String xml);
+//	List<String> listChildren(Session session, String parent);
+//	String getUploadUrl();
 	
-	List <FormClassDesc> listClasses(FormClassDesc parent, String filter);
-	void saveLayoutDesc(String formClass, String xmlLayout);
-	FormClassDesc getFormClassDesc(String className);
-	void deleteFormClassDesc(String className);
+	List <LayoutDefinition> listLayoutDefinitions(Session session, String filter);
+	void saveLayoutDefinition(Session session, String formClass, String xmlLayout);
+	LayoutDefinition getLayoutDefinition(Session session, String className);
+	void deleteLayoutDefinition(Session session, String className);
 	
-	void delete(Catalog catalog);
-	Catalog save(Catalog catalog);
-	void saveAll(Collection<Catalog> catalog);
-	List<Catalog> listCatalogs(String parentCode);
-	List<Catalog> listCatalogs(Catalog parent);
-	Catalog getCatalog(String code);
+	void delete(Session session, Catalog catalog);
+	Catalog save(Session session, Catalog catalog);
+	void saveAll(Session session, Collection<Catalog> catalog);
+
+	Collection<Catalog> listCatalogs(Session session, String parentCode);
+	Collection<Catalog> listCatalogs(Session session, Long parentId);
+	Collection<Catalog> listCatalogs(Session session, Catalog parent);
+	Catalog getCatalog(Session session, long id);
 	
-	Assignment addAssignment(Catalog catalog, RealWorldEntity entity);
-	List<Assignment> listAssignments(Catalog catalog);
-	List<Assignment> listAssignments(RealWorldEntity entity);
+	Assignment addAssignment(Session session, Catalog catalog, AbstractEntity entity);
+	List<Assignment> listAssignments(Session session, Catalog catalog);
+	List<Assignment> listAssignments(Session session, AbstractEntity entity);
 }

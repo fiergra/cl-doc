@@ -2,8 +2,8 @@ package com.ceres.cldoc.client.service;
 
 import java.util.List;
 
-import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.GenericItem;
+import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -11,8 +11,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * The async counterpart of <code>GreetingService</code>.
  */
 public interface HumanBeingServiceAsync {
-	void search(String criteria, AsyncCallback<List<HumanBeing>> callback);
-	void delete(HumanBeing person, AsyncCallback<Void> defaultCallBack);
-	void save(HumanBeing person, AsyncCallback<HumanBeing> callback);
-	void findById(long id, AsyncCallback<HumanBeing> callback);
+	void search(Session session, String criteria, AsyncCallback<List<Person>> callback);
+	void delete(Session session, Person person, AsyncCallback<Void> defaultCallBack);
+	void save(Session session, Person person, AsyncCallback<Person> callback);
+	void findById(Session session, long id, AsyncCallback<Person> callback);
 }

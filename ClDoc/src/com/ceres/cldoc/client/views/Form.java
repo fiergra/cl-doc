@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.controls.DateTextBox;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.Catalog;
-import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.IGenericItem;
+import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.IGenericItem;
+import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -23,7 +24,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -36,7 +36,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.DatePicker;
 
 
 public abstract class Form<T extends IGenericItem> extends FlexTable {
@@ -49,22 +48,19 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 	protected DateTimeFormat df = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
 	private Runnable setModified;
+	private Session session;
 
 	final static int OK = 1;
 	final static int CLOSE = 2;
 	final static int CANCEL = 4;
 	private static final int SPACING = 3;
 
-	public Form(T model, Runnable setModified) {
+	public Form(Session session, T model, Runnable setModified) {
+		this.session = session;
 		addStyleName("form");
+		setRowFormatter(new RowFormatter() {});
 		this.model = model;
 		this.setModified = setModified;
-		this.setColumnFormatter(new ColumnFormatter(){
-
-			@Override
-			public String getStyleName(int column) {
-				return column == 0 ? "formLabel" : super.getStyleName(column);
-			}});
 		setup();
 		toDialog();
 	}
@@ -85,6 +81,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 
 	private HashMap<String, Field> fields = new HashMap<String, Field>();
 
+	@SuppressWarnings("unchecked")
 	public void toDialog() {
 		Iterator<Entry<String, Field>> iter = fields.entrySet().iterator();
 
@@ -121,11 +118,11 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			case FT_HUMANBEING:
 				Long id = valueBag.getLong(field.name);
 				if (id != null) {
-					SRV.humanBeingService.findById(id, new DefaultCallback<HumanBeing>() {
+					SRV.humanBeingService.findById(session, id, new DefaultCallback<Person>() {
 
 						@Override
-						public void onSuccess(HumanBeing result) {
-							((IEntitySelector<HumanBeing>)field.widget).setSelected(result);
+						public void onSuccess(Person result) {
+							((IEntitySelector<Person>)field.widget).setSelected(result);
 						}
 					});
 					
@@ -141,6 +138,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void fromDialog() {
 		Iterator<Entry<String, Field>> iter = fields.entrySet().iterator();
 
@@ -163,7 +161,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 				valueBag.set(qualifiedFieldName, catalog != null ? catalog : null);
 				break;
 			case FT_HUMANBEING:
-				HumanBeing humanBeing = ((IEntitySelector<HumanBeing>) field.widget).getSelected(); 
+				Person humanBeing = ((IEntitySelector<Person>) field.widget).getSelected(); 
 				valueBag.set(qualifiedFieldName, humanBeing != null ? humanBeing.id : null);
 				break;
 			case FT_DATE:
@@ -183,6 +181,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 
 		@Override
 		public void onKeyDown(KeyDownEvent event) {
+			onModification();
 			if (!isModified) {
 				isModified = true;
 				if (setModified != null) {
@@ -192,6 +191,8 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 		}
 	};
 
+	protected void onModification() {}
+	
 	public boolean isModified() {
 		return isModified;
 	}
@@ -208,10 +209,10 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 		hp.setSpacing(3);
 
 		if (onClickSave != null) {
-			final Button pbOk = new Button("Save");
+			final Button pbOk = new Button(SRV.c.save());
 			hp.add(pbOk);
-			pbOk.setStylePrimaryName("button");
-			pbOk.addStyleName("gray");
+//			pbOk.setStylePrimaryName("button");
+//			pbOk.addStyleName("gray");
 			pbOk.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -224,10 +225,10 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 		}
 
 		if (onClickCancel != null) {
-			final Button pbCancel = new Button("Cancel");
+			final Button pbCancel = new Button(SRV.c.cancel());
 			hp.add(pbCancel);
-			pbCancel.setStylePrimaryName("button");
-			pbCancel.addStyleName("gray");
+//			pbCancel.setStylePrimaryName("button");
+//			pbCancel.addStyleName("gray");
 			pbCancel.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -239,10 +240,10 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 		}
 
 		if (onClickDelete != null) {
-			final Button pbCancel = new Button("Delete");
+			final Button pbCancel = new Button(SRV.c.delete());
 			hp.add(pbCancel);
-			pbCancel.setStylePrimaryName("button");
-			pbCancel.addStyleName("gray");
+//			pbCancel.setStylePrimaryName("button");
+//			pbCancel.addStyleName("gray");
 			pbCancel.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -274,8 +275,8 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 
 	protected void addLine(String label, Widget... widgets) {
 		Label l = new Label(label);
-		l.setStylePrimaryName("formLabel");
 		setWidget(row, 0, l);
+		getCellFormatter().addStyleName(row, 0, "formLabel");		
 		Widget w;
 
 		if (widgets.length > 1) {
@@ -346,7 +347,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			w = c;
 			break;
 		case FT_LIST_SELECTION:
-			CatalogListBox clb = new CatalogListBox(attributes.get("parent"));
+			CatalogListBox clb = new CatalogListBox(session, attributes.get("parent"));
 			clb.addChangeHandler(new ChangeHandler() {
 				
 				@Override
@@ -360,7 +361,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			w = clb;
 			break;
 		case FT_HUMANBEING:
-			HumanBeingListBox hlb = new HumanBeingListBox();
+			HumanBeingListBox hlb = new HumanBeingListBox(session);
 			hlb.addChangeHandler(new ChangeHandler() {
 				
 				@Override
@@ -394,7 +395,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 	}
 	
 	protected void parseAndCreate(String xml) {
-		SRV.configurationService.parse(xml, new DefaultCallback<LayoutElement>() {
+		SRV.configurationService.parse(session, xml, new DefaultCallback<LayoutElement>() {
 
 			@Override
 			public void onSuccess(LayoutElement result) {

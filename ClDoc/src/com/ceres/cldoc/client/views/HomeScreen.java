@@ -1,35 +1,35 @@
 package com.ceres.cldoc.client.views;
 
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
 
 
 public class HomeScreen extends PersonSearchList {
-	private ClDoc clDoc;
 
 	public HomeScreen(final ClDoc clDoc) {
 		super(clDoc, 
-				new OnClick<HumanBeing>() {
+				new OnClick<Person>() {
 
 					@Override
-					public void onClick(HumanBeing pp) {
-						editPerson(pp);
+					public void onClick(Person pp) {
+						editPerson(clDoc.getSession(), pp);
 					}
 				},
-				new OnClick<HumanBeing>() {
+				new OnClick<Person>() {
 
 					@Override
-					public void onClick(HumanBeing pp) {
+					public void onClick(Person pp) {
 						loadAndOpenFile(clDoc, pp.id);
 					}
 				},
-				new OnClick<HumanBeing>() {
+				new OnClick<Person>() {
 
 					@Override
-					public void onClick(HumanBeing pp) {
-						loadAndEditPerson(pp.id);
+					public void onClick(Person pp) {
+						loadAndEditPerson(clDoc.getSession(), pp.id);
 					}
 				});
 	}
@@ -149,11 +149,11 @@ public class HomeScreen extends PersonSearchList {
 //		}
 //	}
 	
-	private static void savePerson(HumanBeing result) {
-		SRV.humanBeingService.save(result, new DefaultCallback<HumanBeing>() {
+	private static void savePerson(Session session, Person result) {
+		SRV.humanBeingService.save(session, result, new DefaultCallback<Person>() {
 
 			@Override
-			public void onSuccess(HumanBeing result) {
+			public void onSuccess(Person result) {
 //				searchBox.setText(result.lastName);
 //				doSearch();
 			}
@@ -161,8 +161,8 @@ public class HomeScreen extends PersonSearchList {
 		
 	}
 	
-	private static void deletePerson(HumanBeing person) {
-		SRV.humanBeingService.delete(person, new DefaultCallback<Void>(){
+	private static void deletePerson(Session session, Person person) {
+		SRV.humanBeingService.delete(session, person, new DefaultCallback<Void>(){
 
 			@Override
 			public void onSuccess(Void result) {
@@ -171,35 +171,35 @@ public class HomeScreen extends PersonSearchList {
 	}
 
 	private static void loadAndOpenFile(final ClDoc clDoc, long pid) {
-		SRV.humanBeingService.findById(pid, new DefaultCallback<HumanBeing>() {
+		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>() {
 
 			@Override
-			public void onSuccess(HumanBeing result) {
-				clDoc.openPersonalFile(result);
+			public void onSuccess(Person result) {
+				clDoc.openPersonalFile(clDoc.getSession(), result);
 			}
 		});
 	}
 	
-	private static void loadAndEditPerson(long pid) {
-		SRV.humanBeingService.findById(pid, new DefaultCallback<HumanBeing>() {
+	private static void loadAndEditPerson(final Session session, long pid) {
+		SRV.humanBeingService.findById(session, pid, new DefaultCallback<Person>() {
 
 			@Override
-			public void onSuccess(HumanBeing result) {
-				editPerson(result);
+			public void onSuccess(Person result) {
+				editPerson(session, result);
 			}
 		});
 	}
 	
 	
-	private static void editPerson(final HumanBeing humanBeing) {
-		final PersonEditor pe = new PersonEditor(new PersonWrapper(humanBeing));
+	private static void editPerson(final Session session, final Person humanBeing) {
+		final PersonEditor pe = new PersonEditor(session, new PersonWrapper(humanBeing));
 		pe.showModal("PersonEditor", 
 		new OnClick<PersonWrapper>() {
 			
 			@Override
 			public void onClick(PersonWrapper v) {
 				pe.close();
-				savePerson(humanBeing);
+				savePerson(session, humanBeing);
 			}
 		},
 		new OnClick<PersonWrapper>() {
@@ -207,7 +207,7 @@ public class HomeScreen extends PersonSearchList {
 			@Override
 			public void onClick(PersonWrapper v) {
 				pe.close();
-				deletePerson(humanBeing);
+				deletePerson(session, humanBeing);
 			}
 		},
 		new OnClick<PersonWrapper>() {

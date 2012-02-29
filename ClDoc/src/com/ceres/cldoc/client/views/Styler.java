@@ -8,8 +8,8 @@ import com.ceres.cldoc.client.controls.LabelFunction;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.FormClassDesc;
-import com.ceres.cldoc.shared.domain.GenericItem;
+import com.ceres.cldoc.model.GenericItem;
+import com.ceres.cldoc.model.LayoutDefinition;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -28,22 +28,25 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public class Styler extends DockLayoutPanel {
-	private ClDoc clDoc;
 	private MultiWordSuggestOracle mwso;
 
-	final Form <GenericItem> form = new Form<GenericItem>(new GenericItem("dummy", null), null){
+	final Form <GenericItem> form;
 
-		@Override
-		protected void setup() {
-			setWidth("100%");
-		}};
+	private ClDoc clDoc;
 	
 	public Styler(ClDoc clDoc) {
 		super(Unit.PX);
 		this.clDoc = clDoc;
+		form = new Form<GenericItem>(clDoc.getSession(), new GenericItem("dummy"), null){
+
+			@Override
+			protected void setup() {
+				setWidth("100%");
+			}};
 		setup();
 	}
 
@@ -79,35 +82,35 @@ public class Styler extends DockLayoutPanel {
 				String className = event.getSelectedItem().getReplacementString();
 				
 				if (className != null) {
-					AsyncCallback<FormClassDesc> callback = new DefaultCallback<FormClassDesc>() {
+					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>() {
 
 						@Override
-						public void onSuccess(FormClassDesc result) {
+						public void onSuccess(LayoutDefinition result) {
 							layoutDesc.setText(result.xmlLayout);
 							form.parseAndCreate(result.xmlLayout);
 						}
 					};
-					SRV.configurationService.getFormClassDesc(className, callback );
+					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, callback );
 				}
 			}
 		});
 		
-		OnDemandComboBox<FormClassDesc> cmbClasses = new OnDemandComboBox<FormClassDesc>(new ListRetrievalService<FormClassDesc>() {
+		OnDemandComboBox<LayoutDefinition> cmbClasses = new OnDemandComboBox<LayoutDefinition>(new ListRetrievalService<LayoutDefinition>() {
 
 			@Override
 			public void retrieve(String filter,
-					AsyncCallback<List<FormClassDesc>> callback) {
-				SRV.configurationService.listClasses(null, filter, callback);
+					AsyncCallback<List<LayoutDefinition>> callback) {
+				SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), filter, callback);
 			}
-		}, new LabelFunction<FormClassDesc>() {
+		}, new LabelFunction<LayoutDefinition>() {
 
 			@Override
-			public String getLabel(FormClassDesc item) {
+			public String getLabel(LayoutDefinition item) {
 				return item.name;
 			}
 
 			@Override
-			public String getValue(FormClassDesc item) {
+			public String getValue(LayoutDefinition item) {
 				return item.name;
 			}
 		});
@@ -130,7 +133,7 @@ public class Styler extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SRV.configurationService.saveLayoutDesc(lbClasses.getText(), layoutDesc.getText(), new DefaultCallback<Void>() {
+				SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), lbClasses.getText(), layoutDesc.getText(), new DefaultCallback<Void>() {
 
 					@Override
 					public void onSuccess(Void result) {
@@ -146,7 +149,7 @@ public class Styler extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SRV.configurationService.deleteFormClassDesc(lbClasses.getText(), new DefaultCallback<Void>() {
+				SRV.configurationService.deleteLayoutDefinition(clDoc.getSession(), lbClasses.getText(), new DefaultCallback<Void>() {
 
 					@Override
 					public void onSuccess(Void result) {
@@ -164,8 +167,15 @@ public class Styler extends DockLayoutPanel {
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 			
 		layoutDesc.setText("<form><line label=\"label\" type=\"String\"/></form>");
-		splitPanel.addWest(layoutDesc, 400);
-		splitPanel.add(form);
+		
+		TabLayoutPanel layouts = new TabLayoutPanel(2, Unit.EM);
+		layouts.add(layoutDesc, "Layout");
+		layouts.add(new Label("follow"), "Printout");
+		
+		splitPanel.addWest(layouts, 400);
+		HorizontalPanel formContainer = new HorizontalPanel();
+		formContainer.add(form);
+		splitPanel.add(formContainer);
 		add(splitPanel);
 		
 		layoutDesc.addChangeHandler(new ChangeHandler() {
@@ -180,11 +190,11 @@ public class Styler extends DockLayoutPanel {
 
 	private void refreshOracle() {
 		mwso.clear();
-		SRV.configurationService.listClasses(null, null, new DefaultCallback<List<FormClassDesc>>() {
+		SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), null, new DefaultCallback<List<LayoutDefinition>>() {
 
 			@Override
-			public void onSuccess(List<FormClassDesc> result) {
-				for (FormClassDesc fcd : result) {
+			public void onSuccess(List<LayoutDefinition> result) {
+				for (LayoutDefinition fcd : result) {
 					mwso.add(fcd.name);
 				}
 				

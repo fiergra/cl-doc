@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.shared.domain.Catalog;
+import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.user.client.ui.TreeItem;
 
 public class CatalogTreeItem extends TreeItem {
