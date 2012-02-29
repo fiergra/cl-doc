@@ -1,9 +1,10 @@
 package com.ceres.cldoc.client;
 
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.PersonEditor;
-import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -17,12 +18,14 @@ import com.google.gwt.user.client.ui.Widget;
 public class PersonDetails extends DockLayoutPanel {
 	private Image pbSave = new Image("icons/32/Save-icon.png");
 	private PersonEditor personEditor;
-	private HumanBeing humanBeing;
+	private Person humanBeing;
+	private Session session;
 	
-	public PersonDetails(HumanBeing humanBeing) {
+	public PersonDetails(Session session, Person humanBeing) {
 		super(Unit.PX);
+		this.session = session;
 		this.humanBeing = humanBeing;
-		this.personEditor = new PersonEditor(new PersonWrapper(humanBeing), new Runnable() {
+		this.personEditor = new PersonEditor(session, new PersonWrapper(humanBeing), new Runnable() {
 			
 			@Override
 			public void run() {
@@ -30,7 +33,9 @@ public class PersonDetails extends DockLayoutPanel {
 			}
 		});
 		addNorth(createButtons(), 32);
-		add(personEditor);
+		HorizontalPanel container = new HorizontalPanel();
+		container.add(personEditor);
+		add(container);
 	}
 
 	
@@ -48,10 +53,10 @@ public class PersonDetails extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				personEditor.fromDialog();
-				SRV.humanBeingService.save(humanBeing, new DefaultCallback<HumanBeing>() {
+				SRV.humanBeingService.save(session, humanBeing, new DefaultCallback<Person>() {
 
 					@Override
-					public void onSuccess(HumanBeing result) {
+					public void onSuccess(Person result) {
 						pbSave.setVisible(false);
 						personEditor.clearModification();
 					}

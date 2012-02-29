@@ -20,7 +20,7 @@ public class PopupManager {
 			dlg.setGlassEnabled(true);
 			result = dlg;
 		}
-		result.setAnimationEnabled(true);
+		result.setAnimationEnabled(false);
 		result.setTitle(title);
 		result.setWidget(content);
 		result.center();

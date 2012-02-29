@@ -3,15 +3,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 import org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource;
 
 
-public class Connector {
+public class Connector  {
 
     private String protocol = "jdbc:derby:";
 
@@ -29,6 +27,9 @@ public class Connector {
 			ds.setCreateDatabase("create");
 			dataSource = ds;
 		}
+		
+		
+		
         return dataSource;
 		
 	}

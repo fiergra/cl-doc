@@ -1,13 +1,13 @@
 package com.ceres.cldoc.client;
 
-import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DetailsPanel extends VerticalPanel {
 
-	private HumanBeing humanBeing;
+	private Person humanBeing;
 
-	public DetailsPanel(HumanBeing model) {
+	public DetailsPanel(Person model) {
 		this.humanBeing = model;
 	}
 

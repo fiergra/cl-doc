@@ -1,12 +1,14 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.Catalog;
+import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.user.client.ui.ListBox;
-import com.googlecode.objectify.Key;
 
 public class CatalogListBox extends ListBox implements IEntitySelector <Catalog> {
 	
@@ -15,20 +17,20 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 	private boolean isMandatory = false;
 	private Catalog emptyRecord;
 
-	public CatalogListBox(String parentCode) {
+	public CatalogListBox(Session session, String parentCode) {
 		addStyleName("cataloglistbox");
-		SRV.configurationService.listCatalogs(parentCode, new DefaultCallback<List<Catalog>>() {
+		SRV.configurationService.listCatalogs(session, parentCode, new DefaultCallback<Collection<Catalog>>() {
 
 			@Override
-			public void onSuccess(List<Catalog> result) {
-				CatalogListBox.this.catalogs = result;
+			public void onSuccess(Collection<Catalog> result) {
+				CatalogListBox.this.catalogs = new ArrayList<Catalog>(result);
 				
 				if (!isMandatory) {
 					emptyRecord = new Catalog();
 					emptyRecord.code = "";
 					emptyRecord.shortText = "---";
 					emptyRecord.text = "---";
-					result.add(0, emptyRecord);
+					CatalogListBox.this.catalogs.add(0, emptyRecord);
 				}
 
 				

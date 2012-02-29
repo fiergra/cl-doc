@@ -1,39 +1,38 @@
 package com.ceres.cldoc.client.views;
 
-import java.util.Iterator;
 import java.util.List;
 
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.controls.LabelFunction;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.HumanBeing;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.ListBox;
 
-public class HumanBeingListBox extends OnDemandComboBox <HumanBeing> {
+public class HumanBeingListBox extends OnDemandComboBox <Person> {
 	
-	private List<HumanBeing> humanBeings;
-	private HumanBeing selected;
+	private List<Person> humanBeings;
+	private Person selected;
 	private boolean isMandatory = false;
-	private HumanBeing emptyRecord;
+	private Person emptyRecord;
 
-	public HumanBeingListBox() {
-		super(new ListRetrievalService<HumanBeing>() {
+	public HumanBeingListBox(final Session session) {
+		super(new ListRetrievalService<Person>() {
 
 			@Override
-			public void retrieve(String filter, AsyncCallback<List<HumanBeing>> callback) {
-				SRV.humanBeingService.search(filter, callback);
+			public void retrieve(String filter, AsyncCallback<List<Person>> callback) {
+				SRV.humanBeingService.search(session, filter, callback);
 			}
-		}, new LabelFunction<HumanBeing>() {
+		}, new LabelFunction<Person>() {
 
 			@Override
-			public String getLabel(HumanBeing item) {
+			public String getLabel(Person item) {
 				return item.lastName + ", " + item.firstName;
 			}
 
 			@Override
-			public String getValue(HumanBeing item) {
+			public String getValue(Person item) {
 				return getLabel(item);
 			}
 		});

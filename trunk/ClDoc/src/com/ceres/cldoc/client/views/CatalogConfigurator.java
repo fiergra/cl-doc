@@ -1,11 +1,12 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.shared.domain.Catalog;
+import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -38,11 +39,13 @@ public class CatalogConfigurator extends DockLayoutPanel {
 	private final Image pbSave = new Image("icons/32/Save-icon.png");
 	private final Image pbNew = new Image("icons/32/File-New-icon.png");
 	private final Image pbDelete = new Image("icons/32/File-Delete-icon.png");
-	private List<Catalog> catalogs;
+	private Collection<Catalog> catalogs;
+	private ClDoc clDoc;
 	
 	
 	public CatalogConfigurator(ClDoc clDoc) {
 		super(Unit.PX);
+		this.clDoc = clDoc;
 		setup();
 	}
 
@@ -61,7 +64,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				SRV.configurationService.saveAll(changedObjects,
+				SRV.configurationService.saveAll(clDoc.getSession(), changedObjects,
 						new DefaultCallback<Void>() {
 
 							@Override
@@ -94,7 +97,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 			public void onClick(ClickEvent event) {
 				TreeItem selected = tree.getSelectedItem();
 				if (selected != null) {
-					SRV.configurationService.delete((Catalog)selected.getUserObject(), 						new DefaultCallback<Void>() {
+					SRV.configurationService.delete(clDoc.getSession(), (Catalog)selected.getUserObject(), 						new DefaultCallback<Void>() {
 
 						@Override
 						public void onSuccess(Void result) {
@@ -145,7 +148,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 		Catalog parent = (Catalog) selectedItem.getUserObject();
 		Catalog child = new Catalog();
 		if (parent != null) {
-			child.parentCatalog = parent;
+			child.parent = parent;
 			child.code = parent.code + "<change me>";
 		} else {
 			child.parent = null;
@@ -166,11 +169,11 @@ public class CatalogConfigurator extends DockLayoutPanel {
 		Catalog c = (Catalog) (selectedItem != null ? selectedItem
 				.getUserObject() : null);
 
-		SRV.configurationService.listCatalogs(c,
-				new DefaultCallback<List<Catalog>>() {
+		SRV.configurationService.listCatalogs(clDoc.getSession(), c,
+				new DefaultCallback<Collection<Catalog>>() {
 
 					@Override
-					public void onSuccess(List<Catalog> result) {
+					public void onSuccess(Collection<Catalog> result) {
 						catalogs = result;
 						updateRowData(childGrid);
 					}
@@ -179,7 +182,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 
 	private void updateRowData(final CellTable<Catalog> childGrid) {
 		childGrid.setRowCount(catalogs.size());
-		childGrid.setRowData(catalogs);
+		childGrid.setRowData(new ArrayList<Catalog>(catalogs));
 		
 	}
 	private void setupGrid(CellTable<Catalog> childGrid) {
@@ -274,18 +277,18 @@ public class CatalogConfigurator extends DockLayoutPanel {
 	private void refreshTree(final Tree tree) {
 		tree.clear();
 
-		SRV.configurationService.listCatalogs((Catalog)null,
-				new DefaultCallback<List<Catalog>>() {
+		SRV.configurationService.listCatalogs(clDoc.getSession(), (Catalog)null,
+				new DefaultCallback<Collection<Catalog>>() {
 
 					@Override
-					public void onSuccess(List<Catalog> result) {
+					public void onSuccess(Collection<Catalog> result) {
 						TreeItem root = new TreeItem("root");
 						addTreeItems(root, result);
 						tree.addItem(root);
 						tree.setSelectedItem(root);
 					}
 					
-					private void addTreeItems(TreeItem parent, List<Catalog> children) {
+					private void addTreeItems(TreeItem parent, Collection<Catalog> children) {
 						for (Catalog c : children) {
 							TreeItem ti = catalog2TreeItem(c);
 							parent.addItem(ti);
