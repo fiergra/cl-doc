@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -115,7 +116,7 @@ public class EntityServiceImpl implements IEntityService {
 	private void insertPerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("insert into Person(id,per_id,firstname,lastname,sndx_firstname,sndx_lastname) values (?,?,?,?,soundex(?),soundex(?))");
+				.prepareStatement("insert into Person(id,per_id,firstname,lastname,sndx_firstname,sndx_lastname,dateofbirth) values (?,?,?,?,soundex(?),soundex(?),?)");
 		int i = 1;
 		s.setLong(i++, person.id);
 		s.setLong(i++, person.perId);
@@ -123,6 +124,11 @@ public class EntityServiceImpl implements IEntityService {
 		s.setString(i++, person.lastName);
 		s.setString(i++, person.firstName);
 		s.setString(i++, person.lastName);
+		if (person.dateOfBirth != null) {
+			s.setDate(i++, new java.sql.Date(person.dateOfBirth.getTime()));
+		} else {
+			s.setNull(i++, Types.DATE);
+		}
 		s.executeUpdate();
 		s.close();
 	}
@@ -130,12 +136,17 @@ public class EntityServiceImpl implements IEntityService {
 	private void updatePerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("update Person set firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?) where id = ?");
+				.prepareStatement("update Person set firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?), dateofbirth = ? where id = ?");
 		int i = 1;
 		s.setString(i++, person.firstName);
 		s.setString(i++, person.lastName);
 		s.setString(i++, person.firstName);
 		s.setString(i++, person.lastName);
+		if (person.dateOfBirth != null) {
+			s.setDate(i++, new java.sql.Date(person.dateOfBirth.getTime()));
+		} else {
+			s.setNull(i++, Types.DATE);
+		}
 		s.setLong(i++, person.id);
 		s.close();
 	}

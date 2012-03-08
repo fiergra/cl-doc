@@ -36,7 +36,9 @@ public class PersonRenderer extends FocusPanel {
 		setStylePrimaryName("personRenderer");
 		Grid grid = new Grid(1, 5);
 //		grid.setWidth("100%");
-		grid.setWidget(0, 0, new Label(String.valueOf(person.id)));
+		Label id = new Label(String.valueOf(person.id));
+		id.setWidth("3em");
+		grid.setWidget(0, 0, id);
 		HTML lastName = new HTML("<b>" + getLastName() + "</b>");
 		lastName.setWidth("10em");
 		grid.setWidget(0, 1, lastName);
