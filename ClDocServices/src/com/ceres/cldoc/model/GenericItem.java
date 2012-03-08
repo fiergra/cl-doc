@@ -80,11 +80,13 @@ public class GenericItem extends AbstractNamedValueAccessor {
 			child.set(fieldName.substring(index + 1), value);
 		} else {
 			IGenericItemField field = fields.get(fieldName);
-			if (field == null) {
+			if (field == null && value != null) {
 				field = new GenericItemField(null, fieldName, 0);
 				fields.put(fieldName, field);
 			}
-			field.setValue(value);
+			if (field != null) {
+				field.setValue(value);
+			}
 		}
 
 	}

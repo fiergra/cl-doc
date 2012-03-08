@@ -15,4 +15,5 @@ public interface HumanBeingServiceAsync {
 	void delete(Session session, Person person, AsyncCallback<Void> defaultCallBack);
 	void save(Session session, Person person, AsyncCallback<Person> callback);
 	void findById(Session session, long id, AsyncCallback<Person> callback);
+	void findByAssignment(Session session, String criteria, String roleCode, AsyncCallback<List<Person>> callback);
 }

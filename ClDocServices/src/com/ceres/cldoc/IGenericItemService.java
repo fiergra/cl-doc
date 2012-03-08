@@ -15,5 +15,6 @@ public interface IGenericItemService {
 			throws SQLException;
 	
 	List<GenericItem> load(Session session, AbstractEntity entity);
+	void delete(Session session, GenericItem item);
 	
 }

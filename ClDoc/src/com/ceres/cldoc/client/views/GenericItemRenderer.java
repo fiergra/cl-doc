@@ -1,13 +1,15 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.GenericItem;
 import com.ceres.cldoc.model.IGenericItemField;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
@@ -15,28 +17,30 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class GenericItemRenderer extends DockLayoutPanel {
 
+	private static final int BORDER_WIDTH = 3;
 	private HTML title;
 	private OnOkHandler<GenericItem> onInsertUpdateDelete;
 	private Runnable onSetModified;
-	private Session session;
+	private ClDoc clDoc;
 	
 	public GenericItemRenderer(
-			Session session,
+			ClDoc clDoc,
 			OnOkHandler<GenericItem> onInsertUpdateDelete, 
 			Runnable onSetModified) {
 		super(Unit.PX);
-		this.session = session;
+		this.clDoc = clDoc;
 		this.onInsertUpdateDelete = onInsertUpdateDelete;
 		this.onSetModified = onSetModified;
 		setup();
 	}
 
-	private HorizontalPanel formContainer;
+	private Widget formContainer = new SimplePanel();
 	private Form <GenericItem> formContent;
-	private GenericItem item;
 	
 	private void addLinkButton(HorizontalPanel buttons, int index, String label, String image, 
 			ClickHandler clickHandler) {
@@ -66,7 +70,7 @@ public class GenericItemRenderer extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				print(item);
+//				print(item);
 			}
 		});
 //		addLinkButton(buttons, index++, "icons/32/Edit-Document-icon.png", null);
@@ -82,14 +86,21 @@ public class GenericItemRenderer extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SRV.valueBagService.delete(session, formContent.model, new DefaultCallback<Void>() {
+				new MessageBox("Loeschen", "Wollen Sie das Dokument entgueltig loeschen?", MessageBox.MB_YES | MessageBox.MB_NO, MessageBox.MESSAGE_ICONS.MB_ICON_QUESTION){
 
 					@Override
-					public void onSuccess(Void result) {
-						setValueBag(null, null);
-						onInsertUpdateDelete.onOk(null);
-					}
-				});
+					protected void onClick(int result) {
+						if (result == MessageBox.MB_YES) {
+							SRV.valueBagService.delete(clDoc.getSession(), formContent.model, new DefaultCallback<Void>(clDoc, "delete") {
+	
+								@Override
+								public void onSuccess(Void result) {
+									setValueBag(null, null);
+									onInsertUpdateDelete.onOk(null);
+								}
+							});
+						}
+					}};
 			}
 		});
 
@@ -104,6 +115,10 @@ public class GenericItemRenderer extends DockLayoutPanel {
 		titlePanel.add(buttons);
 
 		addNorth(titlePanel, 38);
+		formContainer.setWidth("100%");
+		add(formContainer);
+		
+		addStyleName("formContainer");
 	}
 
 	protected void print(GenericItem item) {
@@ -129,7 +144,7 @@ public class GenericItemRenderer extends DockLayoutPanel {
 
 	private void saveForm(final boolean doSelect) {
 		formContent.fromDialog();
-		SRV.valueBagService.save(session, formContent.model, new DefaultCallback<GenericItem>() {
+		SRV.valueBagService.save(clDoc.getSession(), formContent.model, new DefaultCallback<GenericItem>(clDoc, "listCatalogs") {
 
 			@Override
 			public void onSuccess(GenericItem item) {
@@ -139,24 +154,41 @@ public class GenericItemRenderer extends DockLayoutPanel {
 		
 	}
 	
-	public boolean setValueBag(LayoutDefinition layoutDef, GenericItem vb) {
-		item = vb;
+	public boolean setValueBag(LayoutDefinition layoutDef, GenericItem item) {
+		int h;
+		int w; 
+//		item = vb;
+
 		if (formContainer != null) {
+			h = formContainer.getOffsetHeight();
+			w = formContainer.getOffsetWidth(); 
 			remove(formContainer);
+		} else {
+			h = getOffsetHeight() - 2 * BORDER_WIDTH;
+			w = getOffsetWidth() - 2 * BORDER_WIDTH; 
 		}
 
-		if (vb != null) {
-			title.setHTML("#" + vb.id);// + " - <b>" + vb.getSummary() + "</b>");
+		if (item != null) {
+			DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
+			title.setTitle("#" + item.id + " - <b>" + item.className + "</b>");
+			String sDate = item.date != null ? formatter.format(item.date) : "--.--.----";
+			title.setHTML("<b>" + item.className + "</b> - " + sDate );
 			if (formContent != null) {
 				if (formContent.isModified() && wantToSave()) {
 					saveForm(false);
 				}
 			}
-			formContent = getValueBagRenderer(layoutDef, vb);
-			formContainer = new HorizontalPanel();
-			formContainer.add(formContent);
-			add(formContainer);
 			
+			formContent = getValueBagRenderer(layoutDef, item, w, h);
+			if (item.className.equals("externalDoc")) {
+				formContainer = formContent;
+			} else {
+				HorizontalPanel hp = new HorizontalPanel();
+				hp.add(formContent);
+				formContainer = hp;
+			}	
+			formContainer.setWidth("100%");
+			add(formContainer);
 		} else {
 			title.setText("");
 		}
@@ -170,8 +202,8 @@ public class GenericItemRenderer extends DockLayoutPanel {
 	}
 
 
-	private Form<GenericItem> getValueBagRenderer(LayoutDefinition layoutDef, final GenericItem vb) {
-		final Form<GenericItem> form = new Form<GenericItem>(session, vb, new Runnable() {
+	private Form<GenericItem> getValueBagRenderer(LayoutDefinition layoutDef, final GenericItem vb, int w, int h) {
+		final Form<GenericItem> form = new Form<GenericItem>(clDoc, vb, new Runnable() {
 			
 			@Override
 			public void run() {
@@ -185,8 +217,11 @@ public class GenericItemRenderer extends DockLayoutPanel {
 	
 		if (vb.className.equals("externalDoc")) {
 			IGenericItemField field = vb.get("file");
-			Frame frame = new Frame("/cldoc/download?id=" + field.getId());
-			frame.setSize("100%", "100%");
+			String baseUrl = GWT.getModuleBaseURL();
+			Frame frame = new Frame(baseUrl + "download?id=" + field.getId());
+			Widget center = getCenter();
+			frame.setPixelSize(w, h);
+			frame.setWidth("100%");
 			form.setSize("100%", "100%");
 			form.setWidget(0, 0, frame);
 		} else {

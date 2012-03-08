@@ -7,6 +7,7 @@ import com.ceres.cldoc.client.views.ClosableTab;
 import com.ceres.cldoc.client.views.ConfiguredTabPanel;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.Form;
+import com.ceres.cldoc.client.views.LogOutput;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
 import com.ceres.cldoc.client.views.PersonalFile;
@@ -32,13 +33,14 @@ public class ClDoc implements EntryPoint {
 	private ConfiguredTabPanel<ClDoc> mainTab;
 	private Label statusMessage = new Label();
 	private Session session;
+	private LogOutput logOutput;
 	
 	public Session getSession() {
 		return session;
 	}
 	
 	public void onModuleLoad() {
-		LoginScreen loginScreen = new LoginScreen(new OnOkHandler<Session>() {
+		LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<Session>() {
 			
 			@Override
 			public void onOk(Session result) {
@@ -62,7 +64,7 @@ public class ClDoc implements EntryPoint {
 	protected void setPassword(final Session session) {
 		final PasswordTextBox pwdField1 = new PasswordTextBox();
 		final PasswordTextBox pwdField2 = new PasswordTextBox();
-		Form createPwd = new Form(session, null, null){
+		Form createPwd = new Form(this, null, null){
 
 			@Override
 			protected void setup() {
@@ -75,7 +77,7 @@ public class ClDoc implements EntryPoint {
 
 			@Override
 			public void onClick(Void pp) {
-				SRV.userService.setPassword(session, session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>() {
+				SRV.userService.setPassword(session, session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>(ClDoc.this, "setPassword") {
 
 					@Override
 					public void onSuccess(Long result) {
@@ -103,7 +105,7 @@ public class ClDoc implements EntryPoint {
 		}
 		
 		if (personalFile == null) {
-			personalFile = new PersonalFile(session, hb);
+			personalFile = new PersonalFile(this, hb);
 		}
 		
 		return personalFile;
@@ -117,6 +119,9 @@ public class ClDoc implements EntryPoint {
 	
 	public void status(String text) {
 		statusMessage.setText(text);
+		if (logOutput != null) {
+			logOutput.log("status", text);
+		}
 	}
 
 	public void clearStatus() {
@@ -129,13 +134,16 @@ public class ClDoc implements EntryPoint {
 		logo.setHeight("60px");
 		mainPanel.addNorth(logo, 60);
 		mainPanel.addSouth(statusMessage, 20);
-		mainTab = new ConfiguredTabPanel<ClDoc>(result, "CLDOC.MAIN", ClDoc.this);
+		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 		mainPanel.add(mainTab);
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(mainPanel);
 	}
 
-	public static void messageBox(String title, String message, OnClick<Integer> onClick) {
-		
+	public void setLogOutput(LogOutput logOutput) {
+		this.logOutput = logOutput;
 	}
+
+	
+	
 }

@@ -2,6 +2,7 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Person;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -50,7 +51,12 @@ public class UploadDialog extends DialogBox {
 		final VerticalPanel formWidget = new VerticalPanel();
 		formWidget.setWidth("100%");
 		form.setWidget(formWidget);
+
+		String baseUrl = GWT.getModuleBaseURL();
+		form.setAction(baseUrl + "uploadService");
+		Label actionLabel = new Label(baseUrl + "uploadService");
 		
+		formWidget.add(actionLabel);
 		formWidget.add(rweKey);
 		formWidget.add(fileName);
 		formWidget.add(fup);
@@ -59,7 +65,6 @@ public class UploadDialog extends DialogBox {
 	
 		form.setEncoding(FormPanel.ENCODING_MULTIPART);
 		form.setMethod(FormPanel.METHOD_POST);
-		form.setAction("/cldoc/uploadService");
 	
 		form.addSubmitHandler(new SubmitHandler() {
 			
@@ -74,12 +79,17 @@ public class UploadDialog extends DialogBox {
 	
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
-				close();
-				onOk.onOk(null);
+				String text = event.getResults();
+				new MessageBox("Upload", text != null && text.length() > 0 ? text : "Datei erfolgreich hochgeladen.", MessageBox.MB_OK, MessageBox.MESSAGE_ICONS.MB_ICON_INFO){
+
+					@Override
+					protected void onClick(int result) {
+						close();
+						onOk.onOk(null);
+					}};
 			}
 		});
 	
-		
 		return form;
 	}
 	
@@ -95,22 +105,11 @@ public class UploadDialog extends DialogBox {
 		
 		final FormPanel form = createUploadPanel(humanBeing);
 		
-//		pbOk.setStylePrimaryName("button");
-//		pbOk.addStyleName("gray");
 		pbOk.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				form.submit();
-//				SRV.configurationService
-//				.getUploadUrl(new DefaultCallback<String>() {
-//
-//					@Override
-//					public void onSuccess(String result) {
-//						form.setAction(result);
-//						form.submit();
-//					}
-//				});
 			}
 		});
 		
@@ -120,8 +119,6 @@ public class UploadDialog extends DialogBox {
 		buttons.add(pbOk);
 		buttons.add(pbCancel);
 		
-//		pbCancel.setStylePrimaryName("button");
-//		pbCancel.addStyleName("gray");
 		pbCancel.addClickHandler(new ClickHandler() {
 
 			@Override

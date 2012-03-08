@@ -24,16 +24,16 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 				humanBeing.lastName = (String) value;
 			} else if (fieldName.equals("dateOfBirth")) {
 				humanBeing.dateOfBirth = (Date) value;
-//			} else if (fieldName.equals("primaryAddress.street")) {
-//				humanBeing.primaryAddress.street = (String)value;
-//			} else if (fieldName.equals("primaryAddress.city")) {
-//				humanBeing.primaryAddress.city = (String)value;
-//			} else if (fieldName.equals("primaryAddress.number")) {
-//				humanBeing.primaryAddress.number = (String)value;
-//			} else if (fieldName.equals("primaryAddress.co")) {
-//				humanBeing.primaryAddress.co = (String)value;
-//			} else if (fieldName.equals("primaryAddress.postCode")) {
-//				humanBeing.primaryAddress.postCode = (String)value;
+			} else if (fieldName.equals("primaryAddress.street")) {
+				humanBeing.getPrimaryAddress().street = (String)value;
+			} else if (fieldName.equals("primaryAddress.city")) {
+				humanBeing.getPrimaryAddress().city = (String)value;
+			} else if (fieldName.equals("primaryAddress.number")) {
+				humanBeing.getPrimaryAddress().number = (String)value;
+			} else if (fieldName.equals("primaryAddress.co")) {
+				humanBeing.getPrimaryAddress().co = (String)value;
+			} else if (fieldName.equals("primaryAddress.postCode")) {
+				humanBeing.getPrimaryAddress().postCode = (String)value;
 			}
 		}
 		
@@ -45,16 +45,16 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 				return new GenericItemField(fieldName, humanBeing.lastName);
 			} else if (fieldName.equals("dateOfBirth")) {
 				return new GenericItemField(fieldName, humanBeing.dateOfBirth);
-//			} else if (fieldName.equals("primaryAddress.street")) {
-//				return new GenericItemField(fieldName, humanBeing.primaryAddress.street);
-//			} else if (fieldName.equals("primaryAddress.number")) {
-//				return new GenericItemField(fieldName, humanBeing.primaryAddress.number);
-//			} else if (fieldName.equals("primaryAddress.city")) {
-//				return new GenericItemField(fieldName, humanBeing.primaryAddress.city);
-//			} else if (fieldName.equals("primaryAddress.co")) {
-//				return new GenericItemField(fieldName, humanBeing.primaryAddress.co);
-//			} else if (fieldName.equals("primaryAddress.postCode")) {
-//				return new GenericItemField(fieldName, humanBeing.primaryAddress.postCode);
+			} else if (fieldName.equals("primaryAddress.street")) {
+				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().street);
+			} else if (fieldName.equals("primaryAddress.number")) {
+				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().number);
+			} else if (fieldName.equals("primaryAddress.city")) {
+				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().city);
+			} else if (fieldName.equals("primaryAddress.co")) {
+				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().co);
+			} else if (fieldName.equals("primaryAddress.postCode")) {
+				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().postCode);
 			} else {
 				return null;
 			}

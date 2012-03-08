@@ -38,7 +38,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 	protected void updateParticipation(Connection con,
 			Participation participation) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"update participation set type = ?, startdate = ?, enddate = ? where id = ?");
+				"update Participation set type = ?, startdate = ?, enddate = ? where id = ?");
 		int i = 1;
 		s.setInt(i++, 1);
 		s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
@@ -55,7 +55,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 	protected void insertParticipation(Connection con,
 			Participation participation) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"insert into participation (itemid, entityid, type, startdate, enddate) values (?, ?, ?, ?, ?) ", new String[]{"ID"});
+				"insert into Participation (itemid, entityid, type, startdate, enddate) values (?, ?, ?, ?, ?) ", new String[]{"ID"});
 		int i = 1;
 		s.setLong(i++, participation.item.id);
 		s.setLong(i++, participation.entity.id);
@@ -79,7 +79,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 			public Collection<Participation> execute(Connection con) throws SQLException {
 				IEntityService entityService = Locator.getEntityService();
 				Collection<Participation> result = new ArrayList<Participation>();		
-				PreparedStatement s = con.prepareStatement("select * from participation where itemid = ?");
+				PreparedStatement s = con.prepareStatement("select * from Participation where itemid = ?");
 				s.setLong(1, item.id);
 				ResultSet rs = s.executeQuery();
 				while (rs.next()) {

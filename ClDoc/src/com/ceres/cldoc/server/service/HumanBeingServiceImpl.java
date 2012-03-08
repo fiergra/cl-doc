@@ -41,4 +41,9 @@ public class HumanBeingServiceImpl extends RemoteServiceServlet implements
 		return getEntityService().load(session, id);
 	}
 
+	@Override
+	public List<Person> findByAssignment(Session session, String filter, String roleCode) {
+		return getEntityService().load(session, filter, roleCode);
+	}
+
 }

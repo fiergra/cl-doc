@@ -65,7 +65,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				SRV.configurationService.saveAll(clDoc.getSession(), changedObjects,
-						new DefaultCallback<Void>() {
+						new DefaultCallback<Void>(clDoc, "saveAll") {
 
 							@Override
 							public void onSuccess(Void result) {
@@ -97,7 +97,8 @@ public class CatalogConfigurator extends DockLayoutPanel {
 			public void onClick(ClickEvent event) {
 				TreeItem selected = tree.getSelectedItem();
 				if (selected != null) {
-					SRV.configurationService.delete(clDoc.getSession(), (Catalog)selected.getUserObject(), 						new DefaultCallback<Void>() {
+					SRV.configurationService.delete(clDoc.getSession(), (Catalog)selected.getUserObject(), 						
+							new DefaultCallback<Void>(clDoc, "delete") {
 
 						@Override
 						public void onSuccess(Void result) {
@@ -169,8 +170,8 @@ public class CatalogConfigurator extends DockLayoutPanel {
 		Catalog c = (Catalog) (selectedItem != null ? selectedItem
 				.getUserObject() : null);
 
-		SRV.configurationService.listCatalogs(clDoc.getSession(), c,
-				new DefaultCallback<Collection<Catalog>>() {
+		SRV.catalogService.listCatalogs(clDoc.getSession(), c,
+				new DefaultCallback<Collection<Catalog>>(clDoc, "listCatalogs") {
 
 					@Override
 					public void onSuccess(Collection<Catalog> result) {
@@ -277,8 +278,8 @@ public class CatalogConfigurator extends DockLayoutPanel {
 	private void refreshTree(final Tree tree) {
 		tree.clear();
 
-		SRV.configurationService.listCatalogs(clDoc.getSession(), (Catalog)null,
-				new DefaultCallback<Collection<Catalog>>() {
+		SRV.catalogService.listCatalogs(clDoc.getSession(), (Catalog)null,
+				new DefaultCallback<Collection<Catalog>>(clDoc, "listCatalogs") {
 
 					@Override
 					public void onSuccess(Collection<Catalog> result) {

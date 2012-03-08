@@ -29,15 +29,15 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 					throws SQLException {
 				try {
 					PreparedStatement u = con.prepareStatement(
-							"update layoutdefinition set valid_to = CURRENT_TIMESTAMP where itemclassid = (select ID from itemclass where name = ?) and typeid = 1 and valid_to is null");
+							"update LayoutDefinition set valid_to = CURRENT_TIMESTAMP where itemclassid = (select ID from ItemClass where name = ?) and typeid = 1 and valid_to is null");
 					u.setString(1, ld.name);
 					int rows = u.executeUpdate();
 					log.info("closed " + rows + " layoutdef(s)");
 					u.close();
 					
 					PreparedStatement s = con.prepareStatement(
-							"insert into layoutdefinition (itemclassid, typeid, xml, valid_to) " +
-							"values ((select ID from itemclass where name = ?), 1, ?, null)", new String[]{"ID"});
+							"insert into LayoutDefinition (itemclassid, typeid, xml, valid_to) " +
+							"values ((select ID from ItemClass where name = ?), 1, ?, null)", new String[]{"ID"});
 					s.setString(1, ld.name);
 					s.setString(2, ld.xmlLayout);
 					ld.id = Jdbc.exec(s);
@@ -70,7 +70,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 			public List<LayoutDefinition> execute(Connection con) throws SQLException {
 				PreparedStatement s = con.prepareStatement(
 						"select ld.id, icl.name classname, valid_To, xml  from LayoutDefinition ld " +
-						"inner join itemclass icl on icl.id = ld.itemclassid " +
+						"inner join ItemClass icl on icl.id = ld.itemclassid " +
 						"where upper(icl.name) like ? and (valid_To >= CURRENT_TIMESTAMP or valid_to is null)");
 				s.setString(1, filter != null ? filter.toUpperCase() + "%" : "%");
 				ResultSet rs = s.executeQuery();
@@ -93,5 +93,18 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 			result.add(ld);
 		}
 		return result;
+	}
+
+	@Override
+	public void delete(Session session, String className) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws SQLException {
+//				PreparedStatement s = con.prepareStatement("delete from LayoutDefinition where classname = ?");
+//				s.setString(1, )
+				return null;
+			}
+		});
 	}
 }

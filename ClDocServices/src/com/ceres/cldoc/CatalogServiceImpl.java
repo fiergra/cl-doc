@@ -24,14 +24,16 @@ public class CatalogServiceImpl implements ICatalogService {
 			
 			@Override
 			public Catalog execute(Connection con) throws SQLException {
-				PreparedStatement s = con.prepareStatement(
-						"update catalog set parent = ?, text = ?, shorttext = ?, date = ? where code = ?");
-				
-				bindVariables(s, catalog);
-				int rows = s.executeUpdate();
-				s.close();
-				if (rows == 0) {
-					s = con.prepareStatement("insert into catalog (parent, text, shorttext, date, code) values (?,?,?,?,?)", new String[]{"ID"});
+				if (catalog.id != null) {
+					PreparedStatement s = con.prepareStatement(
+							"update Catalog set parent = ?, text = ?, shorttext = ?, date = ? where id = ?");
+					
+					int i = bindVariables(s, catalog);
+					s.setLong(i, catalog.id);
+					int rows = s.executeUpdate();
+					s.close();
+				} else {
+					PreparedStatement s = con.prepareStatement("insert into Catalog (parent, text, shorttext, date, code) values (?,?,?,?,?)", new String[]{"ID"});
 					bindVariables(s, catalog);
 					catalog.id = Jdbc.exec(s);
 					s.close();
@@ -39,7 +41,7 @@ public class CatalogServiceImpl implements ICatalogService {
 				return catalog;
 			}
 
-			private void bindVariables(PreparedStatement u,
+			private int bindVariables(PreparedStatement u,
 					final Catalog catalog) throws SQLException {
 				int i = 1;
 				if (catalog.parent != null) {
@@ -55,6 +57,7 @@ public class CatalogServiceImpl implements ICatalogService {
 					u.setNull(i++, Types.DATE);
 				}
 				u.setString(i++, catalog.code);
+				return i;
 			}
 		});
 	}
@@ -66,7 +69,7 @@ public class CatalogServiceImpl implements ICatalogService {
 			@Override
 			public Catalog execute(Connection con) throws SQLException {
 				Catalog c = null;
-				String sql = "select * from catalog where id = ?";
+				String sql = "select * from Catalog where id = ?";
 				PreparedStatement s = con.prepareStatement(sql);
 				s.setLong(1, id);
 				ResultSet rs = s.executeQuery();
@@ -101,7 +104,7 @@ public class CatalogServiceImpl implements ICatalogService {
 			@Override
 			public Collection<Catalog> execute(Connection con) throws SQLException {
 				Collection<Catalog> result = new ArrayList<Catalog>();
-				String sql = "select * from catalog where parent ";
+				String sql = "select * from Catalog where parent ";
 				
 				if (parent == null) {
 					sql += "is null";
@@ -172,7 +175,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}
 
 	private Catalog doLoad(Connection con, Long parentId, String code) throws SQLException {
-		String sql = "select * from catalog where code = ? and ";
+		String sql = "select * from Catalog where code = ? and ";
 		if (parentId == null) {
 			sql += "parent is null"; 
 		} else {

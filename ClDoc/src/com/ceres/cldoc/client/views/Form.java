@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.DateTextBox;
+import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.IGenericItem;
@@ -41,22 +42,22 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class Form<T extends IGenericItem> extends FlexTable {
 
 	public enum DataTypes {
-		FT_STRING, FT_TEXT, FT_DATE, FT_INTEGER, FT_LIST_SELECTION, FT_BOOLEAN, FT_HUMANBEING
+		FT_STRING, FT_TEXT, FT_DATE, FT_INTEGER, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_BOOLEAN, FT_HUMANBEING
 	};
 
 	protected T model;
 	protected DateTimeFormat df = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
 	private Runnable setModified;
-	private Session session;
+	private ClDoc clDoc;
 
 	final static int OK = 1;
 	final static int CLOSE = 2;
 	final static int CANCEL = 4;
 	private static final int SPACING = 3;
 
-	public Form(Session session, T model, Runnable setModified) {
-		this.session = session;
+	public Form(ClDoc clDoc, T model, Runnable setModified) {
+		this.clDoc = clDoc;
 		addStyleName("form");
 		setRowFormatter(new RowFormatter() {});
 		this.model = model;
@@ -99,26 +100,16 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 				((CheckBox) field.widget).setValue(valueBag.getBoolean(field.name));
 				break;
 			case FT_LIST_SELECTION:
+			case FT_OPTION_SELECTION:
 				Catalog catalog = (Catalog) valueBag.getCatalog(field.name);
 				if (catalog != null) {
 					((IEntitySelector<Catalog>)field.widget).setSelected(catalog);
 				}
-//				String code = valueBag.getString(field.name);
-//				if (code != null) {
-//					SRV.configurationService.getCatalog(code, new DefaultCallback<Catalog>() {
-//
-//						@Override
-//						public void onSuccess(Catalog result) {
-//							((IEntitySelector<Catalog>)field.widget).setSelected(result);
-//						}
-//					});
-//					
-//				}
 				break;
 			case FT_HUMANBEING:
 				Long id = valueBag.getLong(field.name);
 				if (id != null) {
-					SRV.humanBeingService.findById(session, id, new DefaultCallback<Person>() {
+					SRV.humanBeingService.findById(clDoc.getSession(), id, new DefaultCallback<Person>(clDoc, "findById") {
 
 						@Override
 						public void onSuccess(Person result) {
@@ -156,6 +147,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			case FT_BOOLEAN:
 				valueBag.set(qualifiedFieldName, ((CheckBox) field.widget).getValue());
 				break;
+			case FT_OPTION_SELECTION:
 			case FT_LIST_SELECTION:
 				Catalog catalog = ((IEntitySelector<Catalog>) field.widget).getSelected(); 
 				valueBag.set(qualifiedFieldName, catalog != null ? catalog : null);
@@ -331,6 +323,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			TextBox t = new TextBox();
 			t.addKeyDownHandler(modificationHandler);
 			w = t;
+			w.setWidth("60%");
 			break;
 		case FT_BOOLEAN:
 			CheckBox c = new CheckBox();
@@ -347,7 +340,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			w = c;
 			break;
 		case FT_LIST_SELECTION:
-			CatalogListBox clb = new CatalogListBox(session, attributes.get("parent"));
+			CatalogListBox clb = new CatalogListBox(clDoc, attributes.get("parent"));
 			clb.addChangeHandler(new ChangeHandler() {
 				
 				@Override
@@ -359,10 +352,11 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 				}
 			});
 			w = clb;
+			w.setWidth("60%");
 			break;
-		case FT_HUMANBEING:
-			HumanBeingListBox hlb = new HumanBeingListBox(session);
-			hlb.addChangeHandler(new ChangeHandler() {
+		case FT_OPTION_SELECTION:
+			CatalogRadioGroup crg = new CatalogRadioGroup(clDoc, attributes.get("parent"), attributes.get("orientation"));
+			crg.addChangeHandler(new ChangeHandler() {
 				
 				@Override
 				public void onChange(ChangeEvent event) {
@@ -372,7 +366,21 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 					}
 				}
 			});
+			w = crg;
+			break;
+		case FT_HUMANBEING:
+			HumanBeingListBox hlb = new HumanBeingListBox(clDoc, attributes.get("role"), new OnDemandChangeListener<Person>() {
+				
+				@Override
+				public void onChange(Person oldValue, Person newValue) {
+					if (!isModified) {
+						isModified = true;
+						setModified.run();
+					}
+				}
+			});
 			w = hlb;
+			w.setWidth("60%");
 			break;
 		case FT_TEXT:
 			TextArea a = new TextArea();
@@ -395,7 +403,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 	}
 	
 	protected void parseAndCreate(String xml) {
-		SRV.configurationService.parse(session, xml, new DefaultCallback<LayoutElement>() {
+		SRV.configurationService.parse(clDoc.getSession(), xml, new DefaultCallback<LayoutElement>(clDoc, "parse") {
 
 			@Override
 			public void onSuccess(LayoutElement result) {
@@ -439,8 +447,10 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 				result = DataTypes.FT_DATE;
 			} else if (type.equals("boolean")) {
 				result = DataTypes.FT_BOOLEAN;
-			} else if (type.equals("catalog")) {
+			} else if (type.equals("list")) {
 				result = DataTypes.FT_LIST_SELECTION;
+			} else if (type.equals("option")) {
+				result = DataTypes.FT_OPTION_SELECTION;
 			} else if (type.equals("humanbeing")) {
 				result = DataTypes.FT_HUMANBEING;
 			}

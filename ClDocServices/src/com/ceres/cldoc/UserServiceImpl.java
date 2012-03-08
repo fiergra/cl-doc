@@ -24,7 +24,7 @@ public class UserServiceImpl implements IUserService {
 				IEntityService entityService = Locator.getEntityService();
 				User user = null;
 				String hash = Strings.hash(password);
-				String sql = "select * from user where name = ? ";
+				String sql = "select * from User where name = ? ";
 				if (hash == null) {
 					sql += " and hash is null";
 				} else {
@@ -60,7 +60,7 @@ public class UserServiceImpl implements IUserService {
 				IEntityService entityService = Locator.getEntityService();
 				User user = null;
 				String hash = Strings.hash(password);
-				PreparedStatement s = con.prepareStatement("select * from user where name = ? and hash = ?");
+				PreparedStatement s = con.prepareStatement("select * from User where name = ? and hash = ?");
 				s.setString(1, userName);
 				s.setString(2, hash);
 				ResultSet rs = s.executeQuery();
@@ -73,7 +73,7 @@ public class UserServiceImpl implements IUserService {
 					}
 				} else {
 					entityService.save(session, person);
-					PreparedStatement i = con.prepareStatement("insert into user (person_id, name, hash) values (?,?,?)", new String[]{"ID"});
+					PreparedStatement i = con.prepareStatement("insert into User (person_id, name, hash) values (?,?,?)", new String[]{"ID"});
 					i.setLong(1, person.id);
 					i.setString(2, userName);
 					i.setString(3, hash);
@@ -104,7 +104,7 @@ public class UserServiceImpl implements IUserService {
 					@Override
 					public Long execute(Connection con) throws SQLException {
 						String hash = Strings.hash(password1);
-						PreparedStatement s = con.prepareStatement("update user set hash = ? where id = ?");
+						PreparedStatement s = con.prepareStatement("update User set hash = ? where id = ?");
 						s.setString(1, hash);
 						s.setLong(2, user.id);
 						int rows = s.executeUpdate();

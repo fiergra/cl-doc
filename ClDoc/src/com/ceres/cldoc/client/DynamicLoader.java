@@ -1,8 +1,8 @@
 package com.ceres.cldoc.client;
 
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.Configurator;
+import com.ceres.cldoc.client.views.DebugPanel;
 import com.ceres.cldoc.client.views.HistoryView;
 import com.ceres.cldoc.client.views.Home;
 import com.ceres.cldoc.model.Person;
@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class DynamicLoader {
-	public static <T> Widget create(Session session, String name, T model) {
+	public static <T> Widget create(ClDoc clDoc, String name, T model) {
 		Widget result = null;
 		
 		if (name.equals("HOME")) {
@@ -22,10 +22,12 @@ public class DynamicLoader {
 			result = new Configurator((ClDoc) model);
 		} else if (name.equals("HISTORY")) {
 			name = SRV.c.history();
-			result = new HistoryView(session, (Person) model);
+			result = new HistoryView(clDoc, (Person) model);
 		} else if (name.equals("DETAILS")) {
 			name = SRV.c.details();
-			result = new PersonDetails(session, (Person) model);
+			result = new PersonDetails(clDoc, (Person) model);
+		} else if (name.equals("DEBUG")) {
+			result = new DebugPanel(clDoc);
 		} else {
 			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(name);

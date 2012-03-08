@@ -11,12 +11,13 @@ public class GenericItemCellRenderer extends AbstractCell<GenericItem> {
 	public void render(Context context, GenericItem value, SafeHtmlBuilder sb) {
 		String sDate = value.date != null ? DateTimeFormat.getFormat("dd.MM.yy").format(value.date) : "--.--.----";
 		String sTime = value.date != null ? DateTimeFormat.getFormat("HH:mm").format(value.date) : "--.--.----";
+		
 		sb.appendHtmlConstant(
-						"<table class=\"historyEntry\" width=\"320px\"><tr>" +
+						"<table class=\"historyEntry" + 
+						(context.getIndex() % 2 == 1 ? " oddRow" : " evenRow") + "\" width=\"320px\" ><tr>" +
 						"<td width=\"20px\"><img src=\"" + getIcon(value) + "\"/></td>" +
 						"<td width=\"75px\">" + sDate + "</td>" +
-						"<td width=\"75px\">" + sTime + "</td>" +
-						"<td width=\"150px\">" + value.className + "</td>" +
+						"<td width=\"150px\"><b>" + value.className + "</b></td>" +
 						"</tr></table>" );
 	}
 
