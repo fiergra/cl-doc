@@ -1,11 +1,16 @@
 package com.ceres.cldoc.client.views;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public abstract class DefaultCallback<T> implements AsyncCallback<T> {
 
+	public DefaultCallback(ClDoc clDoc, String name) {
+		clDoc.status(name);
+	}
+	
 	@Override
 	public void onFailure(Throwable caught) {
 		caught.printStackTrace();

@@ -1,17 +1,17 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
 
 public class PersonEditor extends Form <PersonWrapper> {
 
-	public PersonEditor(Session session, final PersonWrapper result, Runnable setModified) {
-		super(session, result, setModified);
+	public PersonEditor(ClDoc clDoc, final PersonWrapper result, Runnable setModified) {
+		super(clDoc, result, setModified);
 	}
 
-	public PersonEditor(Session session, final PersonWrapper result) {
-		this(session, result, null);
+	public PersonEditor(ClDoc clDoc, final PersonWrapper result) {
+		this(clDoc, result, null);
 	}
 
 	@Override

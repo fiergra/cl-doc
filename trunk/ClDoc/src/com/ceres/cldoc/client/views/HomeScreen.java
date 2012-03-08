@@ -1,6 +1,5 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Person;
@@ -15,7 +14,7 @@ public class HomeScreen extends PersonSearchList {
 
 					@Override
 					public void onClick(Person pp) {
-						editPerson(clDoc.getSession(), pp);
+						editPerson(clDoc, pp);
 					}
 				},
 				new OnClick<Person>() {
@@ -29,7 +28,7 @@ public class HomeScreen extends PersonSearchList {
 
 					@Override
 					public void onClick(Person pp) {
-						loadAndEditPerson(clDoc.getSession(), pp.id);
+						loadAndEditPerson(clDoc, pp.id);
 					}
 				});
 	}
@@ -149,8 +148,8 @@ public class HomeScreen extends PersonSearchList {
 //		}
 //	}
 	
-	private static void savePerson(Session session, Person result) {
-		SRV.humanBeingService.save(session, result, new DefaultCallback<Person>() {
+	private static void savePerson(ClDoc clDoc, Person result) {
+		SRV.humanBeingService.save(clDoc.getSession(), result, new DefaultCallback<Person>(clDoc, "save") {
 
 			@Override
 			public void onSuccess(Person result) {
@@ -161,8 +160,8 @@ public class HomeScreen extends PersonSearchList {
 		
 	}
 	
-	private static void deletePerson(Session session, Person person) {
-		SRV.humanBeingService.delete(session, person, new DefaultCallback<Void>(){
+	private static void deletePerson(ClDoc clDoc, Person person) {
+		SRV.humanBeingService.delete(clDoc.getSession(), person, new DefaultCallback<Void>(clDoc, "deletePerson"){
 
 			@Override
 			public void onSuccess(Void result) {
@@ -171,7 +170,7 @@ public class HomeScreen extends PersonSearchList {
 	}
 
 	private static void loadAndOpenFile(final ClDoc clDoc, long pid) {
-		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>() {
+		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>(clDoc, "findById") {
 
 			@Override
 			public void onSuccess(Person result) {
@@ -180,26 +179,26 @@ public class HomeScreen extends PersonSearchList {
 		});
 	}
 	
-	private static void loadAndEditPerson(final Session session, long pid) {
-		SRV.humanBeingService.findById(session, pid, new DefaultCallback<Person>() {
+	private static void loadAndEditPerson(final ClDoc clDoc, long pid) {
+		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>(clDoc, "findById") {
 
 			@Override
 			public void onSuccess(Person result) {
-				editPerson(session, result);
+				editPerson(clDoc, result);
 			}
 		});
 	}
 	
 	
-	private static void editPerson(final Session session, final Person humanBeing) {
-		final PersonEditor pe = new PersonEditor(session, new PersonWrapper(humanBeing));
+	private static void editPerson(final ClDoc clDoc, final Person humanBeing) {
+		final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(humanBeing));
 		pe.showModal("PersonEditor", 
 		new OnClick<PersonWrapper>() {
 			
 			@Override
 			public void onClick(PersonWrapper v) {
 				pe.close();
-				savePerson(session, humanBeing);
+				savePerson(clDoc, humanBeing);
 			}
 		},
 		new OnClick<PersonWrapper>() {
@@ -207,7 +206,7 @@ public class HomeScreen extends PersonSearchList {
 			@Override
 			public void onClick(PersonWrapper v) {
 				pe.close();
-				deletePerson(session, humanBeing);
+				deletePerson(clDoc, humanBeing);
 			}
 		},
 		new OnClick<PersonWrapper>() {

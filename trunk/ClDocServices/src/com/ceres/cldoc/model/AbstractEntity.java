@@ -2,7 +2,7 @@ package com.ceres.cldoc.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -13,7 +13,7 @@ public class AbstractEntity implements Serializable {
 
 	public int type;
 	
-	public Collection<Address> addresses;
+	public List<Address> addresses;
 	
 	public AbstractEntity() {
 	}
@@ -35,5 +35,19 @@ public class AbstractEntity implements Serializable {
 		address.entity = this;
 		addresses.add(address);
 	}
+	
+	public Address getPrimaryAddress() {
+		Address primaryAddress = null;
+		
+		if (addresses == null) {
+			primaryAddress = new Address();
+			addAddress(primaryAddress);
+		} else {
+			primaryAddress = addresses.get(0);
+		}
+		
+		return primaryAddress;
+	}
+	
 	
 }

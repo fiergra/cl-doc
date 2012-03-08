@@ -2,7 +2,7 @@ package com.ceres.cldoc.client.views;
 
 import java.util.List;
 
-import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.GenericItem;
 import com.ceres.cldoc.model.LayoutDefinition;
@@ -26,10 +26,10 @@ import com.google.gwt.user.client.ui.TextBox;
 public class AddValueBag extends DialogBox {
 
 	private OnOkHandler<GenericItem> onOk;
-	private Session session;
+	private ClDoc clDoc;
 
-	public AddValueBag(Session session, Person humanBeing, OnOkHandler<GenericItem> onOk) {
-		this.session = session;
+	public AddValueBag(ClDoc clDoc, Person humanBeing, OnOkHandler<GenericItem> onOk) {
+		this.clDoc = clDoc;
 		this.onOk = onOk;
 		setup(humanBeing);
 	}
@@ -46,11 +46,12 @@ public class AddValueBag extends DialogBox {
 		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		final ListBox list = new ListBox();
+		list.setSize("100%", "100%");
 		HorizontalPanel filter = new HorizontalPanel();
 		HorizontalPanel buttons = new HorizontalPanel();
 		buttons.setSpacing(5);
 		
-		widget.setPixelSize(400, 550);
+		widget.setPixelSize(400, 250);
 		filter.add(new Label(SRV.c.type()));
 		final TextBox filterText = new TextBox();
 		filter.add(filterText);
@@ -75,8 +76,6 @@ public class AddValueBag extends DialogBox {
 		populateList(null, list);
 		
 		Button pbOk = new Button(SRV.c.ok());
-//		pbOk.setStylePrimaryName("button");
-//		pbOk.addStyleName("gray");
 		pbOk.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -90,9 +89,6 @@ public class AddValueBag extends DialogBox {
 
 		buttons.add(pbOk);
 		buttons.add(pbCancel);
-		
-//		pbCancel.setStylePrimaryName("button");
-//		pbCancel.addStyleName("gray");
 		pbCancel.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -102,8 +98,6 @@ public class AddValueBag extends DialogBox {
 		});
 		
 		buttons.add(pbCancel);
-
-		
 		
 		widget.addNorth(filter, 32);
 		widget.addSouth(buttons, 32);
@@ -115,7 +109,7 @@ public class AddValueBag extends DialogBox {
 	protected void onOk(ListBox list) {
 		int index = list.getSelectedIndex();
 		String selection = list.getValue(index);
-		SRV.configurationService.getLayoutDefinition(session, selection, new DefaultCallback<LayoutDefinition>() {
+		SRV.configurationService.getLayoutDefinition(clDoc.getSession(), selection, new DefaultCallback<LayoutDefinition>(clDoc, "getLayoutDef") {
 
 			@Override
 			public void onSuccess(LayoutDefinition result) {
@@ -131,7 +125,7 @@ public class AddValueBag extends DialogBox {
 	}
 
 	private void populateList(String filter, final ListBox list) {
-		SRV.configurationService.listLayoutDefinitions(session, filter, new DefaultCallback<List<LayoutDefinition>>() {
+		SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), filter, new DefaultCallback<List<LayoutDefinition>>(clDoc, "getLayoutDefs") {
 
 			@Override
 			public void onSuccess(List<LayoutDefinition> result) {
@@ -146,8 +140,8 @@ public class AddValueBag extends DialogBox {
 		});
 	}
 	
-	public static void addValueBag(Session session, Person humanBeing, OnOkHandler<GenericItem> onOk) {
-		AddValueBag avb = new AddValueBag(session, humanBeing, onOk);
+	public static void addValueBag(ClDoc clDoc, Person humanBeing, OnOkHandler<GenericItem> onOk) {
+		AddValueBag avb = new AddValueBag(clDoc, humanBeing, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);
 		avb.center();

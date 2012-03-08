@@ -1,12 +1,12 @@
 DROP TABLE IF EXISTS Assignment;
-DROP TABLE IF EXISTS Layoutdefinition;
+DROP TABLE IF EXISTS LayoutDefinition;
 DROP TABLE IF EXISTS Participation;
 DROP TABLE IF EXISTS User;
 DROP TABLE IF EXISTS Person;
 DROP TABLE IF EXISTS Organisation;
 DROP TABLE IF EXISTS Room;
 DROP TABLE IF EXISTS Address;
-DROP TABLE IF EXISTS ENTITY;
+DROP TABLE IF EXISTS Entity;
 DROP TABLE IF EXISTS ItemField;
 DROP TABLE IF EXISTS Catalog;
 DROP TABLE IF EXISTS Item;
@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS Entity(
     type INTEGER NOT NULL,
     NAME VARCHAR(400)
 );
+
+ALTER TABLE Entity AUTO_INCREMENT = 10000;
 
 CREATE TABLE IF NOT EXISTS Address(
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -166,15 +168,19 @@ CREATE TABLE IF NOT EXISTS Assignment(
 );
 
 
-insert into Entity (TYPE) values (1);
+insert into Entity (ID, TYPE) values (1, 1);
 insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
-values (1, 36762, 'Ralph', 'FIERGOLLA', '1969-08-05');
+values (1, 36762, 'Ralph', 'Fiergolla', '1969-08-05');
+
+insert into Entity (ID, TYPE) values (2, 1);
+insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
+values (2, 12345, 'Christian', 'Laschek', '1978-07-07');
 
 insert into Entity (TYPE,NAME) values (2, 'COMMISSION');
-insert into Organisation (Id,ORN_ID) values ((select max(id) from entity),39);
+insert into Organisation (Id,ORN_ID) values ((select max(id) from Entity),39);
 
 insert into Entity (TYPE,NAME) values (3, 'JMO B2/097');
-insert into Room (id) values ((select max(id) from entity));
+insert into Room (id) values ((select max(id) from Entity));
 
 insert into Catalog (id, parent, code, text, shorttext) values (1, null, 'CLDOC', 'CLDOC', 'CLDOC');
 insert into Catalog (id, parent, code, text, shorttext) values (2, 1, 'MAIN', 'MAIN', 'MAIN');
@@ -201,6 +207,10 @@ insert into Catalog (id, parent, code, text, shorttext) values (20, 15, 'BEISPIE
 
 
 insert into Assignment(entityid, type, startdate) values (1, 10, CURRENT_DATE);
+insert into Assignment(entityid, type, startdate) values (2, 10, CURRENT_DATE);
+
+insert into User (PERSON_ID, NAME) values (2, 'laschek');
+insert into User (PERSON_ID, NAME) values (1, 'fiergra');
 insert into User (PERSON_ID, NAME) values (1, 'u');
 
 insert into ItemClass (Id,Name) values (1, 'Beispiel1');
@@ -209,9 +219,11 @@ insert into LayoutDefinition(typeid, itemclassid, xml) values (1,1,'<form><line 
 insert into ItemClass (Id,Name) values (2, 'Beispiel2');
 insert into LayoutDefinition(typeid, itemclassid, xml) values (1,2,'<form>
    <line label="Personenauswahl" name="Arzt" type="Humanbeing"/> 
+   <line label="EDV" name="edvler" role="ADMIN" type="Humanbeing"/> 
    <line name="KurzText" type="String"/>
    <line name="Text" type="Text"/>
-   <line name="Katalog1" type="Catalog" parent="BEISPIEL.BEISPIEL1"/>
-   <line name="Katalog2" type="Catalog" parent="BEISPIEL.BEISPIEL2"/>
+   <line name="Katalog1" type="List" parent="BEISPIEL.BEISPIEL1"/>
+   <line name="Katalog2" type="List" parent="BEISPIEL.BEISPIEL2"/>
+   <line name="Katalog3" type="Option" parent="BEISPIEL.BEISPIEL1"/>
 </form>');
 

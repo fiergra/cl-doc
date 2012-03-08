@@ -62,7 +62,7 @@ public class EntityServiceImpl implements IEntityService {
 
 	private void updateAddress(Connection con, Address a) throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("update address set street = ?, number = ?, co = ?, postcode = ?, city = ? where id = ?");
+				.prepareStatement("update Address set street = ?, number = ?, co = ?, postcode = ?, city = ? where id = ?");
 		int i = 1;
 		s.setString(i++, a.street);
 		s.setString(i++, a.number);
@@ -77,7 +77,7 @@ public class EntityServiceImpl implements IEntityService {
 	private void insertAddress(Connection con, Address a) throws SQLException {
 		PreparedStatement s = con
 				.prepareStatement(
-						"insert into address (entity_id, street, number, co, postcode, city) values (?,?,?,?,?,?)",
+						"insert into Address (Entity_id, street, number, co, postcode, city) values (?,?,?,?,?,?)",
 						new String[] { "ID" });
 		int i = 1;
 		s.setLong(i++, a.entity.id);
@@ -93,7 +93,7 @@ public class EntityServiceImpl implements IEntityService {
 	private void updateEntity(Connection con, AbstractEntity entity)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("update entity set name = ?, type = ? where id = ?");
+				.prepareStatement("update Entity set name = ?, type = ? where id = ?");
 		s.setString(1, entity.name);
 		s.setInt(2, entity.type);
 		s.setLong(3, entity.id);
@@ -104,7 +104,7 @@ public class EntityServiceImpl implements IEntityService {
 	private void insertEntity(Connection con, AbstractEntity entity)
 			throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"insert into entity (name,type) values (?,?)",
+				"insert into Entity (name,type) values (?,?)",
 				new String[] { "ID" });
 		s.setString(1, entity.name);
 		s.setInt(2, entity.type);
@@ -115,7 +115,7 @@ public class EntityServiceImpl implements IEntityService {
 	private void insertPerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("insert into person(id,per_id,firstname,lastname,sndx_firstname,sndx_lastname) values (?,?,?,?,soundex(?),soundex(?))");
+				.prepareStatement("insert into Person(id,per_id,firstname,lastname,sndx_firstname,sndx_lastname) values (?,?,?,?,soundex(?),soundex(?))");
 		int i = 1;
 		s.setLong(i++, person.id);
 		s.setLong(i++, person.perId);
@@ -130,7 +130,7 @@ public class EntityServiceImpl implements IEntityService {
 	private void updatePerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("update person set firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?) where id = ?");
+				.prepareStatement("update Person set firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?) where id = ?");
 		int i = 1;
 		s.setString(i++, person.firstName);
 		s.setString(i++, person.lastName);
@@ -142,9 +142,9 @@ public class EntityServiceImpl implements IEntityService {
 
 	@SuppressWarnings("unchecked")
 	private <T extends AbstractEntity> T load(Connection con, long id) throws SQLException {
-		String sql = "select e.id entityId, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, street, number, city, postcode, co from entity e "
-				+ "left outer join person pers on pers.id = e.id "
-				+ "left outer join address adr on adr.entity_id = e.id " 
+		String sql = "select e.id entityId, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, street, number, city, postcode, co from Entity e "
+				+ "left outer join Person pers on pers.id = e.id "
+				+ "left outer join Address adr on adr.entity_id = e.id " 
 				+ "where e.id = ?";
 //				+ "order by e.id";
 		PreparedStatement s = con.prepareStatement(sql);
@@ -157,11 +157,7 @@ public class EntityServiceImpl implements IEntityService {
 			if (e == null || !e.id.equals(entityId)) {
 				switch (rs.getInt("type")) {
 				case 1: 
-					Person p = new Person();
-					p.firstName = rs.getString("firstname");
-					p.lastName = rs.getString("lastname");
-					p.id = entityId;
-					p.dateOfBirth = rs.getDate("dateofbirth");
+					Person p = fetchPerson(rs, entityId);
 					e = (T) p;
 				break;
 				}
@@ -179,6 +175,15 @@ public class EntityServiceImpl implements IEntityService {
 			}
 		}
 		return e;
+	}
+
+	private Person fetchPerson(ResultSet rs, long entityId) throws SQLException {
+		Person p = new Person();
+		p.firstName = rs.getString("firstname");
+		p.lastName = rs.getString("lastname");
+		p.id = entityId;
+		p.dateOfBirth = rs.getDate("dateofbirth");
+		return p;
 	}
 
 	@Override
@@ -199,47 +204,75 @@ public class EntityServiceImpl implements IEntityService {
 			
 			@Override
 			public List<Person> execute(Connection con) throws SQLException {
-				StringTokenizer st = new StringTokenizer(filter);
-				Collection<Long> ids = new ArrayList<Long>();
-				Collection<String> names = new ArrayList<String>();
-				
-				while (st.hasMoreTokens()) {
-					String token = st.nextToken();
-					if (token.matches("[0-9]*")) {
-						ids.add(Long.valueOf(token));
-					} else {
-						names.add(token);
-					}
-				}
-				
-				String sql = "select * from person where 1=2 ";
-				
-				for (String name: names) {
-					sql += "OR (sndx_firstname = soundex(?) OR sndx_lastname = soundex(?) OR UPPER(firstname) like ? OR UPPER(lastname) like ?)";
-				}
-				
-				List<Person> result = new ArrayList<Person>();
-				PreparedStatement s = con.prepareStatement(sql);
-				int i = 1;
-				for (String name: names) {
-					s.setString(i++, name);
-					s.setString(i++, name);
-					s.setString(i++, name + "%");
-					s.setString(i++, name + "%");
-				}
-				ResultSet rs = s.executeQuery();
-				while (rs.next()) {
-					Person p = new Person();
-					result.add(p);
-					p.firstName = rs.getString("firstname");
-					p.lastName = rs.getString("lastname");
-					p.id = rs.getLong("id");
-					p.dateOfBirth = rs.getDate("dateofbirth");
-				}
-				return result;
+				return selectPersons(con, filter, null);
 			}
 		});
 		
+		return result;
+	}
+	
+	
+	private List<Person> selectPersons(Connection con, String filter, String role) throws SQLException {
+		Collection<String> names = new ArrayList<String>();
+		String sql = "select * from Person p ";
+		String where = " where 1=1 ";
+		
+		if (role != null) {
+			sql +=  " inner join Assignment a on a.EntityId = p.Id" +
+					" inner join Catalog c on a.type = c.Id";
+			where += " AND c.code = ?";
+		}
+		if (filter != null) {
+			StringTokenizer st = new StringTokenizer(filter);
+			Collection<Long> ids = new ArrayList<Long>();
+			
+			while (st.hasMoreTokens()) {
+				String token = st.nextToken();
+				if (token.matches("[0-9]*")) {
+					ids.add(Long.valueOf(token));
+				} else {
+					names.add(token);
+				}
+			}
+			
+			for (String name: names) {
+				where += " AND (sndx_firstname = soundex(?) OR sndx_lastname = soundex(?) OR UPPER(firstname) like ? OR UPPER(lastname) like ?)";
+			}
+		}
+		
+		List<Person> result = new ArrayList<Person>();
+		PreparedStatement s = con.prepareStatement(sql + where);
+		int i = 1;
+		if (role != null) {
+			s.setString(i++, role);
+		}
+		
+		for (String name: names) {
+			s.setString(i++, name);
+			s.setString(i++, name);
+			s.setString(i++, name + "%");
+			s.setString(i++, name + "%");
+		}
+		ResultSet rs = s.executeQuery();
+		while (rs.next()) {
+			Person p = fetchPerson(rs, rs.getLong("id"));
+			result.add(p);
+		}
+		rs.close();
+		s.close();
+		return result;
+	}
+	
+
+	@Override
+	public <T extends AbstractEntity> List<T> load(Session session, final String filter, final String roleCode) {
+		List<T> result = Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public List<Person> execute(Connection con) throws SQLException {
+				return selectPersons(con, filter, roleCode);
+			}
+		});
 		return result;
 	}
 

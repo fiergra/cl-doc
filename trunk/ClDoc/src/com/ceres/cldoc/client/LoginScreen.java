@@ -46,14 +46,20 @@ public class LoginScreen extends HorizontalPanel {
 //			button.setEnabled(text1 != null  && text2 != null && text1.length() > 0 && text2.length() > 0);
 		}
 		
-	};
-	
-	public LoginScreen(final OnOkHandler<Session> onOk) {
-		setSize("100%", "100%");
+	}
 
+	private ClDoc clDoc;;
+	
+	public LoginScreen(final ClDoc clDoc, final OnOkHandler<Session> onOk) {
+		setSize("100%", "100%");
+		this.clDoc = clDoc;
 		Grid g = new Grid(4, 3);
 		final TextBox txtUserName = new TextBox();
 		final PasswordTextBox txtPassWord = new PasswordTextBox();
+		
+		txtUserName.setWidth("10em");
+		txtPassWord.setWidth("10em");
+
 		Button pbOk = new Button(SRV.c.login());
 		Button pbRegister = new Button(SRV.c.register());
 		pbOk.setEnabled(false);
@@ -62,7 +68,8 @@ public class LoginScreen extends HorizontalPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				SRV.userService.login(txtUserName.getText(), txtPassWord.getText(), new DefaultCallback<Session>() {
+				SRV.userService.login(txtUserName.getText(), txtPassWord.getText(), 
+						new DefaultCallback<Session>(clDoc, "") {
 
 					@Override
 					public void onSuccess(Session result) {
@@ -89,7 +96,7 @@ public class LoginScreen extends HorizontalPanel {
 		HorizontalPanel buttons = new HorizontalPanel();
 		buttons.setSpacing(5);
 		buttons.add(pbOk);
-		buttons.add(pbRegister);
+//		buttons.add(pbRegister);
 		
 		g.setWidget(3, 2, buttons);
 		
@@ -102,7 +109,7 @@ public class LoginScreen extends HorizontalPanel {
 				final PasswordTextBox txtPwd1 = new PasswordTextBox();
 				final PasswordTextBox txtPwd2 = new PasswordTextBox();
 
-				final PersonEditor pe = new PersonEditor(new Session(), new PersonWrapper(person)) {
+				final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(person)) {
 					
 					@Override
 					protected void setup() {
@@ -129,7 +136,7 @@ public class LoginScreen extends HorizontalPanel {
 
 					@Override
 					public void onClick(PersonWrapper pp) {
-						SRV.userService.register(person, txtNewUserName.getText(), txtPwd1.getText(), new DefaultCallback<Void>() {
+						SRV.userService.register(person, txtNewUserName.getText(), txtPwd1.getText(), new DefaultCallback<Void>(clDoc, "register") {
 
 							@Override
 							public void onSuccess(Void result) {

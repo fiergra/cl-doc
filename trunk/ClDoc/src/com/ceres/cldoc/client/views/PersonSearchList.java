@@ -88,7 +88,7 @@ public class PersonSearchList extends DockLayoutPanel {
 			clDoc.status(SRV.c.search());
 			lastSearch = search;
 			searchBox.setEnabled(false);
-			SRV.humanBeingService.search(clDoc.getSession(), search, new DefaultCallback<List<Person>>() {
+			SRV.humanBeingService.search(clDoc.getSession(), search, new DefaultCallback<List<Person>>(clDoc, "search") {
 
 				@Override
 				public void onSuccess(List<Person> result) {

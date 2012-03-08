@@ -67,6 +67,7 @@ public class UploadService extends HttpServlet {
 				Session session = new Session(new User());
 				Person person = Locator.getEntityService().load(session, entityId);
 				item.addParticipant(person, new Date(), null);
+				item.date = new Date();
 				Locator.getGenericItemService().save(session, item);
 			} catch (Exception e) {
 				resp.sendError(
@@ -96,8 +97,7 @@ public class UploadService extends HttpServlet {
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-
-		String key = req.getParameter("blob-key");
+		doPost(req, resp);
 	}
 
 }

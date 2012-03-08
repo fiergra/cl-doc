@@ -1,9 +1,10 @@
 package com.ceres.cldoc.client.views;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
-import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.GenericItem;
 import com.ceres.cldoc.model.LayoutDefinition;
@@ -31,11 +32,13 @@ public class HistoryView extends DockLayoutPanel {
 	private GenericItemRenderer viewer;
 
 	private Person humanBeing;
-	private Session session;
+	private ClDoc clDoc;
 
-	public HistoryView(final Session session, final Person model) {
+	private HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
+
+	public HistoryView(final ClDoc clDoc, final Person model) {
 		super(Unit.EM);
-		this.session = session;
+		this.clDoc = clDoc;
 		this.humanBeing = model;
 
 		historyList = new CellList<GenericItem>(new GenericItemCellRenderer(),
@@ -52,18 +55,24 @@ public class HistoryView extends DockLayoutPanel {
 			@Override
 			public void setSelected(final GenericItem valueBag, final boolean selected) {
 				if (selected && getSelectedObject() != valueBag) {
-					
-					SRV.configurationService.getLayoutDefinition(session, valueBag.className, new DefaultCallback<LayoutDefinition>() {
-
-						@Override
-						public void onSuccess(LayoutDefinition ld) {
-							if (viewer.setValueBag(ld, valueBag)) {
-//								SingleSelectionModel.setSelected(valueBag, selected);
+					LayoutDefinition ld = layouts.get(valueBag.className);
+					if (ld == null) {
+						SRV.configurationService.getLayoutDefinition(clDoc.getSession(), valueBag.className, new DefaultCallback<LayoutDefinition>(clDoc, "getLayoutDef") {
+	
+							@Override
+							public void onSuccess(LayoutDefinition ld) {
+								layouts.put(valueBag.className, ld);
+								if (viewer.setValueBag(ld, valueBag)) {
+//									historyList.getSelectionModel().setSelected(valueBag, selected);
+								}
 							}
+	
+						});
+					} else {
+						if (viewer.setValueBag(ld, valueBag)) {
+//							historyList.getSelectionModel().setSelected(valueBag, selected);
 						}
-
-					});
-					
+					}
 				}
 			}
 		};
@@ -123,7 +132,7 @@ public class HistoryView extends DockLayoutPanel {
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 		splitPanel.addWest(historyPanel, 400);
 
-		viewer = new GenericItemRenderer(session, new OnOkHandler<GenericItem>() {
+		viewer = new GenericItemRenderer(clDoc, new OnOkHandler<GenericItem>() {
 			
 			@Override
 			public void onOk(GenericItem result) {
@@ -145,14 +154,14 @@ public class HistoryView extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				AddValueBag.addValueBag(session, humanBeing, new OnOkHandler<GenericItem>() {
+				AddValueBag.addValueBag(clDoc, humanBeing, new OnOkHandler<GenericItem>() {
 
 					@Override
 					public void onOk(GenericItem item) {
 						item.addParticipant(model, new Date(), null);
 
-						SRV.valueBagService.save(session, item,
-								new DefaultCallback<GenericItem>() {
+						SRV.valueBagService.save(clDoc.getSession(), item,
+								new DefaultCallback<GenericItem>(clDoc, "save") {
 
 									@Override
 									public void onSuccess(GenericItem item) {
@@ -176,8 +185,8 @@ public class HistoryView extends DockLayoutPanel {
 	}
 
 	private void refresh(final GenericItem item) {
-		SRV.valueBagService.findByEntity(session, humanBeing,
-				new DefaultCallback<List<GenericItem>>() {
+		SRV.valueBagService.findByEntity(clDoc.getSession(), humanBeing,
+				new DefaultCallback<List<GenericItem>>(clDoc, "findByEntity") {
 
 					@Override
 					public void onSuccess(List<GenericItem> result) {

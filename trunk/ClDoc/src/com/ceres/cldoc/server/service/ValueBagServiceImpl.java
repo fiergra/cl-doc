@@ -39,8 +39,7 @@ public class ValueBagServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void delete(Session session, GenericItem item) {
-		// TODO Auto-generated method stub
-		
+		getGenericItemService().delete(session, item);
 	}
 
 }

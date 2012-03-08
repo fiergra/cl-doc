@@ -32,7 +32,7 @@ public class DownloadServlet extends HttpServlet {
 			
 			@Override
 			public byte[] execute(Connection con) throws SQLException {
-				PreparedStatement s = con.prepareStatement("select blobvalue from itemfield where id = ?");
+				PreparedStatement s = con.prepareStatement("select blobvalue from ItemField where id = ?");
 				s.setString(1, id);
 				ResultSet rs = s.executeQuery();
 				byte[] bytes = null;

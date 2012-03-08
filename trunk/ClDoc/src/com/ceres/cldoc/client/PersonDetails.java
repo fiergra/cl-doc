@@ -1,6 +1,5 @@
 package com.ceres.cldoc.client;
 
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.PersonEditor;
@@ -19,13 +18,13 @@ public class PersonDetails extends DockLayoutPanel {
 	private Image pbSave = new Image("icons/32/Save-icon.png");
 	private PersonEditor personEditor;
 	private Person humanBeing;
-	private Session session;
+	private ClDoc clDoc;
 	
-	public PersonDetails(Session session, Person humanBeing) {
+	public PersonDetails(ClDoc clDoc, Person humanBeing) {
 		super(Unit.PX);
-		this.session = session;
+		this.clDoc = clDoc;
 		this.humanBeing = humanBeing;
-		this.personEditor = new PersonEditor(session, new PersonWrapper(humanBeing), new Runnable() {
+		this.personEditor = new PersonEditor(clDoc, new PersonWrapper(humanBeing), new Runnable() {
 			
 			@Override
 			public void run() {
@@ -53,7 +52,7 @@ public class PersonDetails extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				personEditor.fromDialog();
-				SRV.humanBeingService.save(session, humanBeing, new DefaultCallback<Person>() {
+				SRV.humanBeingService.save(clDoc.getSession(), humanBeing, new DefaultCallback<Person>(clDoc, "save") {
 
 					@Override
 					public void onSuccess(Person result) {

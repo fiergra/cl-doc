@@ -14,6 +14,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface HumanBeingService extends RemoteService {
 	Person save(Session session, Person humanBeing);
 	void delete(Session session, Person person);
-	List<Person> search(Session session, String criteria);
 	Person findById(Session session, long id);
+
+	List<Person> search(Session session, String criteria);
+	List<Person> findByAssignment(Session session, String criteria, String roleCode);
 }

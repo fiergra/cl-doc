@@ -54,4 +54,8 @@ public interface StringConstants extends Constants {
 	String comment();
 
 	String print();
+
+	String forms();
+
+	String catalogs();
 }

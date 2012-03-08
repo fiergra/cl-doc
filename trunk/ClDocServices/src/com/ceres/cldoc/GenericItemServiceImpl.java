@@ -77,7 +77,7 @@ public class GenericItemServiceImpl implements IGenericItemService {
 
 	private void updateField(Connection con, GenericItem item, Entry<String, IGenericItemField> entry) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"update itemfield set catalogValue = ?, intvalue = ?, stringvalue = ?, datevalue = ?, realvalue = ?, blobvalue = ? where id = ?");
+				"update ItemField set catalogValue = ?, intvalue = ?, stringvalue = ?, datevalue = ?, realvalue = ?, blobvalue = ? where id = ?");
 		String fieldName = entry.getKey();
 		IGenericItemField field = entry.getValue();
 		int i = bindVariables(s, 1, item, fieldName, field);
@@ -89,7 +89,7 @@ public class GenericItemServiceImpl implements IGenericItemService {
 	private void insertField(Connection con, GenericItem item, Entry<String, IGenericItemField> entry, boolean register) throws SQLException {
 		try {
 			PreparedStatement s = con.prepareStatement(
-					"insert into itemfield (itemid, classfieldid, CatalogValue, intvalue, stringvalue, datevalue, realvalue, blobvalue) values (?, (select id from itemclassfield where name = ?), ?, ?, ?, ?, ?, ?)", new String[]{"ID"});
+					"insert into ItemField (itemid, classfieldid, CatalogValue, intvalue, stringvalue, datevalue, realvalue, blobvalue) values (?, (select id from ItemClassField where name = ?), ?, ?, ?, ?, ?, ?)", new String[]{"ID"});
 			String fieldName = entry.getKey();
 			IGenericItemField field = entry.getValue();
 			s.setLong(1, item.id);
@@ -107,7 +107,7 @@ public class GenericItemServiceImpl implements IGenericItemService {
 	}
 
 	private boolean registerClassField(Connection con, GenericItem item, String fieldName, int type) throws SQLException {
-		PreparedStatement s = con.prepareStatement("insert into itemclassfield (itemclassid, name, type) values ((select id from itemclass where name = ?),?,?)");
+		PreparedStatement s = con.prepareStatement("insert into ItemClassField (itemclassid, name, type) values ((select id from ItemClass where name = ?),?,?)");
 		s.setString(1, item.className);
 		s.setString(2, fieldName);
 		s.setInt(3, type);
@@ -128,7 +128,7 @@ public class GenericItemServiceImpl implements IGenericItemService {
 		} else {
 			s.setNull(i++, Types.INTEGER);
 		}
-		if (field.getType() == IGenericItemField.FT_INTEGER) {
+		if (field.getType() == IGenericItemField.FT_INTEGER || field.getType() == IGenericItemField.FT_BOOLEAN) {
 			s.setLong(i++, field.getLongValue());
 		} else {
 			s.setNull(i++, Types.INTEGER);
@@ -165,7 +165,7 @@ public class GenericItemServiceImpl implements IGenericItemService {
 
 	protected GenericItem insert(Connection con, GenericItem item, boolean register) throws SQLException {
 		try {
-			PreparedStatement s = con.prepareStatement("insert into Item (ItemClassId,Date) values ((select id from itemclass where name = ?), ?)",
+			PreparedStatement s = con.prepareStatement("insert into Item (ItemClassId,Date) values ((select id from ItemClass where name = ?), ?)",
 					new String[]{"ID"});
 			s.setString(1, item.className);
 			if (item.date != null) {
@@ -187,7 +187,7 @@ public class GenericItemServiceImpl implements IGenericItemService {
 
 	@Override
 	public boolean registerItemClass(Connection con, String className) throws SQLException {
-		PreparedStatement s = con.prepareStatement("insert into itemclass (name) values (?)");
+		PreparedStatement s = con.prepareStatement("insert into ItemClass (name) values (?)");
 		s.setString(1, className);
 		int rows = s.executeUpdate();
 		s.close();
@@ -211,16 +211,16 @@ public class GenericItemServiceImpl implements IGenericItemService {
 	private List<GenericItem> executeSelect(Session session, Connection con, Long id, AbstractEntity entity) throws SQLException {
 		String sql = "select " +
 				"i.id itemid, i.date, itemclass.name classname, itemclassfield.name fieldname, itemclassfield.type, field.* " +
-				"from item i " +
-				"left outer join itemfield field on i.id = field.itemid " +
-				"left outer join itemclassfield itemclassfield on field.classfieldid = itemclassfield.id " +
-				"inner join itemclass itemclass on i.itemclassid = itemclass.id where 1=1 ";
+				"from Item i " +
+				"left outer join ItemField field on i.id = field.itemid " +
+				"left outer join ItemClassField itemclassfield on field.classfieldid = itemclassfield.id " +
+				"inner join ItemClass itemclass on i.itemclassid = itemclass.id where 1=1 ";
 				
 		if (id != null) {
 			sql += "and i.id = ? ";
 		}
 		if (entity != null) {
-			sql += "and i.id in (select itemid from participation where entityid = ?) ";
+			sql += "and i.id in (select itemid from Participation where entityid = ?) ";
 		}
 		
 		int i = 1;
@@ -303,6 +303,35 @@ public class GenericItemServiceImpl implements IGenericItemService {
 			}			
 		}
 		return items;
+	}
+
+	@Override
+	public void delete(Session session, final GenericItem item) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws SQLException {
+				PreparedStatement s = con.prepareStatement("delete from Participation where itemid = ?");
+				s.setLong(1, item.id);
+				int rows = s.executeUpdate();
+				log.info("deleted " + rows + " participation(s).");
+				s.close();
+				
+				s = con.prepareStatement("delete from ItemField where itemid = ?");
+				s.setLong(1, item.id);
+				rows = s.executeUpdate();
+				log.info("deleted " + rows + " field(s).");
+				s.close();
+				
+				s = con.prepareStatement("delete from Item where id = ?");
+				s.setLong(1, item.id);
+				rows = s.executeUpdate();
+				log.info("deleted item #" + item.id);
+				s.close();
+				
+				return null;
+			}
+		});
 	}
 
 }

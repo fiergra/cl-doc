@@ -1,39 +1,42 @@
 package com.ceres.cldoc.client.controls;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.IEntitySelector;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasChangeHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 
-public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySelector<T>, HasChangeHandlers {
+public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySelector<T> {
 
 	private ListRetrievalService<T> listRetrievalService;
 	private LabelFunction<T> labelFunction;
 	private final TextBox txtFilter = new TextBox();
 	private final ToggleButton pbOpen = new ToggleButton("...");
 	private List<T> itemList;
+	private ClDoc clDoc;
+	private OnDemandChangeListener<T> changeListener;
 	
-	public OnDemandComboBox(ListRetrievalService<T> listRetrievalService, LabelFunction <T> labelFunxtion) {
+	public OnDemandComboBox(ClDoc clDoc, ListRetrievalService<T> listRetrievalService, LabelFunction <T> labelFunxtion, OnDemandChangeListener<T>changeListener) {
 		super(Unit.EM);
-		setSize("2em", "2em");
+		this.clDoc = clDoc;
+		setHeight("2em");
 		this.listRetrievalService = listRetrievalService;
 		this.labelFunction = labelFunxtion;
+		this.changeListener = changeListener;
+		
 		pbOpen.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -62,7 +65,7 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 	}
 
 	protected void retrieve(String value) {
-		listRetrievalService.retrieve(value, new DefaultCallback<List<T>>() {
+		listRetrievalService.retrieve(value, new DefaultCallback<List<T>>(clDoc, "retrieve") {
 
 			@Override
 			public void onSuccess(List<T> result) {
@@ -81,6 +84,7 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 			pp.hide();
 			pp = null;
 			pbOpen.setDown(false);
+			txtFilter.setFocus(true);
 		}
 	}
 	
@@ -119,7 +123,17 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 					} else if (event.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
 						hidePopup();
 						txtFilter.setFocus(true);
+					} else if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+						setSelectedIndex(listBox.getSelectedIndex());
+						hidePopup();
 					}
+				}
+			});
+			listBox.addBlurHandler(new BlurHandler() {
+				
+				@Override
+				public void onBlur(BlurEvent event) {
+					hidePopup();
 				}
 			});
 			
@@ -135,8 +149,14 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 		}
 	}
 
+	private void setSelectedItem(T item) {
+		T oldValue = selectedItem;
+		selectedItem = item;
+		changeListener.onChange(oldValue, selectedItem);
+	}
+	
 	private void setSelectedIndex(int selectedIndex) {
-		selectedItem = itemList.get(selectedIndex);
+		setSelectedItem(itemList.get(selectedIndex));
 		txtFilter.setValue(labelFunction(selectedItem));
 	}
 
@@ -144,31 +164,12 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 		if ((item == null && selectedItem != null) || (item != null && !item.equals(selectedItem))) {
 			selectedItem = item;
 			txtFilter.setValue(labelFunction(item));
-			notifyChangeHandlers();
 		}
 		return itemList != null && itemList.contains(selectedItem);
 	}
 	
-	private void notifyChangeHandlers() {
-//		DomEvent.fireNativeEvent(null, this);
-	}
-
 	public T getSelected() {
 		return selectedItem;
 	}
 
-	private Collection<ChangeHandler> handlers = new ArrayList<ChangeHandler>();
-
-	@Override
-	public HandlerRegistration addChangeHandler(final ChangeHandler handler) {
-		handlers.add(handler);
-		
-		return new HandlerRegistration() {
-			
-			@Override
-			public void removeHandler() {
-				handlers.remove(handler);
-			}
-		};
-	}
 }
