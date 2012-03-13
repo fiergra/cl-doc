@@ -148,6 +148,7 @@ public class EntityServiceImpl implements IEntityService {
 			s.setNull(i++, Types.DATE);
 		}
 		s.setLong(i++, person.id);
+		s.executeUpdate();
 		s.close();
 	}
 

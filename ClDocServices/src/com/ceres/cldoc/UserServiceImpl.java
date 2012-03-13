@@ -39,6 +39,7 @@ public class UserServiceImpl implements IUserService {
 				if (rs.next()) {
 					user = new User();
 					user.id = rs.getLong("id");
+					user.userName = userName;
 					user.person = entityService.load(session, rs.getLong("person_id"));
 					user.hash = rs.getString("hash");
 				}
@@ -67,6 +68,7 @@ public class UserServiceImpl implements IUserService {
 				if (rs.next()) {
 					user = new User();
 					user.id = rs.getLong("id");
+					user.userName = userName;
 					user.person = entityService.load(session, rs.getLong("person_id"));
 					if (isDifferentPerson(person, user.person)) {
 						user = null;

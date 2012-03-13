@@ -130,14 +130,22 @@ public class ClDoc implements EntryPoint {
 	
 	private void setupMain(Session result) {
 		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
-		Image logo = new Image("dkglogo.png");
-		logo.setHeight("60px");
-		mainPanel.addNorth(logo, 60);
+		DockLayoutPanel hp = new DockLayoutPanel(Unit.PX);
+		Image logo = new Image("kg-rlp-text.png");
+		hp.addWest(logo, 290);
+		Label welcome = new Label(getDisplayName(result));
+		hp.addEast(welcome, 200);
+		
+		mainPanel.addNorth(hp, 72);
 		mainPanel.addSouth(statusMessage, 20);
 		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 		mainPanel.add(mainTab);
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(mainPanel);
+	}
+
+	private String getDisplayName(Session s) {
+		return s.getUser().userName + "[" + s.getUser().person.firstName  + " " + s.getUser().person.lastName +"]";
 	}
 
 	public void setLogOutput(LogOutput logOutput) {
