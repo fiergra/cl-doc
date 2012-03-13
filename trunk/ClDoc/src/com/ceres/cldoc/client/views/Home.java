@@ -12,6 +12,7 @@ public class Home extends SplitLayoutPanel {
 		HomeScreen homeScreen = new HomeScreen(clDoc);
 		DockLayoutPanel shortCuts = new DockLayoutPanel(Unit.PX);
 		
+		shortCuts.addStyleName("searchResults");
 		addEast(shortCuts, 350);
 		add(homeScreen);
 	}

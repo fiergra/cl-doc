@@ -104,6 +104,7 @@ body, table td, select, button {
 
 .searchResults {
 	padding: .1em;
+	border: solid 1px #cce1ba;
 	border-radius: 5px;
 }
 
