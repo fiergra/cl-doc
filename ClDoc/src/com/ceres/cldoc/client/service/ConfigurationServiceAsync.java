@@ -21,11 +21,11 @@ public interface ConfigurationServiceAsync {
 //
 //	void getUploadUrl(AsyncCallback<String> callback);
 //
-	void listLayoutDefinitions(Session session, String filter, AsyncCallback<List<LayoutDefinition>> callback);
+	void listClassNames(Session session, String filter, AsyncCallback<List<String>> callback);
 	
-	void saveLayoutDefinition(Session session, String className, String xmlLayoutDesc, AsyncCallback<Void> callback);
+	void saveLayoutDefinition(Session session, int type, String className, String xmlLayoutDesc, AsyncCallback<Void> callback);
 
-	void getLayoutDefinition(Session session, String className, AsyncCallback<LayoutDefinition> callback);
+	void getLayoutDefinition(Session session, String className, int typeId, AsyncCallback<LayoutDefinition> callback);
 
 	void deleteLayoutDefinition(Session session, String className, AsyncCallback<Void> callback);
 

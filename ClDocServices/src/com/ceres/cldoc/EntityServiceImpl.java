@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.AbstractEntity;
 import com.ceres.cldoc.model.Address;
+import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -156,6 +157,7 @@ public class EntityServiceImpl implements IEntityService {
 	private <T extends AbstractEntity> T load(Connection con, long id) throws SQLException {
 		String sql = "select e.id entityId, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, street, number, city, postcode, co from Entity e "
 				+ "left outer join Person pers on pers.id = e.id "
+				+ "left outer join Organisation orga on orga.id = e.id "
 				+ "left outer join Address adr on adr.entity_id = e.id " 
 				+ "where e.id = ?";
 //				+ "order by e.id";
@@ -168,9 +170,13 @@ public class EntityServiceImpl implements IEntityService {
 			long entityId = rs.getLong("entityId");
 			if (e == null || !e.id.equals(entityId)) {
 				switch (rs.getInt("type")) {
-				case 1: 
+				case AbstractEntity.ENTITY_TYPE_PERSON: 
 					Person p = fetchPerson(rs, entityId);
 					e = (T) p;
+				break;
+				case AbstractEntity.ENTITY_TYPE_ORGANISATION: 
+					Organisation o = fetchOrganisation(rs, entityId);
+					e = (T) o;
 				break;
 				}
 			}
@@ -187,6 +193,12 @@ public class EntityServiceImpl implements IEntityService {
 			}
 		}
 		return e;
+	}
+
+	private Organisation fetchOrganisation(ResultSet rs, long entityId) {
+		Organisation o = new Organisation();
+		o.id = entityId;
+		return o;
 	}
 
 	private Person fetchPerson(ResultSet rs, long entityId) throws SQLException {
@@ -226,17 +238,18 @@ public class EntityServiceImpl implements IEntityService {
 	
 	private List<Person> selectPersons(Connection con, String filter, String role) throws SQLException {
 		Collection<String> names = new ArrayList<String>();
+		Collection<Long> ids = new ArrayList<Long>();
+
 		String sql = "select * from Person p ";
 		String where = " where 1=1 ";
 		
 		if (role != null) {
 			sql +=  " inner join Assignment a on a.EntityId = p.Id" +
-					" inner join Catalog c on a.type = c.Id";
+					" inner join Catalog c on a.role = c.Id";
 			where += " AND c.code = ?";
 		}
 		if (filter != null) {
 			StringTokenizer st = new StringTokenizer(filter);
-			Collection<Long> ids = new ArrayList<Long>();
 			
 			while (st.hasMoreTokens()) {
 				String token = st.nextToken();
@@ -249,6 +262,10 @@ public class EntityServiceImpl implements IEntityService {
 			
 			for (String name: names) {
 				where += " AND (sndx_firstname = soundex(?) OR sndx_lastname = soundex(?) OR UPPER(firstname) like ? OR UPPER(lastname) like ?)";
+			}
+			
+			for (Long id : ids) {
+				where += " AND (id = ? OR per_id = ?)";
 			}
 		}
 		
@@ -265,6 +282,12 @@ public class EntityServiceImpl implements IEntityService {
 			s.setString(i++, name + "%");
 			s.setString(i++, name + "%");
 		}
+		for (Long id : ids) {
+			s.setLong(i++, id);
+			s.setLong(i++, id);
+		}
+		
+		
 		ResultSet rs = s.executeQuery();
 		while (rs.next()) {
 			Person p = fetchPerson(rs, rs.getLong("id"));

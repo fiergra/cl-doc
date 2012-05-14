@@ -27,6 +27,26 @@ body, table td, select, button {
 	height:100%; /* Mindesthöhe für den IE */ 
 }
 
+.resultTable {
+	border-width: 2;
+	border-style: inset;
+	border-radius: .5em;	
+	background: #fff;
+}
+
+.evenRow {
+	background: #cce1ba;
+}
+
+.resultRow {
+	cursor: pointer;
+	width: 100%;
+}
+
+.resultRow:hover {
+	background-color: #77bb55
+}
+
 .personRenderer {
 	border: solid 1px #cce1ba;
 	border-radius: 5px;
@@ -39,14 +59,6 @@ body, table td, select, button {
 
 .personRenderer:hover {
 	border: solid 1px #77bb55;
-	background: #cce1ba
-}
-
-.evenRow {
-	background: #fff
-}
-
-.oddRow {
 	background: #cce1ba
 }
 
@@ -91,7 +103,6 @@ body, table td, select, button {
 }
 
 .buttonsPanel {
-	background-color: #cce1ba;
 	width: 100%;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -104,12 +115,10 @@ body, table td, select, button {
 
 .searchResults {
 	padding: .1em;
-	border: solid 1px #cce1ba;
-	border-radius: 5px;
 }
 
 .nameAndId {
-	font-size: 28px;
+	font-size: 16pt;
 	font-weight: bold;
 }
 

@@ -5,9 +5,11 @@ public class Locator {
 	private static IEntityService entityService;
 	private static IUserService userService;
 	private static CatalogServiceImpl catalogService;
-	private static IGenericItemService genericItemService;
+	private static IActService actService;
 	private static ParticipationServiceImpl participationService;
 	private static LayoutDefinitionServiceImpl layoutDefinitionService;
+	private static DocServiceImpl docService;
+	private static LogServiceImpl logService;
 
 	public static IEntityService getEntityService() {
 		if (entityService == null) {
@@ -30,11 +32,18 @@ public class Locator {
 		return catalogService;
 	}
 
-	public static IGenericItemService getGenericItemService() {
-		if (genericItemService == null) {
-			genericItemService = new GenericItemServiceImpl();
+	public static IActService getActService() {
+		if (actService == null) {
+			actService = new ActServiceImpl();
 		}
-		return genericItemService;
+		return actService;
+	}
+
+	public static IDocService getDocService() {
+		if (docService == null) {
+			docService = new DocServiceImpl();
+		}
+		return docService;
 	}
 
 	public static IParticipationService getParticipationService() {
@@ -49,6 +58,13 @@ public class Locator {
 			layoutDefinitionService = new LayoutDefinitionServiceImpl();
 		}
 		return layoutDefinitionService;
+	}
+
+	public static ILogService getLogService() {
+		if (logService == null) {
+			logService = new LogServiceImpl();
+		}
+		return logService;
 	}
 
 }

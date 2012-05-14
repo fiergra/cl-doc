@@ -1,14 +1,14 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.model.GenericItem;
+import com.ceres.cldoc.model.Act;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public class GenericItemCellRenderer extends AbstractCell<GenericItem> {
+public class GenericItemCellRenderer extends AbstractCell<Act> {
 
 	@Override
-	public void render(Context context, GenericItem value, SafeHtmlBuilder sb) {
+	public void render(Context context, Act value, SafeHtmlBuilder sb) {
 		String sDate = value.date != null ? DateTimeFormat.getFormat("dd.MM.yy").format(value.date) : "--.--.----";
 		String sTime = value.date != null ? DateTimeFormat.getFormat("HH:mm").format(value.date) : "--.--.----";
 		
@@ -21,7 +21,7 @@ public class GenericItemCellRenderer extends AbstractCell<GenericItem> {
 						"</tr></table>" );
 	}
 
-	private String getIcon(GenericItem value) {
+	private String getIcon(Act value) {
 		if (value.className.equals("externalDoc")) {
 			return "icons/16/Adobe-PDF-Document-icon.png";
 		} else {

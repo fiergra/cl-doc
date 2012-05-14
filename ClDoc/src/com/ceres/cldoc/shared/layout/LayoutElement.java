@@ -50,4 +50,10 @@ public class LayoutElement implements Serializable {
 		return attributes;
 	}
 
+	@Override
+	public String toString() {
+		return type + "(" + attributes + ")";
+	}
+
+	
 }

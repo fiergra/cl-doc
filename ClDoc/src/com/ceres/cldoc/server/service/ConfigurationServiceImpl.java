@@ -9,6 +9,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import com.ceres.cldoc.IActService;
 import com.ceres.cldoc.ICatalogService;
 import com.ceres.cldoc.ILayoutDefinitionService;
 import com.ceres.cldoc.Locator;
@@ -81,24 +82,28 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<LayoutDefinition> listLayoutDefinitions(Session session, String filter) {
-		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
-		return lds.listLayoutDefinitions(session, filter);
+	public List<String> listClassNames(Session session, String filter) {
+		IActService actService = Locator.getActService();
+		return actService.listClassNames(session, filter);
 	}
 
+//	@Override
+//	public List<LayoutDefinition> listLayoutDefinitions(Session session, String filter) {
+//		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
+//		return lds.listLayoutDefinitions(session, filter);
+//	}
+
 	@Override
-	public void saveLayoutDefinition(Session session, String formClass, String xmlLayout) {
+	public void saveLayoutDefinition(Session session, int type, String formClass, String xmlLayout) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
-		LayoutDefinition ld = new LayoutDefinition();
-		ld.name = formClass;
-		ld.xmlLayout = xmlLayout;
+		LayoutDefinition ld = new LayoutDefinition(type, formClass, xmlLayout);
 		lds.save(session, ld);
 	}
 
 	@Override
-	public LayoutDefinition getLayoutDefinition(Session session, String className) {
+	public LayoutDefinition getLayoutDefinition(Session session, String className, int typeId) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
-		return lds.load(session, className);
+		return lds.load(session, className, typeId);
 	}
 
 	@Override

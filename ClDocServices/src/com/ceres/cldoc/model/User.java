@@ -9,6 +9,7 @@ public class User implements Serializable {
 	public String userName;
 	public String hash;
 	public Person person;
+	public Organisation organisation;
 
 	public User() {
 		super();

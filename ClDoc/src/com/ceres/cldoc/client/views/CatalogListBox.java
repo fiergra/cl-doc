@@ -34,7 +34,7 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 				}
 
 				
-				addListItems();
+				addListActs();
 				if (selected != null) {
 					setSelected(selected);
 				}
@@ -43,7 +43,7 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 	}
 
 
-	private void addListItems() {
+	private void addListActs() {
 		
 		for (Catalog c: catalogs) {
 			addItem(c.shortText, c.code);

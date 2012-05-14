@@ -20,6 +20,7 @@ public class TransactionalTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		user = new User();
+		user.id = 1l;
 		session = new Session(user);
 		TxManager.start(session);
 	}

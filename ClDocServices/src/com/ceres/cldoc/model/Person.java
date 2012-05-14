@@ -11,10 +11,11 @@ public class Person extends AbstractEntity {
 	public String lastName;
 	public String maidenName;
 	public Date dateOfBirth;
+	public Catalog gender;
 
 	public Person() {
 		super();
-		type = 1;
+		type = ENTITY_TYPE_PERSON;
 	}
 	
 }

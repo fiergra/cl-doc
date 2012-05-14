@@ -5,32 +5,30 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
+import com.ceres.cldoc.client.controls.ClickableTable;
+import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.model.GenericItem;
+import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.ProvidesKey;
-import com.google.gwt.view.client.SelectionModel;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class HistoryView extends DockLayoutPanel {
 
-	// private VerticalPanel historyList = new VerticalPanel();
-	private CellList<GenericItem> historyList;
-	private GenericItemRenderer viewer;
-
+	private ActRenderer viewer;
+	private ClickableTable<Act>historyPanel;
+	
 	private Person humanBeing;
 	private ClDoc clDoc;
 
@@ -40,109 +38,63 @@ public class HistoryView extends DockLayoutPanel {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.humanBeing = model;
-
-		historyList = new CellList<GenericItem>(new GenericItemCellRenderer(),
-				new ProvidesKey<GenericItem>() {
-
-					@Override
-					public Object getKey(GenericItem item) {
-						return item.id;
-					}
-				});
-
-		SelectionModel<GenericItem> selectionModel = new SingleSelectionModel<GenericItem>() {
+		historyPanel = new ClickableTable<Act>(clDoc, new ListRetrievalService<Act>() {
 
 			@Override
-			public void setSelected(final GenericItem valueBag, final boolean selected) {
-				if (selected && getSelectedObject() != valueBag) {
-					LayoutDefinition ld = layouts.get(valueBag.className);
-					if (ld == null) {
-						SRV.configurationService.getLayoutDefinition(clDoc.getSession(), valueBag.className, new DefaultCallback<LayoutDefinition>(clDoc, "getLayoutDef") {
-	
-							@Override
-							public void onSuccess(LayoutDefinition ld) {
-								layouts.put(valueBag.className, ld);
-								if (viewer.setValueBag(ld, valueBag)) {
-//									historyList.getSelectionModel().setSelected(valueBag, selected);
-								}
-							}
-	
-						});
-					} else {
-						if (viewer.setValueBag(ld, valueBag)) {
-//							historyList.getSelectionModel().setSelected(valueBag, selected);
-						}
-					}
-				}
+			public void retrieve(String filter, AsyncCallback<List<Act>> callback) {
+				SRV.actService.findByEntity(clDoc.getSession(), humanBeing, callback);
 			}
-		};
-		historyList.setSelectionModel(selectionModel);
-		historyList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
-		// historyList.addCellPreviewHandler(new
-		// CellPreviewEvent.Handler<ValueBag> (){
-		//
-		// @Override
-		// public void onCellPreview(CellPreviewEvent<ValueBag> event) {
-		// ValueBag vb = event.getValue();
-		// if (vb != null) {
-		// viewer.setValueBag(vb);
-		// }
-		// }
-		// });
+		}, new OnClick<Act>() {
 
+			@Override
+			public void onClick(final Act act) {
+				setSelectedAct(act);
+			}
+		}, true){
 
-		DockLayoutPanel historyPanel = new DockLayoutPanel(Unit.PX);
+			@Override
+			public void addRow(FlexTable table, int row, Act act) {
+				int column = 0;
+				String imgSource = "externalDoc".equals(act.className) ? 
+						"icons/16/Adobe-PDF-Document-icon.png" : "icons/16/Document-icon.png";
+				table.setWidget(row, column++, new Image(imgSource));
+				String sDate = act.date != null ? DateTimeFormat.getFormat("dd.MM.yyyy").format(act.date) : "--.--.----";
+				table.setWidget(row, column++, new Label(sDate));
+				table.setWidget(row, column++, new HTML("<b>" + act.className + "</b>"));
+			}};
 
-		HorizontalPanel titlePanel = new HorizontalPanel();
-		titlePanel.setStylePrimaryName("buttonsPanel");
-		titlePanel.setWidth("100%");
-		titlePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		titlePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		Image pbUpload = historyPanel.addButton("upload file", "icons/32/Button-Upload-icon.png");
+		Image pbAdd = historyPanel.addButton("add act", "icons/32/File-New-icon.png");
 
-		HorizontalPanel histButtons = new HorizontalPanel();
-		histButtons.setSpacing(3);
-		Image pbUpload = createButton("upload file", "icons/32/Button-Upload-icon.png");
-		Image pbAdd = createButton("add item", "icons/32/File-New-icon.png");
-		
 		pbUpload.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
-				UploadDialog.uploadFile(model, new OnOkHandler<Void>() {
-					
-					@Override
-					public void onOk(Void result) {
-						refresh(null);
-					}
-				});
+				UploadDialog.uploadFile(HistoryView.this.clDoc, model,
+						new OnOkHandler<Void>() {
+
+							@Override
+							public void onOk(Void result) {
+								historyPanel.refresh();
+							}
+						});
 			}
 		});
-		
-	
-		histButtons.add(pbUpload);
-		histButtons.add(pbAdd);
-		
-		titlePanel.add(histButtons);
-		
-		ScrollPanel sp = new ScrollPanel(historyList);
-		historyPanel.addNorth(titlePanel, 38);
-		historyPanel.add(sp);
-		historyPanel.addStyleName("searchResults");
 
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 		splitPanel.addWest(historyPanel, 400);
 
-		viewer = new GenericItemRenderer(clDoc, new OnOkHandler<GenericItem>() {
-			
+		viewer = new ActRenderer(clDoc, new OnOkHandler<Act>() {
+
 			@Override
-			public void onOk(GenericItem result) {
+			public void onOk(Act result) {
 				refresh(result);
 			}
 		}, new Runnable() {
-			
+
 			@Override
 			public void run() {
-				
+
 			}
 		});
 		viewer.addStyleName("viewer");
@@ -154,18 +106,19 @@ public class HistoryView extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				AddValueBag.addValueBag(clDoc, humanBeing, new OnOkHandler<GenericItem>() {
+				AddAct.addAct(clDoc, humanBeing, new OnOkHandler<Act>() {
 
 					@Override
-					public void onOk(GenericItem item) {
-						item.addParticipant(model, new Date(), null);
+					public void onOk(Act act) {
+						act.addParticipant(model, Catalog.PATIENT, new Date(), null);
 
-						SRV.valueBagService.save(clDoc.getSession(), item,
-								new DefaultCallback<GenericItem>(clDoc, "save") {
+						SRV.actService.save(clDoc.getSession(), act,
+								new DefaultCallback<Act>(clDoc, "save") {
 
 									@Override
-									public void onSuccess(GenericItem item) {
-										refresh(item);
+									public void onSuccess(Act act) {
+										refresh(act);
+										setSelectedAct(act);
 									}
 
 								});
@@ -177,35 +130,58 @@ public class HistoryView extends DockLayoutPanel {
 		refresh(null);
 	}
 
-	private Image createButton(String label, String source) {
-		Image img = new Image(source);
-		img.setTitle(label);
-		return img;
-//		return new Button(label + "<img src=\"" + source + "\"/>");
+	protected void refresh(Act act) {
+		historyPanel.refresh();
+		historyPanel.setSelected(act);
+		setSelectedAct(act);
 	}
 
-	private void refresh(final GenericItem item) {
-		SRV.valueBagService.findByEntity(clDoc.getSession(), humanBeing,
-				new DefaultCallback<List<GenericItem>>(clDoc, "findByEntity") {
+	protected void setSelectedAct(final Act act) {
+		if (act != null) {
+			LayoutDefinition ld = layouts.get(act.className);
+			if (ld == null) {
+				SRV.configurationService.getLayoutDefinition(clDoc.getSession(), act.className, LayoutDefinition.FORM_LAYOUT, 
+						new DefaultCallback<LayoutDefinition>(clDoc, "getLayoutDef") {
 
-					@Override
-					public void onSuccess(List<GenericItem> result) {
-						refresh(result, item);
-					}
-				});
-	}
+							@Override
+							public void onSuccess(LayoutDefinition ld) {
+								layouts.put(act.className, ld);
+								if (viewer.setAct(ld, act)) {
+								}
+							}
 
-	private void refresh(List<GenericItem> result, GenericItem item) {
-		GenericItem selected = ((SingleSelectionModel<GenericItem>)historyList.getSelectionModel()).getSelectedObject();
-		if (result != null) {
-			historyList.setRowCount(result.size());
-			historyList.setRowData(result);
-			
-			if (item != null) {
-				historyList.getSelectionModel().setSelected(item, true);
-			} else if (selected != null) {
-				historyList.getSelectionModel().setSelected(selected, true);
+						});
+			} else {
+				if (viewer.setAct(ld, act)) {
+				}
 			}
 		}
 	}
+	
+	
+//	private void refresh(final Act act) {
+//		SRV.actService.findByEntity(clDoc.getSession(), humanBeing,
+//				new DefaultCallback<List<Act>>(clDoc, "findByEntity") {
+//
+//					@Override
+//					public void onSuccess(List<Act> result) {
+//						refresh(result, act);
+//					}
+//				});
+//	}
+//
+//	private void refresh(List<Act> result, Act act) {
+//		Act selected = ((SingleSelectionModel<Act>) historyList
+//				.getSelectionModel()).getSelectedObject();
+//		if (result != null) {
+//			historyList.setRowCount(result.size());
+//			historyList.setRowData(result);
+//
+//			if (act != null) {
+//				historyList.getSelectionModel().setSelected(act, true);
+//			} else if (selected != null) {
+//				historyList.getSelectionModel().setSelected(selected, true);
+//			}
+//		}
+//	}
 }

@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.model.IGenericItem;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -12,13 +12,13 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
 public class PersonRenderer extends FocusPanel {
-	private IGenericItem valueBag;
+	private IAct act;
 	private OnClick<Person> onClickEdit;
 	private OnClick<Person> onClickOpen;
 	private Person person;
 
-//	public PersonRenderer(GenericItem p, OnClick<HumanBeing> onClickOpen, OnClick<HumanBeing> onClickEdit) {
-//		this.valueBag = p;
+//	public PersonRenderer(GenericAct p, OnClick<HumanBeing> onClickOpen, OnClick<HumanBeing> onClickEdit) {
+//		this.act = p;
 //		this.onClickOpen = onClickOpen;
 //		this.onClickEdit = onClickEdit;
 //		setup();
@@ -81,10 +81,10 @@ public class PersonRenderer extends FocusPanel {
 	}
 
 	private String getLastName() {
-		return person != null ? person.lastName : valueBag.getString("lastName");
+		return person != null ? person.lastName : act.getString("lastName");
 	}
 
 	private String getFirstName() {
-		return person != null ? person.firstName : valueBag.getString("firstName");
+		return person != null ? person.firstName : act.getString("firstName");
 	}
 }

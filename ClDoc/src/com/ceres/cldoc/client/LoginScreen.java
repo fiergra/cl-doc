@@ -136,7 +136,7 @@ public class LoginScreen extends HorizontalPanel {
 
 					@Override
 					public void onClick(PersonWrapper pp) {
-						SRV.userService.register(person, txtNewUserName.getText(), txtPwd1.getText(), new DefaultCallback<Void>(clDoc, "register") {
+						SRV.userService.register(person, null, txtNewUserName.getText(), txtPwd1.getText(), new DefaultCallback<Void>(clDoc, "register") {
 
 							@Override
 							public void onSuccess(Void result) {

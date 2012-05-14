@@ -16,12 +16,16 @@ public class Session implements Serializable {
 	public Session() {
 	}
 
-	public Session(User user) {
+	public Session(User user, long id) {
 		this.user = user;
-		this.id = createSessionId();
+		this.id = id;
 	}
 
-	private synchronized long createSessionId() {
+	public Session(User user) {
+		this(user, createSessionId());
+	}
+
+	private synchronized static long createSessionId() {
 		return sessionIds++;
 	}
 

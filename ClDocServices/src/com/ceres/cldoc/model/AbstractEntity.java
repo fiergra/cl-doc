@@ -7,6 +7,10 @@ import java.util.List;
 public class AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	public static final int ENTITY_TYPE_PERSON = 1;
+	public static final int ENTITY_TYPE_ORGANISATION = 39;
+	public static final int ENTITY_TYPE_ROOM = 40;
+
 	public Long id;
 
 	public String name;

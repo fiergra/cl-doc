@@ -59,8 +59,8 @@ public class HomeScreen extends PersonSearchList {
 //			
 //			@Override
 //			public void onClick(ClickEvent event) {
-//				GenericItem vb = new GenericItem("com.ceres.cldoc.shared.domain.HumanBeing", null);
-//				vb.set("primaryAddress", new GenericItem("com.ceres.cldoc.shared.domain.Address", null));
+//				GenericAct vb = new GenericAct("com.ceres.cldoc.shared.domain.HumanBeing", null);
+//				vb.set("primaryAddress", new GenericAct("com.ceres.cldoc.shared.domain.Address", null));
 //				editPerson(vb);
 //			}
 //		});
@@ -113,12 +113,12 @@ public class HomeScreen extends PersonSearchList {
 //			});
 			
 //			SRV.humanBeingService.findByString(search,
-//					new DefaultCallback<List<ValueBag>>() {
+//					new DefaultCallback<List<Act>>() {
 //
 //						@Override
-//						public void onSuccess(List<ValueBag> result) {
+//						public void onSuccess(List<Act> result) {
 //							results.clear();
-//							for (final ValueBag p : result) {
+//							for (final Act p : result) {
 //								results.add(new PersonRenderer(p, 
 //									new OnClick() {
 //										

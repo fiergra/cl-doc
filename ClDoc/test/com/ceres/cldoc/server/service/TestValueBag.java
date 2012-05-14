@@ -8,14 +8,14 @@ import org.junit.Test;
 
 import com.ceres.cldoc.shared.domain.Address;
 import com.ceres.cldoc.shared.domain.HumanBeing;
-import com.ceres.cldoc.shared.domain.ValueBag;
-import com.ceres.cldoc.shared.domain.ValueBag;
+import com.ceres.cldoc.shared.domain.Act;
+import com.ceres.cldoc.shared.domain.Act;
 
-public class TestValueBag extends TestCase {
+public class TestAct extends TestCase {
 
 	@Test
 	public void testConvert() {
-		ValueBagHelper vbs = new ValueBagHelper();
+		ActHelper vbs = new ActHelper();
 		HumanBeing person = new HumanBeing();
 		person.id = 1234l;
 		person.firstName = "Heinz";
@@ -25,20 +25,20 @@ public class TestValueBag extends TestCase {
 		a.city = "Gusterath";
 		person.primaryAddress = a;
 		
-		ValueBag vb = vbs.convert(person);
+		Act vb = vbs.convert(person);
 		
 		assertEquals("Heinz", vb.getString("firstName"));
 		assertEquals(birthDate, vb.getDate("dateOfBirth"));
 		assertEquals(1234l, vb.getNumber("id"));
 		
-		ValueBag vba = vb.getValueBag("primaryAddress");
+		Act vba = vb.getAct("primaryAddress");
 		assertEquals("Gusterath", vba.getString("city"));
 		assertEquals("Gusterath", vb.getString("primaryAddress.city"));
 		
-		HumanBeing reconverted = vbs.reconvert((ValueBag) vb);
+		HumanBeing reconverted = vbs.reconvert((Act) vb);
 		
 		vb.set("a.b.c.d", "asdf");
-		assertNotNull(vb.getValueBag("a.b.c"));
+		assertNotNull(vb.getAct("a.b.c"));
 		assertEquals("asdf", vb.getString("a.b.c.d"));
 	
 	}

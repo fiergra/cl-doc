@@ -19,8 +19,8 @@ public abstract class SRV {
 	public static final HumanBeingServiceAsync humanBeingService = GWT
 	.create(HumanBeingService.class);
 
-	public static final ValueBagServiceAsync valueBagService = GWT
-	.create(ValueBagService.class);
+	public static final ActServiceAsync actService = GWT
+	.create(ActService.class);
 
 
 }

@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -11,9 +12,10 @@ import com.ceres.cldoc.client.controls.DateTextBox;
 import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.IGenericItem;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.layout.LayoutElement;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
@@ -39,10 +42,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public abstract class Form<T extends IGenericItem> extends FlexTable {
+public abstract class Form<T extends IAct> extends FlexTable implements IView<T>{
 
 	public enum DataTypes {
-		FT_STRING, FT_TEXT, FT_DATE, FT_INTEGER, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_BOOLEAN, FT_HUMANBEING
+		FT_STRING, FT_TEXT, FT_DATE, /*FT_TIME, */FT_INTEGER, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_BOOLEAN, FT_HUMANBEING
 	};
 
 	protected T model;
@@ -51,6 +54,8 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 	private Runnable setModified;
 	private ClDoc clDoc;
 
+	private Collection<Form> pages = new ArrayList<Form>();
+	
 	final static int OK = 1;
 	final static int CLOSE = 2;
 	final static int CANCEL = 4;
@@ -65,6 +70,16 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 		setup();
 		toDialog();
 	}
+
+	
+	
+	@Override
+	public void clear() {
+		super.clear();
+		pages.clear();
+	}
+
+
 
 	private static class Field {
 		public String name;
@@ -84,30 +99,34 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 
 	@SuppressWarnings("unchecked")
 	public void toDialog() {
+		for (Form<T> page:pages) {
+			page.toDialog();
+		}
+
 		Iterator<Entry<String, Field>> iter = fields.entrySet().iterator();
 
 		while (iter.hasNext()) {
 			final Field field = iter.next().getValue();
-			IGenericItem valueBag = model;// getValueBag(model, field);
+			IAct act = model;// getAct(model, field);
 
 			switch (field.dataType) {
 			case FT_TEXT:
 			case FT_STRING:
 				((TextBoxBase) field.widget)
-						.setText(valueBag.getString(field.name));
+						.setText(act.getString(field.name));
 				break;
 			case FT_BOOLEAN:
-				((CheckBox) field.widget).setValue(valueBag.getBoolean(field.name));
+				((CheckBox) field.widget).setValue(act.getBoolean(field.name));
 				break;
 			case FT_LIST_SELECTION:
 			case FT_OPTION_SELECTION:
-				Catalog catalog = (Catalog) valueBag.getCatalog(field.name);
+				Catalog catalog = (Catalog) act.getCatalog(field.name);
 				if (catalog != null) {
 					((IEntitySelector<Catalog>)field.widget).setSelected(catalog);
 				}
 				break;
 			case FT_HUMANBEING:
-				Long id = valueBag.getLong(field.name);
+				Long id = act.getLong(field.name);
 				if (id != null) {
 					SRV.humanBeingService.findById(clDoc.getSession(), id, new DefaultCallback<Person>(clDoc, "findById") {
 
@@ -120,46 +139,60 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 				}
 				break;
 			case FT_DATE:
-				Date value = valueBag.getDate(field.name);
+				Date value = act.getDate(field.name);
 				if (value != null) {
 					((DateTextBox) field.widget).setDate(value);
 				}
 				break;
+//			case FT_TIME:
+//				Date dateValue = act.getDate(field.name);
+//				if (dateValue != null) {
+//					((TimeTextBox) field.widget).setTime(dateValue);
+//				}
+//				break;
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void fromDialog() {
+		for (Form<T> page:pages) {
+			page.fromDialog();
+		}
+		
 		Iterator<Entry<String, Field>> iter = fields.entrySet().iterator();
 
 		while (iter.hasNext()) {
 			Field field = iter.next().getValue();
 			String qualifiedFieldName = field.name;
-			IGenericItem valueBag = model;// getValueBag(model, field);
+			IAct act = model;// getAct(model, field);
 
 			switch (field.dataType) {
 			case FT_TEXT:
 			case FT_STRING:
-				valueBag.set(qualifiedFieldName,
+				act.set(qualifiedFieldName,
 						((TextBoxBase) field.widget).getText());
 				break;
 			case FT_BOOLEAN:
-				valueBag.set(qualifiedFieldName, ((CheckBox) field.widget).getValue());
+				act.set(qualifiedFieldName, ((CheckBox) field.widget).getValue());
 				break;
 			case FT_OPTION_SELECTION:
 			case FT_LIST_SELECTION:
 				Catalog catalog = ((IEntitySelector<Catalog>) field.widget).getSelected(); 
-				valueBag.set(qualifiedFieldName, catalog != null ? catalog : null);
+				act.set(qualifiedFieldName, catalog != null ? catalog : null);
 				break;
 			case FT_HUMANBEING:
 				Person humanBeing = ((IEntitySelector<Person>) field.widget).getSelected(); 
-				valueBag.set(qualifiedFieldName, humanBeing != null ? humanBeing.id : null);
+				act.set(qualifiedFieldName, humanBeing != null ? humanBeing.id : null);
 				break;
 			case FT_DATE:
-				valueBag.set(qualifiedFieldName,
+				act.set(qualifiedFieldName,
 						((DateTextBox) field.widget).getDate());
 				break;
+//			case FT_TIME:
+//				act.set(qualifiedFieldName,
+//						((TimeTextBox) field.widget).getDate());
+//				break;
 			}
 		}
 
@@ -384,7 +417,7 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			break;
 		case FT_TEXT:
 			TextArea a = new TextArea();
-			a.setWidth("100%");
+			a.setWidth("99%");
 			a.addKeyDownHandler(modificationHandler);
 			w = a;
 			break;
@@ -394,6 +427,12 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 			d.addKeyDownHandler(modificationHandler);
 			w = d;
 			break;
+//		case FT_TIME:
+//			TimeTextBox tbx = new TimeTextBox();
+//			tbx.setWidth("4em");
+//			tbx.addKeyDownHandler(modificationHandler);
+//			w = tbx;
+//			break;
 		default:
 			w = new TextBox();
 			break;
@@ -418,19 +457,55 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 
 
 	protected void createAndLayout(LayoutElement layoutElement) {
-		ArrayList<LayoutElement> children = layoutElement.getChildren();
-		for (LayoutElement child : children) {
-			if (child.getType().equals("form")) {
-				
-			} else if (child.getType().equals("line")) {
-				String label = child.getAttribute("label");
-				String fieldName = child.getAttribute("name");
-				addLine(label == null ? fieldName : label, fieldName, getDataType(child), child.getAttributes());
+		if (layoutElement.getType().equals("pages")) {
+			TabLayoutPanel pageContainer = getPageContainer();
+			for (LayoutElement child : layoutElement.getChildren()) {
+				Form page = new Form<T>(clDoc, model, new Runnable() {
+					
+					@Override
+					public void run() {
+						if (!isModified) {
+							setModified.run();
+							isModified = true;
+						}
+					}
+				})
+				{
+
+					@Override
+					protected void setup() {
+						setWidth("100%");
+					}
+
+				};
+				pageContainer.add(page, child.getAttribute("label"));
+				page.createAndLayout(child);
+				pages.add(page);
+			} 
+		} else {
+			ArrayList<LayoutElement> children = layoutElement.getChildren();
+			for (LayoutElement child : children) {
+				if (child.getType().equals("form")) {
+					
+				} else if (child.getType().equals("line")) {
+					String label = child.getAttribute("label");
+					String fieldName = child.getAttribute("name");
+					addLine(label == null ? fieldName : label, fieldName, getDataType(child), child.getAttributes());
+				}
 			}
-		}
-		
+		}		
 	}
 
+
+	private TabLayoutPanel getPageContainer() {
+		TabLayoutPanel pageContainer = (TabLayoutPanel)(getRowCount() == 1 ? getWidget(0, 0) : null);
+		if (pageContainer == null) {
+			pageContainer = new TabLayoutPanel(2, Unit.EM);
+			pageContainer.setSize("600px", "600px");
+			setWidget(0,  0, pageContainer);
+		}
+		return pageContainer;
+	}
 
 	private DataTypes getDataType(LayoutElement child) {
 		String type = child.getAttribute("type");
@@ -445,6 +520,8 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 				result = DataTypes.FT_TEXT;
 			} else if (type.equals("date")) {
 				result = DataTypes.FT_DATE;
+//			} else if (type.equals("time")) {
+//				result = DataTypes.FT_TIME;
 			} else if (type.equals("boolean")) {
 				result = DataTypes.FT_BOOLEAN;
 			} else if (type.equals("list")) {
@@ -459,6 +536,9 @@ public abstract class Form<T extends IGenericItem> extends FlexTable {
 		return result;
 	}
 
-	
+	@Override
+	public T getModel() {
+		return model;
+	}	
 
 }

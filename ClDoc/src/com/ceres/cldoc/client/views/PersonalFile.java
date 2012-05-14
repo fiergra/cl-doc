@@ -11,9 +11,9 @@ public class PersonalFile extends DockLayoutPanel {
 	private Person humanBeing;
 
 	public PersonalFile(ClDoc clDoc, Person hb) {
-		super(Unit.PX);
+		super(Unit.PT);
 		this.humanBeing = hb;
-		addNorth(new PersonalFileHeader(hb), 42);
+		addNorth(new PersonalFileHeader(hb), 22);
 		TabLayoutPanel tab = new ConfiguredTabPanel<Person>(clDoc, "CLDOC.PERSONALFILE", humanBeing);
 		tab.addStyleName("personalFile");
 		add(tab);
