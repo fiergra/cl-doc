@@ -9,35 +9,34 @@ import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.model.GenericItem;
+import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public class Styler extends DockLayoutPanel {
-	private MultiWordSuggestOracle mwso;
-
-	final Form <GenericItem> form;
+	final Form <Act> form;
 
 	private ClDoc clDoc;
 	
 	public Styler(ClDoc clDoc) {
 		super(Unit.PX);
 		this.clDoc = clDoc;
-		form = new Form<GenericItem>(clDoc, new GenericItem("dummy"), null){
+		form = new Form<Act>(clDoc, new Act("dummy"), null){
 
 			@Override
 			protected void setup() {
@@ -48,9 +47,13 @@ public class Styler extends DockLayoutPanel {
 
 
 	private void setup() {
-		final TextArea layoutDescTextArea = new TextArea();
-		final DockLayoutPanel layoutPanel = new DockLayoutPanel(Unit.EM);
-		layoutPanel.add(layoutDescTextArea);
+		final TextArea formLayoutDescTextArea = new TextArea();
+		final DockLayoutPanel formLayoutPanel = new DockLayoutPanel(Unit.EM);
+		final TextArea printLayoutDescTextArea = new TextArea();
+		final DockLayoutPanel printLayoutPanel = new DockLayoutPanel(Unit.EM);
+
+		formLayoutPanel.add(formLayoutDescTextArea);
+		printLayoutPanel.add(printLayoutDescTextArea);
 		
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -78,7 +81,7 @@ public class Styler extends DockLayoutPanel {
 //			
 //			@Override
 //			public void onSelection(SelectionEvent<Suggestion> event) {
-//				String className = event.getSelectedItem().getReplacementString();
+//				String className = event.getSelectedAct().getReplacementString();
 //				
 //				if (className != null) {
 //					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "") {
@@ -94,40 +97,49 @@ public class Styler extends DockLayoutPanel {
 //			}
 //		});
 		
-		final OnDemandComboBox<LayoutDefinition> cmbClasses = new OnDemandComboBox<LayoutDefinition>(clDoc, new ListRetrievalService<LayoutDefinition>() {
+		final OnDemandComboBox<String> cmbClasses = new OnDemandComboBox<String>(clDoc, new ListRetrievalService<String>() {
 
 			@Override
 			public void retrieve(String filter,
-					AsyncCallback<List<LayoutDefinition>> callback) {
-				SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), filter, callback);
+					AsyncCallback<List<String>> callback) {
+				SRV.configurationService.listClassNames(clDoc.getSession(), filter, callback);
 			}
-		}, new LabelFunction<LayoutDefinition>() {
+		}, new LabelFunction<String>() {
 
 			@Override
-			public String getLabel(LayoutDefinition item) {
-				return item.name;
+			public String getLabel(String className) {
+				return className;
 			}
 
 			@Override
-			public String getValue(LayoutDefinition item) {
-				return item.name;
+			public String getValue(String className) {
+				return className;
 			}
-		}, new OnDemandChangeListener<LayoutDefinition>() {
+		}, new OnDemandChangeListener<String>() {
 
 			@Override
-			public void onChange(LayoutDefinition oldValue, LayoutDefinition newValue) {
-				String className = newValue.name;
+			public void onChange(String oldValue, String newValue) {
+				String className = newValue;
 				
 				if (className != null) {
 					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "") {
 
 						@Override
 						public void onSuccess(LayoutDefinition result) {
-							layoutDescTextArea.setText(result.xmlLayout);
-							form.parseAndCreate(result.xmlLayout);
+							if (result != null) {
+								if (result.type == LayoutDefinition.FORM_LAYOUT) {
+									formLayoutDescTextArea.setText(result.xmlLayout);
+									form.parseAndCreate(result.xmlLayout);
+								} else {
+									printLayoutDescTextArea.setText(result.xmlLayout);
+								}
+							}
 						}
 					};
-					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, callback );
+					formLayoutDescTextArea.setText(null);
+					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, LayoutDefinition.FORM_LAYOUT, callback );
+					printLayoutDescTextArea.setText(null);
+					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, LayoutDefinition.PRINT_LAYOUT, callback );
 				}
 			}
 		});
@@ -135,29 +147,61 @@ public class Styler extends DockLayoutPanel {
 		hp.add(cmbClasses);
 //		hp.add(lbClasses);
 
-		Image pbWindowRefreh = new Image("icons/32/Window-Refresh-icon.png");
-		pbWindowRefreh.addClickHandler(new ClickHandler() {
+		Image pbUpload = new Image("icons/32/Button-Upload-icon.png");
+		pbUpload.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				form.parseAndCreate(layoutDescTextArea.getText());
+				UploadDialog.uploadFile(clDoc, LayoutDefinition.FORM_LAYOUT, new OnOkHandler<Void>() {
+					
+					@Override
+					public void onOk(Void result) {
+						
+					}
+				});
 			}
 		});
-		hp.add(pbWindowRefreh);
+		hp.add(pbUpload);
+		Anchor a = new Anchor("<img src=\"icons/32/Button-Download-icon.png\"/>", true);
+		String baseUrl = GWT.getModuleBaseURL();
+		a.setHref(baseUrl + "download?type=form_layouts");
+		hp.add(a);
+		
+//		Image pbDownload = new Image("icons/32/Button-Download-icon.png");
+//		pbDownload.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//			}
+//		});
+//		hp.add(pbDownload);
+//		
+		Image pbWindowRefresh = new Image("icons/32/Window-Refresh-icon.png");
+		pbWindowRefresh.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				form.parseAndCreate(formLayoutDescTextArea.getText());
+			}
+		});
+		hp.add(pbWindowRefresh);
 		
 		Image pbSave = new Image("icons/32/Save-icon.png");
 		pbSave.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				LayoutDefinition ld = cmbClasses.getSelected();
-				SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), ld.name, layoutDescTextArea.getText(), new DefaultCallback<Void>(clDoc, "saveLayout") {
-
-					@Override
-					public void onSuccess(Void result) {
-//						refreshOracle();
+				if (cmbClasses.getText() != null && cmbClasses.getText().length() > 1) {
+					AsyncCallback<Void> callback = new DefaultCallback<Void>(clDoc, "saveLayout") {
+	
+						@Override
+						public void onSuccess(Void result) {}
+					};
+					SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, cmbClasses.getText(), formLayoutDescTextArea.getText(), callback);
+					if (printLayoutDescTextArea.getText() != null && printLayoutDescTextArea.getText().length() > 0) {
+						SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), LayoutDefinition.PRINT_LAYOUT, cmbClasses.getText(), printLayoutDescTextArea.getText(), callback);
 					}
-				});
+				}
 			}
 		});
 		hp.add(pbSave);
@@ -167,14 +211,16 @@ public class Styler extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				LayoutDefinition ld = cmbClasses.getSelected();
-				SRV.configurationService.deleteLayoutDefinition(clDoc.getSession(), ld.name, new DefaultCallback<Void>(clDoc, "deleteLayout") {
-
-					@Override
-					public void onSuccess(Void result) {
-//						refreshOracle();
-					}
-				});
+				String ld = cmbClasses.getSelected();
+				if (ld != null) {
+					SRV.configurationService.deleteLayoutDefinition(clDoc.getSession(), ld, new DefaultCallback<Void>(clDoc, "deleteLayout") {
+	
+						@Override
+						public void onSuccess(Void result) {
+	//						refreshOracle();
+						}
+					});
+				}
 			}
 		});
 		hp.add(pbDelete);
@@ -186,8 +232,8 @@ public class Styler extends DockLayoutPanel {
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 			
 		TabLayoutPanel layouts = new TabLayoutPanel(2, Unit.EM);
-		layouts.add(layoutPanel, "Layout");
-		layouts.add(new Label("print layout still to follow..."), "Printout");
+		layouts.add(formLayoutPanel, "Layout");
+		layouts.add(printLayoutPanel, "Printout");
 		
 		splitPanel.addWest(layouts, 400);
 		HorizontalPanel formContainer = new HorizontalPanel();
@@ -195,11 +241,11 @@ public class Styler extends DockLayoutPanel {
 		splitPanel.add(formContainer);
 		add(splitPanel);
 		
-		layoutDescTextArea.addChangeHandler(new ChangeHandler() {
+		formLayoutDescTextArea.addChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				form.parseAndCreate(layoutDescTextArea.getText());
+				form.parseAndCreate(formLayoutDescTextArea.getText());
 			}
 		});
 	}

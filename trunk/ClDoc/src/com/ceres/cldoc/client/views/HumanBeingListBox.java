@@ -32,13 +32,13 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> {
 		new LabelFunction<Person>() {
 
 			@Override
-			public String getLabel(Person item) {
-				return item.lastName + ", " + item.firstName;
+			public String getLabel(Person act) {
+				return act.lastName + ", " + act.firstName;
 			}
 
 			@Override
-			public String getValue(Person item) {
-				return getLabel(item);
+			public String getValue(Person act) {
+				return getLabel(act);
 			}
 		}, changeHandler);
 		setSize("25em", "2em");

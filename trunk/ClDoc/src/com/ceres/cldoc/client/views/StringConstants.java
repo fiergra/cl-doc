@@ -58,4 +58,6 @@ public interface StringConstants extends Constants {
 	String forms();
 
 	String catalogs();
+
+	String gender();
 }

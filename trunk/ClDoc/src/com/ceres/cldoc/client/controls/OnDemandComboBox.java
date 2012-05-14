@@ -25,7 +25,7 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 	private LabelFunction<T> labelFunction;
 	private final TextBox txtFilter = new TextBox();
 	private final ToggleButton pbOpen = new ToggleButton("...");
-	private List<T> itemList;
+	private List<T> actList;
 	private ClDoc clDoc;
 	private OnDemandChangeListener<T> changeListener;
 	
@@ -58,6 +58,7 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 				if (event.isDownArrow() && pp != null) {
 					listBox.setFocus(true);
 				} else if (event.getNativeKeyCode() != KeyCodes.KEY_TAB) {
+					selectedItem = null;
 					retrieve(txtFilter.getValue());
 				}
 			}
@@ -69,8 +70,12 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 
 			@Override
 			public void onSuccess(List<T> result) {
-				itemList = result;
-				createOrUpdatePopup(result);
+				actList = result;
+				if (actList.isEmpty()) {
+					hidePopup();
+				} else {
+					createOrUpdatePopup(result);
+				}
 			}
 		});
 	}
@@ -88,12 +93,12 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 		}
 	}
 	
-	protected String labelFunction(T item) {
-		return labelFunction.getLabel(item);
+	protected String labelFunction(T act) {
+		return labelFunction.getLabel(act);
 	}
 	
-	protected String valueFunction(T item) {
-		return labelFunction.getValue(item);
+	protected String valueFunction(T act) {
+		return labelFunction.getValue(act);
 	}
 
 	private PopupPanel pp = null;
@@ -144,32 +149,35 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 			listBox.clear();
 		}
 		
-		for (T item:list) {
-			listBox.addItem(labelFunction(item), valueFunction(item));
+		for (T act:list) {
+			listBox.addItem(labelFunction(act), valueFunction(act));
 		}
 	}
 
-	private void setSelectedItem(T item) {
+	private void setSelectedAct(T act) {
 		T oldValue = selectedItem;
-		selectedItem = item;
+		selectedItem = act;
 		changeListener.onChange(oldValue, selectedItem);
 	}
 	
 	private void setSelectedIndex(int selectedIndex) {
-		setSelectedItem(itemList.get(selectedIndex));
+		setSelectedAct(actList.get(selectedIndex));
 		txtFilter.setValue(labelFunction(selectedItem));
 	}
 
-	public boolean setSelected(T item) {
-		if ((item == null && selectedItem != null) || (item != null && !item.equals(selectedItem))) {
-			selectedItem = item;
-			txtFilter.setValue(labelFunction(item));
+	public boolean setSelected(T act) {
+		if ((act == null && selectedItem != null) || (act != null && !act.equals(selectedItem))) {
+			selectedItem = act;
+			txtFilter.setValue(labelFunction(act));
 		}
-		return itemList != null && itemList.contains(selectedItem);
+		return actList != null && actList.contains(selectedItem);
 	}
 	
 	public T getSelected() {
 		return selectedItem;
 	}
 
+	public String getText() {
+		return txtFilter.getText();
+	}
 }

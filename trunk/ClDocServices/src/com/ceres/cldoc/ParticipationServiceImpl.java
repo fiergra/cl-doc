@@ -10,7 +10,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import com.ceres.cldoc.model.GenericItem;
+import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -38,9 +39,9 @@ public class ParticipationServiceImpl implements IParticipationService {
 	protected void updateParticipation(Connection con,
 			Participation participation) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"update Participation set type = ?, startdate = ?, enddate = ? where id = ?");
+				"update Participation set role = ?, startdate = ?, enddate = ? where id = ?");
 		int i = 1;
-		s.setInt(i++, 1);
+		s.setLong(i++, participation.role.id);
 		s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
 		if (participation.end != null) {
 			s.setTimestamp(i++, new java.sql.Timestamp(participation.end.getTime()));
@@ -55,11 +56,11 @@ public class ParticipationServiceImpl implements IParticipationService {
 	protected void insertParticipation(Connection con,
 			Participation participation) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"insert into Participation (itemid, entityid, type, startdate, enddate) values (?, ?, ?, ?, ?) ", new String[]{"ID"});
+				"insert into Participation (actid, entityid, role, startdate, enddate) values (?, ?, ?, ?, ?) ", new String[]{"ID"});
 		int i = 1;
-		s.setLong(i++, participation.item.id);
+		s.setLong(i++, participation.act.id);
 		s.setLong(i++, participation.entity.id);
-		s.setInt(i++, 1);
+		s.setLong(i++, participation.role.id);
 		s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
 
 		if (participation.end != null) {
@@ -72,20 +73,21 @@ public class ParticipationServiceImpl implements IParticipationService {
 	}
 
 	@Override
-	public Collection<Participation> load(final Session session, final GenericItem item) {
+	public Collection<Participation> load(final Session session, final Act act) {
 		Collection<Participation> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public Collection<Participation> execute(Connection con) throws SQLException {
 				IEntityService entityService = Locator.getEntityService();
 				Collection<Participation> result = new ArrayList<Participation>();		
-				PreparedStatement s = con.prepareStatement("select * from Participation where itemid = ?");
-				s.setLong(1, item.id);
+				PreparedStatement s = con.prepareStatement("select * from Participation where actid = ?");
+				s.setLong(1, act.id);
 				ResultSet rs = s.executeQuery();
 				while (rs.next()) {
 					Participation p = new Participation();
-					p.item = item;
+					p.act = act;
 					p.entity = entityService.load(session, rs.getLong("entityid"));
+					p.role = getRole(session, rs.getLong("role"));
 					p.start = new Date(rs.getTimestamp("startdate").getTime());
 					p.end = rs.getTimestamp("enddate");
 					if (rs.wasNull()) {
@@ -101,6 +103,10 @@ public class ParticipationServiceImpl implements IParticipationService {
 		
 		
 		return result;
+	}
+
+	protected Catalog getRole(Session session, long roleId) {
+		return roleId == 101l ? Catalog.PATIENT : Locator.getCatalogService().load(session, roleId);
 	}
 
 }

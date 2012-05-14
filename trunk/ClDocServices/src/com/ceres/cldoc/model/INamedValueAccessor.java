@@ -5,7 +5,7 @@ import java.util.Date;
 
 public interface INamedValueAccessor {
 
-	public abstract INamedValueAccessor getValueBag(String fieldName);
+	public abstract INamedValueAccessor getAct(String fieldName);
 
 	public abstract Object get(String fieldName);
 

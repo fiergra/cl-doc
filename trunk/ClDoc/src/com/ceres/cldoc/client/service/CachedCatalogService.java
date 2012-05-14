@@ -21,22 +21,22 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	}
 
 	@Override
-	public void listLayoutDefinitions(Session session, String filter,
-			AsyncCallback<List<LayoutDefinition>> callback) {
-		SRV.configurationService.listLayoutDefinitions(session, filter, callback);
+	public void listClassNames(Session session, String filter,
+			AsyncCallback<List<String>> callback) {
+		SRV.configurationService.listClassNames(session, filter, callback);
 	}
 
 	@Override
-	public void saveLayoutDefinition(Session session, String className,
+	public void saveLayoutDefinition(Session session, int type, String className,
 			String xmlLayoutDesc, AsyncCallback<Void> callback) {
-		SRV.configurationService.saveLayoutDefinition(session, className, xmlLayoutDesc, callback);
+		SRV.configurationService.saveLayoutDefinition(session, type, className, xmlLayoutDesc, callback);
 	}
 
 	private HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
 
 	@Override
-	public void getLayoutDefinition(Session session, String className, AsyncCallback<LayoutDefinition> callback) {
-		SRV.configurationService.getLayoutDefinition(session, className, callback);
+	public void getLayoutDefinition(Session session, String className, int typeId, AsyncCallback<LayoutDefinition> callback) {
+		SRV.configurationService.getLayoutDefinition(session, className, typeId, callback);
 	}
 
 	@Override

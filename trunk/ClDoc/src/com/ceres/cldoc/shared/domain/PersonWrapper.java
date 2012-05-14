@@ -1,10 +1,11 @@
 package com.ceres.cldoc.shared.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import com.ceres.cldoc.model.AbstractNamedValueAccessor;
-import com.ceres.cldoc.model.GenericItemField;
-import com.ceres.cldoc.model.IGenericItemField;
+import com.ceres.cldoc.model.ActField;
+import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.Person;
 
 public class PersonWrapper extends AbstractNamedValueAccessor {
@@ -17,7 +18,7 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 	}
 	
 		@Override
-		public <T> void set(String fieldName, T value) {
+		public IActField set(String fieldName, Serializable value) {
 			if (fieldName.equals("firstName")) {
 				humanBeing.firstName = (String) value;
 			} else if (fieldName.equals("lastName")) {
@@ -35,26 +36,27 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 			} else if (fieldName.equals("primaryAddress.postCode")) {
 				humanBeing.getPrimaryAddress().postCode = (String)value;
 			}
+			return null;
 		}
 		
 		@Override
-		public IGenericItemField get(String fieldName) {
+		public IActField get(String fieldName) {
 			if (fieldName.equals("firstName")) {
-				return new GenericItemField(fieldName, humanBeing.firstName);
+				return new ActField(fieldName, humanBeing.firstName);
 			} else if (fieldName.equals("lastName")) {
-				return new GenericItemField(fieldName, humanBeing.lastName);
+				return new ActField(fieldName, humanBeing.lastName);
 			} else if (fieldName.equals("dateOfBirth")) {
-				return new GenericItemField(fieldName, humanBeing.dateOfBirth);
+				return new ActField(fieldName, humanBeing.dateOfBirth);
 			} else if (fieldName.equals("primaryAddress.street")) {
-				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().street);
+				return new ActField(fieldName, humanBeing.getPrimaryAddress().street);
 			} else if (fieldName.equals("primaryAddress.number")) {
-				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().number);
+				return new ActField(fieldName, humanBeing.getPrimaryAddress().number);
 			} else if (fieldName.equals("primaryAddress.city")) {
-				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().city);
+				return new ActField(fieldName, humanBeing.getPrimaryAddress().city);
 			} else if (fieldName.equals("primaryAddress.co")) {
-				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().co);
+				return new ActField(fieldName, humanBeing.getPrimaryAddress().co);
 			} else if (fieldName.equals("primaryAddress.postCode")) {
-				return new GenericItemField(fieldName, humanBeing.getPrimaryAddress().postCode);
+				return new ActField(fieldName, humanBeing.getPrimaryAddress().postCode);
 			} else {
 				return null;
 			}

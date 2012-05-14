@@ -1,5 +1,7 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.HashMap;
+
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
@@ -19,6 +21,9 @@ public class PersonEditor extends Form <PersonWrapper> {
 		addLine(SRV.c.firstName(), "firstName", Form.DataTypes.FT_STRING, 50, true);
 		addLine(SRV.c.lastName(), "lastName", Form.DataTypes.FT_STRING, 50);
 		addLine(SRV.c.birthDate(), "dateOfBirth", Form.DataTypes.FT_DATE);
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		attributes.put("parent", "MASTERDATA.GENDER");
+		addLine(SRV.c.gender(), "gender", Form.DataTypes.FT_OPTION_SELECTION, attributes );
 		addLine(SRV.c.street(), "primaryAddress.street", Form.DataTypes.FT_STRING, 50);
 		addLine(SRV.c.no(), "primaryAddress.number", Form.DataTypes.FT_STRING, 3);
 		addLine(SRV.c.co(), "primaryAddress.co", Form.DataTypes.FT_STRING, 50);

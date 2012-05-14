@@ -164,11 +164,13 @@ public class CatalogServiceImpl implements ICatalogService {
 	
 	private Catalog getChild(Collection<Catalog> children, String code) {
 		Catalog child = null;
-		Iterator<Catalog> iter = children.iterator();
-		while (child == null && iter.hasNext()) {
-			Catalog next = iter.next();
-			if (next.code.equals(code)) {
-				child = next;
+		if (children != null) {
+			Iterator<Catalog> iter = children.iterator();
+			while (child == null && iter.hasNext()) {
+				Catalog next = iter.next();
+				if (next.code.equals(code)) {
+					child = next;
+				}
 			}
 		}
 		return child;

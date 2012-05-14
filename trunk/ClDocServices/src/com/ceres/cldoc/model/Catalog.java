@@ -8,8 +8,14 @@ import java.util.Date;
 public class Catalog implements Serializable {
 
 	public final static String ROOT = "ROOT";
+	public static final Catalog ADMIN = new Catalog(10l);
+	public static final Catalog USER = new Catalog(11l);
+	public static final Catalog GUEST = new Catalog(12l);
+	
+	public static final Catalog PATIENT = new Catalog(Participation.PATIENT);
 	
 	private static final long serialVersionUID = -6847677602213023115L;
+
 
 	public Long id;
 	public String code;

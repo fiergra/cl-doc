@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.util.Jdbc;
@@ -24,7 +25,8 @@ public class UserServiceImpl implements IUserService {
 				IEntityService entityService = Locator.getEntityService();
 				User user = null;
 				String hash = Strings.hash(password);
-				String sql = "select * from User where name = ? ";
+				String sql = "select * from User u inner join Organisation o on o.ID = ORGANISATION_ID " +
+						"where u.name = ? ";
 				if (hash == null) {
 					sql += " and hash is null";
 				} else {
@@ -41,6 +43,7 @@ public class UserServiceImpl implements IUserService {
 					user.id = rs.getLong("id");
 					user.userName = userName;
 					user.person = entityService.load(session, rs.getLong("person_id"));
+					user.organisation = entityService.load(session, rs.getLong("organisation_id"));
 					user.hash = rs.getString("hash");
 				}
 				rs.close();
@@ -53,7 +56,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public void register(final Session session, final Person person, final String userName, final String password) {
+	public void register(final Session session, final Person person, final Organisation organisation, final String userName, final String password) {
 		User user = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -75,10 +78,11 @@ public class UserServiceImpl implements IUserService {
 					}
 				} else {
 					entityService.save(session, person);
-					PreparedStatement i = con.prepareStatement("insert into User (person_id, name, hash) values (?,?,?)", new String[]{"ID"});
+					PreparedStatement i = con.prepareStatement("insert into User (person_id, organisation_id, name, hash) values (?,?,?,?)", new String[]{"ID"});
 					i.setLong(1, person.id);
-					i.setString(2, userName);
-					i.setString(3, hash);
+					i.setLong(2, organisation.id);
+					i.setString(3, userName);
+					i.setString(4, hash);
 					user = new User();
 					user.id = Jdbc.exec(i);
 					user.person = person;

@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 
 public class EntityServiceImplTest extends TransactionalTest4 {
@@ -43,14 +44,15 @@ public class EntityServiceImplTest extends TransactionalTest4 {
 	@Test
 	public void testLogin() {
 		IUserService userService = Locator.getUserService();
+		IEntityService entityService = Locator.getEntityService();
 		
 		Session session = userService.login(getSession(), "heinz", "achmed");
 		Assert.assertNull(session);
 		Person person = new Person();
 		person.firstName = "Heinz";
 		person.lastName = "Achmed";
-		
-		userService.register(getSession(), person, "heinz", "achmed");
+		Organisation o = entityService.load(getSession(), 20);
+		userService.register(getSession(), person, o, "heinz", "achmed");
 		session = userService.login(getSession(), "heinz", "achmed");
 		Assert.assertNotNull(session);
 	}

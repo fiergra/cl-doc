@@ -3,6 +3,7 @@ package com.ceres.cldoc.server.service;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
+import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -20,9 +21,9 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void register(Person person, String userName, String password) {
+	public void register(Person person, Organisation organisation, String userName, String password) {
 		Session session = new Session();
-		Locator.getUserService().register(session, person, userName, password);
+		Locator.getUserService().register(session, person, organisation, userName, password);
 	}
 
 	@Override

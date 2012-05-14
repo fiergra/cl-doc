@@ -26,21 +26,24 @@ public class TxManager {
 //					log.info("datasource resource NOT found: "
 //							+ x.getLocalizedMessage());
 					MysqlConnectionPoolDataSource ds = new MysqlConnectionPoolDataSource();
-					ds.setDatabaseName("cldoc");
-					ds.setServerName("krebsgesellschaft.dyndns.org");
-					ds.setPort(2007);
-					ds.setUser("ralph4");
+					ds.setDatabaseName("ClDoc");
+					ds.setUser("root");
 					ds.setPassword("sql4");
-					dataSource = ds;
+					ds.setProfileSQL(false);
+					ds.setDumpMetadataOnColumnNotFound(true);
+					ds.setDumpQueriesOnException(true);
 					ds.getConnection().close();
+					dataSource = ds;
 				} catch (SQLException e) {
 					log.info("datasource resource NOT found: "
 							+ e.getLocalizedMessage());
 					MysqlConnectionPoolDataSource ds = new MysqlConnectionPoolDataSource();
-					ds.setDatabaseName("test");
-					ds.setProfileSQL(false);
-					ds.setDumpMetadataOnColumnNotFound(true);
-					ds.setDumpQueriesOnException(true);
+					ds.setDatabaseName("ClDoc");
+					ds.setServerName("krebsgesellschaft.dyndns.org");
+					ds.setPort(2007);
+					ds.setUser("ralph4");
+					ds.setPassword("sql4");
+					ds.getConnection().close();
 					dataSource = ds;
 				}
 //			}
@@ -62,7 +65,7 @@ public class TxManager {
 
 	private static ConcurrentHashMap<Session, Transaction> transactions = new ConcurrentHashMap<Session, Transaction>();
 
-	public static Connection start(Session session) {
+	public static synchronized Connection start(Session session) {
 		Transaction tx = transactions.get(session);
 		if (tx == null) {
 			log.info("starting transaction (" + session.getId() + ")");
@@ -79,7 +82,7 @@ public class TxManager {
 		return tx.con;
 	}
 
-	public static void end(Session session) {
+	public static synchronized void end(Session session) {
 		Transaction tx = transactions.get(session);
 
 		if (--tx.txCount == 0) {
@@ -90,6 +93,7 @@ public class TxManager {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			transactions.remove(session);
 			tx.con = null;
 		} else {
 			log.info("ending transaction (" + session.getId() + "/"
@@ -97,7 +101,7 @@ public class TxManager {
 		}
 	}
 
-	public static void cancel(Session session) {
+	public static synchronized void cancel(Session session) {
 		Transaction tx = transactions.get(session);
 
 		if (tx.txCount > 0) {
