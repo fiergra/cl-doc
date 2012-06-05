@@ -7,10 +7,10 @@ public interface IActField extends Serializable {
 	final int FT_STRING = 1;
 	final int FT_INTEGER = 2;
 	final int FT_DATE = 3;
-	final int FT_REAL = 4;
-	final int FT_BLOB = 5;
+	final int FT_FLOAT = 4;
 	final int FT_CATALOG = 6;
 	final int FT_BOOLEAN = 7;
+	final int FT_LIST = 8;
 
 	String getName();
 	Long getId();
@@ -27,11 +27,13 @@ public interface IActField extends Serializable {
 //	void setValue(Catalog value);
 	
 	Serializable getValue();
-	byte[] getBlobValue();
+	
 	Long getLongValue();
+	Float getFloatValue();
 	String getStringValue();
 	Date getDateValue();
 	Catalog getCatalogValue();
 	void setId(long id);
 	Boolean getBooleanValue();
+	CatalogList getListValue();
 }

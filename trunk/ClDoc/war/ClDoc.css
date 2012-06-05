@@ -7,9 +7,9 @@ html, body {
 }
 
 body, table td, select, button {
-	font-family: Verdana;
+	font-family: Tahoma;
 	font-smooth: always;
-	font-size: small;
+	font-size: small; 
 }
 
 .background {
@@ -17,8 +17,8 @@ body, table td, select, button {
 	height:auto !important; /* Important Regel für moderne Browser */ 
 	height:100%; /* Mindesthöhe für den IE */ 
 	overflow: hidden !important; /* FF Scroll-leiste */ 
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#aabb99));
-	background: -moz-linear-gradient(top,  #fff,  #aabb99);
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#cce1ba));
+	background: -moz-linear-gradient(top,  #fff,  #cce1ba);
 }
 
 .main {
@@ -28,10 +28,19 @@ body, table td, select, button {
 }
 
 .resultTable {
-	border-width: 2;
-	border-style: inset;
-	border-radius: .5em;	
+	border-top:1px;
 	background: #fff;
+}
+
+.marker {
+	border:medium;
+	background: #a11;
+	width: 200px;
+	height: 400px;
+}
+
+.roundCorners {
+	border-radius: 5px;
 }
 
 .evenRow {
@@ -44,35 +53,16 @@ body, table td, select, button {
 }
 
 .resultRow:hover {
-	background-color: #77bb55
-}
-
-.personRenderer {
-	border: solid 1px #cce1ba;
-	border-radius: 5px;
-	box-shadow: 3px 3px 3px #777;
-	padding: .1em;
-	color: #606060;
-	background: #fff;
-	width: 100%;
-}
-
-.personRenderer:hover {
-	border: solid 1px #77bb55;
-	background: #cce1ba
+	background-color: #59C660
 }
 
 .viewer {
 	padding: 1.5em;
-	border-radius: 5px;
 }
 
 .formContainer {
-	background: #ddddcc;
+	background: #fff;
 	padding: 1em;
-	border: solid 1px;
-	border-color: #aabb99;
-	box-shadow: 3px 3px 3px #777;
 }
 
 .invalid {
@@ -92,6 +82,9 @@ body, table td, select, button {
 	width: 100%;
 }
 
+.actTitle {
+	background-color: #cce1ba;
+}
 
 .historyEntry {
 	border: solid 1px #cce1ba;
@@ -106,6 +99,7 @@ body, table td, select, button {
 	width: 100%;
 	padding-left: 5px;
 	padding-right: 5px;
+	background-color: #cce1ba;
 }
 
 .valueBagTitle {
@@ -118,7 +112,7 @@ body, table td, select, button {
 }
 
 .nameAndId {
-	font-size: 16pt;
+	font-size: 14pt;
 	font-weight: bold;
 }
 
@@ -136,7 +130,12 @@ body, table td, select, button {
 	width: 100px;
 }
 
-.form {
+.formSubLabel {
+	font-style: italic;
+}
+
+.docform {
+	border:medium;
 	text-align: left;
 	vertical-align: top;
 }
@@ -153,10 +152,9 @@ body, table td, select, button {
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: #77bb55;
+  border-color: #59C660;
   border-style: solid;
   border-width: 1px;
-  border-radius: 5px;
   overflow: hidden;
   padding: 6px;
 }
@@ -172,17 +170,17 @@ body, table td, select, button {
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
-  background: #77bb55;
+  background: #59C660;
 }
 
 .gwt-SuggestBox {
-	font-family: Verdana;
+	font-family: Tahoma;
 }
 
 .gwt-TextArea {
-	font-family: Verdana;
+	font-family: Tahoma;
 }
 
 .gwt-TextBox {
-	font-family: Verdana;
+	font-family: Tahoma;
 }

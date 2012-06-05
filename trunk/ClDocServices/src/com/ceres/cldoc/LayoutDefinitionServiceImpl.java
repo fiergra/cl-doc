@@ -3,6 +3,7 @@ package com.ceres.cldoc;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -126,7 +127,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public byte[] exportZip(Session session, final int type) {
+	public byte[] exportZip(Session session) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@SuppressWarnings("unchecked")
@@ -135,31 +136,47 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 				try {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					ZipOutputStream zout = new ZipOutputStream(out);
-					PreparedStatement s = con.prepareStatement(
-							"select name, xml from LayoutDefinition ld inner join ActClass ac on ac.id = ActClassId " +
-							"where valid_to is null or valid_to > CURRENT_TIMESTAMP and TypeId = ?");
-					s.setInt(1, type);
-					ResultSet rs = s.executeQuery();
-					while (rs.next()) {
-						String name = rs.getString("name");
-						String xml = rs.getString("xml");
-						ZipEntry zipEntry = new ZipEntry(name + ".xml");
-						zout.putNextEntry(zipEntry);
-						zout.write(xml.getBytes("UTF-8"));
-					}
-					rs.close();
-					s.close();
+					
+					ZipEntry zipEntry = new ZipEntry("form/");
+					zout.putNextEntry(zipEntry);
+					exportType("form/", LayoutDefinition.FORM_LAYOUT, con, zout);
+					
+					zipEntry = new ZipEntry("print/");
+					zout.putNextEntry(zipEntry);
+					exportType("print/", LayoutDefinition.PRINT_LAYOUT, con, zout);
+					
 					zout.close();
 					return out.toByteArray();
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}
 			}
+
+			private void exportType(final String path, final int type, Connection con,
+					ZipOutputStream zout) throws SQLException, IOException,
+					UnsupportedEncodingException {
+				PreparedStatement s = con.prepareStatement(
+						"select name, xml from LayoutDefinition ld inner join ActClass ac on ac.id = ActClassId " +
+						"where (valid_to is null or valid_to > CURRENT_TIMESTAMP) and TypeId = ?");
+				s.setInt(1, type);
+				ResultSet rs = s.executeQuery();
+				while (rs.next()) {
+					String name = rs.getString("name");
+					String xml = rs.getString("xml");
+					String entryName = path + name + ".xml";
+					log.info("add: " + entryName);
+					ZipEntry zipEntry = new ZipEntry(entryName);
+					zout.putNextEntry(zipEntry);
+					zout.write(xml.getBytes("UTF-8"));
+				}
+				rs.close();
+				s.close();
+			}
 		});
 	}
 
 	@Override
-	public void importZip(final Session session, final int type, final InputStream in) {
+	public void importZip(final Session session, final InputStream in) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@SuppressWarnings("unchecked")
@@ -179,11 +196,23 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 						}
 						String xml = new String(bOut.toByteArray(), "UTF-8");
 						log.info(name + ": " + xml);
-						
-						LayoutDefinition ld = new LayoutDefinition(null, type, removeExtension(name), xml);
-						
-						save(session, ld);
-						
+						if (name.endsWith(".xml")) {
+							int type = -1;
+							if (name.startsWith("form/")) {
+								type = LayoutDefinition.FORM_LAYOUT;
+								name = name.substring(5);
+							} else if (name.startsWith("print/")){
+								type = LayoutDefinition.PRINT_LAYOUT;
+								name = name.substring(6);
+							} 
+							
+							if (type != -1) {
+								LayoutDefinition ld = new LayoutDefinition(null, 3, removeExtension(name), xml);
+								save(session, ld);
+							} else {
+								log.warning(name + " cannot be imported!");
+							}
+						}
 						zipEntry = zin.getNextEntry();
 					}
 					zin.close();

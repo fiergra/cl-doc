@@ -8,6 +8,12 @@ public abstract class AbstractNamedValueAccessor implements IAct, Serializable {
 	private static final long serialVersionUID = 285371339905648646L;
 
 	@Override
+	public CatalogList getCatalogList(String fieldName) {
+		IActField field = get(fieldName);
+		return field != null ? field.getListValue() : null;
+	}
+
+	@Override
 	public String getString(String fieldName) {
 		IActField field = get(fieldName);
 		return field != null ? field.getStringValue() : null;
@@ -17,6 +23,12 @@ public abstract class AbstractNamedValueAccessor implements IAct, Serializable {
 	public Long getLong(String fieldName) {
 		IActField field = get(fieldName);
 		return field != null ? field.getLongValue() : null;
+	}
+
+	@Override
+	public Float getFloat(String fieldName) {
+		IActField field = get(fieldName);
+		return field != null ? field.getFloatValue() : null;
 	}
 
 	@Override
@@ -34,7 +46,7 @@ public abstract class AbstractNamedValueAccessor implements IAct, Serializable {
 	@Override
 	public boolean getBoolean(String fieldName) {
 		IActField field = get(fieldName);
-		return field != null ? field.getBooleanValue() : null;
+		return field != null ? field.getBooleanValue() : Boolean.FALSE;
 	}
 
 	

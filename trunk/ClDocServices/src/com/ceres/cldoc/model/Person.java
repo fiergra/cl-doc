@@ -2,7 +2,7 @@ package com.ceres.cldoc.model;
 
 import java.util.Date;
 
-public class Person extends AbstractEntity {
+public class Person extends Entity {
 
 	private static final long serialVersionUID = -6144522368213126601L;
 

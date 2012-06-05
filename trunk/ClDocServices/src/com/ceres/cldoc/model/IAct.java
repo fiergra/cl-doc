@@ -13,10 +13,13 @@ public interface IAct extends Serializable {
 
 	public abstract Long getLong(String fieldName);
 
+	public abstract Float getFloat(String fieldName);
+
 	public abstract boolean getBoolean(String fieldName);
 
 	public abstract Catalog getCatalog(String fieldName);
 
 	public abstract IActField set(String fieldName, Serializable value);
 
+	public abstract CatalogList getCatalogList(String fieldName);
 }

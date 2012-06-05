@@ -8,9 +8,10 @@ public class Participation implements Serializable {
 	private static final long serialVersionUID = 8017405646839706167L;
 
 	public static final long PATIENT = 101l;
+	public static final long ORGANISATION = 102l;
 
 	public Long id;
-	public AbstractEntity entity;
+	public Entity entity;
 	public Catalog role;
 	public Act act;
 	public Date start;
@@ -19,7 +20,7 @@ public class Participation implements Serializable {
 	public Participation() {
 	}
 
-	public Participation(Act act, AbstractEntity entity, Catalog role, Date start, Date end) {
+	public Participation(Act act, Entity entity, Catalog role, Date start, Date end) {
 		this.entity = entity;
 		this.role = role;
 		this.act = act;

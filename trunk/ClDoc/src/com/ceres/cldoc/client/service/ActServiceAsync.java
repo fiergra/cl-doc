@@ -3,7 +3,7 @@ package com.ceres.cldoc.client.service;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.LogEntry;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -18,5 +18,5 @@ public interface ActServiceAsync {
 	void save(Session session, Act act, AsyncCallback<Act> callback);
 	void print(Session session, Act act, AsyncCallback<String> callback);
 	void findById(Session session, long id, AsyncCallback<Act> callback);
-	void findByEntity(Session session, AbstractEntity entity, AsyncCallback<List<Act>> callback);
+	void findByEntity(Session session, Entity entity, AsyncCallback<List<Act>> callback);
 }

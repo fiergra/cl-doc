@@ -1,7 +1,6 @@
 package com.ceres.cldoc.client.views;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,11 +20,11 @@ public class CatalogRadioGroup extends HorizontalPanel implements IEntitySelecto
 
 	public CatalogRadioGroup(ClDoc clDoc, String parentCode, String orientation) {
 		super();
-		setPixelSize(300, 25);
-		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<Collection<Catalog>>(clDoc, "listCatalogs") {
+		setSpacing(5);
+		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 			@Override
-			public void onSuccess(Collection<Catalog> result) {
+			public void onSuccess(List<Catalog> result) {
 				buttons = new HashMap<Long, RadioButton>(result.size());
 				String groupName = String.valueOf("rbgroup" + ++groupCount);
 				
@@ -58,7 +57,7 @@ public class CatalogRadioGroup extends HorizontalPanel implements IEntitySelecto
 		}
 	}
 	
-	private List<ChangeHandler> changeHandlers = new ArrayList<ChangeHandler>();
+	private final List<ChangeHandler> changeHandlers = new ArrayList<ChangeHandler>();
 	
 	public void addChangeHandler(ChangeHandler changeHandler) {
 		changeHandlers.add(changeHandler);

@@ -9,13 +9,13 @@ public class LogEntry implements Serializable {
 	public long id;
 	public int type;
 	public Act act;
-	public AbstractEntity entity;
+	public Entity entity;
 	public String logEntry;
 	public Date logDate;
 	
 	public LogEntry(){}
 	
-	public LogEntry(long id, int type, Act act, AbstractEntity entity, String logEntry, Date logDate) {
+	public LogEntry(long id, int type, Act act, Entity entity, String logEntry, Date logDate) {
 		super();
 		this.id = id;
 		this.type = type;

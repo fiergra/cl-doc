@@ -15,7 +15,7 @@ public class LayoutDefinitionServiceImplTest extends TransactionalTest {
 
 	public void testExport() throws InterruptedException, IOException {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
-		byte[] bytes = lds.exportZip(getSession(), LayoutDefinition.FORM_LAYOUT);
+		byte[] bytes = lds.exportZip(getSession());
 
 		File f = File.createTempFile("layout.", ".zip");
 		System.out.println(f.getAbsolutePath());
@@ -24,7 +24,7 @@ public class LayoutDefinitionServiceImplTest extends TransactionalTest {
 		w.close();
 		
 		InputStream in = new ByteArrayInputStream(bytes);
-		lds.importZip(getSession(), LayoutDefinition.FORM_LAYOUT, in);
+		lds.importZip(getSession(), in);
 	}
 	
 	public void testAll() throws InterruptedException {

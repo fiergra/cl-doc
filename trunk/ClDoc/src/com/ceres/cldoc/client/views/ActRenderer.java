@@ -138,7 +138,7 @@ public class ActRenderer extends DockLayoutPanel {
 		textPanel.add(title);
 
 		titlePanel.add(textPanel);
-		title.setStylePrimaryName("actTitle");
+		titlePanel.setStylePrimaryName("actTitle");
 		titlePanel.add(buttons);
 
 		addNorth(titlePanel, 38);
@@ -175,6 +175,7 @@ public class ActRenderer extends DockLayoutPanel {
 
 			@Override
 			public void onSuccess(Act act) {
+				formContent.clearModification();
 				onInsertUpdateDelete.onOk(doSelect ? act : null);
 			}
 		});
@@ -279,9 +280,9 @@ public class ActRenderer extends DockLayoutPanel {
 		};		
 	
 		if (vb.className.equals("externalDoc")) {
-			IActField field = vb.get("file");
+			IActField field = vb.get("docId");
 			String baseUrl = GWT.getModuleBaseURL();
-			Frame frame = new Frame(baseUrl + "download?id=" + field.getId());
+			Frame frame = new Frame(baseUrl + "download?id=" + field.getLongValue());
 			Widget center = getCenter();
 			frame.setPixelSize(w, h);
 			frame.setWidth("100%");

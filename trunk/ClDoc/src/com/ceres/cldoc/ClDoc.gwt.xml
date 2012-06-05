@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='cldoc'>
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name='com.ceres.cldoc.ClDocServices'/>
+
+  <!-- Inherit the default GWT style sheet.  You can change       -->
+  <!-- the theme of your GWT application by uncommenting          -->
+  <!-- any one of the following lines.                            -->
+  
+  <inherits name='com.google.gwt.user.theme.clean.Clean'/>   
+  
+  <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+  <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+  <inherits name='com.google.gwt.user.theme.standard.StandardResources'/>
+  <!-- Other module inherits                                      -->
+  <!-- Specify the app entry point class.                         -->
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+  <entry-point class='com.ceres.cldoc.client.ClDoc'/>
+
+  <!-- Specify the paths for translatable code                    -->
+  <source path='client'/>
+  <source path='shared'/>
+
+</module>

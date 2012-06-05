@@ -40,7 +40,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 		titlePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		titlePanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		titlePanel.setStylePrimaryName("buttonsPanel");
-		
+		titlePanel.addStyleName("actTitle");
 		buttonsPanel = new HorizontalPanel();
 		buttonsPanel.setSpacing(5);
 		titlePanel.add(buttonsPanel);
@@ -55,8 +55,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 			final OnClick<T> onClick, boolean showRefresh) {
 		this(clDoc);
 		if (showRefresh) {
-			Image pbWindowRefresh = addButton("refresh", "icons/32/Window-Refresh-icon.png");
-			pbWindowRefresh.addClickHandler(new ClickHandler() {
+			Image pbWindowRefresh = addButton("refresh", "icons/32/Window-Refresh-icon.png", new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
@@ -118,16 +117,33 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 
 	public abstract void addRow(FlexTable table, int row, T entry);
 
-	public Image addButton(String label, String source) {
+	public Image addButton(String label, String source, ClickHandler clickHandler) {
+		Image img = createWidget(label, source, clickHandler);
+		addWidget(img);
+		return img;
+	}
+
+	private Image createWidget(String label, String source,
+			ClickHandler clickHandler) {
 		Image img = new Image(source);
 		img.setTitle(label);
-		buttonsPanel.add(img);
 		img.addStyleName("linkButton");
+		img.addClickHandler(clickHandler);
+		return img;
+	}
+
+	public Image insertButton(String label, String source, ClickHandler clickHandler) {
+		Image img = createWidget(label, source, clickHandler);
+		insertWidget(img);
 		return img;
 	}
 
 	public void addWidget(Widget widget) {
 		buttonsPanel.add(widget);
+	}
+
+	public void insertWidget(Widget widget) {
+		buttonsPanel.insert(widget, 0);
 	}
 
 	

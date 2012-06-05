@@ -3,6 +3,7 @@ package com.ceres.cldoc.client.views;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
@@ -10,6 +11,7 @@ import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -18,6 +20,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -39,6 +42,9 @@ public class CatalogConfigurator extends DockLayoutPanel {
 	private final Image pbSave = new Image("icons/32/Save-icon.png");
 	private final Image pbNew = new Image("icons/32/File-New-icon.png");
 	private final Image pbDelete = new Image("icons/32/File-Delete-icon.png");
+	private final Image pbUpload = new Image("icons/32/Button-Upload-icon.png");
+	private final Image pbDownload = new Image("icons/32/Button-Download-icon.png");
+
 	private Collection<Catalog> catalogs;
 	private ClDoc clDoc;
 	
@@ -58,6 +64,9 @@ public class CatalogConfigurator extends DockLayoutPanel {
 		title.setWidth("100%");
 		title.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		title.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		final Label selectionLabel = new Label("-");
+		selectionLabel.setWidth("200px");
+		title.add(selectionLabel);
 		title.add(buttons);
 		buttons.setSpacing(5);
 		pbSave.addClickHandler(new ClickHandler() {
@@ -95,21 +104,55 @@ public class CatalogConfigurator extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				TreeItem selected = tree.getSelectedItem();
+				final TreeItem selected = tree.getSelectedItem();
 				if (selected != null) {
-					SRV.configurationService.delete(clDoc.getSession(), (Catalog)selected.getUserObject(), 						
-							new DefaultCallback<Void>(clDoc, "delete") {
+					new MessageBox("Loeschen", "Wollen Sie den ausgewaehlten Katalog loeschen?", MessageBox.MB_YES | MessageBox.MB_NO, MessageBox.MESSAGE_ICONS.MB_ICON_QUESTION){
 
 						@Override
-						public void onSuccess(Void result) {
-							refreshTree(tree);
-						}
+						protected void onClick(int result) {
+							if (result == MessageBox.MB_YES) {
+								SRV.configurationService.delete(clDoc.getSession(), (Catalog)selected.getUserObject(), 						
+										new DefaultCallback<Void>(clDoc, "delete") {
 
-					});
+									@Override
+									public void onSuccess(Void result) {
+										refreshTree(tree);
+									}
 
+								});
+							}
+						}};
+					
 				}
 			}
 		});
+		
+		pbUpload.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				UploadDialog.uploadCatalogs(clDoc, new OnOkHandler<Void>() {
+					
+					@Override
+					public void onOk(Void result) {
+						refreshTree(tree);
+					}
+				});
+			}
+		});
+
+		pbDownload.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				String baseUrl = GWT.getModuleBaseURL();
+				Window.open(baseUrl + "download?type=catalogs", "_blank", "");
+			}
+		});
+
+		
+		buttons.add(pbDownload);
+		buttons.add(pbUpload);
 		
 		buttons.add(pbNew);
 		buttons.add(pbSave);
@@ -120,8 +163,8 @@ public class CatalogConfigurator extends DockLayoutPanel {
 			@Override
 			public void render(com.google.gwt.cell.client.Cell.Context context,
 					Catalog value, SafeHtmlBuilder sb) {
-				sb.appendHtmlConstant("<tr><td>" + value.code + "</td><td>"
-						+ value.shortText + "</td><td>" + value.text
+				sb.appendHtmlConstant("<tr><td>" + value.id + "</td>|<td>"
+						+ value.shortText + "</td> - <td>" + value.text
 						+ "</td></tr>");
 
 			}
@@ -136,7 +179,13 @@ public class CatalogConfigurator extends DockLayoutPanel {
 
 			@Override
 			public void onSelection(SelectionEvent<TreeItem> event) {
-				populateChildGrid(childGrid, event.getSelectedItem());
+				TreeItem selected = event.getSelectedItem();
+				if (selected != null && selected.getUserObject() != null) {
+					selectionLabel.setText(((Catalog)selected.getUserObject()).toString());
+				} else {
+					selectionLabel.setText("-");
+				}
+				populateChildGrid(childGrid, selected);
 			}
 		});
 
@@ -171,10 +220,10 @@ public class CatalogConfigurator extends DockLayoutPanel {
 				.getUserObject() : null);
 
 		SRV.catalogService.listCatalogs(clDoc.getSession(), c,
-				new DefaultCallback<Collection<Catalog>>(clDoc, "listCatalogs") {
+				new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 					@Override
-					public void onSuccess(Collection<Catalog> result) {
+					public void onSuccess(List<Catalog> result) {
 						catalogs = result;
 						updateRowData(childGrid);
 					}
@@ -277,15 +326,15 @@ public class CatalogConfigurator extends DockLayoutPanel {
 
 	private void refreshTree(final Tree tree) {
 		tree.clear();
-
 		SRV.catalogService.listCatalogs(clDoc.getSession(), (Catalog)null,
-				new DefaultCallback<Collection<Catalog>>(clDoc, "listCatalogs") {
+				new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 					@Override
-					public void onSuccess(Collection<Catalog> result) {
+					public void onSuccess(List<Catalog> result) {
 						TreeItem root = new TreeItem("root");
 						addTreeItems(root, result);
 						tree.addItem(root);
+						root.setState(true);
 						tree.setSelectedItem(root);
 					}
 					
@@ -293,6 +342,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 						for (Catalog c : children) {
 							TreeItem ti = catalog2TreeItem(c);
 							parent.addItem(ti);
+							ti.setState(true);
 							if (c.hasChildren()) {
 								addTreeItems(ti, c.children);
 							}
@@ -304,7 +354,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 	}
 
 	private TreeItem catalog2TreeItem(Catalog c) {
-		TreeItem ti = new TreeItem("<b>" + c.code + "</b><i>" + c.shortText + "</i>");
+		TreeItem ti = new TreeItem(c.id + "|<b>" + c.code + "</b> - <i>" + c.shortText + "</i>");
 		ti.setUserObject(c);
 		return ti;
 	}

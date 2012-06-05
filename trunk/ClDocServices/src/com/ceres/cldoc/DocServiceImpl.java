@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -19,11 +20,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.cldoc.model.Person;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -66,7 +69,8 @@ public class DocServiceImpl implements IDocService {
 			PdfWriter writer) throws DocumentException {
 		document.setMargins(72, 72, 108, 180);
 		document.add(new Paragraph(act.className, new Font(
-				FontFamily.HELVETICA, 36, Font.BOLD)));
+				FontFamily.HELVETICA, 18, Font.BOLD)));
+		document.add(new Paragraph("created by " + session.getUser().userName + " at " + new Date()));
 		Font boldFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 		Font italicFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.ITALIC);
 
@@ -153,9 +157,14 @@ public class DocServiceImpl implements IDocService {
 
 				if (numChildren == 1
 						&& childNodes.item(0).getNodeType() == Node.TEXT_NODE) {
-					p = new Paragraph(replaceVars(session, act, childNodes
-							.item(0).getNodeValue()),
-							getFont(defaults, domNode));
+					Font font = getFont(defaults, domNode);
+					String text = replaceVars(session, act, childNodes
+							.item(0).getNodeValue());
+					if (font != null) {
+						p = new Paragraph(text, font);
+					} else {
+						p = new Paragraph(text);
+					}
 					setParagraphAttributes(p, domNode, defaults);
 				} else {
 					p = new Paragraph();
@@ -164,6 +173,8 @@ public class DocServiceImpl implements IDocService {
 							childNodes);
 				}
 				document.add(p);
+			} else if (elementName.equals("address")) {
+				addAddress(session, act, pdfNode, domNode, document, writer);
 			} else if (elementName.equals("pdf")) {
 				defaults = initDefaults(domNode);
 				traverseChildren(session, act, pdfNode, document, writer,
@@ -188,6 +199,47 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
+	private void addAddress(Session session, Act act, Element pdfNode,
+			Node domNode, Document document, PdfWriter writer) throws DocumentException {
+		
+		String type = getString(domNode.getAttributes(), "type", "patient");
+		Entity entity = null;
+		Participation p = null;
+		
+		if ("patient".equals(type)) {
+			p = act.getParticipation(Participation.PATIENT);
+		} else if ("organisation".equals(type)){
+			p = act.getParticipation(Participation.ORGANISATION);
+		}
+		entity = p != null ? p.entity : null;
+		
+		if (entity != null) {
+			if (entity.addresses != null && !entity.addresses.isEmpty()) {
+				Paragraph addressParagraph = new Paragraph();
+				setParagraphAttributes(addressParagraph, domNode, defaults);
+				
+				if (entity instanceof Person) {
+					Person person = (Person) entity;
+					addressParagraph.add(new Paragraph(person.firstName + " " + person.lastName));
+				} else {
+					addressParagraph.add(new Paragraph(entity.name));
+				}
+				Address a = entity.addresses.get(0);
+				addressParagraph.add(new Paragraph(a.street + " " + a.number));
+				if (a.co != null) {
+					addressParagraph.add(new Paragraph(a.co));
+				}
+				addressParagraph.add(new Paragraph(a.postCode + " " + a.city));
+
+				document.add(addressParagraph);
+			} else {
+				document.add(new Paragraph("no address for entity found!"));
+			}
+		} else {
+			document.add(new Paragraph("no entity of type " + type + " found!"));
+		}
+	}
+
 	private void setParagraphAttributes(Paragraph p, Node domNode,
 			HashMap<String, Object> defaults) {
 		if (domNode.hasAttributes()) {
@@ -197,7 +249,7 @@ public class DocServiceImpl implements IDocService {
 			Float indentationRight = getFloat(attributes, "indentationLeft");
 			Float spacingBefore = getFloat(attributes, "spacingBefore");
 			Float spacingAfter = getFloat(attributes, "spacingAfter");
-			String alignment = getString(attributes, "align");
+			String alignment = getString(attributes, "align", null);
 
 			if (alignment != null) {
 				p.setAlignment(getAlignment(alignment));
@@ -258,8 +310,8 @@ public class DocServiceImpl implements IDocService {
 		Font font = null;
 		if (domNode.hasAttributes()) {
 			NamedNodeMap attributes = domNode.getAttributes();
-			String fontFamily = getString(attributes, "fontFamily");
-			String fontStyle = getString(attributes, "fontStyle");
+			String fontFamily = getString(attributes, "fontFamily", null);
+			String fontStyle = getString(attributes, "fontStyle", null);
 			Float fontSize = getFloat(attributes, "fontSize");
 
 			font = new Font(getFontFamily(fontFamily, defaults), getFontSize(
@@ -292,13 +344,13 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
-	private String getString(NamedNodeMap attributes, String name) {
+	private String getString(NamedNodeMap attributes, String name, String defaultValue) {
 		Node node = attributes.getNamedItem(name);
-		return node != null ? node.getTextContent() : null;
+		return node != null ? node.getTextContent() : defaultValue;
 	}
 
 	private Float getFloat(NamedNodeMap attributes, String name) {
-		String sValue = getString(attributes, name);
+		String sValue = getString(attributes, name, null);
 		return sValue != null ? Float.parseFloat(sValue) : null;
 	}
 
@@ -316,12 +368,20 @@ public class DocServiceImpl implements IDocService {
 
 	private String getValue(Session session, Act act, String varName) {
 		Serializable value = null;
-		if (varName.startsWith("PATIENT.")) {
-			Participation participation = act
-					.getParticipation(Participation.PATIENT);
-			if (participation != null) {
-				value = getEntityProperty(participation.entity,
-						varName.substring("PATIENT.".length()));
+		int index = varName.indexOf('.');
+		
+		if (index != -1) {
+			if (varName.startsWith("PATIENT.")) {
+				Participation participation = act
+						.getParticipation(Participation.PATIENT);
+				if (participation != null) {
+					value = getEntityProperty(participation.entity,
+							varName.substring("PATIENT.".length()));
+				}
+			} else {
+				Object object = act.getValue(varName.substring(0, index));
+				value = object != null ? getEntityProperty(object,
+						varName.substring(index + 1)) : null;
 			}
 		} else {
 			value = act.getValue(varName);
@@ -329,7 +389,7 @@ public class DocServiceImpl implements IDocService {
 		return value != null ? value.toString() : "";
 	}
 
-	private Serializable getEntityProperty(AbstractEntity entity, String propertyName) {
+	private Serializable getEntityProperty(Object entity, String propertyName) {
 		Serializable value = null;
 //		try {
 //			PropertyDescriptor pd = new PropertyDescriptor(propertyName, entity.getClass());
@@ -360,7 +420,7 @@ public class DocServiceImpl implements IDocService {
 			return (Serializable) (field != null ? field.get(entity) : null);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException(e);
+			return "class: " + entity.getClass().getCanonicalName() + "[" + propertyName + "] ==> " + e;
 		}
 	}
 

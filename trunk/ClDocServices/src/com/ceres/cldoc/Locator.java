@@ -10,6 +10,14 @@ public class Locator {
 	private static LayoutDefinitionServiceImpl layoutDefinitionService;
 	private static DocServiceImpl docService;
 	private static LogServiceImpl logService;
+	private static DocArchive docArchive;
+	
+	public static IDocArchive getDocArchive() {
+		if (docArchive == null) {
+			docArchive = new DocArchive();
+		}
+		return docArchive;
+	}
 
 	public static IEntityService getEntityService() {
 		if (entityService == null) {

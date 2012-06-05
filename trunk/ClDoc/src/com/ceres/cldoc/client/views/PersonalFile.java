@@ -2,26 +2,11 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.model.Person;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class PersonalFile extends DockLayoutPanel {
-
-	private Person humanBeing;
+public class PersonalFile extends EntityFile<Person> {
 
 	public PersonalFile(ClDoc clDoc, Person hb) {
-		super(Unit.PT);
-		this.humanBeing = hb;
-		addNorth(new PersonalFileHeader(hb), 22);
-		TabLayoutPanel tab = new ConfiguredTabPanel<Person>(clDoc, "CLDOC.PERSONALFILE", humanBeing);
-		tab.addStyleName("personalFile");
-		add(tab);
+		super(clDoc, hb, new PersonalFileHeader(hb), "CLDOC.PERSONALFILE");
 	}
-
-	public Person getHumanBeing() {
-		return humanBeing;
-	}
-
 	
 }

@@ -43,7 +43,7 @@ public interface StringConstants extends Constants {
 
 	String newPPP();
 
-	String home();
+	String persons();
 
 	String configuration();
 

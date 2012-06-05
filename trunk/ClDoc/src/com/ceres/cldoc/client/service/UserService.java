@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("user")
 public interface UserService extends RemoteService {
+	public static final String CLDOC_SESSION = "cldoc-session";
 	void register(Person person, Organisation organisation, String userName, String password);
 	Session login(String userName, String password);
 	long setPassword(Session session, User user, String password1, String password2);

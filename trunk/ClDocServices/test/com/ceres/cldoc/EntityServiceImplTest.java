@@ -2,6 +2,7 @@ package com.ceres.cldoc;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -9,11 +10,30 @@ import org.junit.Test;
 
 import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 
 public class EntityServiceImplTest extends TransactionalTest4 {
 
+	@Test
+	public void testRelations() {
+		IEntityService entityService = Locator.getEntityService();
+		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
+		List<Person> persons = entityService.list(getSession(), Entity.ENTITY_TYPE_PERSON);
+		
+		List<EntityRelation> relations = entityService.listRelations(getSession(), organisations.get(0), true);
+	}
+	
+	@Test
+	public void testSelectByType() {
+		IEntityService entityService = Locator.getEntityService();
+		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
+		List<Person> persons = entityService.list(getSession(), Entity.ENTITY_TYPE_PERSON);
+		
+	}
+	
 	@Test
 	public void testCatalog() {
 		ICatalogService catalogService = Locator.getCatalogService();
@@ -61,7 +81,6 @@ public class EntityServiceImplTest extends TransactionalTest4 {
 	public void testSave() {
 		Person person = new Person();
 		person.name = "Heinz";
-		person.type = 1;
 		
 		Address a = new Address();
 		a.street = "Strassenname";

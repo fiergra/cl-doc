@@ -52,7 +52,7 @@ public class Act extends AbstractNamedValueAccessor {
 		return (obj instanceof Act) ? obj.hashCode() == hashCode() : super.equals(obj);
 	}
 
-	public void addParticipant(AbstractEntity entity, Catalog role, Date start, Date end) {
+	public void addParticipant(Entity entity, Catalog role, Date start, Date end) {
 		if (participations == null) {
 			participations = new ArrayList<Participation>();
 		}
@@ -129,6 +129,10 @@ public class Act extends AbstractNamedValueAccessor {
 	public Serializable getValue(String fieldName) {
 		IActField field = get(fieldName);
 		return field != null ? field.getValue() : null;
+	}
+
+	public CatalogList getCatalogList(String fieldName) {
+		return (CatalogList) getValue(fieldName);
 	}
 
 }

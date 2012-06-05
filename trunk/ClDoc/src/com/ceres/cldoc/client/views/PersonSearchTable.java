@@ -73,15 +73,15 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		hp.add(new Label(SRV.c.search()));
 		hp.add(searchBox);
 
-		Image pbNew = addButton(SRV.c.newPPP(), "");
-		hp.add(pbNew);
-		pbNew.addClickHandler(new ClickHandler() {
+		Image pbNew = addButton(SRV.c.newPPP(), "icons/32/user-group-new.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				editPerson(clDoc, new Person());
 			}
 		});
+		pbNew.setPixelSize(32, 32);
+		hp.add(pbNew);
 		
 		
 		addWidget(hp);

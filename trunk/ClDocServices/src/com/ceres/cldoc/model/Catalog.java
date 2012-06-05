@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 public class Catalog implements Serializable {
 
@@ -13,6 +14,7 @@ public class Catalog implements Serializable {
 	public static final Catalog GUEST = new Catalog(12l);
 	
 	public static final Catalog PATIENT = new Catalog(Participation.PATIENT);
+	public static final Catalog ORGANISATION = new Catalog(Participation.ORGANISATION);
 	
 	private static final long serialVersionUID = -6847677602213023115L;
 
@@ -35,7 +37,7 @@ public class Catalog implements Serializable {
 
 	@Override
 	public String toString() {
-		return code;
+		return id != null ? id + "|" + code : code;
 	}
 	
 
@@ -49,6 +51,20 @@ public class Catalog implements Serializable {
 
 	public boolean hasChildren() {
 		return children != null && !children.isEmpty();
+	}
+
+	public void removeChild(Catalog child) {
+		if (hasChildren()) {
+			Iterator<Catalog> iter = children.iterator();
+			while (iter.hasNext()) {
+				Catalog next = iter.next();
+				
+				if (next == child || next.equals(child) || (next.id != null && child.id != null && next.id.equals(child.id))) {
+					iter.remove();
+				}
+			}
+		}
+		
 	}
 	
 

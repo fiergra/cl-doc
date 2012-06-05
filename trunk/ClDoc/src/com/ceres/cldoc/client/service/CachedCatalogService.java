@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.LayoutDefinition;
@@ -45,7 +45,7 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 		SRV.configurationService.deleteLayoutDefinition(session, className, callback);
 	}
 
-	HashMap <String, Collection <Catalog>> catalogsByParentCode = new HashMap<String, Collection<Catalog>>();
+	HashMap <String, List <Catalog>> catalogsByParentCode = new HashMap<String, List<Catalog>>();
 	HashMap <Long, Catalog> catalogById = new HashMap<Long, Catalog>();
 	
 	private void clearCache() {
@@ -68,13 +68,13 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 
 	@Override
 	public void listCatalogs(Session session, final String parentCode,
-			final AsyncCallback<Collection<Catalog>> callback) {
-		Collection<Catalog> result = catalogsByParentCode.get(parentCode);
+			final AsyncCallback<List<Catalog>> callback) {
+		List<Catalog> result = catalogsByParentCode.get(parentCode);
 		
 		if (result != null) {
 			callback.onSuccess(result);
 		} else {
-			SRV.configurationService.listCatalogs(session, parentCode, new AsyncCallback<Collection<Catalog>>() {
+			SRV.configurationService.listCatalogs(session, parentCode, new AsyncCallback<List<Catalog>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
@@ -82,7 +82,7 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 				}
 
 				@Override
-				public void onSuccess(Collection<Catalog> result) {
+				public void onSuccess(List<Catalog> result) {
 					catalogsByParentCode.put(parentCode, result);
 					callback.onSuccess(result);
 				}
@@ -92,14 +92,14 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 
 	@Override
 	public void listCatalogs(Session session, Long parentId,
-			AsyncCallback<Collection<Catalog>> callback) {
+			AsyncCallback<List<Catalog>> callback) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void listCatalogs(Session session, Catalog parent,
-			AsyncCallback<Collection<Catalog>> callback) {
+			AsyncCallback<List<Catalog>> callback) {
 		SRV.configurationService.listCatalogs(session, parent, callback);
 		
 	}
@@ -137,7 +137,7 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 
 	@Override
 	public void addAssignment(Session session, Catalog catalog,
-			AbstractEntity entity, AsyncCallback<Assignment> callback) {
+			Entity entity, AsyncCallback<Assignment> callback) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -150,7 +150,7 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	}
 
 	@Override
-	public void listAssignments(Session session, AbstractEntity entity,
+	public void listAssignments(Session session, Entity entity,
 			AsyncCallback<List<Assignment>> callback) {
 		// TODO Auto-generated method stub
 		

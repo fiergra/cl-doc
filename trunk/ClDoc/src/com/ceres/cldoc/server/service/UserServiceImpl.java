@@ -1,5 +1,7 @@
 package com.ceres.cldoc.server.service;
 
+import javax.servlet.http.HttpSession;
+
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
@@ -17,7 +19,10 @@ public class UserServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public Session login(String userName, String password) {
 		Session session = new Session();
-		return Locator.getUserService().login(session, userName, password);
+		session = Locator.getUserService().login(session, userName, password);
+		HttpSession httpSession = getThreadLocalRequest().getSession();
+		httpSession.setAttribute(CLDOC_SESSION, session);
+		return session;
 	}
 
 	@Override

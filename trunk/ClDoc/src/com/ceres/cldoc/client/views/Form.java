@@ -9,9 +9,11 @@ import java.util.Map.Entry;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.DateTextBox;
+import com.ceres.cldoc.client.controls.FloatTextBox;
 import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.CatalogList;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.layout.LayoutElement;
@@ -45,16 +47,16 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class Form<T extends IAct> extends FlexTable implements IView<T>{
 
 	public enum DataTypes {
-		FT_STRING, FT_TEXT, FT_DATE, /*FT_TIME, */FT_INTEGER, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_BOOLEAN, FT_HUMANBEING
+		FT_STRING, FT_TEXT, FT_DATE, /*FT_TIME, */FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_HUMANBEING, FT_UNDEF
 	};
 
 	protected T model;
 	protected DateTimeFormat df = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
-	private Runnable setModified;
-	private ClDoc clDoc;
+	private final Runnable setModified;
+	private final ClDoc clDoc;
 
-	private Collection<Form> pages = new ArrayList<Form>();
+	private final Collection<Form> pages = new ArrayList<Form>();
 	
 	final static int OK = 1;
 	final static int CLOSE = 2;
@@ -63,7 +65,7 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 
 	public Form(ClDoc clDoc, T model, Runnable setModified) {
 		this.clDoc = clDoc;
-		addStyleName("form");
+		addStyleName("docform");
 		setRowFormatter(new RowFormatter() {});
 		this.model = model;
 		this.setModified = setModified;
@@ -95,8 +97,9 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 
 	}
 
-	private HashMap<String, Field> fields = new HashMap<String, Field>();
+	private final HashMap<String, Field> fields = new HashMap<String, Field>();
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void toDialog() {
 		for (Form<T> page:pages) {
@@ -118,9 +121,12 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			case FT_BOOLEAN:
 				((CheckBox) field.widget).setValue(act.getBoolean(field.name));
 				break;
-			case FT_LIST_SELECTION:
+			case FT_MULTI_SELECTION:
+				((CatalogMultiSelect)field.widget).setSelected(act.getCatalogList(field.name));
+				break;
 			case FT_OPTION_SELECTION:
-				Catalog catalog = (Catalog) act.getCatalog(field.name);
+			case FT_LIST_SELECTION:
+				Catalog catalog = act.getCatalog(field.name);
 				if (catalog != null) {
 					((IEntitySelector<Catalog>)field.widget).setSelected(catalog);
 				}
@@ -144,6 +150,9 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 					((DateTextBox) field.widget).setDate(value);
 				}
 				break;
+			case FT_FLOAT:
+				((FloatTextBox) field.widget).setFloat(act.getFloat(field.name));
+				break;
 //			case FT_TIME:
 //				Date dateValue = act.getDate(field.name);
 //				if (dateValue != null) {
@@ -154,6 +163,7 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public void fromDialog() {
 		for (Form<T> page:pages) {
@@ -176,6 +186,9 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			case FT_BOOLEAN:
 				act.set(qualifiedFieldName, ((CheckBox) field.widget).getValue());
 				break;
+			case FT_MULTI_SELECTION:
+				act.set(qualifiedFieldName, ((IEntitySelector<CatalogList>) field.widget).getSelected());
+				break;
 			case FT_OPTION_SELECTION:
 			case FT_LIST_SELECTION:
 				Catalog catalog = ((IEntitySelector<Catalog>) field.widget).getSelected(); 
@@ -188,6 +201,10 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			case FT_DATE:
 				act.set(qualifiedFieldName,
 						((DateTextBox) field.widget).getDate());
+				break;
+			case FT_FLOAT:
+				act.set(qualifiedFieldName,
+						((FloatTextBox) field.widget).getFloat());
 				break;
 //			case FT_TIME:
 //				act.set(qualifiedFieldName,
@@ -202,7 +219,7 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 	private boolean isModified = false;
 	private int row;
 
-	private KeyDownHandler modificationHandler = new KeyDownHandler() {
+	private final KeyDownHandler modificationHandler = new KeyDownHandler() {
 
 		@Override
 		public void onKeyDown(KeyDownEvent event) {
@@ -218,10 +235,12 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 
 	protected void onModification() {}
 	
+	@Override
 	public boolean isModified() {
 		return isModified;
 	}
 	
+	@Override
 	public void clearModification() {
 		isModified = false;
 	}
@@ -401,6 +420,20 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			});
 			w = crg;
 			break;
+		case FT_MULTI_SELECTION:
+			CatalogMultiSelect cms = new CatalogMultiSelect(clDoc, attributes.get("parent"), attributes.get("orientation"));
+			cms.addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					if (!isModified) {
+						isModified = true;
+						setModified.run();
+					}
+				}
+			});
+			w = cms;
+			break;
 		case FT_HUMANBEING:
 			HumanBeingListBox hlb = new HumanBeingListBox(clDoc, attributes.get("role"), new OnDemandChangeListener<Person>() {
 				
@@ -427,6 +460,12 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			d.addKeyDownHandler(modificationHandler);
 			w = d;
 			break;
+		case FT_FLOAT:
+			FloatTextBox f = new FloatTextBox();
+			f.setWidth("5em");
+			f.addKeyDownHandler(modificationHandler);
+			w = f;
+			break;
 //		case FT_TIME:
 //			TimeTextBox tbx = new TimeTextBox();
 //			tbx.setWidth("4em");
@@ -440,14 +479,20 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		}
 		return w;
 	}
-	
+
 	protected void parseAndCreate(String xml) {
+		parseAndCreate(xml, true);
+	}
+	
+	protected void parseAndCreate(String xml, final boolean clear) {
 		SRV.configurationService.parse(clDoc.getSession(), xml, new DefaultCallback<LayoutElement>(clDoc, "parse") {
 
 			@Override
 			public void onSuccess(LayoutElement result) {
 				if (result.getChildren() != null && !result.getChildren().isEmpty()) {
-					clear();
+					if (clear) {
+						clear();
+					}
 					createAndLayout(result.getChildren().get(0));
 					toDialog();
 				}
@@ -490,7 +535,26 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 				} else if (child.getType().equals("line")) {
 					String label = child.getAttribute("label");
 					String fieldName = child.getAttribute("name");
-					addLine(label == null ? fieldName : label, fieldName, getDataType(child), child.getAttributes());
+					
+					if (child.getChildren().isEmpty()) {
+						addLine(label == null ? fieldName : label, fieldName, getDataType(child), child.getAttributes());
+					} else {
+						HorizontalPanel hp = new HorizontalPanel();
+						hp.setSpacing(5);
+						hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+						for (LayoutElement sub:child.getChildren()) {
+							DataTypes dataType = getDataType(sub);
+							String subLabel = sub.getAttribute("label");
+							String subName = sub.getAttribute("name");
+							Label l = new Label(subLabel == null ? subName : subLabel);
+							l.addStyleName("formSubLabel");
+							Widget w = createWidgetForType(dataType, sub.getAttributes());
+							hp.add(l);
+							hp.add(w);
+							fields.put(subName, new Field(subName, w, dataType));
+						}
+						addLine(label == null ? fieldName : label, hp);
+					}
 				}
 			}
 		}		
@@ -501,7 +565,7 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		TabLayoutPanel pageContainer = (TabLayoutPanel)(getRowCount() == 1 ? getWidget(0, 0) : null);
 		if (pageContainer == null) {
 			pageContainer = new TabLayoutPanel(2, Unit.EM);
-			pageContainer.setSize("600px", "600px");
+			pageContainer.setSize("800px", "600px");
 			setWidget(0,  0, pageContainer);
 		}
 		return pageContainer;
@@ -509,7 +573,7 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 
 	private DataTypes getDataType(LayoutElement child) {
 		String type = child.getAttribute("type");
-		DataTypes result = DataTypes.FT_STRING;
+		DataTypes result = DataTypes.FT_UNDEF;
 		
 		if (type != null) {
 			type = type.toLowerCase();
@@ -520,7 +584,9 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 				result = DataTypes.FT_TEXT;
 			} else if (type.equals("date")) {
 				result = DataTypes.FT_DATE;
-//			} else if (type.equals("time")) {
+			} else if (type.equals("float")) {
+				result = DataTypes.FT_FLOAT;
+//				} else if (type.equals("time")) {
 //				result = DataTypes.FT_TIME;
 			} else if (type.equals("boolean")) {
 				result = DataTypes.FT_BOOLEAN;
@@ -528,6 +594,8 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 				result = DataTypes.FT_LIST_SELECTION;
 			} else if (type.equals("option")) {
 				result = DataTypes.FT_OPTION_SELECTION;
+			} else if (type.equals("multiselect")) {
+				result = DataTypes.FT_MULTI_SELECTION;
 			} else if (type.equals("humanbeing")) {
 				result = DataTypes.FT_HUMANBEING;
 			}

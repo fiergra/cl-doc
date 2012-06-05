@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.LayoutDefinition;
@@ -33,18 +33,18 @@ public interface ConfigurationServiceAsync {
 
 	void save(Session session, Catalog catalog, AsyncCallback<Catalog> callback);
 
-	void listCatalogs(Session session, String parentCode, AsyncCallback<Collection<Catalog>> callback);
+	void listCatalogs(Session session, String parentCode, AsyncCallback<List<Catalog>> callback);
 	
-	void listCatalogs(Session session, Long parentId, AsyncCallback<Collection<Catalog>> callback);
+	void listCatalogs(Session session, Long parentId, AsyncCallback<List<Catalog>> callback);
 	
-	void listCatalogs(Session session, Catalog parent, AsyncCallback<Collection<Catalog>> callback);
+	void listCatalogs(Session session, Catalog parent, AsyncCallback<List<Catalog>> callback);
 	
 	void getCatalog(Session session, long id, AsyncCallback<Catalog> callback);
 
 	void saveAll(Session session, Collection<Catalog> catalogs,
 			AsyncCallback<Void> defaultCallback);
 	
-	void addAssignment(Session session, Catalog catalog, AbstractEntity entity, AsyncCallback<Assignment> callback);
+	void addAssignment(Session session, Catalog catalog, Entity entity, AsyncCallback<Assignment> callback);
 	void listAssignments(Session session, Catalog catalog, AsyncCallback<List<Assignment>> callback);
-	void listAssignments(Session session, AbstractEntity entity, AsyncCallback<List<Assignment>> callback);
+	void listAssignments(Session session, Entity entity, AsyncCallback<List<Assignment>> callback);
 }

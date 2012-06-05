@@ -15,7 +15,7 @@ import com.ceres.cldoc.ILayoutDefinitionService;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.ConfigurationService;
-import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.LayoutDefinition;
@@ -132,18 +132,18 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Collection<Catalog> listCatalogs(Session session, String parentCode) {
+	public List<Catalog> listCatalogs(Session session, String parentCode) {
 		return getCatalogService().loadList(session, parentCode);
 	}
 	
 
 	@Override
-	public Collection<Catalog> listCatalogs(Session session, Long parentId) {
+	public List<Catalog> listCatalogs(Session session, Long parentId) {
 		return listCatalogs(session, parentId != null ? new Catalog(parentId) : null);
 	}
 	
 	@Override
-	public Collection<Catalog> listCatalogs(Session session, Catalog parent) {
+	public List<Catalog> listCatalogs(Session session, Catalog parent) {
 		return getCatalogService().loadList(session, parent);
 	}
 
@@ -155,7 +155,7 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Assignment addAssignment(Session session, Catalog catalog, AbstractEntity entity) {
+	public Assignment addAssignment(Session session, Catalog catalog, Entity entity) {
 		Assignment assignment = new Assignment();
 		return assignment;
 	}
@@ -166,7 +166,7 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Assignment> listAssignments(Session session, AbstractEntity entity) {
+	public List<Assignment> listAssignments(Session session, Entity entity) {
 		return null;
 	}
 

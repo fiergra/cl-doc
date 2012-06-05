@@ -19,11 +19,10 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.model.User;
 
 //The FormPanel must submit to a servlet that extends HttpServlet  
 //RemoteServiceServlet cannot be used
@@ -31,16 +30,7 @@ import com.ceres.cldoc.model.User;
 public class UploadService extends HttpServlet {
 	
 	private Session getSession(HttpServletRequest req) {
-		String sSid = (String) req.getParameter("sid");
-		String sUid = (String) req.getParameter("uid");
-		Session session = null;
-		
-		if (sSid != null && sUid != null) {
-			User user = new User();
-			user.id = Long.valueOf(sUid);
-			session = new Session(user, Long.valueOf(sSid));
-		}
-
+		Session session = (Session) req.getSession().getAttribute(UserService.CLDOC_SESSION);
 		return session;
 	}
 	
@@ -63,7 +53,16 @@ public class UploadService extends HttpServlet {
 						if (!fItem.isFormField()) {
 							String fileName = fItem.getName();
 							if (fileName != null) {
-								Locator.getLayoutDefinitionService().importZip(session, getTypeLayoutType(type), fItem.getInputStream());
+								Locator.getLayoutDefinitionService().importZip(session, fItem.getInputStream());
+							}							
+						}
+					}
+				} else if ("catalogs".equals(type)) {
+					for (FileItem fItem : items) {
+						if (!fItem.isFormField()) {
+							String fileName = fItem.getName();
+							if (fileName != null) {
+								Locator.getCatalogService().importXML(session, fItem.getInputStream());
 							}							
 						}
 					}
@@ -89,7 +88,8 @@ public class UploadService extends HttpServlet {
 								
 								fileName = FilenameUtils.getName(fileName);
 								act.set("fileName", fileName);
-								act.set("file", copyBytes(fItem.getInputStream()));
+								long docId = Locator.getDocArchive().store(fileName, fItem.getInputStream(), null);
+								act.set("docId", docId);
 							}
 						}
 					}
@@ -108,12 +108,6 @@ public class UploadService extends HttpServlet {
 			resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
 					"Request contents type is not supported by the servlet.");
 		}
-	}
-
-	private int getTypeLayoutType(String type) {
-		if ("form_layouts".equals(type)) { return LayoutDefinition.FORM_LAYOUT; }
-		if ("print_layouts".equals(type)) { return LayoutDefinition.PRINT_LAYOUT; }
-		return -1;
 	}
 
 	private byte[] copyBytes(InputStream inputStream) throws IOException {

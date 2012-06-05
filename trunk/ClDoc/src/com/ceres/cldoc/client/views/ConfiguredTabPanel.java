@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client.views;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.DynamicLoader;
@@ -17,14 +17,16 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 	}
 
 	private void setup(final ClDoc clDoc, String parent, final T model) {
-		SRV.catalogService.listCatalogs(clDoc.getSession(), parent, new DefaultCallback <Collection<Catalog>>(clDoc, "listCatalogs") {
+		SRV.catalogService.listCatalogs(clDoc.getSession(), parent, new DefaultCallback <List<Catalog>>(clDoc, "listCatalogs") {
 			
 			@Override
-			public void onSuccess(Collection<Catalog> result) {
-				for (Catalog catalog : result) {
-					add(DynamicLoader.create(clDoc, catalog.code, model), catalog.text, false);
+			public void onSuccess(List<Catalog> result) {
+				if (!result.isEmpty()) {
+					for (Catalog catalog : result) {
+						add(DynamicLoader.create(clDoc, catalog.code, model), catalog.text, false);
+					}
+					selectTab(0);
 				}
-				selectTab(0);
 			}
 			
 		});

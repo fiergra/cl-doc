@@ -1,7 +1,6 @@
 package com.ceres.cldoc.client.views;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,10 +18,10 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 
 	public CatalogListBox(ClDoc clDoc, String parentCode) {
 		addStyleName("cataloglistbox");
-		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<Collection<Catalog>>(clDoc, "listCatalogs") {
+		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 			@Override
-			public void onSuccess(Collection<Catalog> result) {
+			public void onSuccess(List<Catalog> result) {
 				CatalogListBox.this.catalogs = new ArrayList<Catalog>(result);
 				
 				if (!isMandatory) {
