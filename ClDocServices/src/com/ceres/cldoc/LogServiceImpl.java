@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.ceres.cldoc.model.AbstractEntity;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LogEntry;
 import com.ceres.cldoc.model.Participation;
@@ -37,7 +37,7 @@ public class LogServiceImpl implements ILogService {
 					s.setNull(i++, Types.INTEGER);
 				}
 				Participation participation = act.getParticipation(0);
-				AbstractEntity entity = participation != null ? participation.entity : null;
+				Entity entity = participation != null ? participation.entity : null;
 				
 				if (entity != null && entity.id != null) {
 					s.setLong(i++, entity.id);
@@ -111,14 +111,16 @@ public class LogServiceImpl implements ILogService {
 				switch (type) {
 				case IActField.FT_STRING: result = rs.getString("stringValue"); break;
 				case IActField.FT_INTEGER: result = rs.getLong("intValue"); break;
+				case IActField.FT_FLOAT: result = rs.getLong("floatValue"); break;
 				case IActField.FT_DATE: result = rs.getString("dateValue"); break;
 				case IActField.FT_BOOLEAN: result = rs.getInt("intValue") == 1; break;
 				case IActField.FT_CATALOG: 
 					long catalogId = rs.getLong("CatalogValue");
 					result = rs.wasNull() ? null : Locator.getCatalogService().load(session, catalogId); 
 					break;
-				case IActField.FT_BLOB: 
-					result = rs.getBytes("BlobValue");
+				case IActField.FT_LIST: 
+					long listId = rs.getLong("ListValue");
+					result = rs.wasNull() ? null : Locator.getActService().loadCatalogList(session, listId); 
 					break;
 				}
 				return result;

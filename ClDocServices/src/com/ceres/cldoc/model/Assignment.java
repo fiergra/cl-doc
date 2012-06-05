@@ -7,7 +7,7 @@ public class Assignment implements Serializable {
 	private static final long serialVersionUID = -6847677602213023116L;
 	public Long id;
 	public Catalog catalog;
-	public AbstractEntity entity;
+	public Entity entity;
 	
 	public Assignment() {
 	}

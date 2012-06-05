@@ -17,8 +17,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -31,7 +32,7 @@ import com.google.gwt.user.client.ui.TextArea;
 public class Styler extends DockLayoutPanel {
 	final Form <Act> form;
 
-	private ClDoc clDoc;
+	private final ClDoc clDoc;
 	
 	public Styler(ClDoc clDoc) {
 		super(Unit.PX);
@@ -51,6 +52,7 @@ public class Styler extends DockLayoutPanel {
 		final DockLayoutPanel formLayoutPanel = new DockLayoutPanel(Unit.EM);
 		final TextArea printLayoutDescTextArea = new TextArea();
 		final DockLayoutPanel printLayoutPanel = new DockLayoutPanel(Unit.EM);
+		final CheckBox cbMasterData = new CheckBox("Stammdaten");
 
 		formLayoutPanel.add(formLayoutDescTextArea);
 		printLayoutPanel.add(printLayoutDescTextArea);
@@ -58,44 +60,9 @@ public class Styler extends DockLayoutPanel {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hp.setSpacing(5);
+
+		hp.add(cbMasterData);
 		hp.add(new Label("class"));
-//		mwso = new MultiWordSuggestOracle(){
-//			@Override
-//			public void requestSuggestions(Request request, final Callback callback) {
-//				
-//				Callback cb = new Callback() {
-//					
-//					@Override
-//					public void onSuggestionsReady(Request request, Response response) {
-//						if (!response.hasMoreSuggestions()) {
-//							layoutDesc.setText("");
-//						}
-//						callback.onSuggestionsReady(request, response);
-//						
-//					}
-//				};
-//				super.requestSuggestions(request, cb );
-//			}};
-//		final SuggestBox lbClasses = new SuggestBox(mwso);
-//		lbClasses.addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
-//			
-//			@Override
-//			public void onSelection(SelectionEvent<Suggestion> event) {
-//				String className = event.getSelectedAct().getReplacementString();
-//				
-//				if (className != null) {
-//					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "") {
-//
-//						@Override
-//						public void onSuccess(LayoutDefinition result) {
-//							layoutDesc.setText(result.xmlLayout);
-//							form.parseAndCreate(result.xmlLayout);
-//						}
-//					};
-//					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, callback );
-//				}
-//			}
-//		});
 		
 		final OnDemandComboBox<String> cmbClasses = new OnDemandComboBox<String>(clDoc, new ListRetrievalService<String>() {
 
@@ -127,7 +94,7 @@ public class Styler extends DockLayoutPanel {
 						@Override
 						public void onSuccess(LayoutDefinition result) {
 							if (result != null) {
-								if (result.type == LayoutDefinition.FORM_LAYOUT) {
+								if (result.type == LayoutDefinition.FORM_LAYOUT || result.type == LayoutDefinition.MASTER_DATA_LAYOUT) {
 									formLayoutDescTextArea.setText(result.xmlLayout);
 									form.parseAndCreate(result.xmlLayout);
 								} else {
@@ -137,7 +104,8 @@ public class Styler extends DockLayoutPanel {
 						}
 					};
 					formLayoutDescTextArea.setText(null);
-					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, LayoutDefinition.FORM_LAYOUT, callback );
+					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, 
+							cbMasterData.getValue() ? LayoutDefinition.MASTER_DATA_LAYOUT : LayoutDefinition.FORM_LAYOUT, callback );
 					printLayoutDescTextArea.setText(null);
 					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, LayoutDefinition.PRINT_LAYOUT, callback );
 				}
@@ -152,7 +120,7 @@ public class Styler extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				UploadDialog.uploadFile(clDoc, LayoutDefinition.FORM_LAYOUT, new OnOkHandler<Void>() {
+				UploadDialog.uploadLayouts(clDoc, LayoutDefinition.FORM_LAYOUT, new OnOkHandler<Void>() {
 					
 					@Override
 					public void onOk(Void result) {
@@ -162,20 +130,22 @@ public class Styler extends DockLayoutPanel {
 			}
 		});
 		hp.add(pbUpload);
-		Anchor a = new Anchor("<img src=\"icons/32/Button-Download-icon.png\"/>", true);
-		String baseUrl = GWT.getModuleBaseURL();
-		a.setHref(baseUrl + "download?type=form_layouts");
-		hp.add(a);
+//		Anchor a = new Anchor("<img src=\"icons/32/Button-Download-icon.png\"/>", true);
+//		String baseUrl = GWT.getModuleBaseURL();
+//		a.setHref(baseUrl + "download?type=form_layouts");
+//		hp.add(a);
 		
-//		Image pbDownload = new Image("icons/32/Button-Download-icon.png");
-//		pbDownload.addClickHandler(new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//			}
-//		});
-//		hp.add(pbDownload);
-//		
+		Image pbDownload = new Image("icons/32/Button-Download-icon.png");
+		pbDownload.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				String baseUrl = GWT.getModuleBaseURL();
+				Window.open(baseUrl + "download?type=form_layouts", "_blank", "");
+			}
+		});
+		hp.add(pbDownload);
+		
 		Image pbWindowRefresh = new Image("icons/32/Window-Refresh-icon.png");
 		pbWindowRefresh.addClickHandler(new ClickHandler() {
 			
@@ -197,7 +167,7 @@ public class Styler extends DockLayoutPanel {
 						@Override
 						public void onSuccess(Void result) {}
 					};
-					SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, cmbClasses.getText(), formLayoutDescTextArea.getText(), callback);
+					SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), cbMasterData.getValue() ? LayoutDefinition.MASTER_DATA_LAYOUT :  LayoutDefinition.FORM_LAYOUT, cmbClasses.getText(), formLayoutDescTextArea.getText(), callback);
 					if (printLayoutDescTextArea.getText() != null && printLayoutDescTextArea.getText().length() > 0) {
 						SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), LayoutDefinition.PRINT_LAYOUT, cmbClasses.getText(), printLayoutDescTextArea.getText(), callback);
 					}

@@ -83,6 +83,11 @@ public class ActField implements IActField {
 	}
 
 	@Override
+	public Float getFloatValue() {
+		return (Float)value;
+	}
+
+	@Override
 	public String getStringValue() {
 		return (String)value;
 	}
@@ -111,6 +116,9 @@ public class ActField implements IActField {
 		} else if (value instanceof Long) {
 			setValue((Long)value);
 			type = FT_INTEGER;
+		} else if (value instanceof Float) {
+			setValue((Float)value);
+			type = FT_FLOAT;
 		} else if (value instanceof Boolean) {
 			setValue((Boolean)value ? 1l : 0l);
 			type = FT_BOOLEAN;
@@ -120,9 +128,6 @@ public class ActField implements IActField {
 		} else if (value instanceof Catalog) {
 			setValue((Catalog)value);
 			type = FT_CATALOG;
-		} else if (value instanceof byte[]) {
-			setValue((byte[])value);
-			type = FT_BLOB;
 		} else {
 			throw new RuntimeException("unsupported data type:" + (value != null ? value : "null"));
 		}
@@ -138,10 +143,6 @@ public class ActField implements IActField {
 //		blobValue = value;
 //	}
 
-	@Override
-	public byte[] getBlobValue() {
-		return (byte[])value;
-	}
 
 	@Override
 	public String toString() {
@@ -170,20 +171,27 @@ public class ActField implements IActField {
 		if (value == null) {
 		} else if (value instanceof String) {
 			return FT_STRING;
+		} else if (value instanceof CatalogList) {
+			return FT_LIST;
 		} else if (value instanceof Long) {
 			return FT_INTEGER;
+		} else if (value instanceof Float) {
+			return FT_FLOAT;
 		} else if (value instanceof Boolean) {
 			return FT_BOOLEAN;
 		} else if (value instanceof Date) {
 			return FT_DATE;
 		} else if (value instanceof Catalog) {
 			return FT_CATALOG;
-		} else if (value instanceof byte[]) {
-			return FT_BLOB;
 		} else {
 			throw new RuntimeException("unsupported data type:" + (value != null ? value : "null"));
 		}
 		return 0;
+	}
+
+	@Override
+	public CatalogList getListValue() {
+		return (CatalogList)value;
 	}
 
 	

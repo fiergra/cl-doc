@@ -2,6 +2,7 @@ package com.ceres.cldoc.client.views;
 
 import java.util.List;
 
+import com.ceres.cldoc.ILogService;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
@@ -13,7 +14,9 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ShortCutsPanel extends ClickableTable<LogEntry> {
 
@@ -42,7 +45,8 @@ public class ShortCutsPanel extends ClickableTable<LogEntry> {
 		ft.setWidget(row, 0, new Label(date));
 		if (le.act != null) {
 			// date = df.format(le.act.date);
-			ft.setWidget(row, 1, new Label(String.valueOf(le.type)));
+			ft.setWidget(row, 1, getTypeIcon(le.type));
+			
 			HTML html = new HTML("<b>" + le.act.className + "</b>");
 			html.setWidth("100%");
 			ft.setWidget(row, 2, html);
@@ -54,6 +58,24 @@ public class ShortCutsPanel extends ClickableTable<LogEntry> {
 			ft.setWidget(row, 4, html);
 		}
 
+	}
+
+	private Widget getTypeIcon(int type) {
+		String source = "icons/16/Document-icon.png";
+		switch (type) {
+		case ILogService.INSERT:
+			source = "icons/16/Button-Add-01.png";
+			break;
+		case ILogService.VIEW:
+			source = "icons/16/Document-Preview-01.png";
+			break;
+		case ILogService.UPDATE:
+			source = "icons/16/Edit-Document-01.png";
+			break;
+		}
+		Image image = new Image(source);
+		image.setPixelSize(16, 16);
+		return image;
 	}
 
 }

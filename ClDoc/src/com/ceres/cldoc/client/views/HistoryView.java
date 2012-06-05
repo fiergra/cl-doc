@@ -63,14 +63,11 @@ public class HistoryView extends DockLayoutPanel {
 				table.setWidget(row, column++, new HTML("<b>" + act.className + "</b>"));
 			}};
 
-		Image pbUpload = historyPanel.addButton("upload file", "icons/32/Button-Upload-icon.png");
-		Image pbAdd = historyPanel.addButton("add act", "icons/32/File-New-icon.png");
-
-		pbUpload.addClickHandler(new ClickHandler() {
+		Image pbUpload = historyPanel.addButton("upload file", "icons/32/Button-Upload-icon.png", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				UploadDialog.uploadFile(HistoryView.this.clDoc, model,
+				UploadDialog.uploadExternalDoc(HistoryView.this.clDoc, model,
 						new OnOkHandler<Void>() {
 
 							@Override
@@ -80,29 +77,7 @@ public class HistoryView extends DockLayoutPanel {
 						});
 			}
 		});
-
-		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
-		splitPanel.addWest(historyPanel, 400);
-
-		viewer = new ActRenderer(clDoc, new OnOkHandler<Act>() {
-
-			@Override
-			public void onOk(Act result) {
-				refresh(result);
-			}
-		}, new Runnable() {
-
-			@Override
-			public void run() {
-
-			}
-		});
-		viewer.addStyleName("viewer");
-		splitPanel.add(viewer);
-
-		add(splitPanel);
-
-		pbAdd.addClickHandler(new ClickHandler() {
+		Image pbAdd = historyPanel.addButton("add act", "icons/32/File-New-icon.png", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -111,7 +86,8 @@ public class HistoryView extends DockLayoutPanel {
 					@Override
 					public void onOk(Act act) {
 						act.addParticipant(model, Catalog.PATIENT, new Date(), null);
-
+						act.addParticipant(clDoc.getSession().getUser().organisation, Catalog.ORGANISATION, new Date(), null);
+						
 						SRV.actService.save(clDoc.getSession(), act,
 								new DefaultCallback<Act>(clDoc, "save") {
 
@@ -127,6 +103,28 @@ public class HistoryView extends DockLayoutPanel {
 				});
 			}
 		});
+
+		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
+		historyPanel.addStyleName("roundCorners");
+		splitPanel.addWest(historyPanel, 400);
+
+		viewer = new ActRenderer(clDoc, new OnOkHandler<Act>() {
+
+			@Override
+			public void onOk(Act result) {
+				refresh(result);
+			}
+		}, new Runnable() {
+
+			@Override
+ 			public void run() {
+
+			}
+		});
+		viewer.addStyleName("viewer");
+		splitPanel.add(viewer);
+		add(splitPanel);
+
 		refresh(null);
 	}
 
@@ -146,6 +144,7 @@ public class HistoryView extends DockLayoutPanel {
 							@Override
 							public void onSuccess(LayoutDefinition ld) {
 								layouts.put(act.className, ld);
+//								Locator.getLogService().log(clDoc.getSession(), ILogService.VIEW, act, "");
 								if (viewer.setAct(ld, act)) {
 								}
 							}

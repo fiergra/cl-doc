@@ -38,6 +38,7 @@ public class UploadDialog extends DialogBox {
 		fup.setName("fup");
 		String attributes;
 		final TextBox rweKey = new TextBox();
+		
 		if (humanBeing != null) {
 			rweKey.setName("entityId");
 			rweKey.setVisible(false);
@@ -138,12 +139,16 @@ public class UploadDialog extends DialogBox {
 		hide();
 	}
 
-	public static void uploadFile(ClDoc clDoc, Person humanBeing, OnOkHandler<Void> onOk) {
+	public static void uploadExternalDoc(ClDoc clDoc, Person humanBeing, OnOkHandler<Void> onOk) {
 		uploadFile(clDoc, "externalDoc", humanBeing, onOk);
 	}
 
-	public static void uploadFile(ClDoc clDoc, int layoutType, OnOkHandler<Void> onOk) {
+	public static void uploadLayouts(ClDoc clDoc, int layoutType, OnOkHandler<Void> onOk) {
 		uploadFile(clDoc, layoutType == LayoutDefinition.FORM_LAYOUT ? "form_layouts" : "print_layouts", null, onOk);
+	}
+
+	public static void uploadCatalogs(ClDoc clDoc, OnOkHandler<Void> onOk) {
+		uploadFile(clDoc, "catalogs", null, onOk);
 	}
 
 	private static void uploadFile(ClDoc clDoc, String type, Person humanBeing, OnOkHandler<Void> onOk) {

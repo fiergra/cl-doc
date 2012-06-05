@@ -5,13 +5,14 @@ import java.util.Date;
 
 import com.ceres.cldoc.model.AbstractNamedValueAccessor;
 import com.ceres.cldoc.model.ActField;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.Person;
 
 public class PersonWrapper extends AbstractNamedValueAccessor {
 	
 	private static final long serialVersionUID = 184132632098539674L;
-	private Person humanBeing;
+	private final Person humanBeing;
 	
 	public PersonWrapper(Person humanBeing) {
 		this.humanBeing = humanBeing;
@@ -23,6 +24,8 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 				humanBeing.firstName = (String) value;
 			} else if (fieldName.equals("lastName")) {
 				humanBeing.lastName = (String) value;
+			} else if (fieldName.equals("gender")) {
+				humanBeing.gender = (Catalog) value;
 			} else if (fieldName.equals("dateOfBirth")) {
 				humanBeing.dateOfBirth = (Date) value;
 			} else if (fieldName.equals("primaryAddress.street")) {
@@ -45,6 +48,8 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 				return new ActField(fieldName, humanBeing.firstName);
 			} else if (fieldName.equals("lastName")) {
 				return new ActField(fieldName, humanBeing.lastName);
+			} else if (fieldName.equals("gender")) {
+				return new ActField(fieldName, humanBeing.gender);
 			} else if (fieldName.equals("dateOfBirth")) {
 				return new ActField(fieldName, humanBeing.dateOfBirth);
 			} else if (fieldName.equals("primaryAddress.street")) {
@@ -61,5 +66,6 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 				return null;
 			}
 		}
+
 
 }

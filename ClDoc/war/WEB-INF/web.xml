@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+  <resource-ref>
+      <description>DB Connection</description>
+      <res-ref-name>jdbc/ClDoc</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+  </resource-ref>
+  <!-- Servlets -->
+  
+  <servlet>
+    <servlet-name>UploadService</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.UploadService</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>UploadService</servlet-name>
+    <url-pattern>/cldoc/uploadService</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>DownloadService</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.DownloadServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>DownloadService</servlet-name>
+    <url-pattern>/cldoc/download</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>humanbeingServlet</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.HumanBeingServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>humanbeingServlet</servlet-name>
+    <url-pattern>/cldoc/humanbeing</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>entityServlet</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.GWTEntityServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>entityServlet</servlet-name>
+    <url-pattern>/cldoc/entity</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>actServlet</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.ActServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>actServlet</servlet-name>
+    <url-pattern>/cldoc/act</url-pattern>
+  </servlet-mapping>
+  
+  
+<!--   
+  <servlet>
+    <servlet-name>personServlet</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.PersonServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>personServlet</servlet-name>
+    <url-pattern>/cldoc/person</url-pattern>
+  </servlet-mapping>
+ -->  
+
+  <servlet>
+    <servlet-name>userServlet</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.UserServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>userServlet</servlet-name>
+    <url-pattern>/cldoc/user</url-pattern>
+  </servlet-mapping>
+
+  
+  <servlet>
+    <servlet-name>configurationServlet</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.service.ConfigurationServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>configurationServlet</servlet-name>
+    <url-pattern>/cldoc/configuration</url-pattern>
+  </servlet-mapping>
+  
+  
+<resource-ref>
+  <res-ref-name>
+    jdbc/ClDoc
+  </res-ref-name>
+  <res-type>
+    javax.sql.DataSource
+  </res-type>
+  <res-auth>
+    Container
+  </res-auth>
+</resource-ref>  
+  
+  
+  <!-- Default page to serve -->
+  <welcome-file-list>
+    <welcome-file>ClDoc.html</welcome-file>
+  </welcome-file-list>
+
+</web-app>

@@ -3,8 +3,9 @@ package com.ceres.cldoc.client;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.Configurator;
 import com.ceres.cldoc.client.views.DebugPanel;
+import com.ceres.cldoc.client.views.EntitySearch;
 import com.ceres.cldoc.client.views.HistoryView;
-import com.ceres.cldoc.client.views.Home;
+import com.ceres.cldoc.client.views.Persons;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -14,10 +15,12 @@ public class DynamicLoader {
 	public static <T> Widget create(ClDoc clDoc, String name, T model) {
 		Widget result = null;
 		
-		if (name.equals("HOME")) {
-			name = SRV.c.home();
-			result = new Home((ClDoc) model);
-		} else if (name.equals("CONFIG")) {
+		if (name.equals("Personen")) {
+			name = SRV.c.persons();
+			result = new Persons((ClDoc) model);
+		} else if (name.equals("Suche")) {
+			result = new EntitySearch((ClDoc) model);
+		} else if (name.equals("Configuration")) {
 			name = SRV.c.configuration();
 			result = new Configurator((ClDoc) model);
 		} else if (name.equals("HISTORY")) {
@@ -26,7 +29,7 @@ public class DynamicLoader {
 		} else if (name.equals("DETAILS")) {
 			name = SRV.c.details();
 			result = new PersonDetails(clDoc, (Person) model);
-		} else if (name.equals("DEBUG")) {
+		} else if (name.equals("Reporting")) {
 			result = new DebugPanel(clDoc);
 		} else {
 			HorizontalPanel hp = new HorizontalPanel();

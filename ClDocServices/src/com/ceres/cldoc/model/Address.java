@@ -7,7 +7,7 @@ public class Address implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public Long id;
-	public AbstractEntity entity;
+	public Entity entity;
 	public String street;
 	public String number;
 	public String co;

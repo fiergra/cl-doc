@@ -7,5 +7,7 @@ public interface IView<T> extends IsWidget {
 	T getModel();
 	void fromDialog();
 	void toDialog();
+	
 	boolean isModified();
+	void clearModification();
 }

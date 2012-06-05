@@ -3,7 +3,7 @@ package com.ceres.cldoc.client.service;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.LogEntry;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -14,7 +14,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("act")
 public interface ActService extends RemoteService {
-	List<Act> findByEntity(Session session, AbstractEntity entity);
+	List<Act> findByEntity(Session session, Entity entity);
 	List<LogEntry> listRecent(Session session);
 	Act findById(Session session, long id);
 	Act save(Session session, Act act);

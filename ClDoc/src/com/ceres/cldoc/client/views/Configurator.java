@@ -12,7 +12,7 @@ public class Configurator extends TabLayoutPanel {
 		
 		add(new Styler(clDoc), SRV.c.forms());
 		add(new CatalogConfigurator(clDoc), SRV.c.catalogs());
-//		add(new CatalogConfigurator(clDoc), "Assignments");
+		add(new EntityConfigurator(clDoc), "Entities");
 	}
 
 }

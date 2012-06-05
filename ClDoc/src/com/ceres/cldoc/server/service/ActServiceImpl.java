@@ -7,7 +7,7 @@ import com.ceres.cldoc.IDocService;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.ActService;
-import com.ceres.cldoc.model.AbstractEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.LogEntry;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
@@ -28,7 +28,7 @@ public class ActServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<Act> findByEntity(Session session, AbstractEntity entity) {
+	public List<Act> findByEntity(Session session, Entity entity) {
 		return getActService().load(session, entity);
 	}
 

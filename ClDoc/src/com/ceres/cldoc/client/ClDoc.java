@@ -1,5 +1,6 @@
 package com.ceres.cldoc.client;
 
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.ceres.cldoc.IUserService;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -34,6 +36,25 @@ public class ClDoc implements EntryPoint {
 	private Label statusMessage = new Label();
 	private Session session;
 	private LogOutput logOutput;
+	private PickupDragController dragController = new PickupDragController(RootPanel.get(), false) {
+
+		@Override
+		protected void restoreSelectedWidgetsLocation() {
+		}
+
+		@Override
+		protected void restoreSelectedWidgetsStyle() {
+		}
+
+		@Override
+		protected void saveSelectedWidgetsLocationAndStyle() {
+		}
+		
+	};
+	
+	public PickupDragController getDragController() {
+		return dragController;
+	}
 	
 	public Session getSession() {
 		return session;
@@ -97,7 +118,7 @@ public class ClDoc implements EntryPoint {
 		
 		while (index < count && personalFile == null) {
 			Widget tab = mainTab.getWidget(index);
-			if (tab instanceof PersonalFile && ((PersonalFile)tab).getHumanBeing().id.equals(hb.id) ) {
+			if (tab instanceof PersonalFile && ((PersonalFile)tab).getEntity().id.equals(hb.id) ) {
 				personalFile = (PersonalFile) tab;
 			} else {
 				index++;

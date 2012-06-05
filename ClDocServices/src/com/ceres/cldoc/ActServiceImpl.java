@@ -14,10 +14,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import com.ceres.cldoc.model.AbstractEntity;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActField;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.CatalogList;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.util.Jdbc;
@@ -40,7 +41,7 @@ public class ActServiceImpl implements IActService {
 					Locator.getLogService().log(session, ILogService.UPDATE, act, act.snapshot());
 				}
 				
-				saveFields(con, act);
+				saveFields(session, con, act);
 				saveParticipations(session, act);
 				
 				
@@ -52,7 +53,9 @@ public class ActServiceImpl implements IActService {
 	protected void saveParticipations(Session session, Act act) {
 		if (act.participations != null) {
 			Iterator<Participation> iter = act.participations.iterator();
-			saveParticipation(session, iter.next());
+			while (iter.hasNext()) {
+				saveParticipation(session, iter.next());
+			}
 		}
 	}
 
@@ -61,48 +64,48 @@ public class ActServiceImpl implements IActService {
 		participationService.save(session, participation);
 	}
 
-	protected void saveFields(Connection con, Act act) throws SQLException {
+	protected void saveFields(Session session, Connection con, Act act) throws SQLException {
 		if (act.fields != null) {
 			Iterator<Entry<String, IActField>> fieldsIter = act.fields.entrySet().iterator();
 			while (fieldsIter.hasNext()) {
-				saveField(con, act, fieldsIter.next());
+				saveField(session, con, act, fieldsIter.next());
 			}
 		}
 	}
 
-	private void saveField(Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
+	private void saveField(Session session, Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
 		if (entry.getValue() != null && entry.getValue().getId() == null) {
-			insertField(con, act, entry, true);
+			insertField(session, con, act, entry, true);
 		} else {
-			updateField(con, act, entry);
+			updateField(session, con, act, entry);
 		}
 	}
 
-	private void updateField(Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
+	private void updateField(Session session, Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"update ActField set catalogValue = ?, intvalue = ?, stringvalue = ?, datevalue = ?, realvalue = ?, blobvalue = ? where id = ?");
+				"update ActField set catalogValue = ?, intvalue = ?, stringvalue = ?, datevalue = ?, floatvalue = ?, listValue = ? where id = ?");
 		String fieldName = entry.getKey();
 		IActField field = entry.getValue();
-		int i = bindVariables(s, 1, act, fieldName, field);
+		int i = bindVariables(session, s, 1, act, fieldName, field);
 		s.setLong(i, field.getId());
 		int rows = s.executeUpdate();
 		s.close();
 	}
 
-	private void insertField(Connection con, Act act, Entry<String, IActField> entry, boolean register) throws SQLException {
+	private void insertField(Session session, Connection con, Act act, Entry<String, IActField> entry, boolean register) throws SQLException {
 		try {
 			PreparedStatement s = con.prepareStatement(
-					"insert into ActField (actid, classfieldid, CatalogValue, intvalue, stringvalue, datevalue, realvalue, blobvalue) values (?, (select id from ActClassField where name = ?), ?, ?, ?, ?, ?, ?)", new String[]{"ID"});
+					"insert into ActField (actid, classfieldid, CatalogValue, intvalue, stringvalue, datevalue, floatvalue, listValue) values (?, (select id from ActClassField where name = ?), ?, ?, ?, ?, ?, ?)", new String[]{"ID"});
 			String fieldName = entry.getKey();
 			IActField field = entry.getValue();
 			s.setLong(1, act.id);
 			s.setString(2, fieldName);
-			bindVariables(s, 3, act, fieldName, field);
+			bindVariables(session, s, 3, act, fieldName, field);
 			field.setId(Jdbc.exec(s));
 			s.close();
 		} catch (SQLException x) {
 			if (register && registerClassField(con, act, entry.getKey(), entry.getValue().getType())) {
-				insertField(con, act, entry, false);
+				insertField(session, con, act, entry, false);
 			} else {
 				throw x;
 			}
@@ -122,39 +125,87 @@ public class ActServiceImpl implements IActService {
 	}
 
 
-	private int bindVariables(PreparedStatement s, int i, Act act,
+	private int bindVariables(Session session, PreparedStatement s, int i, Act act,
 			String fieldName, IActField field)
 			throws SQLException {
-//actid, classfieldid, catalog, intvalue, stringvalue, datevalue, realvalue, blobvalue
-		if (field.getType() == IActField.FT_CATALOG) {
+		if (field.getType() == IActField.FT_CATALOG && field.getCatalogValue() != null) {
+			if (field.getCatalogValue().id == null) {
+				Locator.getCatalogService().save(session, field.getCatalogValue());
+			}
 			s.setLong(i++, field.getCatalogValue().id);
 		} else {
 			s.setNull(i++, Types.INTEGER);
 		}
-		if (field.getType() == IActField.FT_INTEGER || field.getType() == IActField.FT_BOOLEAN) {
+		if ((field.getType() == IActField.FT_INTEGER || field.getType() == IActField.FT_BOOLEAN) && field.getValue() != null) {
 			s.setLong(i++, field.getType() == IActField.FT_INTEGER ? field.getLongValue() : (field.getBooleanValue() ? 1 : 0));
 		} else {
 			s.setNull(i++, Types.INTEGER);
 		}
-		if (field.getType() == IActField.FT_STRING) {
+		if (field.getType() == IActField.FT_STRING && field.getValue() != null) {
 			s.setString(i++, field.getStringValue());
 		} else {
 			s.setNull(i++, Types.VARCHAR);
 		}
-		if (field.getType() == IActField.FT_DATE) {
+		if (field.getType() == IActField.FT_DATE && field.getValue() != null) {
 			s.setTimestamp(i++, new java.sql.Timestamp(field.getDateValue().getTime()));
 		} else {
 			s.setNull(i++, Types.TIMESTAMP);
 		}
-		// not yet supported...
-		s.setNull(i++, Types.FLOAT);
-		if (field.getType() == IActField.FT_BLOB) {
-			s.setBytes(i++, field.getBlobValue());
+		if (field.getType() == IActField.FT_FLOAT && field.getValue() != null) {
+			s.setFloat(i++, field.getFloatValue());
 		} else {
-			s.setNull(i++, Types.BLOB);
+			s.setNull(i++, Types.FLOAT);
+		}
+		if (field.getType() == IActField.FT_LIST) {
+			if (field.getListValue() != null) {
+				saveCatalogList(s.getConnection(), field.getListValue());
+				s.setLong(i++, field.getListValue().id);
+			} else {
+				s.setNull(i++, Types.INTEGER);
+			}
+		} else {
+			s.setNull(i++, Types.INTEGER);
 		}
 		
 		return i;
+	}
+
+	private void saveCatalogList(Connection con, CatalogList listValue) throws SQLException {
+		if (listValue.id == null) {
+			insertValueList(con, listValue);
+			saveCatalogList(con, listValue, false);
+		} else {
+			updateValueList(con, listValue);
+			saveCatalogList(con, listValue, true);
+		}
+	}
+
+	private void saveCatalogList(Connection con, CatalogList listValue, boolean delete) throws SQLException {
+		if (delete) {
+			PreparedStatement d = con.prepareStatement("delete from CatalogListEntry where List = ?");
+			d.setLong(1, listValue.id);
+			d.executeUpdate();
+			d.close();
+		}
+		if (listValue.list != null) {
+			PreparedStatement i = con.prepareStatement("insert into CatalogListEntry (List, Catalog) values (?,?)");
+			for (Catalog c : listValue.list) {
+				i.setLong(1, listValue.id);
+				i.setLong(2, c.id);
+				i.executeUpdate();
+			}
+			i.close();
+		}
+	}
+
+	private void updateValueList(Connection con, CatalogList listValue) {
+	}
+
+	private void insertValueList(Connection con, CatalogList listValue) throws SQLException {
+		PreparedStatement s = con.prepareStatement("insert into List (type) values (?)", new String[]{"ID"});
+		s.setInt(1, 1);
+		listValue.id = Jdbc.exec(s);
+		s.close();
 	}
 
 	protected Act update(Connection con, Act act) throws SQLException {
@@ -199,7 +250,7 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<Act> load(final Session session, final AbstractEntity entity) {
+	public List<Act> load(final Session session, final Entity entity) {
 		List<Act> acts = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -211,7 +262,7 @@ public class ActServiceImpl implements IActService {
 		return acts;
 	}
 
-	private List<Act> executeSelect(Session session, Connection con, Long id, AbstractEntity entity) throws SQLException {
+	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity) throws SQLException {
 		String sql = "select " +
 				"i.id actid, i.date, actclass.name classname, actclassfield.name fieldname, actclassfield.type, field.* " +
 				"from Act i " +
@@ -283,9 +334,13 @@ public class ActServiceImpl implements IActService {
 				switch (type) {
 				case IActField.FT_BOOLEAN:
 					Long lvalue = rs.getLong("intvalue");
-					field.setValue(lvalue.equals(1));
+					field.setValue(lvalue.equals(1l));
+					break;
 				case IActField.FT_INTEGER:
 					field.setValue(rs.getLong("intvalue"));
+					break;
+				case IActField.FT_FLOAT:
+					field.setValue(rs.getFloat("floatvalue"));
 					break;
 				case IActField.FT_STRING:
 					field.setValue(rs.getString("stringvalue"));
@@ -298,15 +353,41 @@ public class ActServiceImpl implements IActService {
 					Long id = rs.getLong("catalogValue");
 					field.setValue(rs.wasNull() ? (Catalog)null : catalogService.load(session, id));
 					break;
-				case IActField.FT_BLOB:
-					byte[] bytes = rs.getBytes("BlobValue");
-					field.setValue(bytes);
+				case IActField.FT_LIST:
+					Long listId = rs.getLong("listValue");
+					field.setValue(rs.wasNull() ? (CatalogList)null : loadCatalogList(session, listId));
 					break;
 				}
 				act.addField(field);
 			}			
 		}
 		return acts;
+	}
+
+	
+	@Override
+	public CatalogList loadCatalogList(Session session, final long listId) {
+		return Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public CatalogList execute(Connection con) throws SQLException {
+				CatalogList vl = new CatalogList(listId);
+				PreparedStatement s = con.prepareStatement(
+						"select c.* from Catalog c " +
+						"inner join CatalogListEntry cle on cle.catalog = c.id " +
+						"inner join List l on l.id = cle.list " +
+						"where l.id = ?");
+				s.setLong(1, listId);
+				ResultSet rs = s.executeQuery();
+				while (rs.next()) {
+					Catalog catalog = CatalogServiceImpl.fetchCatalog(rs, "");
+					vl.addValue(catalog);
+				}
+				s.close();
+				
+				return vl;
+			}
+		});
 	}
 
 	@Override
@@ -327,6 +408,12 @@ public class ActServiceImpl implements IActService {
 				log.info("deleted " + rows + " field(s).");
 				s.close();
 				
+				s = con.prepareStatement("delete from Logentry where actid = ?");
+				s.setLong(1, act.id);
+				rows = s.executeUpdate();
+				log.info("deleted " + rows + " logentries.");
+				s.close();
+				
 				s = con.prepareStatement("delete from Act where id = ?");
 				s.setLong(1, act.id);
 				rows = s.executeUpdate();
@@ -345,7 +432,7 @@ public class ActServiceImpl implements IActService {
 			@Override
 			public List <String> execute(Connection con) throws SQLException {
 				List <String> result = new ArrayList<String>();
-				PreparedStatement s = con.prepareStatement("select * from actclass where upper(Name) like ? order by Name");
+				PreparedStatement s = con.prepareStatement("select * from ActClass where upper(Name) like ? order by Name");
 				s.setString(1, filter != null ? filter.toUpperCase() + "%" : "%");
 				ResultSet rs = s.executeQuery();
 				while (rs.next()) {
