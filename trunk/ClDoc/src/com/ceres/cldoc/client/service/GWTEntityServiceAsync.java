@@ -14,6 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface GWTEntityServiceAsync {
 	void search(Session session, String criteria, AsyncCallback<List<Person>> callback);
+	void search(Session session, String criteria, int type, AsyncCallback<List<Entity>> callback);
 	
 	void delete(Session session, Entity entity, AsyncCallback<Void> defaultCallBack);
 	void delete(Session session, Person person, AsyncCallback<Void> defaultCallBack);
@@ -26,5 +27,6 @@ public interface GWTEntityServiceAsync {
 	
 	<T extends Entity> void list(Session session, Integer type, AsyncCallback<List<T>> callback);
 
+	void save(Session session, EntityRelation er, AsyncCallback<EntityRelation> callback);
 	void listRelations(Session session,	Entity entity, boolean asSubject, AsyncCallback<List<EntityRelation> > callback);
 }

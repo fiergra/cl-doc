@@ -273,7 +273,7 @@ insert into Catalog (id, parent, code, text, shorttext) values (153, 51, 'FEMALE
 
 insert into Catalog (id, parent, code, text, shorttext) values (154, 150, 'ER', 'EntityRelation', 'E.R.');
 insert into Catalog (id, parent, code, text, shorttext) values (155, 154, 'IsMemberOf', 'IsMemberOf', 'IsMemberOf');
-insert into Catalog (id, parent, code, text, shorttext) values (156, 154, 'LocatedIn', 'LocatedIn', 'LocatedIn');
+insert into Catalog (id, parent, code, text, shorttext) values (156, 154, 'IsLocatedIn', 'IsLocatedIn', 'IsLocatedIn');
 insert into Catalog (id, parent, code, text, shorttext) values (157, 154, 'IsPartOf', 'IsPartOf', 'IsPartOf');
 
 insert into Catalog (id, parent, code, text, shorttext) values (1000, 150, 'EntityTypes', 'EntityTypes', 'E.T.');

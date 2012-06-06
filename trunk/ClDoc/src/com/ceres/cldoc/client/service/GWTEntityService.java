@@ -22,10 +22,13 @@ public interface GWTEntityService extends RemoteService {
 	
 	Person findById(Session session, long id);
 
+	List<Entity> search(Session session, String criteria, int type);
 	List<Person> search(Session session, String criteria);
 	List<Person> findByAssignment(Session session, String criteria, String roleCode);
 	
 	<T extends Entity> List<T> list(Session session, Integer typeId);
+	
+	EntityRelation save(Session session, EntityRelation er);
 	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject);
 
 }
