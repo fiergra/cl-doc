@@ -6,8 +6,6 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.junit.Test;
-
 import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -15,9 +13,8 @@ import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 
-public class EntityServiceImplTest extends TransactionalTest4 {
+public class EntityServiceImplTest extends TransactionalTest {
 
-	@Test
 	public void testRelations() {
 		IEntityService entityService = Locator.getEntityService();
 		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
@@ -26,7 +23,6 @@ public class EntityServiceImplTest extends TransactionalTest4 {
 		List<EntityRelation> relations = entityService.listRelations(getSession(), organisations.get(0), true);
 	}
 	
-	@Test
 	public void testSelectByType() {
 		IEntityService entityService = Locator.getEntityService();
 		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
@@ -34,7 +30,6 @@ public class EntityServiceImplTest extends TransactionalTest4 {
 		
 	}
 	
-	@Test
 	public void testCatalog() {
 		ICatalogService catalogService = Locator.getCatalogService();
 		Catalog catalog1 = createCatalog(null, "code1", "text1", "short1");
@@ -61,7 +56,6 @@ public class EntityServiceImplTest extends TransactionalTest4 {
 		return catalog;
 	}
 	
-	@Test
 	public void testLogin() {
 		IUserService userService = Locator.getUserService();
 		IEntityService entityService = Locator.getEntityService();
@@ -77,7 +71,6 @@ public class EntityServiceImplTest extends TransactionalTest4 {
 		Assert.assertNotNull(session);
 	}
 	
-	@Test
 	public void testSave() {
 		Person person = new Person();
 		person.name = "Heinz";

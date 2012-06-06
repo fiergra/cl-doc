@@ -6,22 +6,16 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
-import org.junit.Test;
-
 import com.ceres.cldoc.model.Catalog;
 
-public class CatalogServiceImplTest extends TransactionalTest4 {
+public class CatalogServiceImplTest extends TransactionalTest {
 
-	
-
-	@Test
 	public void testConfig() {
 		ICatalogService catalogService = Locator.getCatalogService();
 		Collection<Catalog> list = catalogService.loadList(getSession(), "CLDOC.MAIN");
 		Assert.assertNotNull(list);
 	}
 
-	@Test
 	public void testImportExport() {
 		ICatalogService catalogService = Locator.getCatalogService();
 		String xml0 = catalogService.exportXML(getSession(), null);
@@ -32,7 +26,6 @@ public class CatalogServiceImplTest extends TransactionalTest4 {
 		Assert.assertEquals(xml1, xml2);
 	}
 
-	@Test
 	public void testCatalog() {
 		ICatalogService catalogService = Locator.getCatalogService();
 		Catalog catalog1 = createCatalog(null, "code1", "text1", "short1");

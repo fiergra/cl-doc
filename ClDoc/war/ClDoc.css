@@ -32,6 +32,10 @@ body, table td, select, button {
 	background: #fff;
 }
 
+.hunderPercentWidth {
+	width: 100%;
+}
+
 .marker {
 	border:medium;
 	background: #a11;

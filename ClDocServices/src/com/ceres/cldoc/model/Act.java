@@ -56,6 +56,10 @@ public class Act extends AbstractNamedValueAccessor {
 		if (participations == null) {
 			participations = new ArrayList<Participation>();
 		}
+		
+		if (start == null) {
+			start = new Date();
+		}
 		Participation p = new Participation(this, entity, role, start, end);
 		participations.add(p);
 	}

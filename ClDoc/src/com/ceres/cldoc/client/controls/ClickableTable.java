@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HTMLTable.RowFormatter;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -149,5 +150,9 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 	
 	
 	public void setSelected(Act result) {
+	}
+
+	public ColumnFormatter getColumnFormatter() {
+		return table.getColumnFormatter();
 	}
 }

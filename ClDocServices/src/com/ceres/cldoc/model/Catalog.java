@@ -15,9 +15,10 @@ public class Catalog implements Serializable {
 	
 	public static final Catalog PATIENT = new Catalog(Participation.PATIENT);
 	public static final Catalog ORGANISATION = new Catalog(Participation.ORGANISATION);
+	public static final Catalog MASTERDATA = new Catalog(Participation.MASTERDATA);
 	
 	private static final long serialVersionUID = -6847677602213023115L;
-
+	
 
 	public Long id;
 	public String code;

@@ -17,6 +17,7 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.Participation;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -58,16 +60,16 @@ public class EntityConfigurator extends DockLayoutPanel {
 
 			@Override
 			public void onClick(EntityRelation pp) {
-				ClickableTree<EntityRelation> tree = new ClickableTree<EntityRelation>(clDoc, true) {};
-				ClickableTable<Entity> table = new ClickableTable<Entity>(clDoc) {
-
-					@Override
-					public void addRow(FlexTable table, int row, Entity entry) {
-						table.setWidget(row, 0, new Label(entry.name));
-					}
-				};
-				addWest(tree, 300);
-				add(table);
+//				ClickableTree<EntityRelation> tree = new ClickableTree<EntityRelation>(clDoc, true) {};
+//				ClickableTable<Entity> table = new ClickableTable<Entity>(clDoc) {
+//
+//					@Override
+//					public void addRow(FlexTable table, int row, Entity entry) {
+//						table.setWidget(row, 0, new Label(entry.name));
+//					}
+//				};
+//				addWest(tree, 300);
+//				add(table);
 
 			}
 		}, 
@@ -100,11 +102,53 @@ public class EntityConfigurator extends DockLayoutPanel {
 		entityTable = new ClickableTable<Entity>(clDoc, listRetrieval, onClick, true) {
 			
 			@Override
-			public void addRow(FlexTable table, int row, Entity entry) {
+			public void addRow(FlexTable table, int row, final Entity entry) {
 				table.setWidget(row, 0, new Label(entry.id.toString()));
 				Label label = new Label(entry.name);
 				clDoc.getDragController().makeDraggable(label, new Label(entry.name));
 				table.setWidget(row, 1, label);
+				table.getColumnFormatter().addStyleName(1, "hunderPercentWidth");
+				Image pbEdit = new Image("icons/16/Edit-Document-icon.png");
+				pbEdit.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						SRV.actService.findByEntity(clDoc.getSession(), entry, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
+
+							@Override
+							public void onSuccess(List<Act> result) {
+								Catalog type = getSelectedType(cmbTypes, entityTypes);
+								Act act = null;
+								Iterator<Act> iter = result.iterator();
+								while (iter.hasNext() && act == null) {
+									Act next = iter.next();
+									if (next.className.equals(type.code)) {
+										act = next;
+									}
+								}
+								if (act != null) {
+									editMasterData(clDoc, null, act, entry);
+								}
+							}
+						});
+					}
+				});
+				Image pbDelete = new Image("icons/16/File-Delete-icon.png");
+				pbDelete.addClickHandler(new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						SRV.entityService.delete(clDoc.getSession(), entry, new DefaultCallback<Void>(clDoc, "deleteEntity") {
+
+							@Override
+							public void onSuccess(Void result) {
+//								entityTable.refresh();
+							}
+						});
+					}
+				});
+				table.setWidget(row, 2, pbEdit);
+				table.setWidget(row, 3, pbDelete);
 			}
 		};
 		
@@ -115,65 +159,9 @@ public class EntityConfigurator extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				int selectedTypeIndex = cmbTypes.getSelectedIndex();
-				final Catalog type = entityTypes.get(selectedTypeIndex);
-				final String code = type.code;
-
-				SRV.configurationService.getLayoutDefinition(clDoc.getSession(), code, LayoutDefinition.MASTER_DATA_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "loadLayout") {
-
-					@Override
-					public void onSuccess(LayoutDefinition result) {
-						final Act model = new Act(code);
-						final Form form = new Form<IAct>(clDoc, model, null) {
-
-							@Override
-							protected void setup() {
-							}
-						};
-						
-						if (result != null) {
-							final TextBox txtName = new TextBox();
-							form.addLine("Name", txtName);
-							form.parseAndCreate(result.xmlLayout, false);
-							form.showModal("Neu", 
-								new OnClick<Act>() {
-
-									@Override
-									public void onClick(Act pp) {
-										Entity entity = new Entity();
-										entity.name = txtName.getText();
-										entity.type = type.id.intValue();
-										SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "saveEntity") {
-
-											@Override
-											public void onSuccess(Entity result) {
-												SRV.actService.save(clDoc.getSession(), model, new DefaultCallback<Act>(clDoc, "") {
-
-													@Override
-													public void onSuccess(
-															Act result) {
-														entityTable.refresh();
-													}
-												});
-											}
-										});
-									}
-								}, 
-								null, 
-								new OnClick<Void>() {
-
-								@Override
-								public void onClick(Void pp) {
-//									form.close();
-								}
-							});
-						} else {
-							new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + code + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
-						}
-					}
-				});
-				
+				createMasterData(clDoc, entityTable, getSelectedType(cmbTypes, entityTypes));
 			}
+
 		});
 		SRV.configurationService.listCatalogs(clDoc.getSession(), "MASTERDATA.EntityTypes", new DefaultCallback<List<Catalog>>(clDoc, "list entity types") {
 
@@ -227,8 +215,90 @@ public class EntityConfigurator extends DockLayoutPanel {
 		treePanel.add(etree);
 		mainSplit.add(treePanel);
 		add(mainSplit);
-
-		
 	}
 
+	protected Catalog getSelectedType(ListBox cmbTypes, List<Catalog> entityTypes) {
+		int selectedTypeIndex = cmbTypes.getSelectedIndex();
+		final Catalog type = entityTypes.get(selectedTypeIndex);
+		
+		return type;
+	}
+
+	private void createMasterData(final ClDoc clDoc,
+			final ClickableTable<Entity> entityTable,
+			final Catalog type) {
+		
+		final Act model = new Act(type.code);
+		final Entity entity = new Entity();
+		entity.type = type.id.intValue();
+		model.addParticipant(entity, Catalog.MASTERDATA, null, null);
+
+		editMasterData(clDoc, entityTable, model, entity);
+		
+	}
+	
+	private void editMasterData(
+			final ClDoc clDoc,
+			final ClickableTable<Entity> entityTable,
+			final Act model,
+			final Entity entity
+			) {
+		SRV.configurationService.getLayoutDefinition(clDoc.getSession(), model.className, LayoutDefinition.MASTER_DATA_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "loadLayout") {
+
+			@Override
+			public void onSuccess(LayoutDefinition result) {
+				final Form<Act> form = new Form<Act>(clDoc, model, null) {
+
+					@Override
+					protected void setup() {
+					}
+				};
+				
+				if (result != null) {
+					final TextBox txtName = new TextBox();
+					form.addLine("Name", txtName);
+					txtName.setText(entity.name);
+					form.parseAndCreate(result.xmlLayout, false);
+					form.showModal("Neu", 
+						new OnClick<Act>() {
+
+							@Override
+							public void onClick(Act pp) {
+								form.fromDialog();
+								entity.name = txtName.getText();
+								SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "saveEntity") {
+
+									@Override
+									public void onSuccess(Entity result) {
+										entity.id = result.id;
+										SRV.actService.save(clDoc.getSession(), model, new DefaultCallback<Act>(clDoc, "") {
+
+											@Override
+											public void onSuccess(Act result) {
+												if (entityTable != null) {
+													entityTable.refresh();
+												}
+											}
+										});
+									}
+								});
+							}
+						}, 
+						null, 
+						new OnClick<Act>() {
+
+						@Override
+						public void onClick(Act pp) {
+//							form.close();
+						}
+					});
+				} else {
+					new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + model.className + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
+				}
+			}
+		});
+	}
+	
+	
+	
 }
