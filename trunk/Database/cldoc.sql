@@ -252,8 +252,9 @@ insert into Catalog (id, parent, code, text, shorttext) values (51, 50, 'ADMIN',
 insert into Catalog (id, parent, code, text, shorttext) values (52, 50, 'USER', 'USER', 'USER');
 insert into Catalog (id, parent, code, text, shorttext) values (53, 50, 'GUEST', 'GUEST', 'GUEST');
 
-insert into Catalog (id, parent, code, text, shorttext) values (101, 9, 'PATIENT', 'PATIENT', 'PATIENT');
-insert into Catalog (id, parent, code, text, shorttext) values (102, 9, 'ORGANISATION', 'ORGANISATION', 'ORGANISATION');
+insert into Catalog (id, parent, code, text, shorttext) values (101, 50, 'PATIENT', 'PATIENT', 'PATIENT');
+insert into Catalog (id, parent, code, text, shorttext) values (102, 50, 'ORGANISATION', 'ORGANISATION', 'ORGANISATION');
+insert into Catalog (id, parent, code, text, shorttext) values (103, 50, 'MASTERDATA', 'MASTERDATA', 'MASTERDATA');
 
 insert into Catalog (id, parent, code, text, shorttext) values (13, null, 'BEISPIEL', '', '');
 insert into Catalog (id, parent, code, text, shorttext) values (14, 13, 'BEISPIEL1', 'b1', 'b1');

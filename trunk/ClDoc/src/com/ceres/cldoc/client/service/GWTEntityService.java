@@ -16,7 +16,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface GWTEntityService extends RemoteService {
 	Entity save(Session session, Entity entity);
 	Person save(Session session, Person humanBeing);
+	
 	void delete(Session session, Person person);
+	void delete(Session session, Entity entity);
+	
 	Person findById(Session session, long id);
 
 	List<Person> search(Session session, String criteria);

@@ -9,6 +9,7 @@ public class Participation implements Serializable {
 
 	public static final long PATIENT = 101l;
 	public static final long ORGANISATION = 102l;
+	public static final long MASTERDATA = 103l;
 
 	public Long id;
 	public Entity entity;

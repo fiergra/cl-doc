@@ -1,14 +1,19 @@
 package com.ceres.cldoc.server.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.ceres.cldoc.IEntityService;
+import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.GWTEntityService;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.util.Jdbc;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -36,7 +41,33 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public void delete(Session session, Person person) {
-		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void delete(Session session, final Entity entity) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public <T> T execute(Connection con) throws SQLException {
+				PreparedStatement s = con.prepareStatement("delete from EntityRelation where SubjectId = ? OR ObjectId = ?");
+				s.setLong(1, entity.id);
+				s.setLong(2, entity.id);
+				s.execute();
+				s.close();
+				
+				s = con.prepareStatement("delete from Participation where EntityId = ?");
+				s.setLong(1, entity.id);
+				s.execute();
+				s.close();
+				
+				s = con.prepareStatement("delete from Entity where id = ?");
+				s.setLong(1, entity.id);
+				s.execute();
+				s.close();
+				
+				return null;
+			}
+		});
 	}
 
 	@Override
