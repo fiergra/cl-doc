@@ -15,5 +15,7 @@ public interface IEntityService {
 	<T extends Entity> List<T> load(Session session, String filter, String roleCode);
 
 	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject);
+	List<Entity> list(Session session, String criteria, int type);
+	EntityRelation save(Session session, EntityRelation er);
 
 }

@@ -13,9 +13,9 @@ import com.google.gwt.user.client.ui.Label;
 
 public class PersonRenderer extends FocusPanel {
 	private IAct act;
-	private OnClick<Person> onClickEdit;
-	private OnClick<Person> onClickOpen;
-	private Person person;
+	private final OnClick onClickEdit;
+	private final OnClick onClickOpen;
+	private final Person person;
 
 //	public PersonRenderer(GenericAct p, OnClick<HumanBeing> onClickOpen, OnClick<HumanBeing> onClickEdit) {
 //		this.act = p;
@@ -24,7 +24,7 @@ public class PersonRenderer extends FocusPanel {
 //		setup();
 //	}
 
-	public PersonRenderer(Person p, OnClick<Person> onClickOpen, OnClick<Person> onClickEdit) {
+	public PersonRenderer(Person p, OnClick onClickOpen, OnClick onClickEdit) {
 		this.person = p;
 		this.onClickOpen = onClickOpen;
 		this.onClickEdit = onClickEdit;

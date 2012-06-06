@@ -34,6 +34,11 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public EntityRelation save(Session session, EntityRelation er) {
+		return getEntityService().save(session, er);
+	}
+
+	@Override
 	public Person save(Session session, Person person) {
 		getEntityService().save(session, person);
 		return person;
@@ -73,6 +78,11 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public List<Person> search(Session session, String criteria) {
 		return getEntityService().search(session, criteria);
+	}
+
+	@Override
+	public List<Entity> search(Session session, String criteria, int type) {
+		return getEntityService().list(session, criteria, type);
 	}
 
 	@Override

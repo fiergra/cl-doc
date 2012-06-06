@@ -52,6 +52,12 @@ public class Entity implements Serializable {
 		
 		return primaryAddress;
 	}
+
+	@Override
+	public String toString() {
+		return id + "|" + name;
+	}
+	
 	
 	
 }

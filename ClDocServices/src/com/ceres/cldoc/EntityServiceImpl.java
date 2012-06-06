@@ -179,7 +179,7 @@ public class EntityServiceImpl implements IEntityService {
 	
 	@SuppressWarnings("unchecked")
 	private <T extends Entity> T load(Session session, Connection con, long id) throws SQLException {
-		List<Entity> entities = list(session, con, null, id);
+		List<Entity> entities = list(session, con, null, null, id);
 		return (T) (entities.isEmpty() ? null : entities.get(0));
 	}	
 
@@ -190,7 +190,7 @@ public class EntityServiceImpl implements IEntityService {
 			
 			@Override
 			public List<Entity> execute(Connection con) throws SQLException {
-				return list(session, con, typeId, id);
+				return list(session, con, null, typeId, id);
 			}
 		});
 	}	
@@ -232,7 +232,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Entity> list(Session session, Connection con, Integer typeId, Long id) throws SQLException {
+	private List<Entity> list(Session session, Connection con, String name, Integer typeId, Long id) throws SQLException {
 		List<Entity> result = new ArrayList<Entity>();
 		String sql = "select e.id entityId, e.name, e.type, pers.gender, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, street, number, city, postcode, co from Entity e "
 				+ "left outer join Person pers on pers.id = e.id "
@@ -245,6 +245,9 @@ public class EntityServiceImpl implements IEntityService {
 		if (typeId != null) {
 			sql += " AND e.type = ?";
 		}
+		if (name != null) {
+			sql += " AND UPPER(e.name) like ?";
+		}
 		if (id != null) {
 			sql += " AND e.id = ?";
 		}
@@ -252,6 +255,9 @@ public class EntityServiceImpl implements IEntityService {
 		int i = 1;
 		if (typeId != null) {
 			s.setLong(i++, typeId);
+		}
+		if (name != null) {
+			s.setString(i++, name.toUpperCase() + "%");
 		}
 		if (id != null) {
 			s.setLong(i++, id);
@@ -383,7 +389,7 @@ public class EntityServiceImpl implements IEntityService {
 			
 			@Override
 			public List<Entity> execute(Connection con) throws SQLException {
-				return list(session, con, typeId, null);
+				return list(session, con, null, typeId, null);
 			}
 		});
 		return result;
@@ -438,6 +444,35 @@ public class EntityServiceImpl implements IEntityService {
 				s.close();
 				
 				return result;
+			}
+		});
+	}
+
+	@Override
+	public List<Entity> list(final Session session, final String criteria, final int typeId) {
+		return Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public List<Entity> execute(Connection con) throws SQLException {
+				return list(session, con, criteria, typeId, null);
+			}
+		});
+	}
+
+	@Override
+	public EntityRelation save(Session session, final EntityRelation er) {
+		return Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public EntityRelation execute(Connection con) throws SQLException {
+				PreparedStatement s = con.prepareStatement(
+						"insert into EntityRelation (type, subjectid, objectid) values (?,?,?);", new String[]{"ID"});
+				s.setLong(1, er.type.id);
+				s.setLong(2, er.subject.id);
+				s.setLong(3, er.object.id);
+				er.id = Jdbc.exec(s);
+				s.close();
+				return er;
 			}
 		});
 	}

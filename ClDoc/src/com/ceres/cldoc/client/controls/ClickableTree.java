@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayoutPanel {
 
-	private final ClDoc clDoc;
+	protected final ClDoc clDoc;
 	private final Tree tree;
 	private HorizontalPanel buttonsPanel;
 	private ListRetrievalService<T> listRetrieval;

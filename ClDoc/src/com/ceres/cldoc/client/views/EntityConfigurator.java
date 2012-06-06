@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTable;
-import com.ceres.cldoc.client.controls.ClickableTree;
 import com.ceres.cldoc.client.controls.ERTree;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
@@ -15,9 +14,7 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
-import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.cldoc.model.Participation;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
