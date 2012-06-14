@@ -11,6 +11,7 @@ public class Locator {
 	private static DocServiceImpl docService;
 	private static LogServiceImpl logService;
 	private static DocArchive docArchive;
+	private static ILuceneService luceneService;
 	
 	public static IDocArchive getDocArchive() {
 		if (docArchive == null) {
@@ -24,6 +25,13 @@ public class Locator {
 			entityService = new EntityServiceImpl();
 		}
 		return entityService;
+	}
+
+	public static ILuceneService getLuceneService() {
+		if (luceneService == null) {
+			luceneService = new LuceneService();
+		}
+		return luceneService;
 	}
 
 	public static IUserService getUserService() {
