@@ -42,8 +42,8 @@ public class LuceneService implements ILuceneService {
 	}
 	
 	private File getPath() {
-		File path = new File(".");
-		path.mkdir();
+		File path = new File("./lucene");
+		path.mkdirs();
 		
 		return path;
 	}
@@ -51,6 +51,7 @@ public class LuceneService implements ILuceneService {
 	@Override
 	public void deleteIndex() throws CorruptIndexException, LockObtainFailedException, IOException {
 		IndexWriter w = getIndexWriter();
+		w.deleteAll();
 		w.close();
 	}
 	
@@ -62,8 +63,8 @@ public class LuceneService implements ILuceneService {
 		    StringBuffer content = new StringBuffer(entity.name);
 		    Iterator<Entry<String, IActField>> fieldsIter = masterData.fields.entrySet().iterator();
 		    
-			doc.add(new Field("id", String.valueOf(entity.id), Field.Store.NO, Field.Index.ANALYZED));
-			doc.add(new Field("name", entity.name, Field.Store.NO, Field.Index.ANALYZED));
+			doc.add(new Field("id", String.valueOf(entity.id), Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field("name", entity.name, Field.Store.YES, Field.Index.ANALYZED));
 		    while (fieldsIter.hasNext()) {
 		    	Entry<String, IActField> next = fieldsIter.next();
 		    	IActField field = next.getValue();
