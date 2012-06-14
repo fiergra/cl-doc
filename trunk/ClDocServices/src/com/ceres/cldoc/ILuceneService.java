@@ -1,0 +1,17 @@
+package com.ceres.cldoc;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.store.LockObtainFailedException;
+
+import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Entity;
+
+public interface ILuceneService {
+	void addToIndex(Entity entity, Act masterData) throws CorruptIndexException, LockObtainFailedException, IOException;
+	List<Entity> retrieve(String criteria) throws CorruptIndexException, IOException, ParseException;
+	void deleteIndex() throws CorruptIndexException, LockObtainFailedException, IOException;
+}
