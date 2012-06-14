@@ -7,12 +7,13 @@ import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.ClosableTab;
 import com.ceres.cldoc.client.views.ConfiguredTabPanel;
 import com.ceres.cldoc.client.views.DefaultCallback;
+import com.ceres.cldoc.client.views.EntityFile;
 import com.ceres.cldoc.client.views.Form;
 import com.ceres.cldoc.client.views.LogOutput;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
-import com.ceres.cldoc.client.views.PersonalFile;
-import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.Organisation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -33,10 +34,10 @@ public class ClDoc implements EntryPoint {
 	 */
 
 	private ConfiguredTabPanel<ClDoc> mainTab;
-	private Label statusMessage = new Label();
+	private final Label statusMessage = new Label();
 	private Session session;
 	private LogOutput logOutput;
-	private PickupDragController dragController = new PickupDragController(RootPanel.get(), false) {
+	private final PickupDragController dragController = new PickupDragController(RootPanel.get(), false) {
 
 		@Override
 		protected void restoreSelectedWidgetsLocation() {
@@ -60,6 +61,7 @@ public class ClDoc implements EntryPoint {
 		return session;
 	}
 	
+	@Override
 	public void onModuleLoad() {
 		LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<Session>() {
 			
@@ -111,31 +113,31 @@ public class ClDoc implements EntryPoint {
 		}, null, null);
 	}
 
-	private PersonalFile getPersonalFile(Session session, Person hb) {
+	private EntityFile getPersonalFile(Entity hb, Widget header, String config) {
 		int count = mainTab.getWidgetCount();
-		PersonalFile personalFile = null;
+		EntityFile personalFile = null;
 		int index = 0;
 		
 		while (index < count && personalFile == null) {
 			Widget tab = mainTab.getWidget(index);
-			if (tab instanceof PersonalFile && ((PersonalFile)tab).getEntity().id.equals(hb.id) ) {
-				personalFile = (PersonalFile) tab;
+			if (tab instanceof EntityFile && ((EntityFile)tab).getEntity().id.equals(hb.id) ) {
+				personalFile = (EntityFile) tab;
 			} else {
 				index++;
 			}
 		}
 		
 		if (personalFile == null) {
-			personalFile = new PersonalFile(this, hb);
+			personalFile = new EntityFile(this, hb, header, config);
 		}
 		
 		return personalFile;
 	}
 	
-	public void openPersonalFile(Session session, Person hb) {
-		PersonalFile personalFile = getPersonalFile(session, hb);
-		mainTab.add(personalFile, new ClosableTab(mainTab, personalFile, hb.id + " " + hb.lastName));
-		mainTab.selectTab(mainTab.getWidgetIndex(personalFile));
+	public void openEntityFile(Entity entity, Widget header, String config) {
+		EntityFile entityFile = getPersonalFile(entity, header, config);
+		mainTab.add(entityFile, new ClosableTab(mainTab, entityFile, entity.id + " " + entity.name));
+		mainTab.selectTab(mainTab.getWidgetIndex(entityFile));
 	}
 	
 	public void status(String text) {
@@ -152,17 +154,24 @@ public class ClDoc implements EntryPoint {
 	private void setupMain(Session result) {
 		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
 		DockLayoutPanel hp = new DockLayoutPanel(Unit.PX);
-		Image logo = new Image("kg-rlp-text.png");
+		Image logo = getSessionLogo(session);
 		hp.addWest(logo, 290);
 		Label welcome = new Label(getDisplayName(result));
 		hp.addEast(welcome, 200);
 		
-		mainPanel.addNorth(hp, 72);
+		mainPanel.addNorth(hp, 90);
 		mainPanel.addSouth(statusMessage, 20);
 		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 		mainPanel.add(mainTab);
 		RootLayoutPanel.get().clear();
 		RootLayoutPanel.get().add(mainPanel);
+	}
+
+	private Image getSessionLogo(Session session) {
+		Organisation organisation = session.getUser().organisation;
+		Image logo = new Image("icons/" + organisation.name + ".png");
+		
+		return logo;
 	}
 
 	private String getDisplayName(Session s) {

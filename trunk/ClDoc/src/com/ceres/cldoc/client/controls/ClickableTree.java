@@ -57,7 +57,7 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 			});
 		}
 		addNorth(titlePanel, 38);
-		add(tree);
+		add(sp);
 
 	}
 

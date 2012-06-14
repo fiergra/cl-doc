@@ -20,7 +20,7 @@ public interface GWTEntityService extends RemoteService {
 	void delete(Session session, Person person);
 	void delete(Session session, Entity entity);
 	
-	Person findById(Session session, long id);
+	<T extends Entity> T findById(Session session, long id);
 
 	List<Entity> search(Session session, String criteria, int type);
 	List<Person> search(Session session, String criteria);
@@ -30,5 +30,6 @@ public interface GWTEntityService extends RemoteService {
 	
 	EntityRelation save(Session session, EntityRelation er);
 	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject);
+	void delete(Session session, EntityRelation er);
 
 }

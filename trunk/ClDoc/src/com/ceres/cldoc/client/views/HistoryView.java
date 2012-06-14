@@ -10,8 +10,8 @@ import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.cldoc.model.Person;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,23 +26,23 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class HistoryView extends DockLayoutPanel {
 
-	private ActRenderer viewer;
-	private ClickableTable<Act>historyPanel;
+	private final ActRenderer viewer;
+	private final ClickableTable<Act>historyPanel;
 	
-	private Person humanBeing;
-	private ClDoc clDoc;
+	private Entity e;
+	private final ClDoc clDoc;
 
-	private HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
+	private final HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
 
-	public HistoryView(final ClDoc clDoc, final Person model) {
+	public HistoryView(final ClDoc clDoc, Entity entity) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
-		this.humanBeing = model;
+		this.e = entity;
 		historyPanel = new ClickableTable<Act>(clDoc, new ListRetrievalService<Act>() {
 
 			@Override
 			public void retrieve(String filter, AsyncCallback<List<Act>> callback) {
-				SRV.actService.findByEntity(clDoc.getSession(), humanBeing, callback);
+				SRV.actService.findByEntity(clDoc.getSession(), e, callback);
 			}
 		}, new OnClick<Act>() {
 
@@ -68,7 +68,7 @@ public class HistoryView extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				UploadDialog.uploadExternalDoc(HistoryView.this.clDoc, model,
+				UploadDialog.uploadExternalDoc(HistoryView.this.clDoc, e,
 						new OnOkHandler<Void>() {
 
 							@Override
@@ -82,11 +82,11 @@ public class HistoryView extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				AddAct.addAct(clDoc, humanBeing, new OnOkHandler<Act>() {
+				AddAct.addAct(clDoc, e, new OnOkHandler<Act>() {
 
 					@Override
 					public void onOk(Act act) {
-						act.addParticipant(model, Catalog.PATIENT, new Date(), null);
+						act.addParticipant(e, Catalog.PATIENT, new Date(), null);
 						act.addParticipant(clDoc.getSession().getUser().organisation, Catalog.ORGANISATION, new Date(), null);
 						
 						SRV.actService.save(clDoc.getSession(), act,
@@ -126,6 +126,13 @@ public class HistoryView extends DockLayoutPanel {
 		splitPanel.add(viewer);
 		add(splitPanel);
 
+		if (entity != null) {
+			refresh(null);
+		}
+	}
+	
+	public void setModel(Entity entity) {
+		e = entity;
 		refresh(null);
 	}
 
@@ -155,6 +162,8 @@ public class HistoryView extends DockLayoutPanel {
 				if (viewer.setAct(ld, act)) {
 				}
 			}
+		} else {
+			viewer.setAct(null, null);
 		}
 	}
 	

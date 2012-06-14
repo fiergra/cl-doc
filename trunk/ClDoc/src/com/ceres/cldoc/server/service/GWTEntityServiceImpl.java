@@ -39,6 +39,11 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public void delete(Session session, EntityRelation er) {
+		getEntityService().delete(session, er);
+	}
+
+	@Override
 	public Person save(Session session, Person person) {
 		getEntityService().save(session, person);
 		return person;
@@ -86,7 +91,7 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public Person findById(Session session, long id) {
+	public <T extends Entity> T findById(Session session, long id) {
 		return getEntityService().load(session, id);
 	}
 

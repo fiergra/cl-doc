@@ -43,7 +43,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 
 					@Override
 					public void onSuccess(Person result) {
-						clDoc.openPersonalFile(clDoc.getSession(), result);
+						clDoc.openEntityFile(result, new PersonalFileHeader(result), "CLDOC.PERSONALFILE");
 					}
 				});
 			}
@@ -73,7 +73,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		hp.add(new Label(SRV.c.search()));
 		hp.add(searchBox);
 
-		Image pbNew = addButton(SRV.c.newPPP(), "icons/32/user-group-new.png", new ClickHandler() {
+		Image pbNew = addButton(SRV.c.newPPP(), "icons/32/Person-New-icon.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -108,13 +108,13 @@ public class PersonSearchTable extends ClickableTable<Person> {
 				
 			}});
 	}
-
+/*
 	private static void loadAndOpenFile(final ClDoc clDoc, long pid) {
 		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>(clDoc, "findById") {
 
 			@Override
 			public void onSuccess(Person result) {
-				clDoc.openPersonalFile(clDoc.getSession(), result);
+				clDoc.openEntityFile(clDoc.getSession(), result, new PersonalFileHeader(result), "CLDOC.PERSONALFILE");
 			}
 		});
 	}
@@ -129,7 +129,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		});
 	}
 	
-	
+*/	
 	private static void editPerson(final ClDoc clDoc, final Person humanBeing) {
 		final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(humanBeing));
 		pe.showModal("PersonEditor", 

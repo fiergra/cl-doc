@@ -6,6 +6,8 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.CatalogListBox;
 import com.ceres.cldoc.client.views.DefaultCallback;
+import com.ceres.cldoc.client.views.MessageBox;
+import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.PopupManager;
 import com.ceres.cldoc.model.Entity;
@@ -46,15 +48,53 @@ public class ERTree extends ClickableTree<EntityRelation> {
 
 	@Override
 	protected Widget itemRenderer(final EntityRelation er) {
-		Grid grid = new Grid(1, 4);
+		Grid grid = new Grid(1, 6);
 		grid.setWidget(0, 0, new Label(String.valueOf(er.id)));
 		grid.setWidget(0, 1, new HTML("<b>" + er.type.shortText + "</b>"));
 		grid.setWidget(0, 2, getDirectionImage(asSubject));
-		grid.setWidget(0, 3, getEntityWidget(asSubject ? er.object : er.subject)); //new HTML("<i>" + (asSubject ? er.object.name : er.subject.name) + "</i>"));
+		Entity e = asSubject ? er.object : er.subject;
+		grid.setWidget(0, 3, getEntityWidget(e)); //new HTML("<i>" + (asSubject ? er.object.name : er.subject.name) + "</i>"));
+		
+		grid.setWidget(0, 4, getAddRelationButton(e));
+		grid.setWidget(0, 5, getDeleteRelationButton(er));
 		
 		return grid;
 	}
 
+
+	private Widget getAddRelationButton(final Entity entity) {
+		Image pbAdd = new Image("icons/16/File-New-icon.png");
+		pbAdd.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addRelation(entity);
+			}
+		});
+		return pbAdd;
+	}
+	
+	private Widget getDeleteRelationButton(final EntityRelation er) {
+		Image pbDelete = new Image("icons/16/File-Delete-icon.png");
+		pbDelete.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				new MessageBox("Loeschen", "Wollen Sie die Relation entfernen?" , MessageBox.MB_YES | MessageBox.MB_YES, MESSAGE_ICONS.MB_ICON_QUESTION){
+
+					@Override
+					protected void onClick(int result) {
+						if (result == MessageBox.MB_YES) {
+							deleteRelation(er);
+						}
+					}
+					
+				}.show();
+				
+			}
+		});
+		return pbDelete;
+	}
 
 	private Widget getDirectionImage(boolean asSubject) {
 		Image img = asSubject ? new Image("icons/16/arrow-mini-right-icon.png") : new Image("icons/16/arrow-mini-left-icon.png");
@@ -64,7 +104,10 @@ public class ERTree extends ClickableTree<EntityRelation> {
 
 	@Override
 	protected TreeItem getRoot() {
-		return new TreeItem(getEntityWidget(entity));
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.add(getEntityWidget(entity));
+		hp.add(getAddRelationButton(entity));
+		return new TreeItem(hp);
 	}
 
 	private Widget getEntityWidget(final Entity entity) {
@@ -88,20 +131,21 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		hp.add(w);
 		hp.add(new Label(entity.name));
 
-		Image pbAdd = new Image("icons/16/File-New-icon.png");
-		pbAdd.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				addRelation(entity);
-			}
-		});
-		hp.add(pbAdd);
-		
 		return hp;
 	}
 
 	private PopupPanel popup;
+	
+	protected void deleteRelation(EntityRelation er) {
+		SRV.entityService.delete(clDoc.getSession(), entity, new DefaultCallback<Void>(clDoc, "delete ER") {
+
+			@Override
+			public void onSuccess(Void result) {
+				refresh();
+			}
+		});
+		
+	}
 	
 	protected void addRelation(Entity entity) {
 		int row = 0;
