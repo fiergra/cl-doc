@@ -477,4 +477,20 @@ public class EntityServiceImpl implements IEntityService {
 		});
 	}
 
+	@Override
+	public void delete(Session session, final EntityRelation er) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws SQLException {
+				PreparedStatement s = con.prepareStatement(
+						"delete from EntityRelation where id = ?");
+				s.setLong(1, er.id);
+				s.execute();
+				s.close();
+				return null;
+			}
+		});
+	}
+
 }

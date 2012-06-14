@@ -17,5 +17,6 @@ public interface IEntityService {
 	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject);
 	List<Entity> list(Session session, String criteria, int type);
 	EntityRelation save(Session session, EntityRelation er);
+	void delete(Session session, EntityRelation er);
 
 }
