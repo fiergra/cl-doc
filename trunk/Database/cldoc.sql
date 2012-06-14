@@ -281,26 +281,6 @@ insert into Catalog (id, parent, code, text, shorttext) values (1001, 1000, 'Per
 insert into Catalog (id, parent, code, text, shorttext) values (1002, 1000, 'Organisation', 'Organisation', 'Organisation');
 insert into Catalog (id, parent, code, text, shorttext) values (1003, 1000, 'Room', 'Room', 'Room');
 
-insert into Catalog (id, parent, code, text, shorttext) values (1005, 1000, 'Land', 'Land', 'Land');
-insert into Catalog (id, parent, code, text, shorttext) values (1006, 1000, 'Bezirk', 'Bezirk', 'Bezirk');
-insert into Catalog (id, parent, code, text, shorttext) values (1007, 1000, 'Gemeinde', 'Gemeinde', 'Gemeinde');
-insert into Catalog (id, parent, code, text, shorttext) values (1008, 1000, 'Ort', 'Ort', 'Ort');
-
-insert into Entity (ID, TYPE, NAME) values (1001, 1005, 'Rheinland-Pfalz');
-insert into Entity (ID, TYPE, NAME) values (1002, 1005, 'Saarland');
-insert into Entity (ID, TYPE, NAME) values (1003, 1006, 'Trier-Land');
-insert into Entity (ID, TYPE, NAME) values (1004, 1006, 'Trier');
-insert into Entity (ID, TYPE, NAME) values (1005, 1007, 'Ruwer');
-insert into Entity (ID, TYPE, NAME) values (1006, 1008, 'Waldrach');
-insert into Entity (ID, TYPE, NAME) values (1007, 1008, 'Gusterath');
-insert into Entity (ID, TYPE, NAME) values (1008, 1008, 'Pluwig');
-
-insert into entityrelation (type, subjectid, objectid) values (157, 1003, 1001);
-insert into entityrelation (type, subjectid, objectid) values (157, 1004, 1001);
-insert into entityrelation (type, subjectid, objectid) values (157, 1005, 1003);
-insert into entityrelation (type, subjectid, objectid) values (157, 1006, 1005);
-insert into entityrelation (type, subjectid, objectid) values (157, 1007, 1005);
-insert into entityrelation (type, subjectid, objectid) values (157, 1008, 1005);
 
 
 insert into Entity (ID, TYPE, NAME) values (1, 1001, 'Ralph FIERGOLLA');
@@ -328,6 +308,9 @@ insert into Organisation (Id) values (21);
 insert into Entity (ID,TYPE,NAME) values (22, 1002, 'DRK Sozialwerk');
 insert into Organisation (Id) values (22);
 
+insert into Entity (ID,TYPE,NAME) values (23, 1002, 'EART');
+insert into Organisation (Id) values (23);
+
 insert into Entity (ID, TYPE,NAME) values (31, 1003, 'JMO B2/097');
 insert into Room (id) values (31);
 
@@ -354,6 +337,7 @@ insert into Assignment(entityid, role, startdate) values (2, 51, CURRENT_DATE);
 
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (2, 'laschek', 211);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'fiergra', 20);
+insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'eart', 23);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (3, 'krieger', 22);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (4, 'carlita', 210);
 
