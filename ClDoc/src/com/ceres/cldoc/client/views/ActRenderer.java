@@ -28,8 +28,8 @@ public class ActRenderer extends DockLayoutPanel {
 
 	private static final int BORDER_WIDTH = 3;
 	private HTML title;
-	private OnOkHandler<Act> onInsertUpdateDelete;
-	private ClDoc clDoc;
+	private final OnOkHandler<Act> onInsertUpdateDelete;
+	private final ClDoc clDoc;
 	
 	public ActRenderer(
 			ClDoc clDoc,

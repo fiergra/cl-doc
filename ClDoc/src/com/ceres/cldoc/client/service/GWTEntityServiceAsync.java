@@ -22,11 +22,12 @@ public interface GWTEntityServiceAsync {
 	void save(Session session, Entity entity, AsyncCallback<Entity> callback);
 	void save(Session session, Person person, AsyncCallback<Person> callback);
 	
-	void findById(Session session, long id, AsyncCallback<Person> callback);
+	<T extends Entity> void findById(Session session, long id, AsyncCallback<T> callback);
 	void findByAssignment(Session session, String criteria, String roleCode, AsyncCallback<List<Person>> callback);
 	
 	<T extends Entity> void list(Session session, Integer type, AsyncCallback<List<T>> callback);
 
 	void save(Session session, EntityRelation er, AsyncCallback<EntityRelation> callback);
+	void delete(Session session, EntityRelation er, AsyncCallback<Void> callback);
 	void listRelations(Session session,	Entity entity, boolean asSubject, AsyncCallback<List<EntityRelation> > callback);
 }

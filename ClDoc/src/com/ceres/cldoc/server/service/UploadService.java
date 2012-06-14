@@ -22,7 +22,7 @@ import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.model.Entity;
 
 //The FormPanel must submit to a servlet that extends HttpServlet  
 //RemoteServiceServlet cannot be used
@@ -34,6 +34,7 @@ public class UploadService extends HttpServlet {
 		return session;
 	}
 	
+	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
@@ -44,7 +45,7 @@ public class UploadService extends HttpServlet {
 			// Create a new file upload handler
 			ServletFileUpload upload = new ServletFileUpload(factory);
 			Session session = getSession(req);
-			String type = (String) req.getParameter("type");
+			String type = req.getParameter("type");
 			try {
 				List<FileItem> items = upload.parseRequest(req);
 
@@ -93,8 +94,8 @@ public class UploadService extends HttpServlet {
 							}
 						}
 					}
-					Person person = Locator.getEntityService().load(session, entityId);
-					act.addParticipant(person, Catalog.PATIENT, new Date(), null);
+					Entity entity = Locator.getEntityService().load(session, entityId);
+					act.addParticipant(entity, Catalog.PATIENT, new Date(), null);
 					act.date = new Date();
 					Locator.getActService().save(session, act);
 				}
@@ -123,6 +124,7 @@ public class UploadService extends HttpServlet {
 		return out.toByteArray();
 	}
 
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		doPost(req, resp);

@@ -174,7 +174,7 @@ public class HomeScreen extends PersonSearchList {
 
 			@Override
 			public void onSuccess(Person result) {
-				clDoc.openPersonalFile(clDoc.getSession(), result);
+				clDoc.openEntityFile(result, new PersonalFileHeader(result), "CLDOC.PERSONALFILE");
 			}
 		});
 	}

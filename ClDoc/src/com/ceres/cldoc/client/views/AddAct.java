@@ -5,8 +5,8 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.cldoc.model.Person;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -25,10 +25,10 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class AddAct extends DialogBox {
 
-	private OnOkHandler<Act> onOk;
-	private ClDoc clDoc;
+	private final OnOkHandler<Act> onOk;
+	private final ClDoc clDoc;
 
-	public AddAct(ClDoc clDoc, Person humanBeing, OnOkHandler<Act> onOk) {
+	public AddAct(ClDoc clDoc, Entity humanBeing, OnOkHandler<Act> onOk) {
 		this.clDoc = clDoc;
 		this.onOk = onOk;
 		setup(humanBeing);
@@ -42,7 +42,7 @@ public class AddAct extends DialogBox {
 //	hp.add(addNew);
 //
 	
-	private void setup(Person humanBeing) {
+	private void setup(Entity entity) {
 		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		final ListBox list = new ListBox();
@@ -140,7 +140,7 @@ public class AddAct extends DialogBox {
 		});
 	}
 	
-	public static void addAct(ClDoc clDoc, Person humanBeing, OnOkHandler<Act> onOk) {
+	public static void addAct(ClDoc clDoc, Entity humanBeing, OnOkHandler<Act> onOk) {
 		AddAct avb = new AddAct(clDoc, humanBeing, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);

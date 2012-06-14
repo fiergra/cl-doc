@@ -2,8 +2,8 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.cldoc.model.Person;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,18 +25,17 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class UploadDialog extends DialogBox {
 
-	private OnOkHandler<Void> onOk;
+	private final OnOkHandler<Void> onOk;
 
-	public UploadDialog(ClDoc clDoc, String type, Person humanBeing, OnOkHandler<Void> onOk) {
+	public UploadDialog(ClDoc clDoc, String type, Entity humanBeing, OnOkHandler<Void> onOk) {
 		this.onOk = onOk;
 		setup(clDoc, type, humanBeing);
 	}
 
-	private FormPanel createUploadPanel(ClDoc clDoc, String type, Person humanBeing) {
+	private FormPanel createUploadPanel(ClDoc clDoc, String type, Entity humanBeing) {
 		final FormPanel form = new FormPanel();
 		final FileUpload fup = new FileUpload();
 		fup.setName("fup");
-		String attributes;
 		final TextBox rweKey = new TextBox();
 		
 		if (humanBeing != null) {
@@ -96,7 +95,7 @@ public class UploadDialog extends DialogBox {
 	}
 	
 	
-	private void setup(ClDoc clDoc, String type, Person humanBeing) {
+	private void setup(ClDoc clDoc, String type, Entity humanBeing) {
 		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		HorizontalPanel buttons = new HorizontalPanel();
@@ -139,7 +138,7 @@ public class UploadDialog extends DialogBox {
 		hide();
 	}
 
-	public static void uploadExternalDoc(ClDoc clDoc, Person humanBeing, OnOkHandler<Void> onOk) {
+	public static void uploadExternalDoc(ClDoc clDoc, Entity humanBeing, OnOkHandler<Void> onOk) {
 		uploadFile(clDoc, "externalDoc", humanBeing, onOk);
 	}
 
@@ -151,7 +150,7 @@ public class UploadDialog extends DialogBox {
 		uploadFile(clDoc, "catalogs", null, onOk);
 	}
 
-	private static void uploadFile(ClDoc clDoc, String type, Person humanBeing, OnOkHandler<Void> onOk) {
+	private static void uploadFile(ClDoc clDoc, String type, Entity humanBeing, OnOkHandler<Void> onOk) {
 		UploadDialog avb = new UploadDialog(clDoc, type, humanBeing, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);
