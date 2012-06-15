@@ -244,8 +244,8 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (4
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (5, 2, 'Configuration', 'Configuration', 'CONFIG', 3);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'DEBUG', 4);
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (8, 7, 'HISTORY', 'HISTORY', 'HISTORY', 1);
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (9, 7, 'DETAILS', 'DETAILS', 'DETAILS', 2);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (8, 7, 'Formulare', 'Formulare', 'Formulare', 1);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (9, 7, 'Stammdaten', 'Stammdaten', 'Stammdaten', 2);
 
 insert into Catalog (id, parent, code, text, shorttext) values (50, null, 'ROLES', 'ROLES', 'ROLES');
 insert into Catalog (id, parent, code, text, shorttext) values (51, 50, 'ADMIN', 'ADMIN', 'ADMIN');
@@ -268,8 +268,8 @@ insert into Catalog (id, parent, code, text, shorttext) values (20, 15, 'BEISPIE
 insert into Catalog (id, parent, code, text, shorttext) values (150, null, 'MASTERDATA', 'MASTERDATA', 'MASTERDATA');
 
 insert into Catalog (id, parent, code, text, shorttext) values (151, 150, 'GENDER', 'GENDER', 'GENDER');
-insert into Catalog (id, parent, code, text, shorttext) values (152, 51, 'MALE', 'M', 'M');
-insert into Catalog (id, parent, code, text, shorttext) values (153, 51, 'FEMALE', 'F', 'F');
+insert into Catalog (id, parent, code, text, shorttext) values (152, 151, 'MALE', 'M', 'M');
+insert into Catalog (id, parent, code, text, shorttext) values (153, 151, 'FEMALE', 'F', 'F');
 
 insert into Catalog (id, parent, code, text, shorttext) values (154, 150, 'ER', 'EntityRelation', 'E.R.');
 insert into Catalog (id, parent, code, text, shorttext) values (155, 154, 'IsMemberOf', 'IsMemberOf', 'IsMemberOf');

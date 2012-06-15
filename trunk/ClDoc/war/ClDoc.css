@@ -1,10 +1,5 @@
 /** Add css rules here for your application. */
 
-html, body { 
-	margin: 0;
-	padding: 0;
-	height: 100%; /* WICHTIG!!! STRECKT ANZEIGENBEREICH AUF 100% */
-}
 
 body, table td, select, button {
 	font-family: Tahoma;
@@ -12,14 +7,16 @@ body, table td, select, button {
 	font-size: small; 
 }
 
+/*
 .background {
-	min-height: 100%; /* Mindesthöhe für moderne Browser */
-	height:auto !important; /* Important Regel für moderne Browser */ 
-	height:100%; /* Mindesthöhe für den IE */ 
-	overflow: hidden !important; /* FF Scroll-leiste */ 
+	min-height: 100%; 
+	height:auto !important;  
+	height:100%;  
+	overflow: hidden !important;  
 	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#cce1ba));
 	background: -moz-linear-gradient(top,  #fff,  #cce1ba);
 }
+*/
 
 .main {
 	min-height: 100%; /* Mindesthöhe für moderne Browser */
@@ -103,6 +100,8 @@ body, table td, select, button {
 	width: 100%;
 	padding-left: 5px;
 	padding-right: 5px;
+	padding-top: 1px;
+	padding-bottom: 1px;
 	background-color: #cce1ba;
 }
 
