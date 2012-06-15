@@ -24,10 +24,10 @@ public class DynamicLoader {
 		} else if (name.equals("Configuration")) {
 			name = SRV.c.configuration();
 			result = new Configurator((ClDoc) model);
-		} else if (name.equals("HISTORY")) {
+		} else if (name.equals("Formulare")) {
 			name = SRV.c.history();
 			result = new HistoryView(clDoc, (Entity) model);
-		} else if (name.equals("DETAILS")) {
+		} else if (name.equals("Stammdaten")) {
 			name = SRV.c.details();
 			if (model instanceof Person) {
 				result = new PersonDetails(clDoc, (Person) model);

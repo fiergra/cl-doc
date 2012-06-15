@@ -73,7 +73,9 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		toDialog();
 	}
 
-	
+	public void setModel(T model) {
+		this.model = model;
+	}
 	
 	@Override
 	public void clear() {
@@ -480,7 +482,7 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		return w;
 	}
 
-	protected void parseAndCreate(String xml) {
+	public void parseAndCreate(String xml) {
 		parseAndCreate(xml, true);
 	}
 	

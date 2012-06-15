@@ -15,6 +15,7 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.Participation;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -102,7 +103,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 			public void addRow(FlexTable table, int row, final Entity entry) {
 				table.setWidget(row, 0, new Label(entry.id.toString()));
 				Label label = new Label(entry.name);
-				clDoc.getDragController().makeDraggable(label, new Label(entry.name));
+//				clDoc.getDragController().makeDraggable(label, new Label(entry.name));
 				table.setWidget(row, 1, label);
 				table.getColumnFormatter().addStyleName(1, "hunderPercentWidth");
 				Image pbEdit = new Image("icons/16/Edit-Document-icon.png");
@@ -110,7 +111,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						SRV.actService.findByEntity(clDoc.getSession(), entry, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
+						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.MASTERDATA, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
 
 							@Override
 							public void onSuccess(List<Act> result) {

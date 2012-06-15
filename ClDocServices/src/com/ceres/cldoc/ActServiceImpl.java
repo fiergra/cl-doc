@@ -250,19 +250,19 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<Act> load(final Session session, final Entity entity) {
+	public List<Act> load(final Session session, final Entity entity, final Long roleId) {
 		List<Act> acts = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public List<Act> execute(Connection con) throws SQLException {
-				return executeSelect(session, con, null, entity);
+				return executeSelect(session, con, null, entity, roleId);
 			}
 		});
 		
 		return acts;
 	}
 
-	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity) throws SQLException {
+	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity, Long roleId) throws SQLException {
 		String sql = "select " +
 				"i.id actid, i.date, actclass.name classname, actclassfield.name fieldname, actclassfield.type, field.* " +
 				"from Act i " +
@@ -274,7 +274,11 @@ public class ActServiceImpl implements IActService {
 			sql += "and i.id = ? ";
 		}
 		if (entity != null) {
-			sql += "and i.id in (select actid from Participation where entityid = ?) ";
+			if (roleId != null) {
+				sql += "and i.id in (select actid from Participation where entityid = ? and role = ?) ";
+			} else {
+				sql += "and i.id in (select actid from Participation where entityid = ?) ";
+			}
 		}
 		
 		sql += " order by i.date desc";
@@ -285,6 +289,9 @@ public class ActServiceImpl implements IActService {
 		}
 		if (entity != null) {
 			s.setLong(i++, entity.id);
+			if (roleId != null) {
+				s.setLong(i++, roleId);
+			}
 		}
 		ResultSet rs = s.executeQuery();
 		List<Act>acts = fetchActs(session, rs);
@@ -301,7 +308,7 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public Act execute(Connection con) throws SQLException {
-				Collection<Act>acts = executeSelect(session, con, id, null);
+				Collection<Act>acts = executeSelect(session, con, id, null, null);
 				return acts.isEmpty() ? null : acts.iterator().next();
 			}
 		});
