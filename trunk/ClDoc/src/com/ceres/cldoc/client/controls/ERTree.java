@@ -122,6 +122,12 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		case Entity.ENTITY_TYPE_ORGANISATION:
 			w = new Image("icons/16/chart-organisation-icon.png");
 			break;
+		case 1008:
+			w = new Image("icons/16/home-icon.png");
+			break;
+		case 1007:
+			w = new Image("icons/16/City-icon.png");
+			break;
 		default:
 			w = new Image("icons/16/Button-Help-icon.png");
 			break;
