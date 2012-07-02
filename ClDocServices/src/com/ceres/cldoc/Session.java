@@ -2,7 +2,9 @@ package com.ceres.cldoc;
 
 import java.io.Serializable;
 
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.User;
+import com.ceres.cldoc.security.Policies;
 
 public class Session implements Serializable {
 
@@ -10,19 +12,26 @@ public class Session implements Serializable {
 
 	private User user;
 	private long id;
+	private Policies policies;
 	
 	private static long sessionIds = 1;
 	
 	public Session() {
 	}
 
-	public Session(User user, long id) {
-		this.user = user;
-		this.id = id;
+	public boolean isAllowed(Catalog type, Catalog action) {
+		return policies != null ? policies.isAllowed(type, action) : false;
 	}
-
-	public Session(User user) {
-		this(user, createSessionId());
+//	public Session(User user, long id) {
+//		this.user = user;
+//		this.id = id;
+//	}
+//
+	public Session(User user, Policies policies) {
+//		this(user, createSessionId());
+		this.user = user;
+		this.policies = policies;
+		this.id = createSessionId();
 	}
 
 	private synchronized static long createSessionId() {

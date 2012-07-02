@@ -9,6 +9,7 @@ public interface ICatalogService {
 	void save(Session session, Catalog catalog);
 	
 	Catalog load(Session session, long id);
+	Catalog load(Session session, String code);
 	List<Catalog> loadList(Session session, String parentCode);
 	List<Catalog> loadList(Session session, Catalog parent);
 	

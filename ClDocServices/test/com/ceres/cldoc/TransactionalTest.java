@@ -17,14 +17,16 @@ public class TransactionalTest extends TestCase {
 		return session;
 	}
 
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		user = new User();
 		user.id = 1l;
-		session = new Session(user);
+		session = new Session(user, null);
 		TxManager.start(session);
 	}
 
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		TxManager.cancel(session);

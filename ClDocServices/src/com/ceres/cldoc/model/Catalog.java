@@ -2,11 +2,11 @@ package com.ceres.cldoc.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
-public class Catalog implements Serializable {
+public class Catalog implements Serializable, HasChildren<Catalog> {
 
 	public final static String ROOT = "ROOT";
 	public static final Catalog ADMIN = new Catalog(10l);
@@ -16,7 +16,10 @@ public class Catalog implements Serializable {
 	public static final Catalog PATIENT = new Catalog(Participation.PATIENT);
 	public static final Catalog ORGANISATION = new Catalog(Participation.ORGANISATION);
 	public static final Catalog MASTERDATA = new Catalog(Participation.MASTERDATA);
-	
+
+	public static final Catalog VIEW = new Catalog(71l, "VIEW");
+	public static final Catalog EDIT = new Catalog(72l, "EDIT");
+
 	private static final long serialVersionUID = -6847677602213023115L;
 	
 
@@ -27,13 +30,20 @@ public class Catalog implements Serializable {
 	public Date date;
 
 	public Catalog parent;
-	public Collection<Catalog> children;
+	public List<Catalog> children;
+	public Long number1;
+	public Long number2;
 	
 	public Catalog() {
 	}
 
 	public Catalog(long id) {
 		this.id = id;
+	}
+
+	public Catalog(long id, String code) {
+		this(id);
+		this.code = code;
 	}
 
 	@Override
@@ -50,6 +60,7 @@ public class Catalog implements Serializable {
 		children.add(child);
 	}
 
+	@Override
 	public boolean hasChildren() {
 		return children != null && !children.isEmpty();
 	}
@@ -66,6 +77,28 @@ public class Catalog implements Serializable {
 			}
 		}
 		
+	}
+
+	@Override
+	public boolean equals(Object arg0) {
+		if (arg0 instanceof Catalog) {
+			Catalog c = (Catalog)arg0;
+			if (c.id != null && this.id != null) {
+				return c.id.equals(this.id);
+			}
+		}
+		
+		return super.equals(arg0);
+	}
+
+	@Override
+	public int hashCode() {
+		return id != null ? id.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public List<Catalog> getChildren() {
+		return children;
 	}
 	
 

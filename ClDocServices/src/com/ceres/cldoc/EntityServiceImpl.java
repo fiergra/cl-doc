@@ -32,6 +32,8 @@ public class EntityServiceImpl implements IEntityService {
 					insertEntity(con, entity);
 					if (entity instanceof Person) {
 						insertPerson(con, (Person) entity);
+					} else if (entity instanceof Organisation) {
+						insertOrganisation(con, (Organisation) entity);
 					}
 				} else {
 					updateEntity(con, entity);
@@ -43,6 +45,7 @@ public class EntityServiceImpl implements IEntityService {
 				saveAddresses(con, entity);
 				return null;
 			}
+
 		});
 	}
 
@@ -97,7 +100,7 @@ public class EntityServiceImpl implements IEntityService {
 			throws SQLException {
 		PreparedStatement s = con
 				.prepareStatement("update Entity set name = ?, type = ? where id = ?");
-		s.setString(1, entity.name);
+		s.setString(1, entity.getName());
 		s.setInt(2, entity.type);
 		s.setLong(3, entity.id);
 		s.executeUpdate();
@@ -109,9 +112,17 @@ public class EntityServiceImpl implements IEntityService {
 		PreparedStatement s = con.prepareStatement(
 				"insert into Entity (name,type) values (?,?)",
 				new String[] { "ID" });
-		s.setString(1, entity.name);
+		s.setString(1, entity.getName());
 		s.setInt(2, entity.type);
 		entity.id = Jdbc.exec(s);
+		s.close();
+	}
+
+	private void insertOrganisation(Connection con, Organisation entity) throws SQLException {
+		PreparedStatement s = con.prepareStatement(
+				"insert into Organisation (id) values (?)");
+		s.setLong(1, entity.id);
+		s.execute();
 		s.close();
 	}
 
@@ -213,7 +224,7 @@ public class EntityServiceImpl implements IEntityService {
 				e = new Entity();
 			}
 			e.id = entityId;
-			e.name = rs.getString(prefix + "name");
+			e.setName(rs.getString(prefix + "name"));
 			e.type = rs.getInt(prefix + "type");
 		}
 		Long addressId = rs.getLong(prefix + "addressId");
@@ -403,7 +414,7 @@ public class EntityServiceImpl implements IEntityService {
 			public List<EntityRelation> execute(Connection con) throws SQLException {
 				ArrayList<EntityRelation> result = new ArrayList<EntityRelation>();
 				String sql =
-						"select er.id relationId, type.id type_id, type.code type_code, type.shorttext type_shorttext, type.text type_text, type.date type_date, type.parent type_parent, " +
+						"select er.id relationId, type.id type_id, type.code type_code, type.shorttext type_shorttext, type.text type_text, type.date type_date, type.parent type_parent, type.number1 type_number1, type.number2 type_number2, " +
 						"subject.id subject_entityId, subject.name subject_name, subject.type subject_type," +
 						"object.id object_entityId, object.name object_name, object.type object_type " +
 						" from EntityRelation er" +
@@ -417,7 +428,7 @@ public class EntityServiceImpl implements IEntityService {
 						" where 1=1 ";
 				
 				sql += asSubject ? "AND subject.id = ?" : "AND object.id = ?";
-				
+				sql += " order by type.id, " + (!asSubject ? "subject.name" : "object.name") ;
 				PreparedStatement s = con.prepareStatement(sql);
 				s.setLong(1, entity.id);
 				
@@ -428,11 +439,11 @@ public class EntityServiceImpl implements IEntityService {
 					er.subject = new Entity();
 					er.subject.id = rs.getLong("subject_entityId");
 					er.subject.type = rs.getInt("subject_type");
-					er.subject.name = rs.getString("subject_name");
+					er.subject.setName(rs.getString("subject_name"));
 					er.object = new Entity();
 					er.object.id = rs.getLong("object_entityId");
 					er.object.type = rs.getInt("object_type");
-					er.object.name = rs.getString("object_name");
+					er.object.setName(rs.getString("object_name"));
 //					er.subject = fetchEntity(session, null, rs, "subject_");
 //					er.object = fetchEntity(session, null, rs, "object_");
 					er.type = CatalogServiceImpl.fetchCatalog(rs, "type_");

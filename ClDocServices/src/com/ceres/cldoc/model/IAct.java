@@ -22,4 +22,6 @@ public interface IAct extends Serializable {
 	public abstract IActField set(String fieldName, Serializable value);
 
 	public abstract CatalogList getCatalogList(String fieldName);
+	
+	public abstract Participation getParticipation(long role);
 }

@@ -207,7 +207,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 							} 
 							
 							if (type != -1) {
-								LayoutDefinition ld = new LayoutDefinition(null, 3, removeExtension(name), xml);
+								LayoutDefinition ld = new LayoutDefinition(null, type, removeExtension(name), xml);
 								save(session, ld);
 							} else {
 								log.warning(name + " cannot be imported!");
