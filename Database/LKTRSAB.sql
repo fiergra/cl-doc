@@ -11,6 +11,11 @@ insert into Catalog (parent, code, text, shorttext) values (10001, 'KiTa', 'Kind
 insert into Catalog (parent, code, text, shorttext) values (10001, 'KiGa', 'Kindergarten', 'Kindergarten');
 insert into Catalog (parent, code, text, shorttext) values (10001, 'Buergerhaus', 'Buergerhaus', 'Buergerhaus');
 
+insert into Catalog (id, parent, code, text, shorttext) values (20002, 150, 'Verfahren', 'Verfahren', 'Verfahren');
+insert into Catalog (parent, code, text, shorttext) values (20002, 'ausfuehrlich', 'ausfuehrlich', 'ausfuehrlich');
+insert into Catalog (parent, code, text, shorttext) values (20002, 'kurz', 'kurz', 'kurz');
+
+
 
 insert into Entity (ID, TYPE, NAME) values (1001, 1005, 'Trier-Saarburg');
 
@@ -69,3 +74,38 @@ insert into Entity (ID, TYPE, NAME) values (1419, 1007, 'Thomm');
 insert into entityrelation (type, subjectid, objectid) values (157, 1419, 1104);
 insert into Entity (ID, TYPE, NAME) values (1420, 1007, 'Waldrach');
 insert into entityrelation (type, subjectid, objectid) values (157, 1420, 1104);
+
+insert into Entity (ID, TYPE, NAME) values (2001, 1008, 'St. Martin Grundschule');
+insert into entityrelation (type, subjectid, objectid) values (156, 2001, 1403);
+insert into Entity (ID, TYPE, NAME) values (2002, 1008, 'St. Monika');
+insert into entityrelation (type, subjectid, objectid) values (156, 2002, 1403);
+
+/*
+insert into ActClass (Id,Name) values (11001, 'Gebaeude');
+insert into LayoutDefinition(typeid, Actclassid, xml) values (3,11001,'<form>
+   <line name="Gebaeudetyp" type="List" parent="MASTERDATA.Gebaeudetyp"/>
+   <line name="Adresse" type="text"/>
+   <line name="Baujahr Gebaeude" type="integer" length="4"/>
+   <line name="Baujahr Heizung" type="integer" length="4"/>
+   <line name="Nutzflaeche (m2)" type="integer" length="4"/>
+<!--   <line name="Farbe" type="List" parent="MASTERDATA.Farbe"/> -->
+</form>');
+
+insert into ActClass (Id,Name) values (12001, 'Energiepass');
+insert into LayoutDefinition(typeid, Actclassid, xml) values (1,12001,'<form>
+   <line source="energiepass.png" type="image" width="100%"/>
+   <line name="Nummer" type="integer"/>
+   <line label="Erstellt am" name="ErstellDatum" type="date"/>
+   <line label="Heizenergieverbrauchskennwert" name="Strom" type="integer"/>
+   <line label="Stromverberbrauchskennwert (kWh)" name="Heizung" type="integer"/>
+   <line name="Verfahren" type="option" parent="MASTERDATA.Verfahren"/>
+   <line source="energiepass_gesamt.png" type="image" width="100%"/>
+   </form>');
+insert into LayoutDefinition(typeid, Actclassid, xml) values (2,12001,'<pdf size="A4">
+    <paragraph align="center" spacingAfter="36" fontSize="36">Energiepass</paragraph>
+    <paragraph>Nummer: {Nummer}</paragraph>
+    <paragraph spacingBefore="12" spacingAfter="12" fontStyle="bold" fontSize="16">Kennwerte</paragraph>
+    <paragraph indentationLeft="18"><phrase fontStyle="bold">Heizung: </phrase><phrase>{Heizung}</phrase></paragraph>
+    <paragraph indentationLeft="18"><phrase fontStyle="bold">Strom: </phrase><phrase>{Strom}</phrase></paragraph>
+</pdf>');
+*/
