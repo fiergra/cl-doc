@@ -49,5 +49,10 @@ public abstract class AbstractNamedValueAccessor implements IAct, Serializable {
 		return field != null ? field.getBooleanValue() : Boolean.FALSE;
 	}
 
+	@Override
+	public Participation getParticipation(long role) {
+		return null;
+	}
+
 	
 }

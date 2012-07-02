@@ -17,5 +17,11 @@ public class Person extends Entity {
 		super();
 		type = ENTITY_TYPE_PERSON;
 	}
+
+	@Override
+	public String getName() {
+		return firstName + " " + lastName;
+	}
+	
 	
 }

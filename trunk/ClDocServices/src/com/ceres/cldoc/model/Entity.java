@@ -13,7 +13,10 @@ public class Entity implements Serializable {
 
 	public Long id;
 
-	public String name;
+	protected String name;
+	public String getName() {
+		return name;
+	}
 
 	public int type;
 	
@@ -56,6 +59,10 @@ public class Entity implements Serializable {
 	@Override
 	public String toString() {
 		return id + "|" + name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	

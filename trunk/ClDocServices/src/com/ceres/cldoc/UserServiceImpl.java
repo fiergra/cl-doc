@@ -4,11 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
+import com.ceres.cldoc.security.AccessControl;
 import com.ceres.cldoc.util.Jdbc;
 import com.ceres.cldoc.util.Strings;
 
@@ -18,10 +22,10 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public Session login(final Session session, final String userName, final String password) {
-		User user = Jdbc.doTransactional(session, new ITransactional() {
+		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public User execute(Connection con) throws SQLException {
+			public Session execute(Connection con) throws SQLException {
 				IEntityService entityService = Locator.getEntityService();
 				User user = null;
 				String hash = Strings.hash(password);
@@ -48,16 +52,16 @@ public class UserServiceImpl implements IUserService {
 				}
 				rs.close();
 				s.close();
-				return user;
+				
+				return user != null ? new Session(user, AccessControl.get(session, user, null)) : null;
 			}
 		});
 		
-		return (user != null) ? new Session(user) : null;
 	}
 
 	@Override
-	public void register(final Session session, final Person person, final Organisation organisation, final String userName, final String password) {
-		User user = Jdbc.doTransactional(session, new ITransactional() {
+	public User register(final Session session, final Person person, final Organisation organisation, final String userName, final String password) {
+		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public User execute(Connection con) throws SQLException {
@@ -94,7 +98,7 @@ public class UserServiceImpl implements IUserService {
 			}
 
 			private boolean isDifferentPerson(Person person, Person person2) {
-				return !person.name.equals(person2.name);
+				return !person.getName().equals(person2.getName());
 			}
 		});		
 	}
@@ -127,6 +131,71 @@ public class UserServiceImpl implements IUserService {
 			returnCode = NOT_DEFINED;
 		}
 		return returnCode;
+	}
+
+	@Override
+	public List<User> listUsers(final Session session, final String filter) {
+		return Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public List<User> execute(Connection con) throws SQLException {
+				List<User> result = new ArrayList<User>();
+				PreparedStatement s = con.prepareStatement("select u.id userId, u.name userName, p.id entityId, firstname, lastname, o.id organisationId, o.name, o.type from User u inner join Entity o on o.id = organisation_id inner join Person p on p.id = person_id where lower(u.name) like ?");
+				s.setString(1, filter.toLowerCase() + "%");
+				ResultSet rs = s.executeQuery();
+				while (rs.next()) {
+					User u = new User();
+					u.id = rs.getLong("userId");
+					u.userName = rs.getString("userName");
+					Person p = new Person();
+					p.id = rs.getLong("entityId");
+					p.firstName = rs.getString("firstName");
+					p.lastName = rs.getString("lastName");
+					u.person = p;
+					Organisation o = new Organisation();
+					o.id = rs.getLong("organisationId");
+					o.setName(rs.getString("name"));
+					o.type = rs.getInt("type");
+					u.organisation = o;
+					
+					AccessControl.get(session, u, null);
+					result.add(u);
+				}
+				rs.close();
+				s.close();
+				return result;
+			}
+		});
+	}
+
+	@Override
+	public void addRole(Session session, final User user, final Catalog role) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws SQLException {
+				PreparedStatement s = con.prepareStatement("insert into Assignment(userid, role, startdate) values (?, ?, CURRENT_DATE);");
+				s.setLong(1, user.id);
+				s.setLong(2, role.id);
+				int rows = s.executeUpdate();
+				return null;
+			}
+		});
+	}
+
+	@Override
+	public void removeRole(Session session, final User user, final Catalog role) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws SQLException {
+				PreparedStatement s = con.prepareStatement("update Assignment set enddate = CURRENT_DATE where userid = ? and role = ?");
+				s.setLong(1, user.id);
+				s.setLong(2, role.id);
+				int rows = s.executeUpdate();
+				return null;
+			}
+		});
 	}
 
 }

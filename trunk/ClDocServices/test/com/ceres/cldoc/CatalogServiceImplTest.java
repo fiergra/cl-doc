@@ -10,6 +10,13 @@ import com.ceres.cldoc.model.Catalog;
 
 public class CatalogServiceImplTest extends TransactionalTest {
 
+	public void testLoad() {
+		ICatalogService catalogService = Locator.getCatalogService();
+		Catalog c = catalogService.load(getSession(), "CLDOC.MAIN");
+		Assert.assertNotNull(c);
+		
+	}
+
 	public void testConfig() {
 		ICatalogService catalogService = Locator.getCatalogService();
 		Collection<Catalog> list = catalogService.loadList(getSession(), "CLDOC.MAIN");
@@ -28,10 +35,10 @@ public class CatalogServiceImplTest extends TransactionalTest {
 
 	public void testCatalog() {
 		ICatalogService catalogService = Locator.getCatalogService();
-		Catalog catalog1 = createCatalog(null, "code1", "text1", "short1");
-		Catalog catalog2 = createCatalog(catalog1, "code2", "text2", "short2");
-		Catalog catalog3 = createCatalog(catalog1, "code3", "text3", "short3");
-		Catalog catalog4 = createCatalog(catalog1, "code4", "text4", "short4");
+		Catalog catalog1 = createCatalog(null, "code1", "text1", "short1", 1l, 1L);
+		Catalog catalog2 = createCatalog(catalog1, "code2", "text2", "short2", 2l, 2l);
+		Catalog catalog3 = createCatalog(catalog1, "code3", "text3", "short3", 3l, 3l);
+		Catalog catalog4 = createCatalog(catalog1, "code4", "text4", "short4", 4l, 4l);
 		
 		catalogService.save(getSession(), catalog1);
 		catalogService.save(getSession(), catalog2);
@@ -42,13 +49,15 @@ public class CatalogServiceImplTest extends TransactionalTest {
 		Assert.assertEquals(3, catalogs.size());
 	}
 
-	private Catalog createCatalog(Catalog parent, String code, String text, String shortText) {
+	private Catalog createCatalog(Catalog parent, String code, String text, String shortText, Long number1, Long number2) {
 		Catalog catalog = new Catalog();
 		catalog.code = code;
 		catalog.parent = parent;
 		catalog.text = text;
 		catalog.shortText = shortText;
 		catalog.date = new Date();
+		catalog.number1 = number1;
+		catalog.number2 = number2;
 		return catalog;
 	}
 	

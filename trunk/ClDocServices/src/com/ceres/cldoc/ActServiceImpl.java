@@ -95,12 +95,16 @@ public class ActServiceImpl implements IActService {
 	private void insertField(Session session, Connection con, Act act, Entry<String, IActField> entry, boolean register) throws SQLException {
 		try {
 			PreparedStatement s = con.prepareStatement(
-					"insert into ActField (actid, classfieldid, CatalogValue, intvalue, stringvalue, datevalue, floatvalue, listValue) values (?, (select id from ActClassField where name = ?), ?, ?, ?, ?, ?, ?)", new String[]{"ID"});
+					"insert into ActField " +
+					"(actid, classfieldid, CatalogValue, intvalue, stringvalue, datevalue, floatvalue, listValue) " +
+					"values (?, " +
+					"(select id from ActClassField where name = ? and ActClassId = (select id from ActClass where name = ?)), ?, ?, ?, ?, ?, ?)", new String[]{"ID"});
 			String fieldName = entry.getKey();
 			IActField field = entry.getValue();
 			s.setLong(1, act.id);
 			s.setString(2, fieldName);
-			bindVariables(session, s, 3, act, fieldName, field);
+			s.setString(3, act.className);
+			bindVariables(session, s, 4, act, fieldName, field);
 			field.setId(Jdbc.exec(s));
 			s.close();
 		} catch (SQLException x) {

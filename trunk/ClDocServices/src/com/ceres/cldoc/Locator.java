@@ -11,7 +11,8 @@ public class Locator {
 	private static DocServiceImpl docService;
 	private static LogServiceImpl logService;
 	private static DocArchive docArchive;
-	private static ILuceneService luceneService;
+	private static ILuceneService luceneService;	
+	private static IReportService reportService;
 	
 	public static IDocArchive getDocArchive() {
 		if (docArchive == null) {
@@ -29,7 +30,7 @@ public class Locator {
 
 	public static ILuceneService getLuceneService() {
 		if (luceneService == null) {
-			luceneService = new LuceneService();
+			luceneService = new LuceneServiceImpl();
 		}
 		return luceneService;
 	}
@@ -81,6 +82,13 @@ public class Locator {
 			logService = new LogServiceImpl();
 		}
 		return logService;
+	}
+
+	public static IReportService getReportService() {
+		if (reportService == null) {
+			reportService = new ReportServiceImpl();
+		}
+		return reportService;
 	}
 
 }

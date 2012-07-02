@@ -53,7 +53,7 @@ public class CatalogServiceImpl implements ICatalogService {
 			public Catalog execute(Connection con) throws SQLException {
 				if (catalog.id != null) {
 					PreparedStatement s = con
-							.prepareStatement("update Catalog set parent = ?, text = ?, shorttext = ?, date = ? where id = ?");
+							.prepareStatement("update Catalog set parent = ?, text = ?, shorttext = ?, date = ?, number1=?, number2=? where id = ?");
 					long parentId = catalog.parent != null ? catalog.parent.id : 1000;
 					log.info(parentId +"");
 					int i = bindVariables(s, catalog);
@@ -63,7 +63,7 @@ public class CatalogServiceImpl implements ICatalogService {
 				} else {
 					PreparedStatement s = con
 							.prepareStatement(
-									"insert into Catalog (parent, text, shorttext, date, code) values (?,?,?,?,?)",
+									"insert into Catalog (parent, text, shorttext, date, number1, number2, code) values (?,?,?,?,?,?,?)",
 									new String[] { "ID" });
 					int i = bindVariables(s, catalog);
 					s.setString(i++, catalog.code);
@@ -88,6 +88,16 @@ public class CatalogServiceImpl implements ICatalogService {
 				} else {
 					u.setNull(i++, Types.DATE);
 				}
+				if (catalog.number1 != null) {
+					u.setLong(i++, catalog.number1);
+				} else {
+					u.setNull(i++, Types.INTEGER);
+				}
+				if (catalog.number2 != null) {
+					u.setLong(i++, catalog.number2);
+				} else {
+					u.setNull(i++, Types.INTEGER);
+				}
 				return i;
 			}
 		});
@@ -99,6 +109,28 @@ public class CatalogServiceImpl implements ICatalogService {
 		}
 	}
 
+	@Override
+	public Catalog load(Session session, final String code) {
+		int lastDot = code.lastIndexOf('.');
+		Catalog result = null;
+		
+		if (lastDot != -1) {
+			String localCode = code.substring(lastDot + 1);
+			Iterator<Catalog> iter = loadList(session, code.substring(0, lastDot)).iterator();
+			
+			while (iter.hasNext() && result == null) {
+				Catalog next = iter.next();
+				
+				if (next.code.equals(localCode)) {
+					result = next;
+				}
+				
+			}
+			
+		}
+		return result;
+	}	
+	
 	@Override
 	public Catalog load(Session session, final long id) {
 		Catalog result = Jdbc.doTransactional(session, new ITransactional() {
@@ -131,6 +163,10 @@ public class CatalogServiceImpl implements ICatalogService {
 		c.date = rs.getDate(prefix + "date");
 		Long parentId = rs.getLong(prefix + "parent");
 		c.parent = rs.wasNull() ? null : new Catalog(parentId);
+		Long number = rs.getLong(prefix + "number1");
+		c.number1 = rs.wasNull() ? null : number;
+		number = rs.getLong(prefix + "number2");
+		c.number2 = rs.wasNull() ? null : number;
 		return c;
 	}
 
@@ -199,7 +235,7 @@ public class CatalogServiceImpl implements ICatalogService {
 
 		if (st.countTokens() > 1) {
 			Collection<Catalog> children = loadList(session, st.nextToken());
-			while (st.hasMoreTokens()) {
+			while (children != null && st.hasMoreTokens()) {
 				c = getChild(children, st.nextToken());
 				children = c.children;
 			}
@@ -317,7 +353,10 @@ public class CatalogServiceImpl implements ICatalogService {
 
 	private void catalogToXml(Document doc, Node parentNode, Catalog catalog) {
 		Element catalogNode = doc.createElement("catalog");
-		catalogNode.setAttribute("id", String.valueOf(catalog.id));
+		
+		if (catalog.id < 1000) {
+			catalogNode.setAttribute("id", String.valueOf(catalog.id));
+		}
 		catalogNode.setAttribute("code", catalog.code);
 
 		Element textNode = doc.createElement("text");
@@ -337,6 +376,18 @@ public class CatalogServiceImpl implements ICatalogService {
 			Text dateText = doc.createTextNode(sDate);
 			dateNode.appendChild(dateText);
 			catalogNode.appendChild(dateNode);
+		}
+
+		if (catalog.number1 != null) {
+			Element numberNode = doc.createElement("number1");
+			numberNode.appendChild(doc.createTextNode(String.valueOf(catalog.number1)));
+			catalogNode.appendChild(numberNode);
+		}
+
+		if (catalog.number2 != null) {
+			Element numberNode = doc.createElement("number2");
+			numberNode.appendChild(doc.createTextNode(String.valueOf(catalog.number2)));
+			catalogNode.appendChild(numberNode);
 		}
 
 		parentNode.appendChild(catalogNode);
@@ -388,6 +439,12 @@ public class CatalogServiceImpl implements ICatalogService {
 		c.shortText = catalogNode.getElementsByTagName("shorttext").item(0).getTextContent();
 		if (catalogNode.getElementsByTagName("date").getLength() > 0) {
 			c.date = parseDate(catalogNode.getElementsByTagName("date").item(0).getTextContent());
+		}
+		if (catalogNode.getElementsByTagName("number1").getLength() > 0) {
+			c.number1 = Long.valueOf(catalogNode.getElementsByTagName("number1").item(0).getTextContent());
+		}
+		if (catalogNode.getElementsByTagName("number2").getLength() > 0) {
+			c.number2 = Long.valueOf(catalogNode.getElementsByTagName("number2").item(0).getTextContent());
 		}
 
 		save(session, c);

@@ -20,9 +20,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Address;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
@@ -222,7 +222,7 @@ public class DocServiceImpl implements IDocService {
 					Person person = (Person) entity;
 					addressParagraph.add(new Paragraph(person.firstName + " " + person.lastName));
 				} else {
-					addressParagraph.add(new Paragraph(entity.name));
+					addressParagraph.add(new Paragraph(entity.getName()));
 				}
 				Address a = entity.addresses.get(0);
 				addressParagraph.add(new Paragraph(a.street + " " + a.number));

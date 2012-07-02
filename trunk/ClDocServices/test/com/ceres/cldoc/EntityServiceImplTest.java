@@ -73,7 +73,7 @@ public class EntityServiceImplTest extends TransactionalTest {
 	
 	public void testSave() {
 		Person person = new Person();
-		person.name = "Heinz";
+		person.firstName = "Heinz";
 		
 		Address a = new Address();
 		a.street = "Strassenname";

@@ -13,7 +13,7 @@ public class LuceneServiceTest extends TransactionalTest {
 		ls.deleteIndex();
 		
 		Entity entity = new Entity();
-		entity.name = "TestEntity";
+		entity.setName("TestEntity");
 		entity.type = Entity.ENTITY_TYPE_ORGANISATION; 
 				
 		Act masterData = new Act("TestEntity");

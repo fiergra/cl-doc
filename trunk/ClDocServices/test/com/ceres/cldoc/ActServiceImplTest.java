@@ -94,7 +94,7 @@ public class ActServiceImplTest extends TransactionalTest {
 		Person entity = new Person();
 		entity.firstName = "Sven";
 		entity.lastName = "Fiergolla";
-		entity.name = "Sven Fiergolla";
+//		entity.name = "Sven Fiergolla";
 		entityService.save(getSession(), entity );
 
 		act.addParticipant(entity, Catalog.PATIENT, new Date(), null);
@@ -125,11 +125,13 @@ public class ActServiceImplTest extends TransactionalTest {
 		
 		act.set("catalog", c1);
 		act.set("float", 5.2f);
+		act.set("long", 5l);
 
 		Locator.getActService().save(getSession(), act);		
 		act = Locator.getActService().load(getSession(), act.id);
 		
 		assertEquals(5.2f, act.getFloat("float"));
+		assertEquals(new Long(5), act.getLong("long"));
 		assertEquals(now.getTime(), act.getDate("date"));
 	}
 	
