@@ -8,10 +8,13 @@ import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class HumanBeingListBox extends OnDemandComboBox <Person> {
+	
+	private Catalog role;
 	
 	public HumanBeingListBox(final ClDoc clDoc, final String role, OnDemandChangeListener<Person> changeHandler) {
 		super(clDoc, 
@@ -41,8 +44,21 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> {
 				return getLabel(act);
 			}
 		}, changeHandler);
+		
+		SRV.catalogService.getCatalog(clDoc.getSession(), "ROLES." + role , new DefaultCallback<Catalog>(clDoc, "load role catalog") {
+
+			@Override
+			public void onSuccess(Catalog result) {
+				HumanBeingListBox.this.role = result;
+			}
+		});
 		setSize("25em", "2em");
 		addStyleName("humanBeingListBox");
 	}
 
+	public Catalog getRole() {
+		return role;
+	}
+
+	
 }

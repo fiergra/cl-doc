@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.DateTextBox;
 import com.ceres.cldoc.client.controls.FloatTextBox;
+import com.ceres.cldoc.client.controls.LongTextBox;
 import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
@@ -34,6 +35,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -47,7 +49,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class Form<T extends IAct> extends FlexTable implements IView<T>{
 
 	public enum DataTypes {
-		FT_STRING, FT_TEXT, FT_DATE, /*FT_TIME, */FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_HUMANBEING, FT_UNDEF
+		FT_STRING, FT_TEXT, FT_DATE, /*FT_TIME, */FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE
 	};
 
 	protected T model;
@@ -133,6 +135,21 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 					((IEntitySelector<Catalog>)field.widget).setSelected(catalog);
 				}
 				break;
+			case FT_PARTICIPATION:
+//				Participation participation = act.getParticipation(role);
+//				
+//				Long id = act.getLong(field.name);
+//				if (id != null) {
+//					SRV.humanBeingService.findById(clDoc.getSession(), id, new DefaultCallback<Person>(clDoc, "findById") {
+//
+//						@Override
+//						public void onSuccess(Person result) {
+//							((IEntitySelector<Person>)field.widget).setSelected(result);
+//						}
+//					});
+//					
+//				}
+				break;
 			case FT_HUMANBEING:
 				Long id = act.getLong(field.name);
 				if (id != null) {
@@ -154,6 +171,9 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 				break;
 			case FT_FLOAT:
 				((FloatTextBox) field.widget).setFloat(act.getFloat(field.name));
+				break;
+			case FT_INTEGER:
+				((LongTextBox) field.widget).setLong(act.getLong(field.name));
 				break;
 //			case FT_TIME:
 //				Date dateValue = act.getDate(field.name);
@@ -196,6 +216,12 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 				Catalog catalog = ((IEntitySelector<Catalog>) field.widget).getSelected(); 
 				act.set(qualifiedFieldName, catalog != null ? catalog : null);
 				break;
+			case FT_PARTICIPATION:
+				// Person humanBeing = ((IEntitySelector<Person>)
+				// field.widget).getSelected();
+				// act.set(qualifiedFieldName, humanBeing != null ?
+				// humanBeing.id : null);
+				break;
 			case FT_HUMANBEING:
 				Person humanBeing = ((IEntitySelector<Person>) field.widget).getSelected(); 
 				act.set(qualifiedFieldName, humanBeing != null ? humanBeing.id : null);
@@ -207,6 +233,10 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			case FT_FLOAT:
 				act.set(qualifiedFieldName,
 						((FloatTextBox) field.widget).getFloat());
+				break;
+			case FT_INTEGER:
+				act.set(qualifiedFieldName,
+						((LongTextBox) field.widget).getLong());
 				break;
 //			case FT_TIME:
 //				act.set(qualifiedFieldName,
@@ -320,23 +350,28 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 	}
 
 	protected void addLine(String label, Widget... widgets) {
-		Label l = new Label(label);
-		setWidget(row, 0, l);
-		getCellFormatter().addStyleName(row, 0, "formLabel");		
-		Widget w;
-
-		if (widgets.length > 1) {
-			HorizontalPanel hp = new HorizontalPanel();
-			hp.setSpacing(SPACING);
-			for (Widget widget : widgets) {
-				hp.add(widget);
-			}
-			w = hp;
+		if (label == null && widgets.length == 1) {
+			setWidget(row, 0, widgets[0]);
+			getFlexCellFormatter().setColSpan(row, 0, 2);
 		} else {
-			w = widgets[0];
+			Label l = new Label(label);
+			setWidget(row, 0, l);
+			getCellFormatter().addStyleName(row, 0, "formLabel");		
+			Widget w;
+	
+			if (widgets.length > 1) {
+				HorizontalPanel hp = new HorizontalPanel();
+				hp.setSpacing(SPACING);
+				for (Widget widget : widgets) {
+					hp.add(widget);
+				}
+				w = hp;
+			} else {
+				w = widgets[0];
+			}
+			setWidget(row, 1, w);
+			getFlexCellFormatter().setAlignment(row, 1, HasHorizontalAlignment.ALIGN_LEFT, HasVerticalAlignment.ALIGN_TOP);
 		}
-		setWidget(row, 1, w);
-		getFlexCellFormatter().setAlignment(row, 1, HasHorizontalAlignment.ALIGN_LEFT, HasVerticalAlignment.ALIGN_TOP);
 		row++;
 	}
 
@@ -364,8 +399,9 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			DataTypes dataType, HashMap <String, String> attributes) {
 		Widget widget = createWidgetForType(dataType, attributes);
 		addLine(labelText, widget);
-		fields.put(fieldName, new Field(fieldName, widget, dataType));
-
+		if (fieldName != null) {
+			fields.put(fieldName, new Field(fieldName, widget, dataType));
+		}
 		return widget;
 	}
 
@@ -436,8 +472,22 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			});
 			w = cms;
 			break;
-		case FT_HUMANBEING:
+		case FT_PARTICIPATION:
 			HumanBeingListBox hlb = new HumanBeingListBox(clDoc, attributes.get("role"), new OnDemandChangeListener<Person>() {
+				
+				@Override
+				public void onChange(Person oldValue, Person newValue) {
+					if (!isModified) {
+						isModified = true;
+						setModified.run();
+					}
+				}
+			});
+			w = hlb;
+			w.setWidth("60%");
+			break;
+		case FT_HUMANBEING:
+			hlb = new HumanBeingListBox(clDoc, attributes.get("role"), new OnDemandChangeListener<Person>() {
 				
 				@Override
 				public void onChange(Person oldValue, Person newValue) {
@@ -468,6 +518,17 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			f.addKeyDownHandler(modificationHandler);
 			w = f;
 			break;
+		case FT_INTEGER:
+			LongTextBox itb = new LongTextBox();
+			itb.setWidth("5em");
+			itb.addKeyDownHandler(modificationHandler);
+			w = itb;
+			break;
+		case FT_IMAGE:
+			String source = attributes.get("source");
+			Image img = new Image("icons/" + source);
+			w = img;
+			break;
 //		case FT_TIME:
 //			TimeTextBox tbx = new TimeTextBox();
 //			tbx.setWidth("4em");
@@ -479,6 +540,18 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 			break;
 
 		}
+		
+		if (w != null && attributes != null) {
+			String sWidth = attributes.get("width");
+			String sHeight = attributes.get("height");
+			if (sWidth != null) {
+				w.setWidth(sWidth);
+			}
+			if (sHeight != null) {
+				w.setHeight(sHeight);
+			}
+		}
+		
 		return w;
 	}
 
@@ -584,8 +657,12 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 				result = DataTypes.FT_STRING;
 			} else if (type.equals("text")) {
 				result = DataTypes.FT_TEXT;
+			} else if (type.equals("image")) {
+				result = DataTypes.FT_IMAGE;
 			} else if (type.equals("date")) {
 				result = DataTypes.FT_DATE;
+			} else if (type.equals("integer")) {
+				result = DataTypes.FT_INTEGER;
 			} else if (type.equals("float")) {
 				result = DataTypes.FT_FLOAT;
 //				} else if (type.equals("time")) {
@@ -598,6 +675,8 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 				result = DataTypes.FT_OPTION_SELECTION;
 			} else if (type.equals("multiselect")) {
 				result = DataTypes.FT_MULTI_SELECTION;
+			} else if (type.equals("participation")) {
+				result = DataTypes.FT_PARTICIPATION;
 			} else if (type.equals("humanbeing")) {
 				result = DataTypes.FT_HUMANBEING;
 			}

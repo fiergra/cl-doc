@@ -42,6 +42,12 @@ public class DownloadServlet extends HttpServlet {
 				resp.setContentType("text/xml");
 				String xml = Locator.getCatalogService().exportXML(session, null);
 				out = xml.getBytes("UTF-8");
+			} else if ("xsl".equals(type)) {
+				resp.setContentType("application/x-msexcel");
+				final String reportId = req.getParameter("id");
+				if (reportId != null) {
+					out = Locator.getReportService().exportXLS(session, Long.valueOf(reportId));
+				}
 			} else if ("pdf".equals(type)) {
 				final String sid = req.getParameter("id");
 				final long id = Long.valueOf(sid);

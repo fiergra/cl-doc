@@ -1,14 +1,16 @@
 package com.ceres.cldoc.client.service;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -32,7 +34,7 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 		SRV.configurationService.saveLayoutDefinition(session, type, className, xmlLayoutDesc, callback);
 	}
 
-	private HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
+	private final HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
 
 	@Override
 	public void getLayoutDefinition(Session session, String className, int typeId, AsyncCallback<LayoutDefinition> callback) {
@@ -47,6 +49,7 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 
 	HashMap <String, List <Catalog>> catalogsByParentCode = new HashMap<String, List<Catalog>>();
 	HashMap <Long, Catalog> catalogById = new HashMap<Long, Catalog>();
+	HashMap <String, Catalog> catalogByCode = new HashMap<String, Catalog>();
 	
 	private void clearCache() {
 		catalogsByParentCode.clear();
@@ -129,6 +132,30 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	}
 
 	@Override
+	public void getCatalog(Session session, final String code,
+			final AsyncCallback<Catalog> callback) {
+		Catalog result = catalogByCode.get(code);
+		
+		if (result != null) {
+			callback.onSuccess(result);
+		} else {
+			SRV.configurationService.getCatalog(session, code, new AsyncCallback<Catalog>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailure(caught);
+				}
+
+				@Override
+				public void onSuccess(Catalog result) {
+					catalogByCode.put(code, result);
+					callback.onSuccess(result);
+				}
+			});
+		}
+	}
+
+	@Override
 	public void saveAll(Session session, Collection<Catalog> catalogs,
 			AsyncCallback<Void> defaultCallback) {
 		// TODO Auto-generated method stub
@@ -154,6 +181,18 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 			AsyncCallback<List<Assignment>> callback) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void listReportDefinitions(Session session,
+			AsyncCallback<List<ReportDefinition>> callback) {
+		SRV.configurationService.listReportDefinitions(session, callback);
+	}
+
+	@Override
+	public void executeReport(Session session, ReportDefinition rd,
+			AsyncCallback<List<HashMap<String, Serializable>>> callback) {
+		SRV.configurationService.executeReport(session, rd, callback);
 	}
 
 }

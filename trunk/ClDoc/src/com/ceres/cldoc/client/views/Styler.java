@@ -129,7 +129,6 @@ public class Styler extends DockLayoutPanel {
 				});
 			}
 		});
-		hp.add(pbUpload);
 //		Anchor a = new Anchor("<img src=\"icons/32/Button-Download-icon.png\"/>", true);
 //		String baseUrl = GWT.getModuleBaseURL();
 //		a.setHref(baseUrl + "download?type=form_layouts");
@@ -145,7 +144,8 @@ public class Styler extends DockLayoutPanel {
 			}
 		});
 		hp.add(pbDownload);
-		
+		hp.add(pbUpload);
+
 		Image pbWindowRefresh = new Image("icons/32/Window-Refresh-icon.png");
 		pbWindowRefresh.addClickHandler(new ClickHandler() {
 			
@@ -197,7 +197,10 @@ public class Styler extends DockLayoutPanel {
 
 		
 //		refreshOracle();
-		addNorth(hp, 38);
+		HorizontalPanel buttons = new HorizontalPanel();
+		buttons.addStyleName("buttonsPanel");
+		buttons.add(hp);
+		addNorth(buttons, 38);
 		
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 			

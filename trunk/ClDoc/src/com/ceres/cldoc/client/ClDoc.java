@@ -34,7 +34,7 @@ public class ClDoc implements EntryPoint {
 	 */
 
 	private ConfiguredTabPanel<ClDoc> mainTab;
-	private final Label statusMessage = new Label();
+//	private final Label statusMessage = new Label();
 	private Session session;
 	private LogOutput logOutput;
 	private final PickupDragController dragController = new PickupDragController(RootPanel.get(), false) {
@@ -136,19 +136,19 @@ public class ClDoc implements EntryPoint {
 	
 	public void openEntityFile(Entity entity, Widget header, String config) {
 		EntityFile entityFile = getPersonalFile(entity, header, config);
-		mainTab.add(entityFile, new ClosableTab(mainTab, entityFile, entity.id + " " + entity.name));
+		mainTab.add(entityFile, new ClosableTab(mainTab, entityFile, entity.id + " " + entity.getName()));
 		mainTab.selectTab(mainTab.getWidgetIndex(entityFile));
 	}
 	
 	public void status(String text) {
-		statusMessage.setText(text);
+//		statusMessage.setText(text);
 		if (logOutput != null) {
 			logOutput.log("status", text);
 		}
 	}
 
 	public void clearStatus() {
-		statusMessage.setText("");
+//		statusMessage.setText("");
 	}
 	
 	private void setupMain(Session result) {
@@ -156,20 +156,24 @@ public class ClDoc implements EntryPoint {
 		DockLayoutPanel hp = new DockLayoutPanel(Unit.PX);
 		Image logo = getSessionLogo(session);
 		hp.addWest(logo, 290);
+		
 		Label welcome = new Label(getDisplayName(result));
 		hp.addEast(welcome, 200);
 		
-		mainPanel.addNorth(hp, 90);
-		mainPanel.addSouth(statusMessage, 20);
+		mainPanel.addNorth(hp, 45);
+//		mainPanel.addSouth(statusMessage, 20);
 		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 		mainPanel.add(mainTab);
 		RootLayoutPanel.get().clear();
+//		RootLayoutPanel.get().add(logo);
+//		RootLayoutPanel.get().setWidgetVerticalPosition(logo, Alignment.END);
+//		RootLayoutPanel.get().setWidgetHorizontalPosition(logo, Alignment.END);
 		RootLayoutPanel.get().add(mainPanel);
 	}
 
 	private Image getSessionLogo(Session session) {
 		Organisation organisation = session.getUser().organisation;
-		Image logo = new Image("icons/" + organisation.name + ".png");
+		Image logo = new Image("icons/" + organisation.getName() + ".png");
 		
 		return logo;
 	}

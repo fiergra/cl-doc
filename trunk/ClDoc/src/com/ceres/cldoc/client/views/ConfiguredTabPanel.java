@@ -23,9 +23,14 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 			public void onSuccess(List<Catalog> result) {
 				if (!result.isEmpty()) {
 					for (Catalog catalog : result) {
-						add(DynamicLoader.create(clDoc, catalog.code, model), catalog.text, false);
+						if (clDoc.getSession().isAllowed(catalog, Catalog.VIEW)) {
+							add(DynamicLoader.create(clDoc, catalog, model), catalog.text, false);
+						}
 					}
-					selectTab(0);
+					if (getWidgetCount() > 0) {
+						selectTab(0);
+					}
+					
 				}
 			}
 			

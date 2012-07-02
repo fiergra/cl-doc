@@ -125,6 +125,7 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 
 	private TreeItem object2TreeItem(T er) {
 		Widget renderer = itemRenderer(er);
+		
 		return new TreeItem(renderer);
 	}
 

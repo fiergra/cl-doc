@@ -1,7 +1,9 @@
 package com.ceres.cldoc.server.service;
 
+import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
@@ -12,13 +14,15 @@ import javax.xml.stream.XMLStreamReader;
 import com.ceres.cldoc.IActService;
 import com.ceres.cldoc.ICatalogService;
 import com.ceres.cldoc.ILayoutDefinitionService;
+import com.ceres.cldoc.IReportService;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.ConfigurationService;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -126,9 +130,18 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 		return Locator.getCatalogService();
 	}
 	
+	private IReportService getReportService() {
+		return Locator.getReportService();
+	}
+	
 	@Override
 	public Catalog getCatalog(Session session, long id) {
 		return getCatalogService().load(session, id);
+	}
+
+	@Override
+	public Catalog getCatalog(Session session, String code) {
+		return getCatalogService().load(session, code);
 	}
 
 	@Override
@@ -168,6 +181,17 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public List<Assignment> listAssignments(Session session, Entity entity) {
 		return null;
+	}
+
+	@Override
+	public List<ReportDefinition> listReportDefinitions(Session session) {
+		return getReportService().list(session, null);
+	}
+
+	@Override
+	public List<HashMap<String, Serializable>> executeReport(Session session,
+			ReportDefinition rd) {
+		return getReportService().execute(session, rd);
 	}
 
 }

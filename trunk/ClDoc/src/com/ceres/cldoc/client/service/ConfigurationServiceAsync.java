@@ -1,13 +1,16 @@
 package com.ceres.cldoc.client.service;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -17,10 +20,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ConfigurationServiceAsync {
 	void parse(Session session, String xml, AsyncCallback<LayoutElement> callback);
 
-//	void listChildren(String parent, AsyncCallback<List<String>> callback);
-//
-//	void getUploadUrl(AsyncCallback<String> callback);
-//
 	void listClassNames(Session session, String filter, AsyncCallback<List<String>> callback);
 	
 	void saveLayoutDefinition(Session session, int type, String className, String xmlLayoutDesc, AsyncCallback<Void> callback);
@@ -41,10 +40,16 @@ public interface ConfigurationServiceAsync {
 	
 	void getCatalog(Session session, long id, AsyncCallback<Catalog> callback);
 
+	void getCatalog(Session session, String code, AsyncCallback<Catalog> callback);
+
 	void saveAll(Session session, Collection<Catalog> catalogs,
 			AsyncCallback<Void> defaultCallback);
 	
 	void addAssignment(Session session, Catalog catalog, Entity entity, AsyncCallback<Assignment> callback);
 	void listAssignments(Session session, Catalog catalog, AsyncCallback<List<Assignment>> callback);
 	void listAssignments(Session session, Entity entity, AsyncCallback<List<Assignment>> callback);
+
+	void listReportDefinitions(Session session, AsyncCallback<List<ReportDefinition>> callback);
+
+	void executeReport(Session session, ReportDefinition rd, AsyncCallback<List<HashMap<String, Serializable>>> callback);
 }
