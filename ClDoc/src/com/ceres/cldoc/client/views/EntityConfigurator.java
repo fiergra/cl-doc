@@ -102,10 +102,10 @@ public class EntityConfigurator extends DockLayoutPanel {
 			@Override
 			public void addRow(FlexTable table, int row, final Entity entry) {
 				table.setWidget(row, 0, new Label(entry.id.toString()));
-				Label label = new Label(entry.name);
+				Label label = new Label(entry.getName());
 //				clDoc.getDragController().makeDraggable(label, new Label(entry.name));
 				table.setWidget(row, 1, label);
-				table.getColumnFormatter().addStyleName(1, "hunderPercentWidth");
+				table.getColumnFormatter().addStyleName(1, "hundertPercentWidth");
 				Image pbEdit = new Image("icons/16/Edit-Document-icon.png");
 				pbEdit.addClickHandler(new ClickHandler() {
 					
@@ -126,6 +126,8 @@ public class EntityConfigurator extends DockLayoutPanel {
 								}
 								if (act != null) {
 									editMasterData(clDoc, null, act, entry);
+								} else {
+									createMasterData(clDoc, null, type, entry);
 								}
 							}
 						});
@@ -157,7 +159,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				createMasterData(clDoc, entityTable, getSelectedType(cmbTypes, entityTypes));
+				createMasterData(clDoc, entityTable, getSelectedType(cmbTypes, entityTypes), null);
 			}
 
 		});
@@ -224,11 +226,18 @@ public class EntityConfigurator extends DockLayoutPanel {
 
 	private void createMasterData(final ClDoc clDoc,
 			final ClickableTable<Entity> entityTable,
-			final Catalog type) {
+			final Catalog type, Entity selectedEntity) {
 		
 		final Act model = new Act(type.code);
-		final Entity entity = new Entity();
-		entity.type = type.id.intValue();
+		final Entity entity;
+		
+		if (selectedEntity == null) {
+			entity = new Entity();
+			entity.type = type.id.intValue();
+		} else {
+			entity = selectedEntity;
+		}
+	
 		model.addParticipant(entity, Catalog.MASTERDATA, null, null);
 
 		editMasterData(clDoc, entityTable, model, entity);
@@ -255,7 +264,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 				if (result != null) {
 					final TextBox txtName = new TextBox();
 					form.addLine("Name", txtName);
-					txtName.setText(entity.name);
+					txtName.setText(entity.getName());
 					form.parseAndCreate(result.xmlLayout, false);
 					form.showModal("Neu", 
 						new OnClick<Act>() {
@@ -263,7 +272,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 							@Override
 							public void onClick(Act pp) {
 								form.fromDialog();
-								entity.name = txtName.getText();
+								entity.setName(txtName.getText());
 								SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "saveEntity") {
 
 									@Override

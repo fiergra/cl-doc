@@ -135,7 +135,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 
 		w.setTitle(String.valueOf(entity.type));
 		hp.add(w);
-		hp.add(new Label(entity.name));
+		hp.add(new Label(entity.getName()));
 
 		return hp;
 	}
@@ -178,7 +178,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 
 					@Override
 					public String getLabel(Entity entity) {
-						return entity.name;
+						return entity.getName();
 					}
 
 					@Override
@@ -201,7 +201,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		if (asSubject) {
 			er.subject = entity;
 			content.setWidget(row, 0, newLabel("Subject"));
-			content.setWidget(row, 1, new Label(entity.name));
+			content.setWidget(row, 1, new Label(entity.getName()));
 			row++;
 		} else {
 			er.object = entity;
@@ -226,7 +226,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 			
 		} else {
 			content.setWidget(row, 0, newLabel("Object"));
-			content.setWidget(row, 1, new Label(entity.name));
+			content.setWidget(row, 1, new Label(entity.getName()));
 		}
 
 		popup = PopupManager.showModal(er, "Neue Beziehung", content, 

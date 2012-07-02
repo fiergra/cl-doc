@@ -36,7 +36,7 @@ public class XERTree extends Tree {
 
 			@Override
 			public void onSuccess(List<EntityRelation> result) {
-				TreeItem root = new TreeItem(entity.name);
+				TreeItem root = new TreeItem(entity.getName());
 				addTreeItems(root, result);
 				addItem(root);
 				root.setState(true);
@@ -57,7 +57,7 @@ public class XERTree extends Tree {
 	}
 
 	private TreeItem relation2TreeItem(EntityRelation er) {
-		HTML html = new HTML(er.id + "|<b>" + er.type.shortText + "</b> - <i>" + (asSubject ? er.object.name : er.subject.name) + "</i>");
+		HTML html = new HTML(er.id + "|<b>" + er.type.shortText + "</b> - <i>" + (asSubject ? er.object.getName() : er.subject.getName()) + "</i>");
 		TreeItem ti = new TreeItem(html);
 
 		DropController dc = new SimpleDropController(html) {

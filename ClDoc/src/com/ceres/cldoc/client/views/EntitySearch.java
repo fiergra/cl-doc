@@ -25,26 +25,42 @@ public class EntitySearch extends SplitLayoutPanel {
 	public EntitySearch(final ClDoc clDoc, long entityId) {
 		final ClickableTree<EntityRelation> tree = new ClickableTree<EntityRelation>(clDoc, true) {
 
+			private Image getTypeImage(Entity entity) {
+				Image w = null;
+				switch (entity.type) {
+				case Entity.ENTITY_TYPE_PERSON:
+					w = new Image("icons/16/man-icon.png");
+					break;
+				case Entity.ENTITY_TYPE_ORGANISATION:
+					w = new Image("icons/16/chart-organisation-icon.png");
+					break;
+				case 1008:
+					w = new Image("icons/16/home-icon.png");
+					break;
+				case 1007:
+					w = new Image("icons/16/City-icon.png");
+					break;
+				}
+				return w;
+			}
+	
+			
 			@Override
 			protected Widget itemRenderer(EntityRelation er) {
-				if (er.subject.type == 1008) {
+				Image img = getTypeImage(er.subject);
+				if (img != null) {
 					HorizontalPanel hp = new HorizontalPanel();
-					hp.add(new Image("icons/16/home-icon.png"));
-					hp.add(new Label(er.subject.name));
-					return hp;
-				} else if (er.subject.type == 1007) {
-					HorizontalPanel hp = new HorizontalPanel();
-					hp.add(new Image("icons/16/City-icon.png"));
-					hp.add(new Label(er.subject.name));
+					hp.add(img);
+					hp.add(new Label(er.subject.getName()));
 					return hp;
 				} else {
-					return new Label(er.subject.name);
+					return new Label(er.subject.getName());
 				}
 			}
 
 			@Override
 			protected TreeItem getRoot() {
-				return new TreeItem(entity.name);
+				return new TreeItem(entity.getName());
 			}
 			
 			
@@ -67,15 +83,15 @@ public class EntitySearch extends SplitLayoutPanel {
 					
 					@Override
 					public void onClick(EntityRelation pp) {
-//						clDoc.openEntityFile(pp.subject, new HTML(pp.subject.name), "CLDOC.PERSONALFILE");
-//						hv.setModel(pp.subject);
-						HTML header = new HTML(pp.subject.name);
-						header.addStyleName("nameAndId");
-						EntityFile<Entity> ef = new EntityFile<Entity>(clDoc, pp.subject, header, "CLDOC.PERSONALFILE");
-						if (getCenter() != null) {
-							remove(getCenter());
+						if (pp != null) {
+							HTML header = new HTML(pp.subject.getName());
+							header.addStyleName("nameAndId");
+							EntityFile<Entity> ef = new EntityFile<Entity>(clDoc, pp.subject, header, "CLDOC.PERSONALFILE");
+							if (getCenter() != null) {
+								remove(getCenter());
+							}
+							add(ef);
 						}
-						add(ef);
 					}
 				});
 				tree.refresh();

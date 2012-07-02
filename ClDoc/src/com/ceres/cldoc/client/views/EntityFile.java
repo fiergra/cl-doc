@@ -9,8 +9,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class EntityFile <T extends Entity> extends DockLayoutPanel {
 
-	private T entity;
-
+	private final T entity;
+	private boolean isModified;
+	
 	public EntityFile(ClDoc clDoc, T entity, Widget header, String config) {
 		super(Unit.PT);
 		this.entity = entity;
@@ -24,5 +25,11 @@ public class EntityFile <T extends Entity> extends DockLayoutPanel {
 		return entity;
 	}
 
+	public void setModified(boolean set) {
+		isModified = set;
+	}
 	
+	public boolean isModified() {
+		return isModified;
+	}
 }

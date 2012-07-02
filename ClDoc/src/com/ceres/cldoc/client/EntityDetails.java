@@ -25,13 +25,14 @@ public class EntityDetails extends DockLayoutPanel {
 	private final Image pbSave = new Image("icons/32/Save-icon.png");
 	private final ClDoc clDoc;
 	private final Entity entity;
-
+	private final Form<IAct> masterDataForm;
+	
 	public EntityDetails(final ClDoc clDoc, final Entity entity) {
 		super(Unit.PX);
 		this.clDoc = clDoc;
 		this.entity = entity;
-		addNorth(createButtons(), 32);
-		final Form<IAct> masterDataForm = new Form<IAct>(clDoc, null,
+		addNorth(createButtons(), 34);
+		masterDataForm = new Form<IAct>(clDoc, null,
 				new Runnable() {
 
 					@Override
@@ -56,19 +57,19 @@ public class EntityDetails extends DockLayoutPanel {
 								new DefaultCallback<List<Act>>(clDoc,
 										"loadMasterData") {
 
-									private Act act = null;
-
+									private Act masterData;
+									
 									@Override
 									public void onSuccess(List<Act> result) {
 										Iterator<Act> iter = result.iterator();
-										while (iter.hasNext() && act == null) {
+										while (iter.hasNext() && masterData == null) {
 											Act next = iter.next();
 											if (next.className
 													.equals(catalog.code)) {
-												act = next;
+												masterData = next;
 											}
 										}
-										if (act != null) {
+										if (masterData != null) {
 											SRV.configurationService.getLayoutDefinition(
 													clDoc.getSession(),
 													catalog.code,
@@ -81,7 +82,7 @@ public class EntityDetails extends DockLayoutPanel {
 														public void onSuccess(
 																LayoutDefinition layout) {
 															masterDataForm
-																	.setModel(act);
+																	.setModel(masterData);
 															masterDataForm
 																	.parseAndCreate(layout.xmlLayout);
 														}
@@ -116,16 +117,16 @@ public class EntityDetails extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				// personEditor.fromDialog();
-				// SRV.humanBeingService.save(clDoc.getSession(), humanBeing,
-				// new DefaultCallback<Person>(clDoc, "save") {
-				//
-				// @Override
-				// public void onSuccess(Person result) {
-				// pbSave.setVisible(false);
-				// personEditor.clearModification();
-				// }
-				// });
+				masterDataForm.fromDialog();
+				SRV.actService.save(clDoc.getSession(), (Act)masterDataForm.getModel(), new DefaultCallback<Act>(clDoc,"saveMasterData") {
+
+					@Override
+					public void onSuccess(Act result) {
+						masterDataForm.clearModification();
+						masterDataForm.setModel(result);
+						pbSave.setVisible(false);
+					}
+				});
 			}
 		});
 

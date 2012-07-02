@@ -64,7 +64,7 @@ public class HistoryView extends DockLayoutPanel {
 				table.setWidget(row, column++, new HTML("<b>" + act.className + "</b>"));
 			}};
 
-		historyPanel.getColumnFormatter().addStyleName(2, "hunderPercentWidth");
+		historyPanel.getColumnFormatter().addStyleName(2, "hundertPercentWidth");
 		Image pbUpload = historyPanel.addButton("upload file", "icons/32/Button-Upload-icon.png", new ClickHandler() {
 
 			@Override

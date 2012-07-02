@@ -1,13 +1,16 @@
 package com.ceres.cldoc.client.service;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -35,8 +38,13 @@ public interface ConfigurationService extends RemoteService {
 	List<Catalog> listCatalogs(Session session, Long parentId);
 	List<Catalog> listCatalogs(Session session, Catalog parent);
 	Catalog getCatalog(Session session, long id);
+	Catalog getCatalog(Session session, String code);
 	
 	Assignment addAssignment(Session session, Catalog catalog, Entity entity);
 	List<Assignment> listAssignments(Session session, Catalog catalog);
 	List<Assignment> listAssignments(Session session, Entity entity);
+	
+	List<ReportDefinition> listReportDefinitions(Session session);
+	List<HashMap<String, Serializable>> executeReport(Session session, ReportDefinition rd);
+	
 }
