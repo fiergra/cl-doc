@@ -1,0 +1,660 @@
+<catalogs>
+<catalog code="CLDOC" id="1">
+<text>CLDOC</text>
+<shorttext>CLDOC</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<number1>1001</number1>
+<children>
+<catalog code="MAIN" id="2">
+<text>MAIN</text>
+<shorttext>MAIN</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<number1>1001</number1>
+<children>
+<catalog code="SucheTR-SAB">
+<text>Suche</text>
+<shorttext>Suche</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<number1>1001</number1>
+<children/>
+</catalog>
+<catalog code="SucheDKG">
+<text>Suche</text>
+<shorttext>Suche</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<number1>21</number1>
+<children>
+<catalog code="Rathaus">
+<text>Rathaus</text>
+<shorttext>Rathaus</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Schule">
+<text>Schule</text>
+<shorttext>Schule</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="KiTa">
+<text>Kindertagesstaette</text>
+<shorttext>Kindertagesstaette</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="KiGa">
+<text>Kindergarten</text>
+<shorttext>Kindergarten</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Buergerhaus">
+<text>Buergerhaus</text>
+<shorttext>Buergerhaus</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="Personen" id="3">
+<text>Personen</text>
+<shorttext>Personen</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Configuration" id="5">
+<text>Configuration</text>
+<shorttext>CONFIG</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="Layouts" id="21">
+<text>Layouts</text>
+<shorttext>Layouts</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Kataloge" id="22">
+<text>Kataloge</text>
+<shorttext>Kataloge</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Entitaeten" id="23">
+<text>Entitaeten</text>
+<shorttext>Entitaeten</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Berechtigungen" id="24">
+<text>Berechtigungen</text>
+<shorttext>Berechtigungen</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="Reporting" id="6">
+<text>Reporting</text>
+<shorttext>DEBUG</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="PERSONALFILE" id="7">
+<text>PERSONALFILE</text>
+<shorttext>PERSONALFILE</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="Formulare" id="8">
+<text>Formulare</text>
+<shorttext>Formulare</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Stammdaten" id="9">
+<text>Stammdaten</text>
+<shorttext>Stammdaten</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+</children>
+</catalog>
+<catalog code="BEISPIEL" id="13">
+<text/>
+<shorttext/>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="BEISPIEL1" id="14">
+<text>b1</text>
+<shorttext>b1</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="BEISPIEL1.1" id="16">
+<text>b1.1</text>
+<shorttext>b1.1</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="BEISPIEL1.2" id="17">
+<text>b1.2</text>
+<shorttext>b1.2</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="BEISPIEL1.3" id="18">
+<text>b1.3</text>
+<shorttext>b1.3</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="BEISPIEL2" id="15">
+<text>b2</text>
+<shorttext>b2</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="BEISPIEL2.1" id="19">
+<text>b2.1</text>
+<shorttext>b2.1</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="BEISPIEL2.2" id="20">
+<text>b2.2</text>
+<shorttext>b2.2</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+</children>
+</catalog>
+<catalog code="MEINUNG">
+<text/>
+<shorttext/>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="SCHLECHT">
+<text>Schlecht</text>
+<shorttext>Schlecht</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="GUT">
+<text>Gut</text>
+<shorttext>Gut</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="WEISSNICH">
+<text>Weiss nich</text>
+<shorttext>Weiss nich</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="ROLES" id="50">
+<text>ROLES</text>
+<shorttext>ROLES</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="ADMIN" id="51">
+<text>ADMIN</text>
+<shorttext>ADMIN</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="USER" id="52">
+<text>USER</text>
+<shorttext>USER</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="GUEST" id="53">
+<text>GUEST</text>
+<shorttext>GUEST</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="EART_USER" id="54">
+<text>EART_USER</text>
+<shorttext>EART_USER</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="DKG_USER" id="55">
+<text>DKG_USER</text>
+<shorttext>DKG_USER</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="PATIENT" id="101">
+<text>PATIENT</text>
+<shorttext>PATIENT</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="ORGANISATION" id="102">
+<text>ORGANISATION</text>
+<shorttext>ORGANISATION</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="MASTERDATA" id="103">
+<text>MASTERDATA</text>
+<shorttext>MASTERDATA</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="ACTIONS" id="70">
+<text>ACTIONS</text>
+<shorttext>ACTIONS</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="VIEW" id="71">
+<text>VIEW</text>
+<shorttext>VIEW</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="EDIT" id="72">
+<text>EDIT</text>
+<shorttext>EDIT</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="DELETE" id="73">
+<text>DELETE</text>
+<shorttext>DELETE</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="CREATE" id="74">
+<text>CREATE</text>
+<shorttext>CREATE</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="MASTERDATA" id="150">
+<text>MASTERDATA</text>
+<shorttext>MASTERDATA</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="Verfahren">
+<text>Verfahren</text>
+<shorttext>Verfahren</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="ausfuehrlich">
+<text>ausfuehrlich</text>
+<shorttext>ausfuehrlich</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="kurz">
+<text>kurz</text>
+<shorttext>kurz</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="Familienstand">
+<text>Familienstand</text>
+<shorttext>Familienstand</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="VERWITWET">
+<text>verwitwet</text>
+<shorttext>verwitwet</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="VERHEIRATET">
+<text>verheiratet</text>
+<shorttext>verheiratet</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="LEDIG">
+<text>ledig</text>
+<shorttext>ledig</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="GESCHIEDEN">
+<text>geschieden</text>
+<shorttext>geschieden</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="Schulabschluss">
+<text>Schulabschluss</text>
+<shorttext>Schulabschluss</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="Hauptschule">
+<text>Hauptschule</text>
+<shorttext>Hauptschule</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Abitur">
+<text>Abitur</text>
+<shorttext>Abitur</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Mittlere Reife">
+<text>Mittlere Reife</text>
+<shorttext>Mittlere Reife</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Fachabitur">
+<text>Fachabitur</text>
+<shorttext>Fachabitur</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="ohne">
+<text>ohne</text>
+<shorttext>ohne</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="KREBSART">
+<text>Krebsart</text>
+<shorttext>Krebsart</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="Lunge">
+<text>Lunge/Bronchien</text>
+<shorttext>Lunge/Bronchien</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Prostata">
+<text>Prostata</text>
+<shorttext>Prostata</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Hoden">
+<text>Hoden</text>
+<shorttext>Hoden</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Gyn. Tumore">
+<text>Gyn. Tumore</text>
+<shorttext>Gyn. Tumore</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="MAMMA">
+<text>Mamma</text>
+<shorttext>Mamma</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Darm">
+<text>Darm</text>
+<shorttext>Darm</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Pankreas">
+<text>Pankreas</text>
+<shorttext>Pankreas</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Hirn">
+<text>Hirn</text>
+<shorttext>Hirn</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Urologisch">
+<text>Urologisch</text>
+<shorttext>Urologisch</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Haut">
+<text>Haut</text>
+<shorttext>Haut</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Haematologisch">
+<text>Haematologisch</text>
+<shorttext>Haematologisch</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Magen">
+<text>Magen</text>
+<shorttext>Magen</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="HNO">
+<text>HNO</text>
+<shorttext>HNO</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Weichteile">
+<text>Weichteile</text>
+<shorttext>Weichteile</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="GENESE">
+<text>GENESE</text>
+<shorttext>GENESE</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="Remission">
+<text>Remission</text>
+<shorttext>Remission</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Rezidiv">
+<text>Rezidiv</text>
+<shorttext>Rezidiv</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Ersterkrankung">
+<text>Ersterkrankung</text>
+<shorttext>Ersterkrankung</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Zweit">
+<text>Zweittumor</text>
+<shorttext>Zweittumor</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="THERAPIE">
+<text>THERAPIE</text>
+<shorttext>THERAPIE</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="SONSTIGE">
+<text>Sonstige</text>
+<shorttext>Sonstige</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Keine">
+<text>Keine</text>
+<shorttext>Keine</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="HORMON">
+<text>Hormon</text>
+<shorttext>Hormon</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="CHEMO">
+<text>Chemo</text>
+<shorttext>Chemo</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="OP">
+<text>OP</text>
+<shorttext>OP</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="RADIO">
+<text>Bestrahlung</text>
+<shorttext>Bestrahlung</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="GENDER" id="151">
+<text>GENDER</text>
+<shorttext>GENDER</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="MALE" id="152">
+<text>m</text>
+<shorttext>m</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="FEMALE" id="153">
+<text>w</text>
+<shorttext>w</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="ER" id="154">
+<text>EntityRelation</text>
+<shorttext>E.R.</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="IsMemberOf" id="155">
+<text>IsMemberOf</text>
+<shorttext>IsMemberOf</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="IsLocatedIn" id="156">
+<text>IsLocatedIn</text>
+<shorttext>IsLocatedIn</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="IsPartOf" id="157">
+<text>IsPartOf</text>
+<shorttext>IsPartOf</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="REPORTTYPE" id="160">
+<text>REPORTTYPE</text>
+<shorttext>REPORTTYPE</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="SYSTEM" id="161">
+<text>SYSTEM</text>
+<shorttext>SYSTEM</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="USERDEF" id="162">
+<text>USERDEF</text>
+<shorttext>USERDEF</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+<catalog code="EntityTypes">
+<text>EntityTypes</text>
+<shorttext>E.T.</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children>
+<catalog code="Person">
+<text>Person</text>
+<shorttext>Person</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Organisation">
+<text>Organisation</text>
+<shorttext>Organisation</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Room">
+<text>Room</text>
+<shorttext>Room</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Landkreis">
+<text>Landkreis</text>
+<shorttext>Landkreis</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Verbandsgemeinde">
+<text>Verbandsgemeinde</text>
+<shorttext>Verbandsgemeinde</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Gemeinde">
+<text>Gemeinde</text>
+<shorttext>Gemeinde</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+<catalog code="Gebaeude">
+<text>Gebaeude</text>
+<shorttext>Gebaeude</shorttext>
+<date>02-Jul-2012 00:00:00</date>
+<children/>
+</catalog>
+</children>
+</catalog>
+</children>
+</catalog>
+</catalogs>
