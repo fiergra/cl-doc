@@ -28,6 +28,7 @@ public interface ConfigurationService extends RemoteService {
 //	List <LayoutDefinition> listLayoutDefinitions(Session session, String filter);
 	void saveLayoutDefinition(Session session, int type, String formClass, String xmlLayout);
 	LayoutDefinition getLayoutDefinition(Session session, String className, int typeId);
+	List<LayoutDefinition> listLayoutDefinitions(Session session, int typeId);
 	void deleteLayoutDefinition(Session session, String className);
 	
 	void delete(Session session, Catalog catalog);

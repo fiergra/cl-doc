@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -25,6 +26,8 @@ public interface ConfigurationServiceAsync {
 	void saveLayoutDefinition(Session session, int type, String className, String xmlLayoutDesc, AsyncCallback<Void> callback);
 
 	void getLayoutDefinition(Session session, String className, int typeId, AsyncCallback<LayoutDefinition> callback);
+
+	void listLayoutDefinitions(Session session, int typeId, AsyncCallback<List<LayoutDefinition>> defaultCallback);
 
 	void deleteLayoutDefinition(Session session, String className, AsyncCallback<Void> callback);
 
@@ -52,4 +55,5 @@ public interface ConfigurationServiceAsync {
 	void listReportDefinitions(Session session, AsyncCallback<List<ReportDefinition>> callback);
 
 	void executeReport(Session session, ReportDefinition rd, AsyncCallback<List<HashMap<String, Serializable>>> callback);
+
 }

@@ -111,6 +111,12 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public List<LayoutDefinition> listLayoutDefinitions(Session session, int typeId) {
+		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
+		return lds.listLayoutDefinitions(session, null, typeId);
+	}
+	
+	@Override
 	public void deleteLayoutDefinition(Session session, String className) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		lds.delete(session, className);

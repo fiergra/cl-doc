@@ -125,15 +125,15 @@ public class AddAct extends DialogBox {
 	}
 
 	private void populateList(String filter, final ListBox list) {
-		SRV.configurationService.listClassNames(clDoc.getSession(), filter, new DefaultCallback<List<String>>(clDoc, "getLayoutDefs") {
+		SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, new DefaultCallback<List<LayoutDefinition>>(clDoc, "getLayoutDefs") {
 
 			@Override
-			public void onSuccess(List<String> result) {
+			public void onSuccess(List<LayoutDefinition> result) {
 				list.clear();
 				int row = 0;
 				
-				for (String className : result) {
-					list.addItem(className);
+				for (LayoutDefinition name : result) {
+					list.addItem(name.name);
 //					list.setWidget(row++, 0, new Label(fds.name));
 				}
 			}
