@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import com.ceres.cldoc.client.ClDoc;
@@ -44,9 +45,15 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.NamedNodeMap;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.XMLParser;
 
 
-public abstract class Form<T extends IAct> extends FlexTable implements IView<T>{
+public class Form<T extends IAct> extends FlexTable implements IView<T>{
 
 	public enum DataTypes {
 		FT_STRING, FT_TEXT, FT_DATE, /*FT_TIME, */FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE
@@ -58,8 +65,6 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 	private final Runnable setModified;
 	private final ClDoc clDoc;
 
-	private final Collection<Form> pages = new ArrayList<Form>();
-	
 	final static int OK = 1;
 	final static int CLOSE = 2;
 	final static int CANCEL = 4;
@@ -79,14 +84,6 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		this.model = model;
 	}
 	
-	@Override
-	public void clear() {
-		super.clear();
-		pages.clear();
-	}
-
-
-
 	private static class Field {
 		public String name;
 		public Widget widget;
@@ -106,10 +103,6 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 	@Override
 	@SuppressWarnings("unchecked")
 	public void toDialog() {
-		for (Form<T> page:pages) {
-			page.toDialog();
-		}
-
 		Iterator<Entry<String, Field>> iter = fields.entrySet().iterator();
 
 		while (iter.hasNext()) {
@@ -188,10 +181,6 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 	@Override
 	@SuppressWarnings("unchecked")
 	public void fromDialog() {
-		for (Form<T> page:pages) {
-			page.fromDialog();
-		}
-		
 		Iterator<Entry<String, Field>> iter = fields.entrySet().iterator();
 
 		while (iter.hasNext()) {
@@ -277,7 +266,7 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		isModified = false;
 	}
 
-	protected abstract void setup();
+	protected void setup() {}
 
 	private HorizontalPanel addButtons(final OnClick<T> onClickSave,
 			final OnClick<T> onClickDelete, final OnClick<T> onClickCancel) {
@@ -555,99 +544,207 @@ public abstract class Form<T extends IAct> extends FlexTable implements IView<T>
 		return w;
 	}
 
+//	public void parseAndCreate(String xml) {
+//		parseAndCreate(xml, true);
+//	}
+//	
+//	protected void parseAndCreate(String xml, final boolean clear) {
+//		SRV.configurationService.parse(clDoc.getSession(), xml, new DefaultCallback<LayoutElement>(clDoc, "parse") {
+//
+//			@Override
+//			public void onSuccess(LayoutElement result) {
+//				if (result.getChildren() != null && !result.getChildren().isEmpty()) {
+//					if (clear) {
+//						clear();
+//					}
+//					createAndLayout(result.getChildren().get(0));
+//					toDialog();
+//				}
+//			}
+//		});
+//	}
+//
+//	public static List<Form> parse(ClDoc clDoc, IAct model, Runnable setModified, LayoutElement result) {
+//		List<Form> forms = new ArrayList<Form>();
+//		
+//		if (result.getChildren() != null && !result.getChildren().isEmpty()) {
+//			LayoutElement layoutElement = result.getChildren().get(0);
+//			
+//			if (layoutElement.getType().equals("pages")) {
+//				for (LayoutElement child : layoutElement.getChildren()) {
+//					forms.add(newForm(clDoc, model, setModified, child));
+//				}			
+//			} else {
+//				forms.add(newForm(clDoc, model, setModified, layoutElement));
+//			}
+//		}
+//		
+//		return forms;
+//	}
+//
+//	private static Form newForm(ClDoc clDoc, IAct model, Runnable setModified,
+//			LayoutElement layoutElement) {
+//		Form f = new Form<IAct>(clDoc, model, setModified) {
+//
+//			@Override
+//			protected void setup() {
+//				
+//			}
+//		};
+//		f.createAndLayout(layoutElement);
+//		f.toDialog();
+//		
+//		return f;
+//	}
+//
+	
+
 	public void parseAndCreate(String xml) {
 		parseAndCreate(xml, true);
 	}
 	
-	protected void parseAndCreate(String xml, final boolean clear) {
-		SRV.configurationService.parse(clDoc.getSession(), xml, new DefaultCallback<LayoutElement>(clDoc, "parse") {
-
-			@Override
-			public void onSuccess(LayoutElement result) {
-				if (result.getChildren() != null && !result.getChildren().isEmpty()) {
-					if (clear) {
-						clear();
-					}
-					createAndLayout(result.getChildren().get(0));
-					toDialog();
-				}
+	
+	public void parseAndCreate(String xml, boolean clear) {
+		if (clear) {
+			clear();
+		}
+		
+		Document document = XMLParser.parse(xml);
+		NodeList childNodes = document.getChildNodes();
+		
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node item = childNodes.item(i);
+			
+			if (item.getNodeName().equals("form")) {
+				createAndLayout(item);
 			}
-		});
+		}
 	}
-
-
-	protected void createAndLayout(LayoutElement layoutElement) {
-		if (layoutElement.getType().equals("pages")) {
-			TabLayoutPanel pageContainer = getPageContainer();
-			for (LayoutElement child : layoutElement.getChildren()) {
-				Form page = new Form<T>(clDoc, model, new Runnable() {
-					
-					@Override
-					public void run() {
-						if (!isModified) {
-							setModified.run();
-							isModified = true;
-						}
-					}
-				})
-				{
-
-					@Override
-					protected void setup() {
-						setWidth("100%");
-					}
-
-				};
-				pageContainer.add(page, child.getAttribute("label"));
-				page.createAndLayout(child);
-				pages.add(page);
-			} 
-		} else {
-			ArrayList<LayoutElement> children = layoutElement.getChildren();
-			for (LayoutElement child : children) {
-				if (child.getType().equals("form")) {
-					
-				} else if (child.getType().equals("line")) {
-					String label = child.getAttribute("label");
-					String fieldName = child.getAttribute("name");
-					
-					if (child.getChildren().isEmpty()) {
-						addLine(label == null ? fieldName : label, fieldName, getDataType(child), child.getAttributes());
-					} else {
-						HorizontalPanel hp = new HorizontalPanel();
-						hp.setSpacing(5);
-						hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-						for (LayoutElement sub:child.getChildren()) {
-							DataTypes dataType = getDataType(sub);
-							String subLabel = sub.getAttribute("label");
-							String subName = sub.getAttribute("name");
-							Label l = new Label(subLabel == null ? subName : subLabel);
-							l.addStyleName("formSubLabel");
-							Widget w = createWidgetForType(dataType, sub.getAttributes());
-							hp.add(l);
-							hp.add(w);
-							fields.put(subName, new Field(subName, w, dataType));
-						}
-						addLine(label == null ? fieldName : label, hp);
-					}
+	
+	
+	protected void createAndLayout(Node layoutElement) {
+		NodeList children = layoutElement.getChildNodes();
+		
+		for (int i = 0; i < children.getLength(); i++) {
+			Node item = children.item(i);
+			Element child = item instanceof Element ? (Element)item : null;
+			
+			if (child != null && child.getNodeName().equals("line")) {
+				String label = child.getAttribute("label");
+				String fieldName = child.getAttribute("name");
+				
+				if (child.getChildNodes().getLength() == 0) {
+					addLine(label == null ? fieldName : label, fieldName, getDataType(child.getAttribute("type")), getAttributesMap(child));//child.getAttributes());
+				} else {
+					HorizontalPanel hp = new HorizontalPanel();
+					hp.setSpacing(5);
+					hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//					for (LayoutElement sub:child.getChildren()) {
+//						DataTypes dataType = getDataType(sub);
+//						String subLabel = sub.getAttribute("label");
+//						String subName = sub.getAttribute("name");
+//						Label l = new Label(subLabel == null ? subName : subLabel);
+//						l.addStyleName("formSubLabel");
+//						Widget w = createWidgetForType(dataType, sub.getAttributes());
+//						hp.add(l);
+//						hp.add(w);
+//						fields.put(subName, new Field(subName, w, dataType));
+//					}
+					addLine(label == null ? fieldName : label, hp);
 				}
 			}
 		}		
 	}
+
+	
+	private HashMap<String, String> getAttributesMap(Element child) {
+		HashMap<String, String> result = new HashMap<String, String>();
+		
+		NamedNodeMap attributes = child.getAttributes();
+		for (int i = 0; i < attributes.getLength(); i++) {
+			Node item = attributes.item(i);
+			result.put(item.getNodeName(), item.getNodeValue());
+		}
+		
+		return result;
+	}
+
+//	protected void createAndLayout(LayoutElement layoutElement) {
+//		if (layoutElement.getType().equals("pages")) {
+//			TabLayoutPanel pageContainer = getPageContainer();
+//			for (LayoutElement child : layoutElement.getChildren()) {
+//				Form page = new Form<T>(clDoc, model, new Runnable() {
+//					
+//					@Override
+//					public void run() {
+//						if (!isModified) {
+//							setModified.run();
+//							isModified = true;
+//						}
+//					}
+//				})
+//				{
+//
+//					@Override
+//					protected void setup() {
+//						setWidth("100%");
+//					}
+//
+//				};
+//				pageContainer.add(page, child.getAttribute("label"));
+//				page.createAndLayout(child);
+//				pages.add(page);
+//			} 
+//		} else {
+//			ArrayList<LayoutElement> children = layoutElement.getChildren();
+//			for (LayoutElement child : children) {
+//				if (child.getType().equals("form")) {
+//					
+//				} else if (child.getType().equals("line")) {
+//					String label = child.getAttribute("label");
+//					String fieldName = child.getAttribute("name");
+//					
+//					if (child.getChildren().isEmpty()) {
+//						addLine(label == null ? fieldName : label, fieldName, getDataType(child), child.getAttributes());
+//					} else {
+//						HorizontalPanel hp = new HorizontalPanel();
+//						hp.setSpacing(5);
+//						hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//						for (LayoutElement sub:child.getChildren()) {
+//							DataTypes dataType = getDataType(sub);
+//							String subLabel = sub.getAttribute("label");
+//							String subName = sub.getAttribute("name");
+//							Label l = new Label(subLabel == null ? subName : subLabel);
+//							l.addStyleName("formSubLabel");
+//							Widget w = createWidgetForType(dataType, sub.getAttributes());
+//							hp.add(l);
+//							hp.add(w);
+//							fields.put(subName, new Field(subName, w, dataType));
+//						}
+//						addLine(label == null ? fieldName : label, hp);
+//					}
+//				}
+//			}
+//		}		
+//	}
 
 
 	private TabLayoutPanel getPageContainer() {
 		TabLayoutPanel pageContainer = (TabLayoutPanel)(getRowCount() == 1 ? getWidget(0, 0) : null);
 		if (pageContainer == null) {
 			pageContainer = new TabLayoutPanel(2, Unit.EM);
-			pageContainer.setSize("800px", "600px");
+			pageContainer.setHeight("600px");
+//			pageContainer.setSize("800px", "600px");
 			setWidget(0,  0, pageContainer);
 		}
 		return pageContainer;
 	}
 
 	private DataTypes getDataType(LayoutElement child) {
-		String type = child.getAttribute("type");
+		return getDataType(child.getAttribute("type"));
+	}
+
+	private DataTypes getDataType(String type) {
 		DataTypes result = DataTypes.FT_UNDEF;
 		
 		if (type != null) {

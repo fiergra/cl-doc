@@ -60,11 +60,11 @@ public class LuceneService implements ILuceneService {
 	    if (entity.id != null) {
 			IndexWriter w = getIndexWriter();
 		    Document doc = new Document();
-		    StringBuffer content = new StringBuffer(entity.name);
+		    StringBuffer content = new StringBuffer(entity.getName());
 		    Iterator<Entry<String, IActField>> fieldsIter = masterData.fields.entrySet().iterator();
 		    
 			doc.add(new Field("id", String.valueOf(entity.id), Field.Store.YES, Field.Index.ANALYZED));
-			doc.add(new Field("name", entity.name, Field.Store.YES, Field.Index.ANALYZED));
+			doc.add(new Field("name", entity.getName(), Field.Store.YES, Field.Index.ANALYZED));
 		    while (fieldsIter.hasNext()) {
 		    	Entry<String, IActField> next = fieldsIter.next();
 		    	IActField field = next.getValue();

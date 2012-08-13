@@ -17,6 +17,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -30,19 +32,12 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 
 public class Styler extends DockLayoutPanel {
-	final Form <Act> form;
-
+	private IView<Act> form;
 	private final ClDoc clDoc;
 	
 	public Styler(ClDoc clDoc) {
 		super(Unit.PX);
 		this.clDoc = clDoc;
-		form = new Form<Act>(clDoc, new Act("dummy"), null){
-
-			@Override
-			protected void setup() {
-				setWidth("100%");
-			}};
 		setup();
 	}
 
@@ -63,6 +58,19 @@ public class Styler extends DockLayoutPanel {
 
 		hp.add(cbMasterData);
 		hp.add(new Label("class"));
+		
+		final DockLayoutPanel formContainer = new DockLayoutPanel(Unit.EM);
+		final Runnable updateForm = new Runnable() {
+			
+			@Override
+			public void run() {
+				if (form != null) {
+					formContainer.remove(form);
+				}
+				form = ActRenderer.getActRenderer(clDoc, formLayoutDescTextArea.getText(), null, null);
+				formContainer.add(form);
+			}
+		};
 		
 		final OnDemandComboBox<String> cmbClasses = new OnDemandComboBox<String>(clDoc, new ListRetrievalService<String>() {
 
@@ -96,7 +104,7 @@ public class Styler extends DockLayoutPanel {
 							if (result != null) {
 								if (result.type == LayoutDefinition.FORM_LAYOUT || result.type == LayoutDefinition.MASTER_DATA_LAYOUT) {
 									formLayoutDescTextArea.setText(result.xmlLayout);
-									form.parseAndCreate(result.xmlLayout);
+									updateForm.run();
 								} else {
 									printLayoutDescTextArea.setText(result.xmlLayout);
 								}
@@ -151,7 +159,7 @@ public class Styler extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				form.parseAndCreate(formLayoutDescTextArea.getText());
+				updateForm.run();
 			}
 		});
 		hp.add(pbWindowRefresh);
@@ -209,16 +217,22 @@ public class Styler extends DockLayoutPanel {
 		layouts.add(printLayoutPanel, "Printout");
 		
 		splitPanel.addWest(layouts, 400);
-		HorizontalPanel formContainer = new HorizontalPanel();
-		formContainer.add(form);
 		splitPanel.add(formContainer);
 		add(splitPanel);
+		
+//		formLayoutDescTextArea.addKeyUpHandler(new KeyUpHandler() {
+//			
+//			@Override
+//			public void onKeyUp(KeyUpEvent event) {
+//				updateForm.run();
+//			}
+//		});
 		
 		formLayoutDescTextArea.addChangeHandler(new ChangeHandler() {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				form.parseAndCreate(formLayoutDescTextArea.getText());
+				updateForm.run();
 			}
 		});
 	}

@@ -85,6 +85,7 @@ public class EntityDetails extends DockLayoutPanel {
 																	.setModel(masterData);
 															masterDataForm
 																	.parseAndCreate(layout.xmlLayout);
+															masterDataForm.toDialog();
 														}
 													});
 										}

@@ -299,6 +299,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 //							form.close();
 						}
 					});
+					form.toDialog();
 				} else {
 					new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + model.className + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
 				}

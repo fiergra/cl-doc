@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
+import com.ceres.cldoc.client.controls.PagesView;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.IActField;
@@ -20,9 +21,11 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.xml.client.Document;
+import com.google.gwt.xml.client.Element;
+import com.google.gwt.xml.client.Node;
+import com.google.gwt.xml.client.NodeList;
+import com.google.gwt.xml.client.XMLParser;
 
 public class ActRenderer extends DockLayoutPanel {
 
@@ -41,7 +44,6 @@ public class ActRenderer extends DockLayoutPanel {
 		setup();
 	}
 
-	private Widget formContainer = new SimplePanel();
 	private IView<Act> formContent;
 	private Act act;
 	
@@ -142,8 +144,6 @@ public class ActRenderer extends DockLayoutPanel {
 		titlePanel.add(buttons);
 
 		addNorth(titlePanel, 38);
-		formContainer.setWidth("100%");
-		add(formContainer);
 		
 		addStyleName("formContainer");
 	}
@@ -183,19 +183,7 @@ public class ActRenderer extends DockLayoutPanel {
 	}
 	
 	public boolean setAct(LayoutDefinition layoutDef, Act act) {
-		int h;
-		int w; 
-
 		this.act = act;
-		
-		if (formContainer != null) {
-			h = formContainer.getOffsetHeight();
-			w = formContainer.getOffsetWidth(); 
-			remove(formContainer);
-		} else {
-			h = getOffsetHeight() - 2 * BORDER_WIDTH;
-			w = getOffsetWidth() - 2 * BORDER_WIDTH; 
-		}
 
 		if (act != null) {
 			DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
@@ -207,16 +195,34 @@ public class ActRenderer extends DockLayoutPanel {
 					saveForm(false);
 				}
 			}
+
+			if (formContent != null) {
+				remove(formContent);
+			}
 			
-			formContent = getActRenderer(layoutDef, act, w, h);
 			if (act.className.equals("externalDoc")) {
-				formContainer = formContent.asWidget();
+				IActField field = act.get("docId");
+				String baseUrl = GWT.getModuleBaseURL();
+				FrameView<Act> frame = new FrameView<Act>(act, baseUrl + "download?id=" + field.getLongValue());
+				int h = getOffsetHeight() - 2 * BORDER_WIDTH;
+				int w = getOffsetWidth() - 2 * BORDER_WIDTH; 
+				frame.setPixelSize(w, h);
+				frame.setWidth("100%");
+				formContent = frame;
+				frame.setSize("100%", "100%");
+				add(formContent);
 			} else {
-				ScrollPanel sp = new ScrollPanel(formContent.asWidget());
-				formContainer = sp;
+//				ScrollPanel sp = new ScrollPanel(formContent.asWidget());
+				formContent = getActRenderer(clDoc, layoutDef.xmlLayout, act, new Runnable() {
+					
+					@Override
+					public void run() {
+						title.setHTML("*<i>" + title.getText() + "</i>");
+					}
+				});
+				add(formContent);
+				formContent.toDialog();
 			}	
-			formContainer.setWidth("100%");
-			add(formContainer);
 		} else {
 			title.setText("");
 		}
@@ -231,74 +237,45 @@ public class ActRenderer extends DockLayoutPanel {
 	}
 
 
-//	private Form<GenericAct> getActRenderer(LayoutDefinition layoutDef, final GenericAct vb, int w, int h) {
-//		final Form<GenericAct> form = new Form<GenericAct>(clDoc, vb, new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				title.setHTML("*<i>" + title.getText() + "</i>");
-//			}
-//		}){
-//
-//			@Override
-//			protected void setup() {};
-//		};		
-//	
-//		if (vb.className.equals("externalDoc")) {
-//			IGenericActField field = vb.get("file");
-//			String baseUrl = GWT.getModuleBaseURL();
-//			Frame frame = new Frame(baseUrl + "download?id=" + field.getId());
-//			Widget center = getCenter();
-//			frame.setPixelSize(w, h);
-//			frame.setWidth("100%");
-//			form.setSize("100%", "100%");
-//			form.setWidget(0, 0, frame);
-//		} else {
-//			String layoutDefinition = layoutDef.xmlLayout;
-//			
-//			if (layoutDefinition != null) {
-//				form.parseAndCreate(layoutDefinition);
-//				form.setWidth("100%");
-//			} else {
-//				form.addLine("error", "no layout definition available", Form.DataTypes.FT_STRING, null);
-//			}
-//		}		
-//		return form;
-//	}
 	
-	private Form<Act> getActRenderer(LayoutDefinition layoutDef, final Act vb, int w, int h) {
-		final Form<Act> form = new Form<Act>(clDoc, vb, new Runnable() {
+	public static IView<Act> getActRenderer(ClDoc clDoc, String xml, final Act act, Runnable onChange) {
+		IView<Act> result = null;
+		
+		if (xml != null) {
 			
-			@Override
-			public void run() {
-				title.setHTML("*<i>" + title.getText() + "</i>");
-			}
-		}){
-
-			@Override
-			protected void setup() {};
-		};		
-	
-		if (vb.className.equals("externalDoc")) {
-			IActField field = vb.get("docId");
-			String baseUrl = GWT.getModuleBaseURL();
-			Frame frame = new Frame(baseUrl + "download?id=" + field.getLongValue());
-			Widget center = getCenter();
-			frame.setPixelSize(w, h);
-			frame.setWidth("100%");
-			form.setSize("100%", "100%");
-			form.setWidget(0, 0, frame);
-		} else {
-			String layoutDefinition = layoutDef.xmlLayout;
+			Document document = XMLParser.parse(xml);
+			NodeList childNodes = document.getChildNodes();
 			
-			if (layoutDefinition != null) {
-				form.parseAndCreate(layoutDefinition);
-				form.setWidth("100%");
-			} else {
-				form.addLine("error", "no layout definition available", Form.DataTypes.FT_STRING, null);
+			for (int i = 0; i < childNodes.getLength(); i++) {
+				Node item = childNodes.item(i);
+				
+				if (item.getNodeName().equals("pages")) {
+					PagesView<Act> pages = new PagesView<Act>(act);
+					NodeList subItems = item.getChildNodes();
+					for (int j = 0; j < subItems.getLength(); j++) {
+						if (subItems.item(j) instanceof Element) {
+							Element subItem = (Element) subItems.item(j);
+							
+							Form<Act> form = new Form<Act>(clDoc, act, onChange);
+							form.createAndLayout(subItem);
+							form.setWidth("100%");
+							pages.addPage(form, subItem.getAttribute("label"));
+						}
+					}
+					result = pages;
+					pages.setSize("100%", "100%");
+				} else {
+					Form<Act> form = new Form<Act>(clDoc, act, onChange);
+					form.createAndLayout(item);
+					form.setWidth("100%");
+					result = form;
+				}
+				
 			}
-		}		
-		return form;
+			
+		}
+		
+		return result;
 	}
 	
 }
