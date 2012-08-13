@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.ceres.cldoc.client.views.IView;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class PagesView<T> extends TabLayoutPanel implements IView<T> {
@@ -24,7 +25,9 @@ public class PagesView<T> extends TabLayoutPanel implements IView<T> {
 
 	public void addPage(IView<T> page, String label) {
 		pages.add(page);
-		add(page, label);
+		DockLayoutPanel dp = new DockLayoutPanel(Unit.EM);
+		dp.add(page);
+		add(dp, label);
 	}
 	
 	@Override
