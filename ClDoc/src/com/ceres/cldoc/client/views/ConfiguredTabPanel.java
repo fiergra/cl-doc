@@ -24,7 +24,7 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 				if (!result.isEmpty()) {
 					for (Catalog catalog : result) {
 						if (clDoc.getSession().isAllowed(catalog, Catalog.VIEW)) {
-							add(DynamicLoader.create(clDoc, catalog, model), catalog.text, false);
+							addTab(clDoc, catalog, model);
 						}
 					}
 					if (getWidgetCount() > 0) {
@@ -35,6 +35,10 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 			}
 			
 		});
+	}
+
+	protected void addTab(ClDoc clDoc, Catalog catalog, T model) {
+		add(DynamicLoader.create(clDoc, catalog, model), catalog.text, false);
 	}
 	
 }

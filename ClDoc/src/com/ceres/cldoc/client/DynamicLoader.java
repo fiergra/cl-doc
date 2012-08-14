@@ -8,7 +8,7 @@ import com.ceres.cldoc.client.views.EntityConfigurator;
 import com.ceres.cldoc.client.views.EntitySearch;
 import com.ceres.cldoc.client.views.HistoryView;
 import com.ceres.cldoc.client.views.Persons;
-import com.ceres.cldoc.client.views.ReportingPanel;
+import com.ceres.cldoc.client.views.Reporting;
 import com.ceres.cldoc.client.views.Styler;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -39,7 +39,7 @@ public class DynamicLoader {
 				result = new Label("details...");
 			}
 		} else if (name.equals("Reporting")) {
-			result = new ReportingPanel(clDoc);
+			result = new Reporting(clDoc);
 		} else if (name.equals("Debug")) {
 			result = new DebugPanel(clDoc);
 		} else if (name.equals("Kataloge")) {

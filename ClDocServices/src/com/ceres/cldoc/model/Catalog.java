@@ -33,6 +33,7 @@ public class Catalog implements Serializable, HasChildren<Catalog> {
 	public List<Catalog> children;
 	public Long number1;
 	public Long number2;
+	public Long logicalOrder;
 	
 	public Catalog() {
 	}

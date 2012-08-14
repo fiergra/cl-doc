@@ -22,15 +22,18 @@ public class TxManager {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				dataSource = (DataSource) envCtx.lookup("jdbc/ClDoc");
-				MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
-				ds.setDatabaseName("ClDoc");
-				ds.setUser("root");
-				ds.setPassword("sql4");
-				ds.setProfileSQL(false);
-				ds.setDumpMetadataOnColumnNotFound(true);
-				ds.setDumpQueriesOnException(true);
-				ds.getConnection().close();
-				dataSource = ds;
+				
+				if (dataSource instanceof MysqlConnectionPoolDataSource) {
+					MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
+					ds.setDatabaseName("ClDoc");
+					ds.setUser("root");
+					ds.setPassword("sql4");
+					ds.setProfileSQL(false);
+					ds.setDumpMetadataOnColumnNotFound(true);
+					ds.setDumpQueriesOnException(true);
+					ds.getConnection().close();
+					dataSource = ds;
+				}
 				
 				log.info("datasource resource found!");
 			} catch (Exception x) {
@@ -80,15 +83,15 @@ public class TxManager {
 	public static synchronized Connection start(Session session) {
 		Transaction tx = transactions.get(session);
 		if (tx == null) {
-			log.info("starting transaction (" + session.getId() + ")");
+			log.finest("starting transaction (" + session.getId() + ")");
 			tx = new Transaction();
 			transactions.put(session, tx);
 		} else {
-			log.info("using transaction (" + session.getId() + "/" + tx.txCount
+			log.finest("using transaction (" + session.getId() + "/" + tx.txCount
 					+ ")");
 		}
 		if (tx.txCount++ == 0) {
-			log.info("get connection");
+			log.finest("get connection");
 			tx.con = getConnection();
 		}
 		return tx.con;
@@ -99,7 +102,7 @@ public class TxManager {
 
 		if (--tx.txCount == 0) {
 			try {
-				log.info("committing transaction (" + session.getId() + ")");
+				log.finest("committing transaction (" + session.getId() + ")");
 				tx.con.commit();
 				tx.con.close();
 			} catch (SQLException e) {
@@ -108,7 +111,7 @@ public class TxManager {
 			transactions.remove(session);
 			tx.con = null;
 		} else {
-			log.info("ending transaction (" + session.getId() + "/"
+			log.finest("ending transaction (" + session.getId() + "/"
 					+ tx.txCount + ")");
 		}
 	}
@@ -117,7 +120,7 @@ public class TxManager {
 		Transaction tx = transactions.get(session);
 
 		if (tx.txCount > 0) {
-			log.info("cancel transaction (" + session.getId() + ")");
+			log.finest("cancel transaction (" + session.getId() + ")");
 			tx.txCount = 0;
 			if (tx.con != null) {
 				try {

@@ -14,6 +14,9 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -21,15 +24,22 @@ import com.google.gwt.user.client.ui.ToggleButton;
 
 public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySelector<T> {
 
-	private ListRetrievalService<T> listRetrievalService;
-	private LabelFunction<T> labelFunction;
+	private final ListRetrievalService<T> listRetrievalService;
+	private final LabelFunction<T> labelFunction;
 	private final TextBox txtFilter = new TextBox();
-	private final ToggleButton pbOpen = new ToggleButton("...");
-	private List<T> actList;
-	private ClDoc clDoc;
-	private OnDemandChangeListener<T> changeListener;
 	
-	public OnDemandComboBox(ClDoc clDoc, ListRetrievalService<T> listRetrievalService, LabelFunction <T> labelFunxtion, OnDemandChangeListener<T>changeListener) {
+	private final ToggleButton pbOpen = new ToggleButton("...");
+	private final Image pbNew = new Image("icons/16/Button-Add-01.png");
+	
+	private List<T> actList;
+	private final ClDoc clDoc;
+	private final OnDemandChangeListener<T> changeListener;
+	
+	public OnDemandComboBox(ClDoc clDoc, 
+			ListRetrievalService<T> listRetrievalService, 
+			LabelFunction <T> labelFunxtion, 
+			OnDemandChangeListener<T>changeListener,
+			final Runnable onClick) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		setHeight("2em");
@@ -48,8 +58,22 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 				}
 			}
 		});
-		pbOpen.setWidth("2em");
-		addEast(pbOpen, 2);
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hp.add(pbOpen);
+		
+		if (onClick != null) {
+			hp.add(pbNew);
+			
+			pbNew.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					onClick.run();
+				}
+			});
+		}
+		addEast(hp, hp.getWidgetCount() * 2);
 		add(txtFilter);
 		txtFilter.addKeyUpHandler(new KeyUpHandler() {
 			
@@ -165,6 +189,7 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 		txtFilter.setValue(labelFunction(selectedItem));
 	}
 
+	@Override
 	public boolean setSelected(T act) {
 		if ((act == null && selectedItem != null) || (act != null && !act.equals(selectedItem))) {
 			selectedItem = act;
@@ -173,6 +198,7 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 		return actList != null && actList.contains(selectedItem);
 	}
 	
+	@Override
 	public T getSelected() {
 		return selectedItem;
 	}

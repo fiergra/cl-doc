@@ -35,7 +35,7 @@ public class ReportTab extends DockLayoutPanel {
 	}
 
 	void execute() {
-		SRV.configurationService.executeReport(clDoc.getSession(), reportDefinition, new DefaultCallback<List<HashMap<String,Serializable>>>(clDoc, "exec:" + reportDefinition.name) {
+		SRV.configurationService.executeReport(clDoc.getSession(), reportDefinition, new DefaultCallback<List<HashMap<String,Serializable>>>(clDoc, "exec:") {
 
 			@Override
 			public void onSuccess(List<HashMap<String, Serializable>> result) {

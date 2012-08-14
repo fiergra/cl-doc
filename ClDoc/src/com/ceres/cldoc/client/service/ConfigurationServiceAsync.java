@@ -53,6 +53,7 @@ public interface ConfigurationServiceAsync {
 	void listAssignments(Session session, Entity entity, AsyncCallback<List<Assignment>> callback);
 
 	void listReportDefinitions(Session session, AsyncCallback<List<ReportDefinition>> callback);
+	void loadReportDefinition(Session session, Catalog catalog, AsyncCallback<ReportDefinition> callback);
 
 	void executeReport(Session session, ReportDefinition rd, AsyncCallback<List<HashMap<String, Serializable>>> callback);
 

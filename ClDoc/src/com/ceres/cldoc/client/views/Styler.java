@@ -118,7 +118,7 @@ public class Styler extends DockLayoutPanel {
 					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, LayoutDefinition.PRINT_LAYOUT, callback );
 				}
 			}
-		});
+		}, null);
 		cmbClasses.setWidth("200px");
 		hp.add(cmbClasses);
 //		hp.add(lbClasses);

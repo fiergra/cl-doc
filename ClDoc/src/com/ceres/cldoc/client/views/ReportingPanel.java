@@ -1,9 +1,7 @@
 package com.ceres.cldoc.client.views;
 
-import java.util.List;
-
 import com.ceres.cldoc.client.ClDoc;
-import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -13,27 +11,28 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class ReportingPanel extends DockLayoutPanel {
 
-	private final ClDoc clDoc;
 	private final HorizontalPanel buttons;
-	private final TabLayoutPanel reports;
+	private ReportTab reportTab;
 	
-	public ReportingPanel(ClDoc clDoc) {
+	public ReportingPanel(ClDoc clDoc, Catalog catalog) {
 		super(Unit.PX);
-		this.clDoc = clDoc;
 		buttons = new HorizontalPanel();
 		setupButtons();
-		reports = new TabLayoutPanel(2, Unit.EM);
 		HorizontalPanel buttonsContainer = new HorizontalPanel();
 		buttonsContainer.addStyleName("buttonsPanel"); 
 		buttonsContainer.add(buttons);
 		buttons.setSpacing(3);
 		addNorth(buttonsContainer, 38);
-		add(reports);
-		addReportTabs();
+//		add(reports);
+		addReportTab(clDoc, catalog);
+	}
+
+	private void addReportTab(ClDoc clDoc, Catalog catalog) {
+		reportTab = new ReportTab(clDoc, new ReportDefinition(catalog));
+		add(reportTab);
 	}
 
 	private void setupButtons() {
@@ -43,8 +42,7 @@ public class ReportingPanel extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				ReportTab rt = (ReportTab) reports.getWidget(reports.getSelectedIndex());
-				rt.execute();
+				reportTab.execute();
 			}
 		});
 		
@@ -54,26 +52,25 @@ public class ReportingPanel extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				ReportTab rt = (ReportTab) reports.getWidget(reports.getSelectedIndex());
 				String baseUrl = GWT.getModuleBaseURL();
-				Window.open(baseUrl + "download?type=xsl&id=" + rt.getReportDefinition().id , "_blank", "");
+				Window.open(baseUrl + "download?type=xsl&id=" + reportTab.getReportDefinition().id , "_blank", "");
 
-				rt.execute();
+				reportTab.execute();
 			}
 		});
 		
 	}
 
-	private void addReportTabs() {
-		SRV.configurationService.listReportDefinitions(clDoc.getSession(), new DefaultCallback<List<ReportDefinition>>(clDoc, "list reports") {
-
-			@Override
-			public void onSuccess(List<ReportDefinition> result) {
-				for (ReportDefinition rd:result) {
-					reports.add(new ReportTab(clDoc, rd), rd.name);
-				}
-			}
-		});
-	}
-
+//	private void addReportTabs() {
+//		SRV.configurationService.listReportDefinitions(clDoc.getSession(), new DefaultCallback<List<ReportDefinition>>(clDoc, "list reports") {
+//
+//			@Override
+//			public void onSuccess(List<ReportDefinition> result) {
+//				for (ReportDefinition rd:result) {
+//					reports.add(new ReportTab(clDoc, rd), rd.name);
+//				}
+//			}
+//		});
+//	}
+//
 }

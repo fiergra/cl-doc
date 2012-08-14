@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Entity(
     NAME VARCHAR(400) NOT NULL
 );
 
-ALTER TABLE Entity AUTO_INCREMENT = 10000;
+ALTER TABLE Entity AUTO_INCREMENT = 100000;
 
 CREATE TABLE IF NOT EXISTS EntityRelation (
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -277,7 +277,10 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (23, 5, 'Entitaeten', 'Entitaeten', 'Entitaeten', 3);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (24, 5, 'Berechtigungen', 'Berechtigungen', 'Berechtigungen', 4);
 
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'DEBUG', 4);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
+insert into Catalog (parent, code, text, shorttext) values (6, 'Veranstaltungen', 'Veranstaltungen', 'Veranstaltungen');
+insert into Catalog (parent, code, text, shorttext) values (6, 'Beratungen', 'Beratungen', 'Beratungen');
+
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (8, 7, 'Formulare', 'Formulare', 'Formulare', 1);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (9, 7, 'Stammdaten', 'Stammdaten', 'Stammdaten', 2);
@@ -289,6 +292,7 @@ insert into Catalog (id, parent, code, text, shorttext) values (52, 51, 'USER', 
 insert into Catalog (id, parent, code, text, shorttext) values (53, 52, 'GUEST', 'GUEST', 'GUEST');
 insert into Catalog (id, parent, code, text, shorttext) values (54, 51, 'EART_USER', 'EART_USER', 'EART_USER');
 insert into Catalog (id, parent, code, text, shorttext) values (55, 51, 'DKG_USER', 'DKG_USER', 'DKG_USER');
+insert into Catalog (id, parent, code, text, shorttext) values (56, 51, 'CONFIGURATOR', 'CONFIGURATOR', 'CONFIGURATOR');
 
 insert into Catalog (id, parent, code, text, shorttext) values (70, null, 'ACTIONS', 'ACTIONS', 'ACTIONS');
 insert into Catalog (id, parent, code, text, shorttext) values (71, 70, 'VIEW', 'VIEW', 'VIEW');
@@ -387,16 +391,16 @@ insert into Organisation (Id) values (211);
 insert into Address(entity_id, street, number, postcode, city) values(211, 'Hauptstr.', '45', 52239, 'Koblenz');
 
 /* Ralph is member of CERES */
-insert into entityrelation (type, subjectid, objectid) values (155, 1, 20);
+insert into EntityRelation (type, subjectid, objectid) values (155, 1, 20);
 /* DKG Trier is-part-of DKG RLP */
-insert into entityrelation (type, subjectid, objectid) values (157, 210, 21);
+insert into EntityRelation (type, subjectid, objectid) values (157, 210, 21);
 /* DKG Koblenz is-part-of DKG RLP */
-insert into entityrelation (type, subjectid, objectid) values (157, 211, 21);
+insert into EntityRelation (type, subjectid, objectid) values (157, 211, 21);
 /* Stefan is member of mevik */
-insert into entityrelation (type, subjectid, objectid) values (155, 5, 24);
+insert into EntityRelation (type, subjectid, objectid) values (155, 5, 24);
 
-insert into entityrelation (type, subjectid, objectid) values (155, 1, 25);
-insert into entityrelation (type, subjectid, objectid) values (155, 6, 25);
+insert into EntityRelation (type, subjectid, objectid) values (155, 1, 25);
+insert into EntityRelation (type, subjectid, objectid) values (155, 6, 25);
 
 
 
@@ -420,22 +424,23 @@ insert into Assignment(userid, role, startdate) values ((select id from User whe
 insert into Assignment(userid, role, startdate) values ((select id from User where name='carlita'), 52, CURRENT_DATE);
 insert into Assignment(userid, role, startdate) values ((select id from User where name='carlita'), 55, CURRENT_DATE);
 
-
 insert into Policy (role, objectType, action, startDate) values (52,4,71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (51,5,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (56,5,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,3,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,6,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,7,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,8,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,9,71, CURRENT_DATE);
 
-insert into Policy (role, objectType, action, startDate) values (51,21,71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (51,22,71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (51,23,71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (51,24,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (56,21,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (56,22,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (56,23,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (56,24,71, CURRENT_DATE);
 
 insert into Policy (role, objectType, action, startDate) values (54,(select id from Catalog where code ='SucheTR-SAB'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (55,(select id from Catalog where code ='SucheDKG'),71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (55,(select id from Catalog where code ='Veranstaltungen'),71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (55,(select id from Catalog where code ='Beratungen'),71, CURRENT_DATE);
 
 
 insert into ActClass (Id,Name) values (1, 'Beispiel1');

@@ -24,7 +24,20 @@ public class Act extends AbstractNamedValueAccessor {
 	public Act(String className) {
 		this.className = className;
 	}
+	
+	
 
+	@Override
+	public Date getDate() {
+		return date;
+	}
+
+	@Override
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	@Override
 	public Participation getParticipation(long role) {
 		Participation p = null;
 		if (participations != null) {
@@ -135,6 +148,7 @@ public class Act extends AbstractNamedValueAccessor {
 		return field != null ? field.getValue() : null;
 	}
 
+	@Override
 	public CatalogList getCatalogList(String fieldName) {
 		return (CatalogList) getValue(fieldName);
 	}

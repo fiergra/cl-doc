@@ -195,6 +195,11 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
+	public ReportDefinition loadReportDefinition(Session session, Catalog catalog) {
+		return getReportService().load(session, catalog);
+	}
+
+	@Override
 	public List<HashMap<String, Serializable>> executeReport(Session session,
 			ReportDefinition rd) {
 		return getReportService().execute(session, rd);

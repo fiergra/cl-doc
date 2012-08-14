@@ -196,7 +196,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 							er.object = newValue;
 						}
 					}
-				});
+				}, null);
 		
 		if (asSubject) {
 			er.subject = entity;

@@ -154,8 +154,10 @@ public class EntityServiceImpl implements IEntityService {
 	private void updatePerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("update Person set gender = ?, firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?), dateofbirth = ? where id = ?");
+				.prepareStatement("update Person set per_id = ?, gender = ?, firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?), dateofbirth = ? where id = ?");
 		int i = 1;
+
+		s.setLong(i++, person.perId);
 		if (person.gender != null) {
 			s.setLong(i++, person.gender.id);
 		} else {
@@ -245,7 +247,7 @@ public class EntityServiceImpl implements IEntityService {
 	@SuppressWarnings("unchecked")
 	private List<Entity> list(Session session, Connection con, String name, Integer typeId, Long id) throws SQLException {
 		List<Entity> result = new ArrayList<Entity>();
-		String sql = "select e.id entityId, e.name, e.type, pers.gender, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, street, number, city, postcode, co from Entity e "
+		String sql = "select e.id entityId, e.name, e.type, pers.gender, pers.per_id, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, street, number, city, postcode, co from Entity e "
 				+ "left outer join Person pers on pers.id = e.id "
 				+ "left outer join Organisation orga on orga.id = e.id "
 				+ "left outer join Address adr on adr.entity_id = e.id " 
@@ -301,6 +303,7 @@ public class EntityServiceImpl implements IEntityService {
 		p.firstName = rs.getString(prefix + "firstname");
 		p.lastName = rs.getString(prefix + "lastname");
 		p.id = entityId;
+		p.perId = rs.getLong(prefix + "per_id");
 		p.dateOfBirth = rs.getDate(prefix + "dateofbirth");
 		return p;
 	}
@@ -414,7 +417,7 @@ public class EntityServiceImpl implements IEntityService {
 			public List<EntityRelation> execute(Connection con) throws SQLException {
 				ArrayList<EntityRelation> result = new ArrayList<EntityRelation>();
 				String sql =
-						"select er.id relationId, type.id type_id, type.code type_code, type.shorttext type_shorttext, type.text type_text, type.date type_date, type.parent type_parent, type.number1 type_number1, type.number2 type_number2, " +
+						"select er.id relationId, type.id type_id, type.code type_code, type.shorttext type_shorttext, type.logical_order type_logical_order, type.text type_text, type.date type_date, type.parent type_parent, type.number1 type_number1, type.number2 type_number2, " +
 						"subject.id subject_entityId, subject.name subject_name, subject.type subject_type," +
 						"object.id object_entityId, object.name object_name, object.type object_type " +
 						" from EntityRelation er" +

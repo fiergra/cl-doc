@@ -32,6 +32,10 @@ body, table td, select, button {
 	width: 100%;
 }
 
+.hundertPercentHeight {
+	height: 100%;
+}
+
 .marker {
 	border:medium;
 	background: #a11;
@@ -75,6 +79,7 @@ body, table td, select, button {
 
 .formContainer {
 	padding: 1em;
+	background-color: #e0e0e0;
 }
 
 .invalid {
@@ -142,6 +147,7 @@ body, table td, select, button {
 .formLabel {
 	text-align: right;
 	padding-right: 5px;
+	font-weight: bold;
 	width: 100px;
 }
 
@@ -150,6 +156,7 @@ body, table td, select, button {
 }
 
 .docform {
+	height: 100%;
 	border:medium;
 	text-align: left;
 	vertical-align: top;

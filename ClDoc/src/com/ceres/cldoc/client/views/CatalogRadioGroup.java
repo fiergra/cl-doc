@@ -30,6 +30,7 @@ public class CatalogRadioGroup extends HorizontalPanel implements IEntitySelecto
 				
 				for (final Catalog c:result) {
 					RadioButton rb = new RadioButton(groupName, c.shortText);
+					rb.setTitle(c.text);
 					add(rb);
 					buttons.put(c.id, rb);
 					rb.addClickHandler(new ClickHandler() {
