@@ -31,7 +31,7 @@ public class AccessControl {
 							"role.id role_id, role.code role_code, " +
 							"action.id action_id, action.code action_code, " +
 							"objectType.id objectType_id, objectType.code objectType_code " +
-							"from Policy p " +
+							"from Policy P " +
 							"inner join Catalog role on role.id = P.role " +
 							"inner join Catalog objectType on objectType.id = P.objectType " +
 							"inner join Catalog action on action.id = P.action where role.id in(" + getRoleIds(user) + ") ";

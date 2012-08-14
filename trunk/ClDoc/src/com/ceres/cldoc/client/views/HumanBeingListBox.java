@@ -43,7 +43,13 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> {
 			public String getValue(Person act) {
 				return getLabel(act);
 			}
-		}, changeHandler);
+		}, changeHandler, new Runnable() {
+			
+			@Override
+			public void run() {
+				PersonEditor.editPerson(clDoc, new Person());
+			}
+		});
 		
 		SRV.catalogService.getCatalog(clDoc.getSession(), "ROLES." + role , new DefaultCallback<Catalog>(clDoc, "load role catalog") {
 

@@ -46,6 +46,7 @@ public interface ConfigurationService extends RemoteService {
 	List<Assignment> listAssignments(Session session, Entity entity);
 	
 	List<ReportDefinition> listReportDefinitions(Session session);
+	ReportDefinition loadReportDefinition(Session session, Catalog catalog);
 	List<HashMap<String, Serializable>> executeReport(Session session, ReportDefinition rd);
 	
 }

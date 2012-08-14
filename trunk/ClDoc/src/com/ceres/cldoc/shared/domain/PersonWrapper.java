@@ -22,6 +22,8 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 		public IActField set(String fieldName, Serializable value) {
 			if (fieldName.equals("firstName")) {
 				humanBeing.firstName = (String) value;
+			} else if (fieldName.equals("id")) {
+				humanBeing.perId = (Long) value;
 			} else if (fieldName.equals("lastName")) {
 				humanBeing.lastName = (String) value;
 			} else if (fieldName.equals("gender")) {
@@ -46,6 +48,8 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 		public IActField get(String fieldName) {
 			if (fieldName.equals("firstName")) {
 				return new ActField(fieldName, humanBeing.firstName);
+			} else if (fieldName.equals("id")) {
+				return new ActField(fieldName, humanBeing.perId);
 			} else if (fieldName.equals("lastName")) {
 				return new ActField(fieldName, humanBeing.lastName);
 			} else if (fieldName.equals("gender")) {
@@ -65,6 +69,18 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 			} else {
 				return null;
 			}
+		}
+
+		@Override
+		public Date getDate() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void setDate(Date date) {
+			// TODO Auto-generated method stub
+			
 		}
 
 

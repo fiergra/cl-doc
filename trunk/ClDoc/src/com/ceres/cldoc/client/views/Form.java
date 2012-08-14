@@ -1,11 +1,8 @@
 package com.ceres.cldoc.client.views;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 
 import com.ceres.cldoc.client.ClDoc;
@@ -448,7 +445,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			w = crg;
 			break;
 		case FT_MULTI_SELECTION:
-			CatalogMultiSelect cms = new CatalogMultiSelect(clDoc, attributes.get("parent"), attributes.get("orientation"));
+			CatalogMultiSelect cms = new CatalogMultiSelect(clDoc, attributes.get("parent"), 8, attributes.get("orientation"));
 			cms.addChangeHandler(new ChangeHandler() {
 				
 				@Override

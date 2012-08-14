@@ -15,10 +15,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PersonDetails extends DockLayoutPanel {
-	private Image pbSave = new Image("icons/32/Save-icon.png");
-	private PersonEditor personEditor;
-	private Person humanBeing;
-	private ClDoc clDoc;
+	private final Image pbSave = new Image("icons/32/Save-icon.png");
+	private final PersonEditor personEditor;
+	private final Person humanBeing;
+	private final ClDoc clDoc;
 	
 	public PersonDetails(ClDoc clDoc, Person humanBeing) {
 		super(Unit.PX);
@@ -30,7 +30,7 @@ public class PersonDetails extends DockLayoutPanel {
 			public void run() {
 				setModified();
 			}
-		});
+		}, null);
 		addNorth(createButtons(), 32);
 		HorizontalPanel container = new HorizontalPanel();
 		container.add(personEditor);

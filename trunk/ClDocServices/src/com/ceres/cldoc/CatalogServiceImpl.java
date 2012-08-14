@@ -47,23 +47,33 @@ public class CatalogServiceImpl implements ICatalogService {
 
 	@Override
 	public void save(Session session, final Catalog catalog) {
+		save(session, catalog, true);
+	}	
+	
+	private void save(Session session, final Catalog catalog, final boolean insertIfUpdateFails) {
 		Catalog c = Jdbc.doTransactional(session, new ITransactional() {
 
 			@Override
 			public Catalog execute(Connection con) throws SQLException {
 				if (catalog.id != null) {
 					PreparedStatement s = con
-							.prepareStatement("update Catalog set parent = ?, text = ?, shorttext = ?, date = ?, number1=?, number2=? where id = ?");
+							.prepareStatement("update Catalog set parent = ?, text = ?, shorttext = ?, date = ?, number1=?, number2=?, logical_order=? where id = ?");
 					long parentId = catalog.parent != null ? catalog.parent.id : 1000;
 					log.info(parentId +"");
 					int i = bindVariables(s, catalog);
 					s.setLong(i, catalog.id);
 					int rows = s.executeUpdate();
 					s.close();
+					
+					if (insertIfUpdateFails && rows == 0) {
+						catalog.id = null;
+						execute(con);
+					}
+					
 				} else {
 					PreparedStatement s = con
 							.prepareStatement(
-									"insert into Catalog (parent, text, shorttext, date, number1, number2, code) values (?,?,?,?,?,?,?)",
+									"insert into Catalog (parent, text, shorttext, date, number1, number2, logical_Order, code) values (?,?,?,?,?,?,?,?)",
 									new String[] { "ID" });
 					int i = bindVariables(s, catalog);
 					s.setString(i++, catalog.code);
@@ -95,6 +105,11 @@ public class CatalogServiceImpl implements ICatalogService {
 				}
 				if (catalog.number2 != null) {
 					u.setLong(i++, catalog.number2);
+				} else {
+					u.setNull(i++, Types.INTEGER);
+				}
+				if (catalog.logicalOrder != null) {
+					u.setLong(i++, catalog.logicalOrder);
 				} else {
 					u.setNull(i++, Types.INTEGER);
 				}
@@ -167,6 +182,8 @@ public class CatalogServiceImpl implements ICatalogService {
 		c.number1 = rs.wasNull() ? null : number;
 		number = rs.getLong(prefix + "number2");
 		c.number2 = rs.wasNull() ? null : number;
+		number = rs.getLong(prefix + "logical_order");
+		c.logicalOrder = rs.wasNull() ? null : number;
 		return c;
 	}
 
@@ -187,7 +204,7 @@ public class CatalogServiceImpl implements ICatalogService {
 						} else {
 							sql += "= ?";
 						}
-						sql += " order by logical_order";
+						sql += " order by IFNULL(logical_order, 999)";
 						PreparedStatement s = con.prepareStatement(sql);
 						if (parent != null) {
 							s.setLong(1, parent.id);
@@ -354,9 +371,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	private void catalogToXml(Document doc, Node parentNode, Catalog catalog) {
 		Element catalogNode = doc.createElement("catalog");
 		
-		if (catalog.id < 1000) {
-			catalogNode.setAttribute("id", String.valueOf(catalog.id));
-		}
+		catalogNode.setAttribute("id", String.valueOf(catalog.id));
 		catalogNode.setAttribute("code", catalog.code);
 
 		Element textNode = doc.createElement("text");
@@ -387,6 +402,12 @@ public class CatalogServiceImpl implements ICatalogService {
 		if (catalog.number2 != null) {
 			Element numberNode = doc.createElement("number2");
 			numberNode.appendChild(doc.createTextNode(String.valueOf(catalog.number2)));
+			catalogNode.appendChild(numberNode);
+		}
+
+		if (catalog.logicalOrder != null) {
+			Element numberNode = doc.createElement("logicalOrder");
+			numberNode.appendChild(doc.createTextNode(String.valueOf(catalog.logicalOrder)));
 			catalogNode.appendChild(numberNode);
 		}
 
@@ -430,25 +451,56 @@ public class CatalogServiceImpl implements ICatalogService {
 
 	}
 
+	private Element getChildByName(Element node, String childName) {
+		Element child = null;
+		
+		NodeList children = node.getChildNodes();
+		int length = children.getLength();
+		int index = 0;
+		
+		while (child == null && index < length) {
+			Node curChild = children.item(index++);
+			
+			if (childName.equals(curChild.getNodeName())) {
+				child = (Element) curChild;
+			}
+			
+		}
+		
+		
+		return child;
+	}
+	
 	private void importCatalog(Session session, Element catalogNode, Catalog parent) {
-		Catalog c = new Catalog();
-		c.parent = parent;
-		c.id = getLong(catalogNode.getAttributes(), "id");
-		c.code = getString(catalogNode.getAttributes(), "code");
-		c.text = catalogNode.getElementsByTagName("text").item(0).getTextContent();
-		c.shortText = catalogNode.getElementsByTagName("shorttext").item(0).getTextContent();
-		if (catalogNode.getElementsByTagName("date").getLength() > 0) {
-			c.date = parseDate(catalogNode.getElementsByTagName("date").item(0).getTextContent());
+		Catalog catalog = new Catalog();
+		catalog.parent = parent;
+		catalog.id = getLong(catalogNode.getAttributes(), "id");
+		catalog.code = getString(catalogNode.getAttributes(), "code");
+		catalog.text = catalogNode.getElementsByTagName("text").item(0).getTextContent();
+		catalog.shortText = catalogNode.getElementsByTagName("shorttext").item(0).getTextContent();
+		
+		Element child = getChildByName(catalogNode, "date"); 
+		if (child != null) {
+			catalog.date = parseDate(child.getTextContent());
 		}
-		if (catalogNode.getElementsByTagName("number1").getLength() > 0) {
-			c.number1 = Long.valueOf(catalogNode.getElementsByTagName("number1").item(0).getTextContent());
+		
+		child = getChildByName(catalogNode, "number1"); 
+		if (child != null) {
+			catalog.number1 = Long.valueOf(child.getTextContent());
 		}
-		if (catalogNode.getElementsByTagName("number2").getLength() > 0) {
-			c.number2 = Long.valueOf(catalogNode.getElementsByTagName("number2").item(0).getTextContent());
+		
+		child = getChildByName(catalogNode, "number2"); 
+		if (child != null) {
+			catalog.number2 = Long.valueOf(child.getTextContent());
+		}
+		
+		child = getChildByName(catalogNode, "logicalOrder"); 
+		if (child != null) {
+			catalog.logicalOrder = Long.valueOf(child.getTextContent());
 		}
 
-		save(session, c);
-		log.info("imported " + c);
+		save(session, catalog, true);
+		log.info("imported " + catalog);
 		
 		NodeList childNodes = catalogNode.getChildNodes();
 		for (int i = 0; i < childNodes.getLength(); i++) {
@@ -459,7 +511,7 @@ public class CatalogServiceImpl implements ICatalogService {
 				for (int j = 0; j < childrenCatalogs.getLength(); j++) {
 					Node childCatalog = childrenCatalogs.item(j);
 					if (childCatalog.getNodeName().equals("catalog")) {
-						importCatalog(session, (Element)childCatalog, c);
+						importCatalog(session, (Element)childCatalog, catalog);
 					}
 				}
 			}

@@ -20,6 +20,7 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -61,13 +62,37 @@ public class ReportServiceImpl implements IReportService {
 	}
 
 	@Override
-	public List<HashMap<String, Serializable>> execute(Session session, ReportDefinition rd) {
+	public List<HashMap<String, Serializable>> execute(Session session, final ReportDefinition rd) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public List<HashMap<String, Serializable>> execute(Connection con) throws SQLException {
 				List<HashMap<String, Serializable>> result = new ArrayList<HashMap<String, Serializable>>();
-				PreparedStatement s = con.prepareStatement(
+				PreparedStatement s;
+				
+				if (rd.name.equals("Veranstaltungen")) {
+					s = con.prepareStatement("select date(a.date) Datum, e.name Veranstalter, " +
+							" (select stringValue from ActField af inner join ActClassField acf on acf.id = af.ClassFieldId where acf.name = 'Thema' and af.actId = a.id) Thema, " +
+							" (select stringValue from ActField af inner join ActClassField acf on acf.id = af.ClassFieldId where acf.name = 'Ort/Lokal' and af.actId = a.id) Lokal " +
+							" from Act a " +
+							" inner join Participation p on p.actId = a.id and p.role = 101 " +
+							" inner join Entity e on e.id = p.entityId " +
+							" inner join Participation orgP on orgP.actId = a.id and orgP.role = 102 " +
+							" inner join Entity orgE on orgE.id = orgP.entityId" +
+							" inner join ActClass ac on a.ActClassId = ac.id" +
+							" where ac.name = 'Veranstaltungsbericht'");
+				} else if (rd.name.equals("Beratungen")) {
+					s = con.prepareStatement("select e.name Klient, date(a.date) Datum, orgE.name orga, " +
+							" (select stringValue from ActField af inner join ActClassField acf on acf.id = af.ClassFieldId where acf.name = 'Ort' and af.actId = a.id) Ort " +
+							" from Act a inner join ActClass ac on a.ActClassId = ac.id" +
+							" inner join Participation p on p.actId = a.id and p.role = 101 " +
+							" inner join Entity e on e.id = p.entityId " +
+							" inner join Participation orgP on orgP.actId = a.id and orgP.role = 102 " +
+							" inner join Entity orgE on orgE.id = orgP.entityId" +
+							" where ac.name = 'Beratungsgespraech'");
+				} else {
+				
+				 s = con.prepareStatement(
 						"select " +
 						"						(select intValue from ActField af inner join ActClassField acf on acf.id = af.ClassFieldId where acf.name = 'Heizung' and af.actId = a.id) heizung," +
 						"						(select intValue from ActField af inner join ActClassField acf on acf.id = af.ClassFieldId where acf.name = 'Strom' and af.actId = a.id) strom," +
@@ -84,19 +109,8 @@ public class ReportServiceImpl implements IReportService {
 						"						where name = 'Gebaeude' and p.role = 103 AND p.entityid = e.id" +
 						"						))" +
 						"						where ac.Name = 'Energiepass'");
-				ResultSet rs = s.executeQuery();
-				ResultSetMetaData md = rs.getMetaData();
-				while (rs.next()) {
-					HashMap <String, Serializable> record = new HashMap<String, Serializable>();
-					for (int i = 1; i < md.getColumnCount(); i++) {
-						String columnName = md.getColumnLabel(i);
-						record.put(columnName, (Serializable) rs.getObject(columnName));
-					}
-					result.add(record);
 				}
-				rs.close();
-				s.close();
-				
+				execSQL(result, s);
 				return result ;
 			}
 		});
@@ -108,7 +122,9 @@ public class ReportServiceImpl implements IReportService {
 		WritableWorkbook workbook = Workbook.createWorkbook(out); 
 		WritableSheet sheet = workbook.createSheet("First Sheet", 0); 
 
-		List<HashMap<String, Serializable>> result = execute(session, null);
+		Catalog c = Locator.getCatalogService().load(session, reportId);
+		
+		List<HashMap<String, Serializable>> result = execute(session, new ReportDefinition(c));
 		
 		Iterator<HashMap<String, Serializable>> iter = result.iterator();
 		int row = 0;
@@ -144,6 +160,28 @@ public class ReportServiceImpl implements IReportService {
 		} catch (WriteException wx) {
 			throw new RuntimeException(wx);
 		}
+	}
+
+	@Override
+	public ReportDefinition load(Session session, Catalog catalog) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private void execSQL(List<HashMap<String, Serializable>> result,
+			PreparedStatement s) throws SQLException {
+		ResultSet rs = s.executeQuery();
+		ResultSetMetaData md = rs.getMetaData();
+		while (rs.next()) {
+			HashMap <String, Serializable> record = new HashMap<String, Serializable>();
+			for (int i = 0; i < md.getColumnCount(); i++) {
+				String columnName = md.getColumnLabel(i+1);
+				record.put(columnName, (Serializable) rs.getObject(columnName));
+			}
+			result.add(record);
+		}
+		rs.close();
+		s.close();
 	}
 
 }

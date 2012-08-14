@@ -7,7 +7,6 @@ import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.shared.domain.PersonWrapper;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -77,7 +76,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				editPerson(clDoc, new Person());
+				PersonEditor.editPerson(clDoc, new Person());
 			}
 		});
 		pbNew.setPixelSize(32, 32);
@@ -85,29 +84,11 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		
 		
 		addWidget(hp);
+		getColumnFormatter().addStyleName(4, "hundertPercentWidth");
+
 	}
 
 	
-	private static void savePerson(ClDoc clDoc, Person result) {
-		SRV.humanBeingService.save(clDoc.getSession(), result, new DefaultCallback<Person>(clDoc, "save") {
-
-			@Override
-			public void onSuccess(Person result) {
-//				searchBox.setText(result.lastName);
-//				doSearch();
-			}
-		});
-		
-	}
-	
-	private static void deletePerson(ClDoc clDoc, Person person) {
-		SRV.humanBeingService.delete(clDoc.getSession(), person, new DefaultCallback<Void>(clDoc, "deletePerson"){
-
-			@Override
-			public void onSuccess(Void result) {
-				
-			}});
-	}
 /*
 	private static void loadAndOpenFile(final ClDoc clDoc, long pid) {
 		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>(clDoc, "findById") {
@@ -130,34 +111,6 @@ public class PersonSearchTable extends ClickableTable<Person> {
 	}
 	
 */	
-	private static void editPerson(final ClDoc clDoc, final Person humanBeing) {
-		final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(humanBeing));
-		pe.showModal("PersonEditor", 
-		new OnClick<PersonWrapper>() {
-			
-			@Override
-			public void onClick(PersonWrapper v) {
-				pe.close();
-				savePerson(clDoc, humanBeing);
-			}
-		},
-		new OnClick<PersonWrapper>() {
-			
-			@Override
-			public void onClick(PersonWrapper v) {
-				pe.close();
-				deletePerson(clDoc, humanBeing);
-			}
-		},
-		new OnClick<PersonWrapper>() {
-			
-			@Override
-			public void onClick(PersonWrapper v) {
-				pe.close();
-			}
-		}
-		);
-	}
 
 	@Override
 	public void addRow(FlexTable grid, int row, Person person) {
@@ -172,6 +125,15 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		firstName.setWidth("10em");
 		grid.setWidget(row, 2, firstName);
 		grid.setWidget(row, 3, new Label(person.dateOfBirth != null ? ("*" + f.format(person.dateOfBirth)) : "" ));
+		
+		if (person.gender != null) {
+			Image gender = person.gender.id.equals(152l) ? new Image("icons/male-sign.png") : new Image("icons/female-sign.png");
+			gender.setHeight("1em");
+			grid.setWidget(row, 4, gender);
+		} else {
+			grid.setWidget(row, 4, new Label());
+		}
+		
 	}
 
 }

@@ -196,6 +196,12 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	}
 
 	@Override
+	public void loadReportDefinition(Session session, Catalog catalog,
+			AsyncCallback<ReportDefinition> callback) {
+		SRV.configurationService.loadReportDefinition(session, catalog, callback);
+	}
+
+	@Override
 	public void listLayoutDefinitions(Session session, int typeId, AsyncCallback<List<LayoutDefinition>> defaultCallback) {
 		SRV.configurationService.listLayoutDefinitions(session, typeId, defaultCallback);
 	}
