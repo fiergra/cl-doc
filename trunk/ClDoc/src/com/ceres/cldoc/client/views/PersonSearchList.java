@@ -71,7 +71,7 @@ public class PersonSearchList extends DockLayoutPanel {
 			});
 		}
 		
-		addNorth(hp, 3);
+		addNorth(hp, 3.5);
 		verticalList.setWidth("97%");
 		verticalList.setSpacing(2);
 		ScrollPanel sp = new ScrollPanel(verticalList);

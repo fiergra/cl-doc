@@ -146,6 +146,7 @@ body, table td, select, button {
 
 .formLabel {
 	text-align: right;
+	vertical-align: top;
 	padding-right: 5px;
 	font-weight: bold;
 	width: 100px;
@@ -155,8 +156,12 @@ body, table td, select, button {
 	font-style: italic;
 }
 
+.mandatory {
+	border-color: red;
+	border-width: 1px;
+}
+
 .docform {
-	height: 100%;
 	border:medium;
 	text-align: left;
 	vertical-align: top;

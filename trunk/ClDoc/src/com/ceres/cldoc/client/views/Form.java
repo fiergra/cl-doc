@@ -536,6 +536,10 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			if (sHeight != null) {
 				w.setHeight(sHeight);
 			}
+			
+			if ("true".equals(attributes.get("mandatory"))) {
+				w.addStyleName("mandatory");
+			}
 		}
 		
 		return w;
@@ -636,17 +640,21 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 					HorizontalPanel hp = new HorizontalPanel();
 					hp.setSpacing(5);
 					hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-//					for (LayoutElement sub:child.getChildren()) {
-//						DataTypes dataType = getDataType(sub);
-//						String subLabel = sub.getAttribute("label");
-//						String subName = sub.getAttribute("name");
-//						Label l = new Label(subLabel == null ? subName : subLabel);
-//						l.addStyleName("formSubLabel");
-//						Widget w = createWidgetForType(dataType, sub.getAttributes());
-//						hp.add(l);
-//						hp.add(w);
-//						fields.put(subName, new Field(subName, w, dataType));
-//					}
+					NodeList subChildren = child.getChildNodes();
+					for (int j=0; j < subChildren.getLength(); j++) {
+						Element sub = (Element) (subChildren.item(j) instanceof Element ? subChildren.item(j) : null);
+						if (sub != null) {
+							DataTypes dataType = getDataType(sub);
+							String subLabel = sub.getAttribute("label");
+							String subName = sub.getAttribute("name");
+							Label l = new Label(subLabel == null ? subName : subLabel);
+							l.addStyleName("formSubLabel");
+							Widget w = createWidgetForType(dataType, getAttributesMap(sub));
+							hp.add(l);
+							hp.add(w);
+							fields.put(subName, new Field(subName, w, dataType));
+						}
+					}
 					addLine(label == null ? fieldName : label, hp);
 				}
 			}
@@ -737,8 +745,8 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		return pageContainer;
 	}
 
-	private DataTypes getDataType(LayoutElement child) {
-		return getDataType(child.getAttribute("type"));
+	private DataTypes getDataType(Element sub) {
+		return getDataType(sub.getAttribute("type"));
 	}
 
 	private DataTypes getDataType(String type) {
