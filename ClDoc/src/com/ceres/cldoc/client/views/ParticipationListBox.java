@@ -40,7 +40,7 @@ public class ParticipationListBox extends OnDemandComboBox <Person> {
 			public String getValue(Person act) {
 				return getLabel(act);
 			}
-		}, changeHandler);
+		}, changeHandler, null);
 		setSize("25em", "2em");
 		addStyleName("humanBeingListBox");
 	}
