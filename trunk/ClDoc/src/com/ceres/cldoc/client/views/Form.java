@@ -15,14 +15,13 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.CatalogList;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.shared.layout.LayoutElement;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.ui.Button;
@@ -34,6 +33,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -85,18 +85,34 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		public String name;
 		public Widget widget;
 		public DataTypes dataType;
+		public boolean isMandatory;
 
-		public Field(String name, Widget widget, DataTypes dataType) {
+		public Field(String name, Widget widget, DataTypes dataType, boolean isMandatory) {
 			super();
 			this.name = name;
 			this.widget = widget;
 			this.dataType = dataType;
+			this.isMandatory = isMandatory;
 		}
 
 	}
 
 	private final HashMap<String, Field> fields = new HashMap<String, Field>();
 
+	public boolean validate(TextBoxBase textBox) {
+		boolean isValid = false;
+		String sValue = textBox.getText();
+		if (sValue == null || sValue.length() == 0) {
+			textBox.addStyleName("invalidContent");
+		} else {
+			textBox.removeStyleName("invalidContent");
+			isValid = true;
+		}
+
+		return isValid;
+	}
+
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public void toDialog() {
@@ -109,8 +125,11 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			switch (field.dataType) {
 			case FT_TEXT:
 			case FT_STRING:
-				((TextBoxBase) field.widget)
-						.setText(act.getString(field.name));
+				String sValue = act.getString(field.name);
+				((TextBoxBase) field.widget).setText(sValue);
+				if (field.isMandatory) {
+					validate((TextBoxBase) field.widget);
+				}
 				break;
 			case FT_BOOLEAN:
 				((CheckBox) field.widget).setValue(act.getBoolean(field.name));
@@ -237,11 +256,20 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 	private boolean isModified = false;
 	private int row;
 
-	private final KeyDownHandler modificationHandler = new KeyDownHandler() {
+	private class WidgetKeyUpHandler implements KeyUpHandler {
 
+		private IsWidget widget;
+
+		public WidgetKeyUpHandler(IsWidget widget) {
+			this.widget = widget;
+		}
+		
 		@Override
-		public void onKeyDown(KeyDownEvent event) {
+		public void onKeyUp(KeyUpEvent event) {
 			onModification();
+			if (widget instanceof TextBoxBase) {
+				validate((TextBoxBase) widget);
+			}
 			if (!isModified) {
 				isModified = true;
 				if (setModified != null) {
@@ -249,7 +277,22 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				}
 			}
 		}
-	};
+		
+	}
+	
+//	private final KeyDownHandler modificationHandler = new KeyDownHandler() {
+//
+//		@Override
+//		public void onKeyDown(KeyDownEvent event) {
+//			onModification();
+//			if (!isModified) {
+//				isModified = true;
+//				if (setModified != null) {
+//					setModified.run();
+//				}
+//			}
+//		}
+//	};
 
 	protected void onModification() {}
 	
@@ -386,7 +429,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		Widget widget = createWidgetForType(dataType, attributes);
 		addLine(labelText, widget);
 		if (fieldName != null) {
-			fields.put(fieldName, new Field(fieldName, widget, dataType));
+			fields.put(fieldName, new Field(fieldName, widget, dataType, "true".equals(attributes.get("mandatory"))));
 		}
 		return widget;
 	}
@@ -397,7 +440,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		switch (dataType) {
 		case FT_STRING:
 			TextBox t = new TextBox();
-			t.addKeyDownHandler(modificationHandler);
+			t.addKeyUpHandler(new WidgetKeyUpHandler(t));
 			w = t;
 			w.setWidth("60%");
 			break;
@@ -489,25 +532,25 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		case FT_TEXT:
 			TextArea a = new TextArea();
 			a.setWidth("99%");
-			a.addKeyDownHandler(modificationHandler);
+			a.addKeyUpHandler(new WidgetKeyUpHandler(a));
 			w = a;
 			break;
 		case FT_DATE:
 			DateTextBox d = new DateTextBox();
 			d.setWidth("10em");
-			d.addKeyDownHandler(modificationHandler);
+			d.addKeyUpHandler(new WidgetKeyUpHandler(d));
 			w = d;
 			break;
 		case FT_FLOAT:
 			FloatTextBox f = new FloatTextBox();
 			f.setWidth("5em");
-			f.addKeyDownHandler(modificationHandler);
+			f.addKeyUpHandler(new WidgetKeyUpHandler(f));
 			w = f;
 			break;
 		case FT_INTEGER:
 			LongTextBox itb = new LongTextBox();
 			itb.setWidth("5em");
-			itb.addKeyDownHandler(modificationHandler);
+			itb.addKeyUpHandler(new WidgetKeyUpHandler(itb));
 			w = itb;
 			break;
 		case FT_IMAGE:
@@ -537,9 +580,6 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				w.setHeight(sHeight);
 			}
 			
-			if ("true".equals(attributes.get("mandatory"))) {
-				w.addStyleName("mandatory");
-			}
 		}
 		
 		return w;
@@ -649,10 +689,11 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 							String subName = sub.getAttribute("name");
 							Label l = new Label(subLabel == null ? subName : subLabel);
 							l.addStyleName("formSubLabel");
-							Widget w = createWidgetForType(dataType, getAttributesMap(sub));
+							HashMap<String, String> subAttributes = getAttributesMap(sub);
+							Widget w = createWidgetForType(dataType, subAttributes);
 							hp.add(l);
 							hp.add(w);
-							fields.put(subName, new Field(subName, w, dataType));
+							fields.put(subName, new Field(subName, w, dataType, "true".equals(subAttributes.get("mandatory"))));
 						}
 					}
 					addLine(label == null ? fieldName : label, hp);

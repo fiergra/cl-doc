@@ -156,7 +156,7 @@ body, table td, select, button {
 	font-style: italic;
 }
 
-.mandatory {
+.invalidContent {
 	border-color: red;
 	border-width: 1px;
 }
