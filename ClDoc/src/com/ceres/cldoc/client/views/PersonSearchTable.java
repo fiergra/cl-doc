@@ -67,7 +67,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 			}
 		});
 
-		hp.setSpacing(2);
+//		hp.setSpacing(2);
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hp.add(new Label(SRV.c.search()));
 		hp.add(searchBox);

@@ -1,8 +1,10 @@
 package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
+import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.controls.PagesView;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
@@ -20,7 +22,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
@@ -32,13 +33,14 @@ public class ActRenderer extends DockLayoutPanel {
 	private static final int BORDER_WIDTH = 3;
 	private HTML title;
 	private final OnOkHandler<Act> onInsertUpdateDelete;
+	private LinkButton pbSave;
 	private final ClDoc clDoc;
 	
 	public ActRenderer(
 			ClDoc clDoc,
 			OnOkHandler<Act> onInsertUpdateDelete, 
 			Runnable onSetModified) {
-		super(Unit.PX);
+		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.onInsertUpdateDelete = onInsertUpdateDelete;
 		setup();
@@ -47,17 +49,11 @@ public class ActRenderer extends DockLayoutPanel {
 	private IView<Act> formContent;
 	private Act act;
 	
-	private void addLinkButton(HorizontalPanel buttons, int index, String label, String image, 
+	private LinkButton addLinkButton(HorizontalPanel buttons, int index, String toolTip, String enabledImage, String disabledImage, 
 			ClickHandler clickHandler) {
-		Image linkButton = new Image(image);
-		linkButton.addStyleName("linkButton");
-		linkButton.setTitle(label);
+		LinkButton linkButton = new LinkButton(toolTip, enabledImage, disabledImage, clickHandler);
 		buttons.add(linkButton);
-		if (clickHandler != null) {
-			linkButton.addClickHandler(clickHandler);
-		} else {
-			// show disabled
-		}
+		return linkButton;
 	}
 	
 	
@@ -104,14 +100,15 @@ public class ActRenderer extends DockLayoutPanel {
 		buttons.add(a);
 		
 		
-		addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Save-icon.png", new ClickHandler() {
+		pbSave = addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				saveForm(true);
+				saveForm(true, null);
 			}
 		});
-		addLinkButton(buttons, index++, SRV.c.delete(), "icons/32/File-Delete-icon.png", new ClickHandler() {
+		pbSave.enable(false);
+		addLinkButton(buttons, index++, SRV.c.delete(), "icons/32/File-Delete-icon.png", null, new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -137,13 +134,14 @@ public class ActRenderer extends DockLayoutPanel {
 		HorizontalPanel textPanel = new HorizontalPanel();
 		textPanel.setWidth("100%");
 		title = new HTML();
+		title.addStyleName("actTitle");
 		textPanel.add(title);
 
 		titlePanel.add(textPanel);
 		titlePanel.setStylePrimaryName("actTitle");
 		titlePanel.add(buttons);
 
-		addNorth(titlePanel, 38);
+		addNorth(titlePanel, 3);
 		
 		addStyleName("formContainer");
 	}
@@ -169,68 +167,99 @@ public class ActRenderer extends DockLayoutPanel {
 	}
 
 
-	private void saveForm(final boolean doSelect) {
+	private void saveForm(final boolean doSelect, final Runnable callback) {
 		formContent.fromDialog();
 		SRV.actService.save(clDoc.getSession(), formContent.getModel(), new DefaultCallback<Act>(clDoc, "listCatalogs") {
 
 			@Override
 			public void onSuccess(Act act) {
 				formContent.clearModification();
+				pbSave.enable(false);
 				onInsertUpdateDelete.onOk(doSelect ? act : null);
+				if (callback != null) {
+					callback.run();
+				}
 			}
 		});
 		
 	}
 	
-	public boolean setAct(LayoutDefinition layoutDef, Act act) {
-		this.act = act;
-
+	public boolean setAct(final LayoutDefinition layoutDef, final Act act) {
 		if (act != null) {
-			DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
-			title.setTitle("#" + act.id + " - <b>" + act.className + "</b>");
-			String sDate = act.date != null ? formatter.format(act.date) : "--.--.----";
-			title.setHTML("<b>" + act.className + "</b> - " + sDate );
-			if (formContent != null) {
-				if (formContent.isModified() && wantToSave()) {
-					saveForm(false);
-				}
-			}
-
-			if (formContent != null) {
-				remove(formContent);
-			}
 			
-			if (act.className.equals("externalDoc")) {
-				IActField field = act.get("docId");
-				String baseUrl = GWT.getModuleBaseURL();
-				FrameView<Act> frame = new FrameView<Act>(act, baseUrl + "download?id=" + field.getLongValue());
-				int h = getOffsetHeight() - 2 * BORDER_WIDTH;
-				int w = getOffsetWidth() - 2 * BORDER_WIDTH; 
-				frame.setPixelSize(w, h);
-				frame.setWidth("100%");
-				formContent = frame;
-				frame.setSize("100%", "100%");
-				add(formContent);
-			} else {
-//				ScrollPanel sp = new ScrollPanel(formContent.asWidget());
-				formContent = getActRenderer(clDoc, layoutDef.xmlLayout, act, new Runnable() {
-					
+			if (formContent != null && formContent.isModified()) {
+				new MessageBox("Speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YES | MessageBox.MB_NO | MessageBox.MB_CANCEL, MESSAGE_ICONS.MB_ICON_QUESTION){
+
 					@Override
-					public void run() {
-						title.setHTML("*<i>" + title.getText() + "</i>");
+					protected void onClick(int result) {
+						switch(result) {
+							case MessageBox.MB_YES:
+								saveForm(false, new Runnable() {
+									
+									@Override
+									public void run() {
+										doSetAct(layoutDef, act);
+									}
+								});
+								break;
+							case MessageBox.MB_NO:
+								doSetAct(layoutDef, act);
+								break;
+							case MessageBox.MB_CANCEL:
+								break;
+						}
 					}
-				});
-				add(formContent);
-				formContent.toDialog();
-			}	
-		} else {
-			title.setText("");
+					
+				}.center();
+			} else {
+				doSetAct(layoutDef, act);
+			}
 		}
-		
 		return true;
 	}
 
 
+	private boolean doSetAct(LayoutDefinition layoutDef, Act act) {
+
+		if (formContent != null) {
+			remove(formContent);
+		}
+		
+		if (act.className.equals("externalDoc")) {
+			IActField field = act.get("docId");
+			String baseUrl = GWT.getModuleBaseURL();
+			FrameView<Act> frame = new FrameView<Act>(act, baseUrl + "download?id=" + field.getLongValue());
+			int h = getOffsetHeight() - 2 * BORDER_WIDTH;
+			int w = getOffsetWidth() - 2 * BORDER_WIDTH; 
+			frame.setPixelSize(w, h);
+			frame.setWidth("100%");
+			formContent = frame;
+			frame.setSize("100%", "100%");
+			add(formContent);
+		} else {
+			formContent = getActRenderer(clDoc, layoutDef.xmlLayout, act, new Runnable() {
+				
+				@Override
+				public void run() {
+					title.setHTML("*<i>" + title.getText() + "</i>");
+					pbSave.enable(true);
+				}
+			});
+			add(formContent);
+			formContent.toDialog();
+		}
+		
+		this.act = act;
+		DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
+		title.setTitle("#" + act.id + " - <b>" + act.className + "</b>");
+		String sDate = act.date != null ? formatter.format(act.date) : "--.--.----";
+		title.setHTML("<b>" + act.className + "</b> - " + sDate );
+			
+		return true;
+	}
+
+	
+	
 	private boolean wantToSave() {
 //		new MessageBox("Speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YES | MessageBox.MB_NO, MESSAGE_ICONS.MB_ICON_QUESTION).center();
 		return true;
@@ -268,7 +297,7 @@ public class ActRenderer extends DockLayoutPanel {
 					Form<Act> form = new Form<Act>(clDoc, act, onChange);
 					form.createAndLayout(item);
 					form.setWidth("100%");
-					result = form;
+					result = new ScrollView(form);
 				}
 				
 			}

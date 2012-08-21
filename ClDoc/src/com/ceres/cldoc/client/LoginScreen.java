@@ -8,19 +8,26 @@ import com.ceres.cldoc.client.views.OnOkHandler;
 import com.ceres.cldoc.client.views.PersonEditor;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class LoginScreen extends HorizontalPanel {
+public class LoginScreen extends LayoutPanel {
 
 	private static class OkEnabler implements KeyUpHandler {
 
@@ -51,8 +58,11 @@ public class LoginScreen extends HorizontalPanel {
 	private ClDoc clDoc;;
 	
 	public LoginScreen(final ClDoc clDoc, final OnOkHandler<Session> onOk) {
-		setSize("100%", "100%");
+		super();
+		addStyleName("background");
+//		setSize("100%", "100%");
 		this.clDoc = clDoc;
+		
 		Grid g = new Grid(4, 3);
 		final TextBox txtUserName = new TextBox();
 		final PasswordTextBox txtPassWord = new PasswordTextBox();
@@ -85,7 +95,7 @@ public class LoginScreen extends HorizontalPanel {
 		});
 		new OkEnabler(txtUserName, txtPassWord, pbOk);
 		
-		g.setWidget(0, 0, new Image("clDOC_bw.png"));
+//		g.setWidget(0, 0, new Image("clDOC_bw.png"));
 
 		g.setWidget(1, 1, new Label(SRV.c.user()));
 		g.setWidget(1, 2, txtUserName);
@@ -157,8 +167,12 @@ public class LoginScreen extends HorizontalPanel {
 			}
 		});
 		
-		add(g);
+		Image logo = new Image("clDOC_bw.png"); 
+		add(logo);
 		
+		add(g);
+		setWidgetLeftRight(g, 40, Unit.PCT, 10, Unit.PX);
+		setWidgetTopBottom(g, 40, Unit.PCT, 0, Unit.PCT);
 		txtUserName.setFocus(true);
 	}
 }

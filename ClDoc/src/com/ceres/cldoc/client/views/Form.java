@@ -53,7 +53,7 @@ import com.google.gwt.xml.client.XMLParser;
 public class Form<T extends IAct> extends FlexTable implements IView<T>{
 
 	public enum DataTypes {
-		FT_STRING, FT_TEXT, FT_DATE, /*FT_TIME, */FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE
+		FT_STRING, FT_TEXT, FT_DATE, FT_ACTDATE, FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE, FT_SEPARATOR
 	};
 
 	protected T model;
@@ -178,6 +178,11 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 					((DateTextBox) field.widget).setDate(value);
 				}
 				break;
+			case FT_ACTDATE:
+				if (act.getDate() != null) {
+					((DateTextBox) field.widget).setDate(act.getDate());
+				}
+				break;
 			case FT_FLOAT:
 				((FloatTextBox) field.widget).setFloat(act.getFloat(field.name));
 				break;
@@ -235,6 +240,9 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				act.set(qualifiedFieldName,
 						((DateTextBox) field.widget).getDate());
 				break;
+			case FT_ACTDATE:
+				act.setDate(((DateTextBox) field.widget).getDate());
+				break;
 			case FT_FLOAT:
 				act.set(qualifiedFieldName,
 						((FloatTextBox) field.widget).getFloat());
@@ -269,7 +277,10 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			onModification();
 			if (widget instanceof TextBoxBase) {
 				validate((TextBoxBase) widget);
+//				System.out.print(((TextBoxBase) widget).getText());
 			}
+			
+			
 			if (!isModified) {
 				isModified = true;
 				if (setModified != null) {
@@ -385,7 +396,9 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		} else {
 			Label l = new Label(label);
 			setWidget(row, 0, l);
-			getCellFormatter().addStyleName(row, 0, "formLabel");		
+			getCellFormatter().addStyleName(row, 0, "formLabel");	
+			getFlexCellFormatter().setColSpan(row, 0, 2);
+			row++;
 			Widget w;
 	
 			if (widgets.length > 1) {
@@ -399,6 +412,8 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				w = widgets[0];
 			}
 			setWidget(row, 1, w);
+			getCellFormatter().addStyleName(row, 1, "formItem");		
+			
 			getFlexCellFormatter().setAlignment(row, 1, HasHorizontalAlignment.ALIGN_LEFT, HasVerticalAlignment.ALIGN_TOP);
 		}
 		row++;
@@ -429,7 +444,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		Widget widget = createWidgetForType(dataType, attributes);
 		addLine(labelText, widget);
 		if (fieldName != null) {
-			fields.put(fieldName, new Field(fieldName, widget, dataType, "true".equals(attributes.get("mandatory"))));
+			fields.put(fieldName, new Field(fieldName, widget, dataType, attributes != null ? "true".equals(attributes.get("mandatory")) : false));
 		}
 		return widget;
 	}
@@ -535,6 +550,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			a.addKeyUpHandler(new WidgetKeyUpHandler(a));
 			w = a;
 			break;
+		case FT_ACTDATE:
 		case FT_DATE:
 			DateTextBox d = new DateTextBox();
 			d.setWidth("10em");
@@ -557,6 +573,10 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			String source = attributes.get("source");
 			Image img = new Image("icons/" + source);
 			w = img;
+			break;
+		case FT_SEPARATOR:
+			HTML separator = new HTML("<hr noshade=\"noshade\" size=\"1\"/>");
+			w = separator;
 			break;
 //		case FT_TIME:
 //			TimeTextBox tbx = new TimeTextBox();
@@ -802,8 +822,12 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				result = DataTypes.FT_TEXT;
 			} else if (type.equals("image")) {
 				result = DataTypes.FT_IMAGE;
+			} else if (type.equals("separator")) {
+				result = DataTypes.FT_SEPARATOR;
 			} else if (type.equals("date")) {
 				result = DataTypes.FT_DATE;
+			} else if (type.equals("actdate")) {
+				result = DataTypes.FT_ACTDATE;
 			} else if (type.equals("integer")) {
 				result = DataTypes.FT_INTEGER;
 			} else if (type.equals("float")) {

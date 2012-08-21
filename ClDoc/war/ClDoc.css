@@ -2,21 +2,21 @@
 
 
 body, table td, select, button {
-	font-family: Tahoma;
+	font-family: Calibri;
 	font-smooth: always;
-	font-size: small; 
+	font-size: medium; 
 }
 
-/*
+
 .background {
 	min-height: 100%; 
 	height:auto !important;  
 	height:100%;  
 	overflow: hidden !important;  
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#cce1ba));
-	background: -moz-linear-gradient(top,  #fff,  #cce1ba);
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#CFE2FF));
+	background: -moz-linear-gradient(top,  #fff,  #CFE2FF);
 }
-*/
+
 
 .main {
 	min-height: 100%; /* Mindesthöhe für moderne Browser */
@@ -25,7 +25,6 @@ body, table td, select, button {
 }
 
 .resultTable {
-	border-top:1px;
 }
 
 .hundertPercentWidth {
@@ -56,7 +55,7 @@ body, table td, select, button {
 }
 
 .evenRow {
-	background: #cce1ba;
+	background: #CFE2FF;
 }
 
 .resultRow {
@@ -70,7 +69,7 @@ body, table td, select, button {
 }
 
 .resultRow:hover {
-	background-color: #59C660
+	background-color: #77AEFF
 }
 
 .viewer {
@@ -79,7 +78,6 @@ body, table td, select, button {
 
 .formContainer {
 	padding: 1em;
-	background-color: #e0e0e0;
 }
 
 .invalid {
@@ -100,11 +98,12 @@ body, table td, select, button {
 }
 
 .actTitle {
-	background-color: #cce1ba;
+	background-color: #CFE2FF;
+	font-size: larger;
 }
 
 .historyEntry {
-	border: solid 1px #cce1ba;
+	border: solid 1px #CFE2FF;
 	padding: .5em;
 	width: 100%;
 }
@@ -114,12 +113,12 @@ body, table td, select, button {
 
 .buttonsPanel {
 	width: 100%;
-	height: 38px;
+	height: 3em;
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	background-color: #cce1ba;
+	background-color: #CFE2FF;
 }
 
 .valueBagTitle {
@@ -144,12 +143,18 @@ body, table td, select, button {
 	background: #fff;
 }
 
+
 .formLabel {
-	text-align: right;
+	text-align: left;
 	vertical-align: top;
-	padding-right: 5px;
-	font-weight: bold;
-	width: 100px;
+	font-variant: small-caps;
+	padding-left: 10px;
+	padding-top: 5px;
+}
+
+.formItem {
+	vertical-align: bottom;
+	padding-left: 25px;
 }
 
 .formSubLabel {
@@ -173,18 +178,21 @@ body, table td, select, button {
   padding-top: 6px;
   padding-left: 5px;
 }
+
 .gwt-TabLayoutPanel {
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
 }
+
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: #59C660;
+  border-color: #77AEFF;
   border-style: solid;
   border-width: 1px;
   overflow: hidden;
   padding: 6px;
 }
+
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
   margin-left: 6px;
   padding: 3px 6px 3px 6px;
@@ -192,22 +200,55 @@ body, table td, select, button {
   cursor: hand;
   color: black;
   text-align: center;
-  background: #cce1ba;
+  background: #CFE2FF;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
-  background: #59C660;
+  background: #77AEFF;
+  font-size: larger;
+  color: white;
 }
 
 .gwt-SuggestBox {
-	font-family: Tahoma;
+	font-family: Calibri;
+	font-weight: bold;
+	 font-size: medium; 
 }
 
 .gwt-TextArea {
-	font-family: Tahoma;
+	font-family: Calibri;
+	font-weight: bold;
+	 font-size: medium; 
 }
 
 .gwt-TextBox {
-	font-family: Tahoma;
+	font-family: Calibri;
+	font-weight: bold;
+	 font-size: medium; 
+}
+
+.gwt-PasswordTextBox {
+	font-family: Calibri;
+	font-weight: bold;
+	 font-size: medium; 
+}
+
+
+.gwt-ListBox {
+	font-family: Calibri;
+	font-weight: bold;
+	 font-size: medium; 
+}
+
+.gwt-RadioButton {
+	font-family: Calibri;
+	font-weight: bold;
+	 font-size: medium; 
+}
+
+.gwt-CheckBox {
+	font-family: Calibri;
+	font-weight: bold;
+	 font-size: medium; 
 }

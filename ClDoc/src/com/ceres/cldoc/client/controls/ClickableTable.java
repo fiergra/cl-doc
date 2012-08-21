@@ -29,7 +29,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 	private ListRetrievalService<T> listRetrieval;
 	
 	public ClickableTable(ClDoc clDoc) {
-		super(Unit.PX);
+		super(Unit.EM);
 		
 		this.clDoc = clDoc;
 		table = new FlexTable();
@@ -45,7 +45,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 		buttonsPanel.setSpacing(5);
 		buttonsPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		titlePanel.add(buttonsPanel);
-		addNorth(titlePanel, 38);
+		addNorth(titlePanel, 3);
 		sp.addStyleName("resultTable");
 		add(sp);
 
