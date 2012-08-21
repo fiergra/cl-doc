@@ -15,13 +15,14 @@ import com.ceres.cldoc.client.views.OnOkHandler;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Organisation;
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -152,20 +153,41 @@ public class ClDoc implements EntryPoint {
 	}
 	
 	private void setupMain(Session result) {
-		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
-		DockLayoutPanel hp = new DockLayoutPanel(Unit.PX);
+		LayoutPanel mainPanel = new LayoutPanel();
+
 		Image logo = getSessionLogo(session);
-		hp.addWest(logo, 290);
-		
 		Label welcome = new Label(getDisplayName(result));
-		hp.addEast(welcome, 200);
+		VerticalPanel hp = new VerticalPanel();
+		hp.setSpacing(5);
+		hp.add(welcome);
+		hp.add(logo);
 		
-		mainPanel.addNorth(hp, 45);
+		
+		mainPanel.add(hp);
+		mainPanel.setWidgetHorizontalPosition(hp, Alignment.END);
+		mainPanel.setWidgetVerticalPosition(hp, Alignment.END);
 		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 		mainPanel.add(mainTab);
+
 		RootLayoutPanel.get().clear();
 		mainPanel.addStyleName("background");
 		RootLayoutPanel.get().add(mainPanel);
+		
+//		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
+//		DockLayoutPanel hp = new DockLayoutPanel(Unit.PX);
+//		Image logo = getSessionLogo(session);
+//		hp.addWest(logo, 290);
+//		
+//		Label welcome = new Label(getDisplayName(result));
+//		hp.addEast(welcome, 200);
+//		
+//		mainPanel.addNorth(hp, 45);
+//		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
+//		mainPanel.add(mainTab);
+//		RootLayoutPanel.get().clear();
+//		mainPanel.addStyleName("background");
+//		RootLayoutPanel.get().add(mainPanel);
+		
 	}
 
 	private Image getSessionLogo(Session session) {

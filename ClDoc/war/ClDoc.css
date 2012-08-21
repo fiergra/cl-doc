@@ -189,24 +189,16 @@ body, table td, select, button {
   border-color: #77AEFF;
   border-style: solid;
   border-width: 1px;
-  overflow: hidden;
-  padding: 6px;
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
-  margin-left: 6px;
-  padding: 3px 6px 3px 6px;
-  cursor: pointer;
-  cursor: hand;
-  color: black;
-  text-align: center;
   background: #CFE2FF;
+  color: black;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
   background: #77AEFF;
-  font-size: larger;
   color: white;
 }
 
@@ -251,4 +243,9 @@ body, table td, select, button {
 	font-family: Calibri;
 	font-weight: bold;
 	 font-size: medium; 
+}
+
+.gwt-SplitLayoutPanel-HDragger {
+background: #CFE2FF url(images/thumb_vertical.png) center center no-repeat;
+cursor: col-resize;
 }
