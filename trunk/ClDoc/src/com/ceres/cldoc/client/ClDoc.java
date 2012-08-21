@@ -161,13 +161,10 @@ public class ClDoc implements EntryPoint {
 		hp.addEast(welcome, 200);
 		
 		mainPanel.addNorth(hp, 45);
-//		mainPanel.addSouth(statusMessage, 20);
 		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 		mainPanel.add(mainTab);
 		RootLayoutPanel.get().clear();
-//		RootLayoutPanel.get().add(logo);
-//		RootLayoutPanel.get().setWidgetVerticalPosition(logo, Alignment.END);
-//		RootLayoutPanel.get().setWidgetHorizontalPosition(logo, Alignment.END);
+		mainPanel.addStyleName("background");
 		RootLayoutPanel.get().add(mainPanel);
 	}
 

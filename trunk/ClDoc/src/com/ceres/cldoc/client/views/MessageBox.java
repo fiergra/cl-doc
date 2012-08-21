@@ -29,6 +29,8 @@ public class MessageBox extends DialogBox {
 	public static final int MB_CANCEL = 2;
 	public static final int MB_YES = 4;
 	public static final int MB_NO = 8;
+	public static final int MB_YESNO = MB_YES | MB_NO;
+	public static final int MB_YESNOCANCEL = MB_YES | MB_NO | MB_CANCEL;
 	
 	public static enum MESSAGE_ICONS { MB_ICON_OK, MB_ICON_INFO, MB_ICON_QUESTION, MB_ICON_EXCLAMATION };
 	
@@ -52,14 +54,14 @@ public class MessageBox extends DialogBox {
 		if ((flags & MB_OK) != 0) {
 			addButton(innerButtonsPanel, "Ok", MB_OK);
 		}
-		if ((flags & MB_CANCEL) != 0) {
-			addButton(innerButtonsPanel, "Abbruch", MB_CANCEL);
-		}
 		if ((flags & MB_YES) != 0) {
 			addButton(innerButtonsPanel, "Ja", MB_YES);
 		}
 		if ((flags & MB_NO) != 0) {
 			addButton(innerButtonsPanel, "Nein", MB_NO);
+		}
+		if ((flags & MB_CANCEL) != 0) {
+			addButton(innerButtonsPanel, "Abbruch", MB_CANCEL);
 		}
 		
 		String imageSource = null;
