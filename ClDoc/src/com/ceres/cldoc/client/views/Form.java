@@ -8,8 +8,6 @@ import java.util.Map.Entry;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.DateTextBox;
 import com.ceres.cldoc.client.controls.FloatTextBox;
-import com.ceres.cldoc.client.controls.InteractiveControl;
-import com.ceres.cldoc.client.controls.InteractiveTextBox;
 import com.ceres.cldoc.client.controls.LongTextBox;
 import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.service.SRV;
@@ -85,11 +83,11 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 	
 	private static class Field {
 		public String name;
-		public InteractiveControl widget;
+		public Widget widget;
 		public DataTypes dataType;
 		public boolean isMandatory;
 
-		public Field(String name, InteractiveControl widget, DataTypes dataType, boolean isMandatory) {
+		public Field(String name, Widget widget, DataTypes dataType, boolean isMandatory) {
 			super();
 			this.name = name;
 			this.widget = widget;
@@ -100,6 +98,20 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 	}
 
 	private final HashMap<String, Field> fields = new HashMap<String, Field>();
+	
+	public static boolean validate(TextBoxBase textBox) {
+		boolean isValid = false;
+		String sValue = textBox.getText();
+		if (sValue == null || sValue.length() == 0) {
+			textBox.addStyleName("invalidContent");
+		} else {
+			textBox.removeStyleName("invalidContent");
+			isValid = true;
+		}
+
+		return isValid;
+	}
+	
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -115,7 +127,9 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			case FT_STRING:
 				String sValue = act.getString(field.name);
 				((TextBoxBase) field.widget).setText(sValue);
-				field.widget.validate();
+				if (field.isMandatory) {
+					validate((TextBoxBase) field.widget);
+				}
 				break;
 			case FT_BOOLEAN:
 				((CheckBox) field.widget).setValue(act.getBoolean(field.name));
@@ -262,7 +276,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		public void onKeyUp(KeyUpEvent event) {
 			onModification();
 			if (widget instanceof TextBoxBase) {
-				InteractiveTextBox.validate((TextBoxBase) widget);
+				validate((TextBoxBase) widget);
 //				System.out.print(((TextBoxBase) widget).getText());
 			}
 			
@@ -405,29 +419,29 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		row++;
 	}
 
-	protected InteractiveControl addLine(String labelText, String fieldName, DataTypes dataType, int width, boolean focused) {
-		InteractiveControl w = addLine(labelText, fieldName, dataType, width);
+	protected Widget addLine(String labelText, String fieldName, DataTypes dataType, int width, boolean focused) {
+		Widget w = addLine(labelText, fieldName, dataType, width);
 		if (w instanceof Focusable) {
 			((Focusable)w).setFocus(focused);
 		}
 		return w;
 	}
 
-	protected InteractiveControl addLine(String labelText, String fieldName,
+	protected Widget addLine(String labelText, String fieldName,
 			DataTypes dataType, int width) {
-		InteractiveControl w = addLine(labelText, fieldName, dataType, null);
+		Widget w = addLine(labelText, fieldName, dataType, null);
 //		w.setWidth(width + "em");
 		return w;
 	}
 
-	protected InteractiveControl addLine(String labelText, String fieldName,
+	protected Widget addLine(String labelText, String fieldName,
 			DataTypes dataType) {
 		return addLine(labelText, fieldName, dataType, null);
 	}
 
-	protected InteractiveControl addLine(String labelText, String fieldName,
+	protected Widget addLine(String labelText, String fieldName,
 			DataTypes dataType, HashMap <String, String> attributes) {
-		InteractiveControl widget = createWidgetForType(dataType, attributes);
+		Widget widget = createWidgetForType(dataType, attributes);
 		addLine(labelText, widget);
 		if (fieldName != null) {
 			fields.put(fieldName, new Field(fieldName, widget, dataType, attributes != null ? "true".equals(attributes.get("mandatory")) : false));
@@ -435,7 +449,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		return widget;
 	}
 
-	private InteractiveControl createWidgetForType(DataTypes dataType, HashMap<String, String> attributes) {
+	private Widget createWidgetForType(DataTypes dataType, HashMap<String, String> attributes) {
 		Widget w = null;
 
 		switch (dataType) {

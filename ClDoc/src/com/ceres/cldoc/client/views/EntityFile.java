@@ -3,19 +3,20 @@ package com.ceres.cldoc.client.views;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.model.Entity;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EntityFile <T extends Entity> extends DockLayoutPanel {
+public class EntityFile <T extends Entity> extends LayoutPanel {
 
 	private final T entity;
 	private boolean isModified;
 	
 	public EntityFile(ClDoc clDoc, T entity, Widget header, String config) {
-		super(Unit.PT);
+		super();
 		this.entity = entity;
-		addNorth(header, 22);
+		add(header);
+		setWidgetLeftWidth(header, 220, Unit.PX, 100, Unit.PCT);
 		TabLayoutPanel tab = new ConfiguredTabPanel<T>(clDoc, config, entity);
 		tab.addStyleName("personalFile");
 		add(tab);

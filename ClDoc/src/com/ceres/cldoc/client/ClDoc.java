@@ -137,7 +137,7 @@ public class ClDoc implements EntryPoint {
 	
 	public void openEntityFile(Entity entity, Widget header, String config) {
 		EntityFile entityFile = getPersonalFile(entity, header, config);
-		mainTab.add(entityFile, new ClosableTab(mainTab, entityFile, entity.id + " " + entity.getName()));
+		mainTab.add(entityFile, new ClosableTab(mainTab, entityFile, entity.getName()));
 		mainTab.selectTab(mainTab.getWidgetIndex(entityFile));
 	}
 	

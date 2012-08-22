@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 
 	public ConfiguredTabPanel(ClDoc clDoc, String name, T model) {
-		super(2, Unit.EM);
+		super(2.5, Unit.EM);
 		setup(clDoc, name, model);
 	}
 

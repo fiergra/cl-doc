@@ -64,6 +64,10 @@ public class Entity implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Long getDisplayId() {
+		return id;
+	}
 	
 	
 	

@@ -50,6 +50,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		this.clDoc = clDoc;
 		
 		HorizontalPanel hp = new HorizontalPanel();
+		hp.setSpacing(5);
 		final Timer timer = new Timer() {
 
 			@Override
@@ -57,7 +58,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 				refresh();
 			}
 		};
-		searchBox.setWidth("50em");
+		searchBox.setWidth("200px");
 		searchBox.addKeyUpHandler(new KeyUpHandler() {
 
 			@Override
@@ -115,7 +116,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 	@Override
 	public void addRow(FlexTable grid, int row, Person person) {
 		DateTimeFormat f = DateTimeFormat.getFormat("dd.MM.yyyy");
-		Label id = new Label(String.valueOf(person.id));
+		Label id = new Label(String.valueOf(person.getDisplayId()));
 		
 		grid.setWidget(row, 0, id);
 		HTML lastName = new HTML("<b>" + person.lastName + "</b>");
