@@ -250,3 +250,7 @@ body, table td, select, button {
 background: #CFE2FF url(images/thumb_vertical.png) center center no-repeat;
 cursor: col-resize;
 }
+
+.gwt-Tree .gwt-TreeItem-selected {
+background: #77AEFF;
+}

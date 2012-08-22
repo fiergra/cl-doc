@@ -30,7 +30,7 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 	private ListRetrievalService<T> listRetrieval;
 	
 	public ClickableTree(ClDoc clDoc, boolean showRefresh) {
-		super(Unit.PX);
+		super(Unit.EM);
 		
 		this.clDoc = clDoc;
 		tree = new Tree();
@@ -56,7 +56,7 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 				}
 			});
 		}
-		addNorth(titlePanel, 38);
+		addNorth(titlePanel, 3);
 		add(sp);
 
 	}
