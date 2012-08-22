@@ -50,7 +50,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 	
 	
 	public CatalogConfigurator(ClDoc clDoc) {
-		super(Unit.PX);
+		super(Unit.EM);
 		this.clDoc = clDoc;
 		setup();
 	}
@@ -189,7 +189,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 			}
 		});
 
-		addNorth(title, 36);
+		addNorth(title, 3);
 		add(mainSplit);
 
 	}
@@ -290,6 +290,30 @@ public class CatalogConfigurator extends DockLayoutPanel {
 		
 		childGrid.addColumn(colText, "Text");
 		childGrid.setColumnWidth(colText, 60, Unit.PCT);
+
+		
+		Column<Catalog, String> colOrder = new Column<Catalog, String>(
+				new EditTextCell()) {
+			@Override
+			public String getValue(Catalog object) {
+				return object.logicalOrder != null ? object.logicalOrder.toString() : "";
+			}
+		};
+
+		colOrder.setFieldUpdater(new FieldUpdater<Catalog, String>() {
+			public void update(int index, Catalog object, String value) {
+				Long lValue = null;
+				try {
+					lValue = Long.valueOf(value);
+				} catch (RuntimeException e) {
+				}
+				object.logicalOrder = lValue;
+				addToChangedObjects(object);
+			}
+		});
+
+		childGrid.addColumn(colOrder, "Logical Order");
+		childGrid.setColumnWidth(colOrder, 60, Unit.PCT);
 		
 	}
 
