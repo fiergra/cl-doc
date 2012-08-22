@@ -22,6 +22,12 @@ public class Person extends Entity {
 	public String getName() {
 		return firstName + " " + lastName;
 	}
+
+	@Override
+	public Long getDisplayId() {
+		return perId;
+	}
+	
 	
 	
 }

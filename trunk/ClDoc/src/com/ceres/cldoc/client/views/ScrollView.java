@@ -4,17 +4,17 @@ import com.ceres.cldoc.model.Act;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ScrollView extends ScrollPanel implements IView<Act> {
+public class ScrollView<T> extends ScrollPanel implements IView<T> {
 
-	private IView<Act> content;
+	private IView<T> content;
 
-	public ScrollView(IView<Act> content) {
+	public ScrollView(IView<T> content) {
 		super((Widget) content);
 		this.content = content;
 	}
 	
 	@Override
-	public Act getModel() {
+	public T getModel() {
 		return content.getModel();
 	}
 

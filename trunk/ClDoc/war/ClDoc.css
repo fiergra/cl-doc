@@ -100,6 +100,7 @@ body, table td, select, button {
 .actTitle {
 	background-color: #CFE2FF;
 	font-size: larger;
+	height: 100%;
 }
 
 .historyEntry {
@@ -131,7 +132,7 @@ body, table td, select, button {
 }
 
 .nameAndId {
-	font-size: 14pt;
+	font-size: x-large;
 	font-weight: bold;
 }
 
