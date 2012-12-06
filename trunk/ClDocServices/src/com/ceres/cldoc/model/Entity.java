@@ -7,9 +7,9 @@ import java.util.List;
 public class Entity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public static final int ENTITY_TYPE_PERSON = 1001;
-	public static final int ENTITY_TYPE_ORGANISATION = 1002;
-	public static final int ENTITY_TYPE_ROOM = 1003;
+	public static final int ENTITY_TYPE_PERSON = 181;
+	public static final int ENTITY_TYPE_ORGANISATION = 182;
+	public static final int ENTITY_TYPE_ROOM = 183;
 
 	public Long id;
 
@@ -18,7 +18,7 @@ public class Entity implements Serializable {
 		return name;
 	}
 
-	public int type;
+	public long type;
 	
 	public List<Address> addresses;
 	

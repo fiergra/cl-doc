@@ -9,7 +9,7 @@ import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
-import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
@@ -24,6 +24,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class HistoryView extends DockLayoutPanel {
 
@@ -32,36 +34,90 @@ public class HistoryView extends DockLayoutPanel {
 	
 	private Entity e;
 	private final ClDoc clDoc;
-
+	private final TabLayoutPanel tab;
 	private final HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
 
-	public HistoryView(final ClDoc clDoc, Entity entity) {
+	public HistoryView(final ClDoc clDoc, Entity entity, final TabLayoutPanel tab) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.e = entity;
+		this.tab = tab;
 		historyPanel = new ClickableTable<Act>(clDoc, new ListRetrievalService<Act>() {
 
 			@Override
 			public void retrieve(String filter, AsyncCallback<List<Act>> callback) {
-				SRV.actService.findByEntity(clDoc.getSession(), e, Participation.PATIENT,  callback);
+				SRV.actService.findByEntity(clDoc.getSession(), e, Participation.PROTAGONIST.id,  callback);
 			}
 		}, new OnClick<Act>() {
 
 			@Override
 			public void onClick(final Act act) {
-				setSelectedAct(act);
+				SRV.actService.findById(clDoc.getSession(), act.id, new DefaultCallback<Act>(clDoc, "load act"){
+
+					@Override
+					public void onSuccess(Act result) {
+						setSelectedAct(result);
+					}});
 			}
 		}, true){
 
 			@Override
-			public void addRow(FlexTable table, int row, Act act) {
-				int column = 0;
-				String imgSource = "externalDoc".equals(act.className) ? 
-						"icons/16/Adobe-PDF-Document-icon.png" : "icons/16/Document-icon.png";
-				table.setWidget(row, column++, new Image(imgSource));
-				String sDate = act.date != null ? DateTimeFormat.getFormat("dd.MM.yyyy").format(act.date) : "--.--.----";
-				table.setWidget(row, column++, new Label(sDate));
-				table.setWidget(row, column++, new HTML("<b>" + act.className + "</b>"));
+			public boolean addRow(FlexTable table, int row, final Act act) {
+				if (act.actClass.isSingleton) {
+					ActRenderer ar = getActRenderer(tab, act.actClass);
+					if (ar == null) {
+							SRV.configurationService.getLayoutDefinition(clDoc.getSession(), act.actClass.name, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "load layout definition") {
+
+									private ActRenderer ar;
+
+									@Override
+									public void onSuccess(LayoutDefinition result) {
+										ar = new ActRenderer(clDoc,
+												new OnOkHandler<Act>() {
+
+													@Override
+													public void onOk(Act result) {
+														if (result == null) {
+															tab.remove(ar);
+														}
+													}
+												}, null);
+										ar.setAct(result, act);
+										tab.add(ar, act.actClass.name);
+									}
+								});
+					} else {
+					ar.resetAct(act);
+					}
+				} else {
+					int column = 0;
+					String imgSource = ActClass.EXTERNAL_DOC.name.equals(act.actClass.name) ? 
+							"icons/16/Adobe-PDF-Document-icon.png" : "icons/16/Document-icon.png";
+					table.setWidget(row, column++, new Image(imgSource));
+					String sDate = act.date != null ? DateTimeFormat.getFormat("dd.MM.yyyy").format(act.date) : "--.--.----";
+					table.setWidget(row, column++, new Label(sDate));
+					table.setWidget(row, column++, new HTML("<b>" + act.summary + "</b>"));
+					HTML user = new HTML("<i>" + act.modifiedBy.userName + "</i>");
+					user.setTitle(act.createdBy.userName);
+					table.setWidget(row, column++, user);
+				}
+				return !act.actClass.isSingleton;
+			}
+
+			private ActRenderer getActRenderer(TabLayoutPanel tab, ActClass actClass) {
+				int i = 0;
+				ActRenderer ar = null;
+				while (i < tab.getWidgetCount()) {
+					Widget w = tab.getWidget(i);
+					if (w instanceof ActRenderer) {
+						Act act = ((ActRenderer)w).getAct();
+						if (act.actClass.name.equals(actClass.name)) {
+							ar = (ActRenderer)w;
+						}
+					}
+					i++;
+				}
+				return ar;
 			}};
 
 		historyPanel.getColumnFormatter().addStyleName(2, "hundertPercentWidth");
@@ -83,12 +139,12 @@ public class HistoryView extends DockLayoutPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				AddAct.addAct(clDoc, e, new OnOkHandler<Act>() {
+				AddAct.addAct(clDoc, e, historyPanel.getList(), new OnOkHandler<Act>() {
 
 					@Override
 					public void onOk(Act act) {
-						act.addParticipant(e, Catalog.PATIENT, new Date(), null);
-						act.addParticipant(clDoc.getSession().getUser().organisation, Catalog.ORGANISATION, new Date(), null);
+						act.setParticipant(e, Participation.PROTAGONIST, new Date(), null);
+						act.setParticipant(clDoc.getSession().getUser().organisation, Participation.ORGANISATION, new Date(), null);
 						
 						SRV.actService.save(clDoc.getSession(), act,
 								new DefaultCallback<Act>(clDoc, "save") {
@@ -145,14 +201,14 @@ public class HistoryView extends DockLayoutPanel {
 
 	protected void setSelectedAct(final Act act) {
 		if (act != null) {
-			LayoutDefinition ld = layouts.get(act.className);
+			LayoutDefinition ld = layouts.get(act.actClass.name);
 			if (ld == null) {
-				SRV.configurationService.getLayoutDefinition(clDoc.getSession(), act.className, LayoutDefinition.FORM_LAYOUT, 
+				SRV.configurationService.getLayoutDefinition(clDoc.getSession(), act.actClass.name, LayoutDefinition.FORM_LAYOUT, 
 						new DefaultCallback<LayoutDefinition>(clDoc, "getLayoutDef") {
 
 							@Override
 							public void onSuccess(LayoutDefinition ld) {
-								layouts.put(act.className, ld);
+								layouts.put(act.actClass.name, ld);
 //								Locator.getLogService().log(clDoc.getSession(), ILogService.VIEW, act, "");
 								if (viewer.setAct(ld, act)) {
 								}

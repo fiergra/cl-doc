@@ -1,5 +1,7 @@
 package com.ceres.cldoc.client;
 
+import java.util.List;
+
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.ceres.cldoc.IUserService;
 import com.ceres.cldoc.Session;
@@ -12,10 +14,12 @@ import com.ceres.cldoc.client.views.Form;
 import com.ceres.cldoc.client.views.LogOutput;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Organisation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.layout.client.Layout.Alignment;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -74,6 +78,7 @@ public class ClDoc implements EntryPoint {
 						setPassword(session);
 					} else {
 						setupMain(result);
+						preload(result);
 					}
 				} else {
 					
@@ -84,6 +89,20 @@ public class ClDoc implements EntryPoint {
 		
 	}
 	
+	protected void preload(Session result) {
+		SRV.catalogService.listCatalogs(result, "ROLES", new AsyncCallback<List<Catalog>>() {
+			
+			@Override
+			public void onSuccess(List<Catalog> result) {
+				System.out.print(".");
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+		});
+	}
+
 	@SuppressWarnings("unchecked")
 	protected void setPassword(final Session session) {
 		final PasswordTextBox pwdField1 = new PasswordTextBox();

@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.LayoutDefinition;
 
 
@@ -31,8 +32,11 @@ public class LayoutDefinitionServiceImplTest extends TransactionalTest {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		IActService actService = Locator.getActService();
 		
-		LayoutDefinition ld = new LayoutDefinition(LayoutDefinition.FORM_LAYOUT, "TESTCLASS", "<asdf/>");
-		Act act = new Act("TESTCLASS");
+		ActClass actClass = new ActClass(null, "TESTCLASS", null, false);
+		LayoutDefinition ld = new LayoutDefinition(actClass, LayoutDefinition.FORM_LAYOUT, "<asdf/>");
+		lds.save(getSession(), ld);
+		
+		Act act = new Act(new ActClass("TESTCLASS"));
 		actService.save(getSession(), act);
 		lds.save(getSession(), ld);
 		Thread.sleep(500);
@@ -43,7 +47,7 @@ public class LayoutDefinitionServiceImplTest extends TransactionalTest {
 		
 		assertNotNull(ld.id);
 		
-		List<String> classNames = actService.listClassNames(getSession(), "T");
+		List<ActClass> classNames = actService.listClasses(getSession(), "T");
 		assertNotNull(classNames);
 		assertTrue(!classNames.isEmpty());
 		

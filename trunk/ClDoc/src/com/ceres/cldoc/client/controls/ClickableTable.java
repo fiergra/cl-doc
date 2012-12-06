@@ -107,16 +107,17 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 		RowFormatter rf = table.getRowFormatter();
 		rf.addStyleName(row, "resultTable");
 		for (T entry:list) {
-			addRow(table, row, entry);
-			rf.addStyleName(row, "resultRow");
-			if (row % 2 == 0) {
-				rf.addStyleName(row, "evenRow");
+			if (addRow(table, row, entry)) {
+				rf.addStyleName(row, "resultRow");
+				if (row % 2 == 0) {
+					rf.addStyleName(row, "evenRow");
+				}
+				row++;
 			}
-			row++;
 		}		
 	}
 
-	public abstract void addRow(FlexTable table, int row, T entry);
+	public abstract boolean addRow(FlexTable table, int row, T entry);
 
 	public Image addButton(String label, String source, ClickHandler clickHandler) {
 		Image img = createWidget(label, source, clickHandler);
@@ -154,5 +155,9 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 
 	public ColumnFormatter getColumnFormatter() {
 		return table.getColumnFormatter();
+	}
+
+	public List<T> getList() {
+		return list;
 	}
 }

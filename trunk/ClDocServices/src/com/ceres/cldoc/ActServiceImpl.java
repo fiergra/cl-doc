@@ -15,12 +15,14 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.ActField;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.CatalogList;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.util.Jdbc;
 
 public class ActServiceImpl implements IActService {
@@ -32,36 +34,58 @@ public class ActServiceImpl implements IActService {
 		Act i = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public Act execute(Connection con) throws SQLException {
+			public Act execute(Connection con) throws Exception {
+				act.summary = generateSummary(act);
 				if (act.id == null) {
-					insert(con, act, true);
+					insert(session, con, act, true);
 					Locator.getLogService().log(session, ILogService.INSERT, act, act.snapshot());
 				} else {
-					update(con, act);
+					update(session, con, act);
 					Locator.getLogService().log(session, ILogService.UPDATE, act, act.snapshot());
 				}
 				
 				saveFields(session, con, act);
 				saveParticipations(session, act);
 				
+				if (act.actClass.isSingleton) {
+					Participation p = act.getParticipation(Participation.PROTAGONIST);
+					Locator.getLuceneService().addToIndex(p.entity, act);
+				}
 				
 				return act;
 			}
 		});
 	}
 
+	protected String generateSummary(Act act) {
+		String summary;
+		if (act.actClass.name.equals(ActClass.EXTERNAL_DOC.name)) {
+			String comment = act.getString("comment");
+			String fileName = act.getString("fileName");
+			summary = comment != null ? comment + " - <i>" + fileName + "</i>": fileName;
+		} else {
+			summary = act.actClass.name;
+		}
+		return summary;
+	}
+
 	protected void saveParticipations(Session session, Act act) {
 		if (act.participations != null) {
-			Iterator<Participation> iter = act.participations.iterator();
+			Iterator<Entry<Long, Participation>> iter = act.participations.entrySet().iterator();
 			while (iter.hasNext()) {
-				saveParticipation(session, iter.next());
+				Entry<Long, Participation> nextEntry = iter.next();
+				saveParticipation(session, act, nextEntry.getKey(), nextEntry.getValue());
 			}
 		}
 	}
 
-	private void saveParticipation(Session session,	Participation participation) {
+	private void saveParticipation(Session session,	Act act, long roleId, Participation participation) {
 		IParticipationService participationService = Locator.getParticipationService();
-		participationService.save(session, participation);
+		if (participation != null) {
+			participationService.save(session, participation);
+		} else {
+			participationService.delete(session, act.id, roleId);
+		}
 	}
 
 	protected void saveFields(Session session, Connection con, Act act) throws SQLException {
@@ -103,7 +127,7 @@ public class ActServiceImpl implements IActService {
 			IActField field = entry.getValue();
 			s.setLong(1, act.id);
 			s.setString(2, fieldName);
-			s.setString(3, act.className);
+			s.setString(3, act.actClass.name);
 			bindVariables(session, s, 4, act, fieldName, field);
 			field.setId(Jdbc.exec(s));
 			s.close();
@@ -118,13 +142,13 @@ public class ActServiceImpl implements IActService {
 
 	private boolean registerClassField(Connection con, Act act, String fieldName, int type) throws SQLException {
 		PreparedStatement s = con.prepareStatement("insert into ActClassField (actclassid, name, type) values ((select id from ActClass where name = ?),?,?)");
-		s.setString(1, act.className);
+		s.setString(1, act.actClass.name);
 		s.setString(2, fieldName);
 		s.setInt(3, type);
 		
 		int rows = s.executeUpdate();
 		s.close();
-		log.info("registered new field '" + fieldName + "(" + type + ")' in act class '" + act.className + "'");
+		log.info("registered new field '" + fieldName + "(" + type + ")' in act class '" + act.actClass.name + "'");
 		return rows == 1;
 	}
 
@@ -212,30 +236,40 @@ public class ActServiceImpl implements IActService {
 		s.close();
 	}
 
-	protected Act update(Connection con, Act act) throws SQLException {
-		PreparedStatement s = con.prepareStatement("update Act set Date = ? where id = ?");
-		s.setTimestamp(1, new java.sql.Timestamp(act.date != null ? act.date.getTime() : new Date().getTime()));
-		s.setLong(2, act.id);
+	private Act update(Session session, Connection con, Act act) throws SQLException {
+		PreparedStatement s = con.prepareStatement("update Act set Date = ?, ModifiedByUserId = ?, summary = ? where id = ?");
+		int i = 1;
+		s.setTimestamp(i++, new java.sql.Timestamp(act.date != null ? act.date.getTime() : new Date().getTime()));
+		s.setLong(i++, session.getUser().id);
+		s.setString(i++, act.summary);
+		s.setLong(i++, act.id);
 		s.executeUpdate();
 		s.close();
 		return act;
 	}
 
-	protected Act insert(Connection con, Act act, boolean register) throws SQLException {
+	private Act insert(Session session, Connection con, Act act, boolean register) throws SQLException {
 		try {
-			PreparedStatement s = con.prepareStatement("insert into Act (ActClassId,Date) values ((select id from ActClass where name = ?), ?)",
+			PreparedStatement s = con.prepareStatement("insert into Act (ActClassId,Date,summary,CreatedByUserId,ModifiedByUserId ) values ((select id from ActClass where name = ?), ?, ?, ?, ?)",
 					new String[]{"ID"});
-			s.setString(1, act.className);
+			int i = 1;
+			s.setString(i++, act.actClass.name);
 			if (act.date != null) {
-				s.setTimestamp(2, new java.sql.Timestamp(act.date.getTime()));
+				s.setTimestamp(i++, new java.sql.Timestamp(act.date.getTime()));
 			} else {
-				s.setNull(2, Types.TIMESTAMP);
+				s.setNull(i++, Types.TIMESTAMP);
 			}
+			s.setString(i++, act.summary);
+			s.setLong(i++, session.getUser().id);
+			s.setLong(i++, session.getUser().id);
 			act.id = Jdbc.exec(s);
 			s.close();
 		} catch (SQLException x) {
-			if (register && registerActClass(con, act.className)) {
-				insert(con, act, false);
+			if (register/* && registerActClass(con, act.actClass.name)*/) {
+				log.warning("class '" + act.actClass.name + "' needs to be registered first!");
+//				ActClass actClass = new ActClass(act.actClass.name);
+				registerActClass(con, act.actClass);
+				insert(session, con, act, false);
 			} else {
 				throw x;
 			}
@@ -244,13 +278,43 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public boolean registerActClass(Connection con, String className) throws SQLException {
-		PreparedStatement s = con.prepareStatement("insert into ActClass (name) values (?)");
-		s.setString(1, className);
-		int rows = s.executeUpdate();
-		s.close();
-		log.info("registered new act class '" + className + "'");
-		return rows == 1;
+	public void registerActClass(Connection con, ActClass actClass) throws SQLException {
+		PreparedStatement s;
+		
+		int i = 1;
+		if (actClass.id == null) {
+			try {
+				s = con.prepareStatement("insert into ActClass (name, entitytype, singleton) values (?,?,?)", new String[]{"ID"});
+				s.setString(i++, actClass.name);
+				if (actClass.entityType == null) {
+					s.setNull(i++, Types.NUMERIC);
+				} else {
+					s.setLong(i++, actClass.entityType);
+				}
+				s.setBoolean(i++, actClass.isSingleton);
+				actClass.id = Jdbc.exec(s);
+				s.close();
+				log.info("registered new act class '" + actClass.name + "'");
+			} catch (SQLException x) {
+				List<ActClass> classes = listClasses(con, actClass.name);
+				if (!classes.isEmpty()) {
+					actClass.initFrom(classes.get(0));
+				} else {
+					throw x;
+				}
+			}
+		} else {
+			s = con.prepareStatement("update ActClass set entitytype=?, singleton=? where id=?");
+			if (actClass.entityType == null) {
+				s.setNull(i++, Types.NUMERIC);
+			} else {
+				s.setLong(i++, actClass.entityType);
+			}
+			s.setBoolean(i++, actClass.isSingleton);
+			s.setLong(i++, actClass.id);
+			int rows = s.executeUpdate();
+			s.close();
+		}
 	}
 
 	@Override
@@ -259,23 +323,30 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public List<Act> execute(Connection con) throws SQLException {
-				return executeSelect(session, con, null, entity, roleId);
+				return executeSelect(session, con, null, entity, roleId, null);
 			}
 		});
 		
 		return acts;
 	}
 
-	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity, Long roleId) throws SQLException {
+	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity, Long roleId, Boolean singleton) throws SQLException {
 		String sql = "select " +
-				"i.id actid, i.date, actclass.name classname, actclassfield.name fieldname, actclassfield.type, field.* " +
+				"i.id actid, i.date, i.summary, actclass.id classid, actclass.name classname, actclass.entitytype entitytype, actclass.singleton singleton, actclassfield.name fieldname, actclassfield.type, field.*," +
+				"uc.id createdByUserId, uc.name createdByUserName, um.id modifiedByUserId, um.name modifiedByUserName " +
 				"from Act i " +
 				"left outer join ActField field on i.id = field.actid " +
 				"left outer join ActClassField actclassfield on field.classfieldid = actclassfield.id " +
-				"inner join ActClass actclass on i.actclassid = actclass.id where 1=1 ";
+				"inner join ActClass actclass on i.actclassid = actclass.id " +
+				"inner join User uc on i.CreatedByUserId = uc.id " +
+				"inner join User um on i.ModifiedByUserId = um.id " +
+				"where 1=1 ";
 				
 		if (id != null) {
 			sql += "and i.id = ? ";
+		}
+		if (singleton != null) {
+			sql += "and actclass.singleton  = ? ";
 		}
 		if (entity != null) {
 			if (roleId != null) {
@@ -285,11 +356,14 @@ public class ActServiceImpl implements IActService {
 			}
 		}
 		
-		sql += " order by i.date desc";
+		sql += " order by i.id, i.date desc";
 		int i = 1;
 		PreparedStatement s = con.prepareStatement(sql);
 		if (id != null) {
 			s.setLong(i++, id);
+		}
+		if (singleton != null) {
+			s.setBoolean(i++, singleton);
 		}
 		if (entity != null) {
 			s.setLong(i++, entity.id);
@@ -312,7 +386,7 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public Act execute(Connection con) throws SQLException {
-				Collection<Act>acts = executeSelect(session, con, id, null, null);
+				Collection<Act>acts = executeSelect(session, con, id, null, null, null);
 				return acts.isEmpty() ? null : acts.iterator().next();
 			}
 		});
@@ -329,10 +403,17 @@ public class ActServiceImpl implements IActService {
 		while (rs.next()) {
 			long actId = rs.getLong("actid");
 			if (act == null || !act.id.equals(actId)) {
-				act = new Act(rs.getString("classname"));
+				act = new Act(new ActClass(rs.getLong("classid"), rs.getString("classname"), rs.getLong("entityType"), rs.getBoolean("singleton")));
 				act.id = actId;
+				act.summary = rs.getString("summary");
 				Timestamp timeStamp = rs.getTimestamp("date");
 				act.date = rs.wasNull() ? null : new Date(timeStamp.getTime());
+				act.createdBy = new User();
+				act.createdBy.id = rs.getLong("createdByUserId");
+				act.createdBy.userName = rs.getString("createdByUserName");
+				act.modifiedBy = new User();
+				act.modifiedBy.id = rs.getLong("modifiedByUserId");
+				act.modifiedBy.userName = rs.getString("modifiedByUserName");
 				acts.add(act);
 			}
 			long fieldId = rs.getLong("id");
@@ -349,12 +430,15 @@ public class ActServiceImpl implements IActService {
 					break;
 				case IActField.FT_INTEGER:
 					field.setValue(rs.getLong("intvalue"));
+					if (rs.wasNull()) { field.setValue(null); }
 					break;
 				case IActField.FT_FLOAT:
 					field.setValue(rs.getFloat("floatvalue"));
+					if (rs.wasNull()) { field.setValue(null); }
 					break;
 				case IActField.FT_STRING:
 					field.setValue(rs.getString("stringvalue"));
+					if (rs.wasNull()) { field.setValue(null); }
 					break;
 				case IActField.FT_DATE:
 					timeStamp = rs.getTimestamp("datevalue");
@@ -437,21 +521,51 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<String> listClassNames(Session session, final String filter) {
+	public List<ActClass> listClasses(Session session, final String filter) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public List <String> execute(Connection con) throws SQLException {
-				List <String> result = new ArrayList<String>();
-				PreparedStatement s = con.prepareStatement("select * from ActClass where upper(Name) like ? order by Name");
-				s.setString(1, filter != null ? filter.toUpperCase() + "%" : "%");
-				ResultSet rs = s.executeQuery();
-				while (rs.next()) {
-					result.add(rs.getString("Name"));
-				}
-				return result;
+			public List <ActClass> execute(Connection con) throws SQLException {
+				return listClasses(con, filter != null ? filter.toUpperCase() + "%" : "%");
 			}
 		});
 	}
 
+	private List <ActClass> listClasses(Connection con, String filter) throws SQLException {
+		List <ActClass> result = new ArrayList<ActClass>();
+		PreparedStatement s = con.prepareStatement("select * from ActClass where upper(Name) like ? order by Name");
+		s.setString(1, filter);
+		ResultSet rs = s.executeQuery();
+		while (rs.next()) {
+			Long entityType = rs.getLong("entitytype");
+			if (rs.wasNull()) { entityType = null;}
+			ActClass actClass = new ActClass(rs.getLong("id"), rs.getString("name"), entityType, rs.getBoolean("singleton"));
+			result.add(actClass);
+		}
+		return result;
+	}
+
+	@Override
+	public void rebuildIndex(final Session session) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws Exception {
+				List<Act> masterData = executeSelect(session, con, null, null, null, true);
+				ILuceneService ls = Locator.getLuceneService();
+				IParticipationService participationService = Locator.getParticipationService();
+				ls.deleteIndex();
+				for (Act a : masterData) {
+					a.participations = participationService.load(session, a);
+					Participation p = a.getParticipation(Participation.PROTAGONIST);
+					
+					ls.addToIndex(p.entity, a);
+				}
+				return null;
+			}
+		});
+	}
+	
+
+	
 }

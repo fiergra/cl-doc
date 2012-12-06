@@ -12,7 +12,7 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class HumanBeingListBox extends OnDemandComboBox <Person> {
+public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAssignedEntitySelector<Person>{
 	
 	private Catalog role;
 	
@@ -62,6 +62,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> {
 		addStyleName("humanBeingListBox");
 	}
 
+	@Override
 	public Catalog getRole() {
 		return role;
 	}

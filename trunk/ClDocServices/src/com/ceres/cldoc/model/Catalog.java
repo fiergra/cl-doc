@@ -13,10 +13,6 @@ public class Catalog implements Serializable, HasChildren<Catalog> {
 	public static final Catalog USER = new Catalog(11l);
 	public static final Catalog GUEST = new Catalog(12l);
 	
-	public static final Catalog PATIENT = new Catalog(Participation.PATIENT);
-	public static final Catalog ORGANISATION = new Catalog(Participation.ORGANISATION);
-	public static final Catalog MASTERDATA = new Catalog(Participation.MASTERDATA);
-
 	public static final Catalog VIEW = new Catalog(71l, "VIEW");
 	public static final Catalog EDIT = new Catalog(72l, "EDIT");
 

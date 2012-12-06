@@ -4,7 +4,7 @@
 body, table td, select, button {
 	font-family: Calibri;
 	font-smooth: always;
-	font-size: medium; 
+	font-size: small; 
 }
 
 
@@ -13,15 +13,15 @@ body, table td, select, button {
 	height:auto !important;  
 	height:100%;  
 	overflow: hidden !important;  
-	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#CFE2FF));
-	background: -moz-linear-gradient(top,  #fff,  #CFE2FF);
+	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#DEE7D6));
+	background: -moz-linear-gradient(top,  #FAFAFA,  #DEE7D6);
 }
 
 
 .main {
-	min-height: 100%; /* Mindesthöhe für moderne Browser */
-	height:auto !important; /* Important Regel für moderne Browser */ 
-	height:100%; /* Mindesthöhe für den IE */ 
+	min-height: 100%; /* Mindesthï¿½he fï¿½r moderne Browser */
+	height:auto !important; /* Important Regel fï¿½r moderne Browser */ 
+	height:100%; /* Mindesthï¿½he fï¿½r den IE */ 
 }
 
 .resultTable {
@@ -51,11 +51,11 @@ body, table td, select, button {
 	border-width: 1px;
 	border-radius: 5px;
 	vertical-align: middle;
-	background-color: #fff;
+	background-color: #FAFAFA;
 }
 
 .evenRow {
-	background: #CFE2FF;
+	background: #DEE7D6;
 }
 
 .resultRow {
@@ -69,15 +69,15 @@ body, table td, select, button {
 }
 
 .resultRow:hover {
-	background-color: #77AEFF
+	background-color: #31A639
 }
 
 .viewer {
-	padding: 1.5em;
+	padding: 1em;
 }
 
 .formContainer {
-	padding: 1em;
+	padding: 0.5em;
 }
 
 .invalid {
@@ -98,13 +98,13 @@ body, table td, select, button {
 }
 
 .actTitle {
-	background-color: #CFE2FF;
+	background-color: #DEE7D6;
 	font-size: larger;
 	height: 100%;
 }
 
 .historyEntry {
-	border: solid 1px #CFE2FF;
+	border: solid 1px #DEE7D6;
 	padding: .5em;
 	width: 100%;
 }
@@ -119,7 +119,7 @@ body, table td, select, button {
 	padding-right: 5px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	background-color: #CFE2FF;
+	background-color: #DEE7D6;
 }
 
 .valueBagTitle {
@@ -141,7 +141,7 @@ body, table td, select, button {
 }
 
 .linkButton:hover {
-	background: #fff;
+	background: #FAFAFA;
 }
 
 
@@ -150,12 +150,13 @@ body, table td, select, button {
 	vertical-align: top;
 	font-variant: small-caps;
 	padding-left: 10px;
-	padding-top: 5px;
+	padding-top: 0px;
 }
 
 .formItem {
 	vertical-align: bottom;
-	padding-left: 25px;
+	padding-left: 30px;
+	padding-top: 0px;
 }
 
 .formSubLabel {
@@ -168,7 +169,6 @@ body, table td, select, button {
 }
 
 .docform {
-	border:medium;
 	text-align: left;
 	vertical-align: top;
 }
@@ -187,19 +187,19 @@ body, table td, select, button {
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: #77AEFF;
+  border-color: #31A639;
   border-style: solid;
   border-width: 1px;
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
-  background: #CFE2FF;
+  background: #DEE7D6;
   color: black;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
-  background: #77AEFF;
+  background: #31A639;
   color: white;
 }
 
@@ -247,10 +247,10 @@ body, table td, select, button {
 }
 
 .gwt-SplitLayoutPanel-HDragger {
-background: #CFE2FF url(images/thumb_vertical.png) center center no-repeat;
+background: #DEE7D6 url(images/thumb_vertical.png) center center no-repeat;
 cursor: col-resize;
 }
 
 .gwt-Tree .gwt-TreeItem-selected {
-background: #77AEFF;
+background: #31A639;
 }

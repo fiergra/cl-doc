@@ -43,7 +43,7 @@ public class DocServiceImpl implements IDocService {
 	@Override
 	public byte[] print(final Session session, final Act act) {
 		LayoutDefinition ld = Locator.getLayoutDefinitionService().load(
-				session, act.className, LayoutDefinition.PRINT_LAYOUT);
+				session, act.actClass.name, LayoutDefinition.PRINT_LAYOUT);
 		Document document = new Document();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		PdfWriter writer;
@@ -68,7 +68,7 @@ public class DocServiceImpl implements IDocService {
 	private void defaultLayout(Session session, Act act, Document document,
 			PdfWriter writer) throws DocumentException {
 		document.setMargins(72, 72, 108, 180);
-		document.add(new Paragraph(act.className, new Font(
+		document.add(new Paragraph(act.actClass.name, new Font(
 				FontFamily.HELVETICA, 18, Font.BOLD)));
 		document.add(new Paragraph("created by " + session.getUser().userName + " at " + new Date()));
 		Font boldFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD);
@@ -207,7 +207,7 @@ public class DocServiceImpl implements IDocService {
 		Participation p = null;
 		
 		if ("patient".equals(type)) {
-			p = act.getParticipation(Participation.PATIENT);
+			p = act.getParticipation(Participation.PROTAGONIST);
 		} else if ("organisation".equals(type)){
 			p = act.getParticipation(Participation.ORGANISATION);
 		}
@@ -373,7 +373,7 @@ public class DocServiceImpl implements IDocService {
 		if (index != -1) {
 			if (varName.startsWith("PATIENT.")) {
 				Participation participation = act
-						.getParticipation(Participation.PATIENT);
+						.getParticipation(Participation.PROTAGONIST);
 				if (participation != null) {
 					value = getEntityProperty(participation.entity,
 							varName.substring("PATIENT.".length()));

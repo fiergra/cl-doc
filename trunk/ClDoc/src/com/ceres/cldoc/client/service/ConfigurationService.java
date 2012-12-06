@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -24,11 +25,11 @@ public interface ConfigurationService extends RemoteService {
 //	List<String> listChildren(Session session, String parent);
 //	String getUploadUrl();
 	
-	List <String> listClassNames(Session session, String filter);
+	List <ActClass> listClasses(Session session, String filter);
 //	List <LayoutDefinition> listLayoutDefinitions(Session session, String filter);
-	void saveLayoutDefinition(Session session, int type, String formClass, String xmlLayout);
+	LayoutDefinition saveLayoutDefinition(Session session, LayoutDefinition ld);
 	LayoutDefinition getLayoutDefinition(Session session, String className, int typeId);
-	List<LayoutDefinition> listLayoutDefinitions(Session session, int typeId);
+	List<LayoutDefinition> listLayoutDefinitions(Session session, int typeId, Long entityType, Boolean isSingleton);
 	void deleteLayoutDefinition(Session session, String className);
 	
 	void delete(Session session, Catalog catalog);

@@ -1,10 +1,12 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.google.gwt.dom.client.Style.Unit;
@@ -28,10 +30,10 @@ public class AddAct extends DialogBox {
 	private final OnOkHandler<Act> onOk;
 	private final ClDoc clDoc;
 
-	public AddAct(ClDoc clDoc, Entity humanBeing, OnOkHandler<Act> onOk) {
+	public AddAct(ClDoc clDoc, Entity humanBeing, List<Act> acts, OnOkHandler<Act> onOk) {
 		this.clDoc = clDoc;
 		this.onOk = onOk;
-		setup(humanBeing);
+		setup(humanBeing, acts);
 	}
 
 //	HorizontalPanel hp = new HorizontalPanel();
@@ -42,7 +44,7 @@ public class AddAct extends DialogBox {
 //	hp.add(addNew);
 //
 	
-	private void setup(Entity entity) {
+	private void setup(final Entity entity, final List<Act> acts) {
 		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		final ListBox list = new ListBox();
@@ -59,7 +61,7 @@ public class AddAct extends DialogBox {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				populateList(filterText.getText(), list);
+				populateList(filterText.getText(), entity.type, list, acts);
 			}
 		});
 		filter.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -73,7 +75,7 @@ public class AddAct extends DialogBox {
 				onOk(list);
 			}
 		});
-		populateList(null, list);
+		populateList(null, entity.type, list, acts);
 		
 		Button pbOk = new Button(SRV.c.ok());
 		pbOk.addClickHandler(new ClickHandler() {
@@ -113,7 +115,7 @@ public class AddAct extends DialogBox {
 
 			@Override
 			public void onSuccess(LayoutDefinition result) {
-				Act vb = new Act(result.name/*, result.xmlLayout*/);
+				Act vb = new Act(result.actClass);
 				onOk.onOk(vb);
 				close();
 			}
@@ -124,24 +126,36 @@ public class AddAct extends DialogBox {
 		hide();
 	}
 
-	private void populateList(String filter, final ListBox list) {
-		SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, new DefaultCallback<List<LayoutDefinition>>(clDoc, "getLayoutDefs") {
+	private void populateList(String filter, long entityType, final ListBox list, final List<Act> acts) {
+		SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, entityType, null, new DefaultCallback<List<LayoutDefinition>>(clDoc, "getLayoutDefs") {
 
 			@Override
 			public void onSuccess(List<LayoutDefinition> result) {
 				list.clear();
 				int row = 0;
 				
-				for (LayoutDefinition name : result) {
-					list.addItem(name.name);
+				for (LayoutDefinition layoutDef : result) {
+					if (!layoutDef.actClass.isSingleton || !alreadyThere(layoutDef.actClass, acts)) {
+						list.addItem(layoutDef.actClass.name);
+					}
 //					list.setWidget(row++, 0, new Label(fds.name));
 				}
+			}
+
+			private boolean alreadyThere(ActClass actClass, List<Act> acts) {
+				Iterator<Act> iter = acts.iterator();
+				boolean found = false;
+				
+				while (!found && iter.hasNext()) {
+					found = iter.next().actClass.name.equals(actClass.name);
+				}
+				return found;
 			}
 		});
 	}
 	
-	public static void addAct(ClDoc clDoc, Entity humanBeing, OnOkHandler<Act> onOk) {
-		AddAct avb = new AddAct(clDoc, humanBeing, onOk);
+	public static void addAct(ClDoc clDoc, Entity humanBeing, List<Act> acts, OnOkHandler<Act> onOk) {
+		AddAct avb = new AddAct(clDoc, humanBeing, acts, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);
 		avb.center();

@@ -38,10 +38,11 @@ public class AssignmentsPanel extends DockLayoutPanel {
 		userList = new ClickableTable<User>(clDoc) {
 
 			@Override
-			public void addRow(FlexTable table, int row, User user) {
+			public boolean addRow(FlexTable table, int row, User user) {
 				table.setWidget(row, 0, new Label(user.userName));
 				table.setWidget(row, 1, new HTML(user.person.lastName + ",&nbsp;" + user.person.firstName));
 				table.setWidget(row, 2, rolesList(user));
+				return true;
 			}
 
 			private Widget rolesList(final User user) {

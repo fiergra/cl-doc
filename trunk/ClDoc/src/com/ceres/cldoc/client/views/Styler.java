@@ -10,6 +10,7 @@ import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -17,8 +18,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -47,8 +46,11 @@ public class Styler extends DockLayoutPanel {
 		final DockLayoutPanel formLayoutPanel = new DockLayoutPanel(Unit.EM);
 		final TextArea printLayoutDescTextArea = new TextArea();
 		final DockLayoutPanel printLayoutPanel = new DockLayoutPanel(Unit.EM);
-		final CheckBox cbMasterData = new CheckBox("Stammdaten");
+//		final CheckBox cbMasterData = new CheckBox("Stammdaten");
 
+		final CheckBox cbSingleton = new CheckBox("Stammdaten");
+		final CatalogListBox lbEntityTypes = new CatalogListBox(clDoc, "MASTERDATA.EntityTypes");
+		
 		formLayoutPanel.add(formLayoutDescTextArea);
 		printLayoutPanel.add(printLayoutDescTextArea);
 		
@@ -56,7 +58,7 @@ public class Styler extends DockLayoutPanel {
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hp.setSpacing(5);
 
-		hp.add(cbMasterData);
+//		hp.add(cbMasterData);
 		hp.add(new Label("class"));
 		
 		final DockLayoutPanel formContainer = new DockLayoutPanel(Unit.EM);
@@ -72,38 +74,40 @@ public class Styler extends DockLayoutPanel {
 			}
 		};
 		
-		final OnDemandComboBox<String> cmbClasses = new OnDemandComboBox<String>(clDoc, new ListRetrievalService<String>() {
+		final OnDemandComboBox<ActClass> cmbClasses = new OnDemandComboBox<ActClass>(clDoc, 
+				new ListRetrievalService<ActClass>() {
 
 			@Override
 			public void retrieve(String filter,
-					AsyncCallback<List<String>> callback) {
-				SRV.configurationService.listClassNames(clDoc.getSession(), filter, callback);
+					AsyncCallback<List<ActClass>> callback) {
+				SRV.configurationService.listClasses(clDoc.getSession(), filter, callback);
 			}
-		}, new LabelFunction<String>() {
+		}, new LabelFunction<ActClass>() {
 
 			@Override
-			public String getLabel(String className) {
-				return className;
+			public String getLabel(ActClass actClass) {
+				return actClass.name;
 			}
 
 			@Override
-			public String getValue(String className) {
-				return className;
+			public String getValue(ActClass actClass) {
+				return String.valueOf(actClass.id);
 			}
-		}, new OnDemandChangeListener<String>() {
+		}, new OnDemandChangeListener<ActClass>() {
 
 			@Override
-			public void onChange(String oldValue, String newValue) {
-				String className = newValue;
+			public void onChange(ActClass oldValue, ActClass newValue) {
 				
-				if (className != null) {
+				if (newValue != null) {
 					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "") {
 
 						@Override
 						public void onSuccess(LayoutDefinition result) {
 							if (result != null) {
-								if (result.type == LayoutDefinition.FORM_LAYOUT || result.type == LayoutDefinition.MASTER_DATA_LAYOUT) {
+								if (result.type == LayoutDefinition.FORM_LAYOUT/* || result.type == LayoutDefinition.MASTER_DATA_LAYOUT*/) {
 									formLayoutDescTextArea.setText(result.xmlLayout);
+									cbSingleton.setValue(result.actClass.isSingleton);
+									lbEntityTypes.setSelected(result.actClass.entityType);
 									updateForm.run();
 								} else {
 									printLayoutDescTextArea.setText(result.xmlLayout);
@@ -112,16 +116,17 @@ public class Styler extends DockLayoutPanel {
 						}
 					};
 					formLayoutDescTextArea.setText(null);
-					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, 
-							cbMasterData.getValue() ? LayoutDefinition.MASTER_DATA_LAYOUT : LayoutDefinition.FORM_LAYOUT, callback );
+					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), newValue.name, 
+							/*cbMasterData.getValue() ? LayoutDefinition.MASTER_DATA_LAYOUT : */LayoutDefinition.FORM_LAYOUT, callback );
 					printLayoutDescTextArea.setText(null);
-					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), className, LayoutDefinition.PRINT_LAYOUT, callback );
+					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), newValue.name, LayoutDefinition.PRINT_LAYOUT, callback );
 				}
 			}
 		}, null);
 		cmbClasses.setWidth("200px");
 		hp.add(cmbClasses);
-//		hp.add(lbClasses);
+		hp.add(cbSingleton);
+		hp.add(lbEntityTypes);
 
 		Image pbUpload = new Image("icons/32/Button-Upload-icon.png");
 		pbUpload.addClickHandler(new ClickHandler() {
@@ -170,14 +175,29 @@ public class Styler extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				if (cmbClasses.getText() != null && cmbClasses.getText().length() > 1) {
-					AsyncCallback<Void> callback = new DefaultCallback<Void>(clDoc, "saveLayout") {
+					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "saveLayout") {
 	
 						@Override
-						public void onSuccess(Void result) {}
+						public void onSuccess(LayoutDefinition result) {
+							cmbClasses.refresh();
+						}
 					};
-					SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), cbMasterData.getValue() ? LayoutDefinition.MASTER_DATA_LAYOUT :  LayoutDefinition.FORM_LAYOUT, cmbClasses.getText(), formLayoutDescTextArea.getText(), callback);
+					ActClass actClass = cmbClasses.getSelected();
+					if (actClass == null) {
+						actClass = new ActClass();
+						actClass.name = cmbClasses.getText();
+					}
+					actClass.entityType = lbEntityTypes.getSelected() != null ? lbEntityTypes.getSelected().id : null;
+					actClass.isSingleton = cbSingleton.getValue();
+					
+					LayoutDefinition ld = new LayoutDefinition(
+							actClass,
+							/*cbMasterData.getValue() ? LayoutDefinition.MASTER_DATA_LAYOUT :  */LayoutDefinition.FORM_LAYOUT, 
+									formLayoutDescTextArea.getText());
+					SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), ld, callback);
 					if (printLayoutDescTextArea.getText() != null && printLayoutDescTextArea.getText().length() > 0) {
-						SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), LayoutDefinition.PRINT_LAYOUT, cmbClasses.getText(), printLayoutDescTextArea.getText(), callback);
+						SRV.configurationService.saveLayoutDefinition(clDoc.getSession(), 
+								new LayoutDefinition(actClass, LayoutDefinition.PRINT_LAYOUT, printLayoutDescTextArea.getText()), callback);
 					}
 				}
 			}
@@ -189,9 +209,9 @@ public class Styler extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				String ld = cmbClasses.getSelected();
-				if (ld != null) {
-					SRV.configurationService.deleteLayoutDefinition(clDoc.getSession(), ld, new DefaultCallback<Void>(clDoc, "deleteLayout") {
+				ActClass actClass = cmbClasses.getSelected();
+				if (actClass != null) {
+					SRV.configurationService.deleteLayoutDefinition(clDoc.getSession(), actClass.name, new DefaultCallback<Void>(clDoc, "deleteLayout") {
 	
 						@Override
 						public void onSuccess(Void result) {

@@ -11,7 +11,7 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Entity;
 
 public interface ILuceneService {
-	void addToIndex(Entity entity, Act masterData) throws CorruptIndexException, LockObtainFailedException, IOException;
-	List<Entity> retrieve(String criteria) throws CorruptIndexException, IOException, ParseException;
+	void addToIndex(Entity entity, Act masterData) throws CorruptIndexException, LockObtainFailedException, IOException, ClassNotFoundException, ParseException;
+	List<Entity> retrieve(String criteria) throws CorruptIndexException, IOException, ParseException, ClassNotFoundException;
 	void deleteIndex() throws CorruptIndexException, LockObtainFailedException, IOException;
 }

@@ -115,7 +115,8 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		hp.setSpacing(2);
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		Image w = null;
-		switch (entity.type) {
+		int et = new Long(entity.type).intValue();
+		switch (et) {
 		case Entity.ENTITY_TYPE_PERSON:
 			w = new Image("icons/16/man-icon.png");
 			break;

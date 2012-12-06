@@ -6,6 +6,7 @@ import com.ceres.cldoc.client.controls.PagesView;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.google.gwt.core.client.GWT;
@@ -48,6 +49,7 @@ public class ActRenderer extends DockLayoutPanel {
 
 	private IView<Act> formContent;
 	private Act act;
+	private LayoutDefinition layoutDefinition;
 	
 	private LinkButton addLinkButton(HorizontalPanel buttons, int index, String toolTip, String enabledImage, String disabledImage, 
 			ClickHandler clickHandler) {
@@ -122,7 +124,9 @@ public class ActRenderer extends DockLayoutPanel {
 								@Override
 								public void onSuccess(Void result) {
 									setAct(null, null);
-									onInsertUpdateDelete.onOk(null);
+									if (onInsertUpdateDelete != null) {
+										onInsertUpdateDelete.onOk(null);
+									}
 								}
 							});
 						}
@@ -175,7 +179,10 @@ public class ActRenderer extends DockLayoutPanel {
 			public void onSuccess(Act act) {
 				formContent.clearModification();
 				pbSave.enable(false);
-				onInsertUpdateDelete.onOk(doSelect ? act : null);
+				setTitle(act);
+				if (onInsertUpdateDelete != null) {
+					onInsertUpdateDelete.onOk(doSelect ? act : null);
+				}
 				if (callback != null) {
 					callback.run();
 				}
@@ -185,6 +192,7 @@ public class ActRenderer extends DockLayoutPanel {
 	}
 	
 	public boolean setAct(final LayoutDefinition layoutDef, final Act act) {
+		this.layoutDefinition = layoutDef;
 		if (act != null) {
 			
 			if (formContent != null && formContent.isModified()) {
@@ -225,7 +233,7 @@ public class ActRenderer extends DockLayoutPanel {
 			remove(formContent);
 		}
 		
-		if (act.className.equals("externalDoc")) {
+		if (act.actClass.name.equals(ActClass.EXTERNAL_DOC.name)) {
 			IActField field = act.get("docId");
 			String baseUrl = GWT.getModuleBaseURL();
 			FrameView<Act> frame = new FrameView<Act>(act, baseUrl + "download?id=" + field.getLongValue());
@@ -250,16 +258,20 @@ public class ActRenderer extends DockLayoutPanel {
 		}
 		
 		this.act = act;
-		DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
-		title.setTitle("#" + act.id + " - <b>" + act.className + "</b>");
-		String sDate = act.date != null ? formatter.format(act.date) : "--.--.----";
-		title.setHTML("<b>" + act.className + "</b> - " + sDate );
-			
+		setTitle(act);
 		return true;
 	}
 
 	
 	
+	private void setTitle(Act act) {
+		DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
+		title.setTitle("#" + act.id + " - <b>" + act.actClass.name + "</b>");
+		String sDate = act.date != null ? formatter.format(act.date) : "--.--.----";
+		title.setHTML("<b>" + act.actClass.name + "</b> - " + sDate );
+	}
+
+
 	private boolean wantToSave() {
 //		new MessageBox("Speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YES | MessageBox.MB_NO, MESSAGE_ICONS.MB_ICON_QUESTION).center();
 		return true;
@@ -305,6 +317,16 @@ public class ActRenderer extends DockLayoutPanel {
 		}
 		
 		return result;
+	}
+
+
+	public Act getAct() {
+		return act;
+	}
+
+
+	public void resetAct(Act act) {
+		setAct(layoutDefinition, act);
 	}
 	
 }

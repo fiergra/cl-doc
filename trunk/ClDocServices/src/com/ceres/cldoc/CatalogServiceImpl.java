@@ -55,32 +55,59 @@ public class CatalogServiceImpl implements ICatalogService {
 
 			@Override
 			public Catalog execute(Connection con) throws SQLException {
-				if (catalog.id != null) {
-					PreparedStatement s = con
-							.prepareStatement("update Catalog set parent = ?, text = ?, shorttext = ?, date = ?, number1=?, number2=?, logical_order=? where id = ?");
+				if (catalog.id != null || insertIfUpdateFails) {
+					String sql = "update Catalog set parent = ?, text = ?, shorttext = ?, date = ?, number1=?, number2=?, logical_order=? where ";
+					if (catalog.id != null) {
+						sql += "id = ?";
+					} else {
+						sql += "code = ? and parent " + (catalog.parent == null ? "is null" : "= ?");
+					}
+					
+					PreparedStatement s = con.prepareStatement(sql);
 					long parentId = catalog.parent != null ? catalog.parent.id : 1000;
 					log.info(parentId +"");
 					int i = bindVariables(s, catalog);
-					s.setLong(i, catalog.id);
+					if (catalog.id != null) {
+						s.setLong(i++, catalog.id);
+					} else {
+						s.setString(i++, catalog.code);
+						if (catalog.parent != null) {
+							s.setLong(i++, catalog.parent.id);
+						}
+					}
 					int rows = s.executeUpdate();
 					s.close();
 					
-					if (insertIfUpdateFails && rows == 0) {
-						catalog.id = null;
-						execute(con);
+					if (insertIfUpdateFails) {
+						if (rows == 0) {
+							catalog.id = null;
+							insert(con, catalog);
+						} else if (catalog.id == null) {
+							s = con.prepareStatement("select id from Catalog where code = ?");
+							s.setString(1, catalog.code);
+							ResultSet rs = s.executeQuery();
+							rs.next();
+							catalog.id = rs.getLong("id");
+							s.close();
+						}
 					}
 					
 				} else {
-					PreparedStatement s = con
-							.prepareStatement(
-									"insert into Catalog (parent, text, shorttext, date, number1, number2, logical_Order, code) values (?,?,?,?,?,?,?,?)",
-									new String[] { "ID" });
-					int i = bindVariables(s, catalog);
-					s.setString(i++, catalog.code);
-					catalog.id = Jdbc.exec(s);
-					s.close();
+					insert(con, catalog);
 				}
 				return catalog;
+			}
+
+			private void insert(Connection con, final Catalog catalog)
+					throws SQLException {
+				PreparedStatement s = con
+						.prepareStatement(
+								"insert into Catalog (parent, text, shorttext, date, number1, number2, logical_Order, code) values (?,?,?,?,?,?,?,?)",
+								new String[] { "ID" });
+				int i = bindVariables(s, catalog);
+				s.setString(i++, catalog.code);
+				catalog.id = Jdbc.exec(s);
+				s.close();
 			}
 
 			private int bindVariables(PreparedStatement u, final Catalog catalog)
@@ -176,6 +203,9 @@ public class CatalogServiceImpl implements ICatalogService {
 		c.shortText = rs.getString(prefix + "shorttext");
 		c.text = rs.getString(prefix + "text");
 		c.date = rs.getDate(prefix + "date");
+		if (rs.wasNull()) {
+			c.date = null;
+		}
 		Long parentId = rs.getLong(prefix + "parent");
 		c.parent = rs.wasNull() ? null : new Catalog(parentId);
 		Long number = rs.getLong(prefix + "number1");
@@ -253,8 +283,14 @@ public class CatalogServiceImpl implements ICatalogService {
 		if (st.countTokens() > 1) {
 			Collection<Catalog> children = loadList(session, st.nextToken());
 			while (children != null && st.hasMoreTokens()) {
-				c = getChild(children, st.nextToken());
-				children = c.children;
+				String token = st.nextToken();
+				c = getChild(children, token);
+				if (c != null) {
+					children = c.children;
+				} else {
+					log.severe("child '" + token + "' does not exist in catalog '" + code + "'!");
+					children = null;
+				}
 			}
 		} else {
 			c = doLoad(con, null, code);
@@ -371,7 +407,11 @@ public class CatalogServiceImpl implements ICatalogService {
 	private void catalogToXml(Document doc, Node parentNode, Catalog catalog) {
 		Element catalogNode = doc.createElement("catalog");
 		
-		catalogNode.setAttribute("id", String.valueOf(catalog.id));
+		if (catalog.id < 1000) {
+			catalogNode.setAttribute("id", String.valueOf(catalog.id));
+		} else {
+			log.fine("omit custom id.");
+		}
 		catalogNode.setAttribute("code", catalog.code);
 
 		Element textNode = doc.createElement("text");
@@ -413,7 +453,7 @@ public class CatalogServiceImpl implements ICatalogService {
 
 		parentNode.appendChild(catalogNode);
 
-		if (catalog.children != null) {
+		if (catalog.children != null && !catalog.children.isEmpty()) {
 			Element childrenNode = doc.createElement("children");
 			catalogNode.appendChild(childrenNode);
 			for (Catalog c : catalog.children) {

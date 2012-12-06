@@ -5,9 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Act;
@@ -39,8 +38,9 @@ public class ParticipationServiceImpl implements IParticipationService {
 	protected void updateParticipation(Connection con,
 			Participation participation) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"update Participation set role = ?, startdate = ?, enddate = ? where id = ?");
+				"update Participation set entityid = ?, role = ?, startdate = ?, enddate = ? where id = ?");
 		int i = 1;
+		s.setLong(i++, participation.entity.id);
 		s.setLong(i++, participation.role.id);
 		s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
 		if (participation.end != null) {
@@ -73,18 +73,19 @@ public class ParticipationServiceImpl implements IParticipationService {
 	}
 
 	@Override
-	public Collection<Participation> load(final Session session, final Act act) {
-		Collection<Participation> result = Jdbc.doTransactional(session, new ITransactional() {
+	public HashMap<Long, Participation> load(final Session session, final Act act) {
+		HashMap<Long, Participation> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public Collection<Participation> execute(Connection con) throws SQLException {
+			public HashMap<Long, Participation> execute(Connection con) throws SQLException {
 				IEntityService entityService = Locator.getEntityService();
-				Collection<Participation> result = new ArrayList<Participation>();		
+				HashMap<Long, Participation> result = new HashMap<Long, Participation>();		
 				PreparedStatement s = con.prepareStatement("select * from Participation where actid = ?");
 				s.setLong(1, act.id);
 				ResultSet rs = s.executeQuery();
 				while (rs.next()) {
 					Participation p = new Participation();
+					p.id = rs.getLong("id");
 					p.act = act;
 					p.entity = entityService.load(session, rs.getLong("entityid"));
 					p.role = getRole(session, rs.getLong("role"));
@@ -93,7 +94,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 					if (rs.wasNull()) {
 						p.end = null;
 					}
-					result.add(p);
+					result.put(p.role.id, p);
 				}
 				rs.close();
 				s.close();
@@ -106,7 +107,22 @@ public class ParticipationServiceImpl implements IParticipationService {
 	}
 
 	protected Catalog getRole(Session session, long roleId) {
-		return roleId == 101l ? Catalog.PATIENT : Locator.getCatalogService().load(session, roleId);
+		return roleId == 101l ? Participation.PROTAGONIST : Locator.getCatalogService().load(session, roleId);
+	}
+
+	@Override
+	public void delete(Session session, final long actId, final long roleId) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws SQLException {
+				PreparedStatement s = con.prepareStatement("delete from Participation where actid = ? and role = ?");
+				s.setLong(1, actId);
+				s.setLong(2, roleId);
+				int rows = s.executeUpdate();
+				return null;
+			}
+		});
 	}
 
 }

@@ -1,28 +1,8 @@
 package com.ceres.cldoc.client;
 
-import java.util.Iterator;
-import java.util.List;
 
-import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.client.views.DefaultCallback;
-import com.ceres.cldoc.client.views.Form;
-import com.ceres.cldoc.model.Act;
-import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.IAct;
-import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.cldoc.model.Participation;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Widget;
-
-public class EntityDetails extends DockLayoutPanel {
-	private final Image pbSave = new Image("icons/32/Save-icon.png");
+public class EntityDetails {}/*extends DockLayoutPanel {
+	private final Image pbSave = new Image("icons/32/Save-icon.png");²
 	private final ClDoc clDoc;
 	private final Entity entity;
 	private final Form<IAct> masterDataForm;
@@ -53,7 +33,7 @@ public class EntityDetails extends DockLayoutPanel {
 					@Override
 					public void onSuccess(final Catalog catalog) {
 
-						SRV.actService.findByEntity(clDoc.getSession(), entity, Participation.MASTERDATA,
+						SRV.actService.findByEntity(clDoc.getSession(), entity, Participation.MASTERDATA.id,
 								new DefaultCallback<List<Act>>(clDoc,
 										"loadMasterData") {
 
@@ -64,7 +44,7 @@ public class EntityDetails extends DockLayoutPanel {
 										Iterator<Act> iter = result.iterator();
 										while (iter.hasNext() && masterData == null) {
 											Act next = iter.next();
-											if (next.className
+											if (next.actClass.name
 													.equals(catalog.code)) {
 												masterData = next;
 											}
@@ -140,4 +120,4 @@ public class EntityDetails extends DockLayoutPanel {
 		pbSave.setVisible(true);
 	}
 
-}
+}*/

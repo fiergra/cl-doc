@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.client.views.DefaultCallback;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -21,13 +21,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ConfigurationServiceAsync {
 	void parse(Session session, String xml, AsyncCallback<LayoutElement> callback);
 
-	void listClassNames(Session session, String filter, AsyncCallback<List<String>> callback);
+	void listClasses(Session session, String filter, AsyncCallback<List<ActClass>> callback);
 	
-	void saveLayoutDefinition(Session session, int type, String className, String xmlLayoutDesc, AsyncCallback<Void> callback);
+	void saveLayoutDefinition(Session session, LayoutDefinition ld, AsyncCallback<LayoutDefinition> callback);
 
 	void getLayoutDefinition(Session session, String className, int typeId, AsyncCallback<LayoutDefinition> callback);
 
-	void listLayoutDefinitions(Session session, int typeId, AsyncCallback<List<LayoutDefinition>> defaultCallback);
+	void listLayoutDefinitions(Session session, int typeId, Long entityType, Boolean isSingleton, AsyncCallback<List<LayoutDefinition>> defaultCallback);
 
 	void deleteLayoutDefinition(Session session, String className, AsyncCallback<Void> callback);
 

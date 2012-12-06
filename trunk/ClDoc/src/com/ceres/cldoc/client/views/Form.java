@@ -13,7 +13,9 @@ import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.CatalogList;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IAct;
+import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -145,19 +147,9 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				}
 				break;
 			case FT_PARTICIPATION:
-//				Participation participation = act.getParticipation(role);
-//				
-//				Long id = act.getLong(field.name);
-//				if (id != null) {
-//					SRV.humanBeingService.findById(clDoc.getSession(), id, new DefaultCallback<Person>(clDoc, "findById") {
-//
-//						@Override
-//						public void onSuccess(Person result) {
-//							((IEntitySelector<Person>)field.widget).setSelected(result);
-//						}
-//					});
-//					
-//				}
+				IAssignedEntitySelector<Entity> selector = (IAssignedEntitySelector<Entity>)field.widget;
+				Participation participation = act.getParticipation(selector.getRole());
+				selector.setSelected(participation != null ? participation.entity : null);
 				break;
 			case FT_HUMANBEING:
 				Long id = act.getLong(field.name);
@@ -227,13 +219,17 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				act.set(qualifiedFieldName, catalog != null ? catalog : null);
 				break;
 			case FT_PARTICIPATION:
-				// Person humanBeing = ((IEntitySelector<Person>)
-				// field.widget).getSelected();
-				// act.set(qualifiedFieldName, humanBeing != null ?
-				// humanBeing.id : null);
+				IAssignedEntitySelector<Person> selector = (IAssignedEntitySelector<Person>) field.widget;
+				Person humanBeing = selector.getSelected(); 
+				Participation p = act.getParticipation(selector.getRole());
+				
+				if (p == null || !p.entity.equals(humanBeing)) {
+					act.setParticipant(humanBeing, selector.getRole());
+				}
+				
 				break;
 			case FT_HUMANBEING:
-				Person humanBeing = ((IEntitySelector<Person>) field.widget).getSelected(); 
+				humanBeing = ((IEntitySelector<Person>) field.widget).getSelected(); 
 				act.set(qualifiedFieldName, humanBeing != null ? humanBeing.id : null);
 				break;
 			case FT_DATE:
@@ -266,7 +262,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 
 	private class WidgetKeyUpHandler implements KeyUpHandler {
 
-		private IsWidget widget;
+		private final IsWidget widget;
 
 		public WidgetKeyUpHandler(IsWidget widget) {
 			this.widget = widget;
@@ -379,6 +375,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		vp.add(new HTML("<hr width=\"100%\">"));
 		HorizontalPanel buttons = addButtons(onClickSave, onClickDelete, onClickCancel);
 		vp.add(buttons);
+		setWidth("800px");
 
 		popup = PopupManager.showModal(title, vp);
 	}

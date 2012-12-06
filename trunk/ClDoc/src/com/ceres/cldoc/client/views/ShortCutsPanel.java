@@ -31,7 +31,7 @@ public class ShortCutsPanel extends ClickableTable<LogEntry> {
 
 			@Override
 			public void onClick(LogEntry le) {
-				new MessageBox("Click", le.act != null ? le.act.className
+				new MessageBox("Click", le.act != null ? le.act.actClass.name
 						: le.logDate.toString(), MessageBox.MB_OK,
 						MESSAGE_ICONS.MB_ICON_INFO).show();
 			}
@@ -39,7 +39,7 @@ public class ShortCutsPanel extends ClickableTable<LogEntry> {
 	}
 
 	@Override
-	public void addRow(FlexTable ft, int row, LogEntry le) {
+	public boolean addRow(FlexTable ft, int row, LogEntry le) {
 		DateTimeFormat df = DateTimeFormat.getFormat("dd.MM.yyyy");
 		String date = df.format(le.logDate);
 		ft.setWidget(row, 0, new Label(date));
@@ -47,7 +47,7 @@ public class ShortCutsPanel extends ClickableTable<LogEntry> {
 			// date = df.format(le.act.date);
 			ft.setWidget(row, 1, getTypeIcon(le.type));
 			
-			HTML html = new HTML("<b>" + le.act.className + "</b>");
+			HTML html = new HTML("<b>" + le.act.actClass.name + "</b>");
 			html.setWidth("100%");
 			ft.setWidget(row, 2, html);
 		}
@@ -57,6 +57,7 @@ public class ShortCutsPanel extends ClickableTable<LogEntry> {
 			html.setWidth("100%");
 			ft.setWidget(row, 4, html);
 		}
+		return true;
 
 	}
 

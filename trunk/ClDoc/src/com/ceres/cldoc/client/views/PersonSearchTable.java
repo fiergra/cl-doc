@@ -114,7 +114,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 */	
 
 	@Override
-	public void addRow(FlexTable grid, int row, Person person) {
+	public boolean addRow(FlexTable grid, int row, Person person) {
 		DateTimeFormat f = DateTimeFormat.getFormat("dd.MM.yyyy");
 		Label id = new Label(String.valueOf(person.getDisplayId()));
 		
@@ -134,6 +134,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		} else {
 			grid.setWidget(row, 4, new Label());
 		}
+		return true;
 		
 	}
 
