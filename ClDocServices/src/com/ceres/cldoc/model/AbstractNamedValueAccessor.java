@@ -50,9 +50,16 @@ public abstract class AbstractNamedValueAccessor implements IAct, Serializable {
 	}
 
 	@Override
-	public Participation getParticipation(long role) {
+	public Participation getParticipation(Catalog role) {
 		return null;
 	}
+
+	@Override
+	public void setParticipant(Entity e, Catalog role) {
+		
+	}
+	
+	
 
 	
 }

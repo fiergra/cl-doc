@@ -2,6 +2,7 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.google.gwt.core.client.GWT;
@@ -139,7 +140,7 @@ public class UploadDialog extends DialogBox {
 	}
 
 	public static void uploadExternalDoc(ClDoc clDoc, Entity humanBeing, OnOkHandler<Void> onOk) {
-		uploadFile(clDoc, "externalDoc", humanBeing, onOk);
+		uploadFile(clDoc, ActClass.EXTERNAL_DOC.name, humanBeing, onOk);
 	}
 
 	public static void uploadLayouts(ClDoc clDoc, int layoutType, OnOkHandler<Void> onOk) {

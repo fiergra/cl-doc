@@ -35,12 +35,17 @@ public class Jdbc {
 		} catch (RuntimeException rx) {
 			TxManager.cancel(session);
 			throw rx;
-		} catch (SQLException x) {
+		} catch (Exception x) {
 			log.severe(x.getLocalizedMessage());
 			TxManager.cancel(session);
 			throw new RuntimeException(x);
 		}
 		
+	}
+
+	public static Long getLong(ResultSet rs, String columnLabel) throws SQLException {
+		long value = rs.getLong(columnLabel);
+		return rs.wasNull() ? null : value;
 	}
 
 }

@@ -7,9 +7,9 @@ public class Participation implements Serializable {
 
 	private static final long serialVersionUID = 8017405646839706167L;
 
-	public static final long PATIENT = 101l;
-	public static final long ORGANISATION = 102l;
-	public static final long MASTERDATA = 103l;
+	public static final Catalog PROTAGONIST = new Catalog(101l);
+	public static final Catalog ORGANISATION = new Catalog(102l);
+	public static final Catalog MASTERDATA = new Catalog(103l);
 
 	public Long id;
 	public Entity entity;

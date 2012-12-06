@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LogEntry;
@@ -36,7 +37,7 @@ public class LogServiceImpl implements ILogService {
 				} else {
 					s.setNull(i++, Types.INTEGER);
 				}
-				Participation participation = act.getParticipation(0);
+				Participation participation = act.getParticipation(Participation.PROTAGONIST);
 				Entity entity = participation != null ? participation.entity : null;
 				
 				if (entity != null && entity.id != null) {
@@ -78,7 +79,8 @@ public class LogServiceImpl implements ILogService {
 					long actId = rs.getLong("actId");
 					long leId = rs.getLong("leId");
 					if (act == null || act.id != actId) {
-						act = new Act(rs.getString("classname"));
+						act = new Act();
+						act.actClass = new ActClass(rs.getString("classname"));
 						act.id = actId;
 						act.date = rs.getTimestamp("actDate");
 					}

@@ -9,13 +9,13 @@ import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ERTree;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
-import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -30,7 +30,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TextBox;
 
 public class EntityConfigurator extends DockLayoutPanel {
 
@@ -100,7 +99,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 		entityTable = new ClickableTable<Entity>(clDoc, listRetrieval, onClick, true) {
 			
 			@Override
-			public void addRow(FlexTable table, int row, final Entity entry) {
+			public boolean addRow(FlexTable table, int row, final Entity entry) {
 				table.setWidget(row, 0, new Label(entry.id.toString()));
 				Label label = new Label(entry.getName());
 //				clDoc.getDragController().makeDraggable(label, new Label(entry.name));
@@ -111,7 +110,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.MASTERDATA, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
+						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.MASTERDATA.id, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
 
 							@Override
 							public void onSuccess(List<Act> result) {
@@ -120,12 +119,12 @@ public class EntityConfigurator extends DockLayoutPanel {
 								Iterator<Act> iter = result.iterator();
 								while (iter.hasNext() && act == null) {
 									Act next = iter.next();
-									if (next.className.equals(type.code)) {
+									if (next.actClass.name.equals(type.code)) {
 										act = next;
 									}
 								}
 								if (act != null) {
-									editMasterData(clDoc, null, act, entry);
+									editEntityMasterData(clDoc, null, act, entry);
 								} else {
 									createMasterData(clDoc, null, type, entry);
 								}
@@ -149,6 +148,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 				});
 				table.setWidget(row, 2, pbEdit);
 				table.setWidget(row, 3, pbDelete);
+				return true;
 			}
 		};
 		
@@ -228,29 +228,63 @@ public class EntityConfigurator extends DockLayoutPanel {
 			final ClickableTable<Entity> entityTable,
 			final Catalog type, Entity selectedEntity) {
 		
-		final Act model = new Act(type.code);
-		final Entity entity;
-		
-		if (selectedEntity == null) {
-			entity = new Entity();
-			entity.type = type.id.intValue();
-		} else {
-			entity = selectedEntity;
-		}
-	
-		model.addParticipant(entity, Catalog.MASTERDATA, null, null);
-
-		editMasterData(clDoc, entityTable, model, entity);
+//		final Act model = new Act(type.code);
+//		final Entity entity;
+//		
+//		if (selectedEntity == null) {
+//			entity = createNewEntity(type);
+//		} else {
+//			entity = selectedEntity;
+//		}
+//	
+//		model.setParticipant(entity, Participation.MASTERDATA, null, null);
+//		editEntityMasterData(clDoc, entityTable, model, entity);
 		
 	}
 	
-	private void editMasterData(
+	private Entity createNewEntity(Catalog type) {
+		Entity entity;
+		int t = type.id.intValue();
+		switch (t) {
+		case Entity.ENTITY_TYPE_PERSON:
+			entity = new Person();
+			break;
+		case Entity.ENTITY_TYPE_ORGANISATION:
+			entity = new Organisation();
+			break;
+		default:
+			entity = new Entity();
+			entity.type = t;
+		}
+		
+		return entity;
+	}
+
+	private void editEntityMasterData(
 			final ClDoc clDoc,
 			final ClickableTable<Entity> entityTable,
 			final Act model,
 			final Entity entity
 			) {
-		SRV.configurationService.getLayoutDefinition(clDoc.getSession(), model.className, LayoutDefinition.MASTER_DATA_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "loadLayout") {
+		int et = new Long(entity.type).intValue();
+		switch (et) {
+		case Entity.ENTITY_TYPE_PERSON:
+			PersonEditor.editPerson(clDoc, (Person) entity);
+			break;
+		case Entity.ENTITY_TYPE_ORGANISATION:
+		default:
+			editGenericMasterData(clDoc, entityTable, model, entity);
+		}
+	}	
+	
+	private void editGenericMasterData(
+			final ClDoc clDoc,
+			final ClickableTable<Entity> entityTable,
+			final Act model,
+			final Entity entity
+			) {
+/*		
+		SRV.configurationService.getLayoutDefinition(clDoc.getSession(), model.actClass.name, LayoutDefinition.MASTER_DATA_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "loadLayout") {
 
 			@Override
 			public void onSuccess(LayoutDefinition result) {
@@ -263,7 +297,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 				
 				if (result != null) {
 					final TextBox txtName = new TextBox();
-					form.addLine("Name", txtName);
+					form.addLine("Anzeigename", txtName);
 					txtName.setText(entity.getName());
 					form.parseAndCreate(result.xmlLayout, false);
 					form.showModal("Neu", 
@@ -301,11 +335,11 @@ public class EntityConfigurator extends DockLayoutPanel {
 					});
 					form.toDialog();
 				} else {
-					new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + model.className + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
+					new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + model.actClass.name + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
 				}
 			}
 		});
-	}
+*/	}
 	
 	
 	

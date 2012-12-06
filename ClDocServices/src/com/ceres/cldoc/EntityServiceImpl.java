@@ -101,7 +101,7 @@ public class EntityServiceImpl implements IEntityService {
 		PreparedStatement s = con
 				.prepareStatement("update Entity set name = ?, type = ? where id = ?");
 		s.setString(1, entity.getName());
-		s.setInt(2, entity.type);
+		s.setLong(2, entity.type);
 		s.setLong(3, entity.id);
 		s.executeUpdate();
 		s.close();
@@ -113,7 +113,7 @@ public class EntityServiceImpl implements IEntityService {
 				"insert into Entity (name,type) values (?,?)",
 				new String[] { "ID" });
 		s.setString(1, entity.getName());
-		s.setInt(2, entity.type);
+		s.setLong(2, entity.type);
 		entity.id = Jdbc.exec(s);
 		s.close();
 	}

@@ -21,8 +21,9 @@ import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
-import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.Participation;
 
 //The FormPanel must submit to a servlet that extends HttpServlet  
 //RemoteServiceServlet cannot be used
@@ -67,8 +68,8 @@ public class UploadService extends HttpServlet {
 							}							
 						}
 					}
-				} else if ("externalDoc".equals(type)) {
-					Act act = new Act("externalDoc");
+				} else if (ActClass.EXTERNAL_DOC.name.equals(type)) {
+					Act act = new Act(ActClass.EXTERNAL_DOC);
 					Long entityId = null;
 					for (FileItem fItem : items) {
 						// process only file upload - discard other form act
@@ -80,7 +81,10 @@ public class UploadService extends HttpServlet {
 							} else if (fItem.getFieldName().equals("userId")) {
 
 							} else {
-								act.set(fItem.getFieldName(), fItem.getString());
+								String value = fItem.getString();
+								if (value != null && value.length() > 0) {
+									act.set(fItem.getFieldName(), value);
+								}
 							}
 						} else {
 							String fileName = fItem.getName();
@@ -95,7 +99,7 @@ public class UploadService extends HttpServlet {
 						}
 					}
 					Entity entity = Locator.getEntityService().load(session, entityId);
-					act.addParticipant(entity, Catalog.PATIENT, new Date(), null);
+					act.setParticipant(entity, Participation.PROTAGONIST, new Date(), null);
 					act.date = new Date();
 					Locator.getActService().save(session, act);
 				}

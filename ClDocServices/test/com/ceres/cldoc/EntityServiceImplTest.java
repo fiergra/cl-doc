@@ -2,10 +2,13 @@ package com.ceres.cldoc;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -15,6 +18,32 @@ import com.ceres.cldoc.model.Person;
 
 public class EntityServiceImplTest extends TransactionalTest {
 
+	public void testParticipations() {
+		IEntityService entityService = Locator.getEntityService();
+		ICatalogService catalogService = Locator.getCatalogService();
+		IActService actService = Locator.getActService();
+		
+		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
+		List<Person> persons = entityService.list(getSession(), Entity.ENTITY_TYPE_PERSON);
+
+		Iterator<Organisation> oi = organisations.iterator();
+		Organisation p1 = oi.next();
+		Person p2 = persons.iterator().next();
+
+		Catalog rO = catalogService.load(getSession(), "ROLES.ORGANISATION");
+		Catalog rP = catalogService.load(getSession(), "ROLES.PROTAGONIST");
+		
+		Act a = new Act(new ActClass("PARTICIPATION_TEST"));
+		a.setParticipant(p1, rO, null, null);
+		a.setParticipant(p2, rP, null, null);
+		actService.save(getSession(), a);
+		
+		a = actService.load(getSession(), a.id);
+		assertNotNull(a.getParticipation(rO));
+		assertNotNull(a.getParticipation(rP));
+		
+	}
+	
 	public void testRelations() {
 		IEntityService entityService = Locator.getEntityService();
 		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);

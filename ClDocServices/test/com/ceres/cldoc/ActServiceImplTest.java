@@ -6,16 +6,42 @@ import java.util.Date;
 import java.util.List;
 
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.CatalogList;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LogEntry;
+import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
 
 public class ActServiceImplTest extends TransactionalTest {
 
+	
+	public void testMasterdata() throws Exception {
+		ActClass ac = new ActClass(null, "Masterdata", null, true);
+		Person p = new Person();
+		p.firstName = "Heinz";
+		p.lastName = "Achmed";
+		Locator.getEntityService().save(getSession(), p);
+		Act a = new Act(ac);
+		a.set("feld1", "xxx");
+		a.set("feld2", "yyy");
+		a.setParticipant(p, Participation.PROTAGONIST);
+		
+		Locator.getActService().save(getSession(), a);
+		List<Entity> entities = Locator.getLuceneService().retrieve("xx* y*");
+		assertFalse(entities.isEmpty());
+		
+		Locator.getActService().rebuildIndex(getSession());
+		entities = Locator.getLuceneService().retrieve("xx* y*");
+		assertFalse(entities.isEmpty());
+		assertEquals(entities.size(), 1);
+	}
+
+	
 	public void testListClassNames() {
 		IActService actService = Locator.getActService();
-		List<String> classNames = actService.listClassNames(getSession(), "");
+		List<ActClass> classNames = actService.listClasses(getSession(), "");
 		assertNotNull(classNames);
 		assertTrue(!classNames.isEmpty());
 	}
@@ -30,7 +56,7 @@ public class ActServiceImplTest extends TransactionalTest {
 	public void testSave() {
 		IActService actService = Locator.getActService();
 		
-		Act act = new Act("Unknown");
+		Act act = new Act(new ActClass("Unknown"));
 		
 		actService.save(getSession(), act);
 		Date d = new Date(0l);
@@ -97,7 +123,7 @@ public class ActServiceImplTest extends TransactionalTest {
 //		entity.name = "Sven Fiergolla";
 		entityService.save(getSession(), entity );
 
-		act.addParticipant(entity, Catalog.PATIENT, new Date(), null);
+		act.setParticipant(entity, Participation.PROTAGONIST, new Date(), null);
 		actService.save(getSession(), act);
 		
 		act = actService.load(getSession(), act.id);
@@ -108,7 +134,7 @@ public class ActServiceImplTest extends TransactionalTest {
 	}
 
 	public void testDataTypes() {
-		Act act = new Act("Unknown");
+		Act act = new Act(new ActClass("Unknown"));
 		act.set("string", "asdf");
 		act.set("long", 1l);
 		Calendar now = Calendar.getInstance();

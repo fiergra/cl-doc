@@ -1,0 +1,399 @@
+<catalogs>
+  <catalog code="MASTERDATA" id="150">
+    <text>MASTERDATA</text>
+    <shorttext>MASTERDATA</shorttext>
+    <date>02-Jul-2012 00:00:00</date>
+    <children>
+      <catalog code="Familienstand" id="10011">
+        <text>Familienstand</text>
+        <shorttext>Familienstand</shorttext>
+        <date>02-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="VERWITWET" id="10012">
+            <text>verwitwet</text>
+            <shorttext>verwitwet</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="VERHEIRATET" id="10013">
+            <text>verheiratet</text>
+            <shorttext>verheiratet</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="LEDIG" id="10014">
+            <text>ledig</text>
+            <shorttext>ledig</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="GESCHIEDEN" id="10015">
+            <text>geschieden</text>
+            <shorttext>geschieden</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="Schulabschluss" id="10016">
+        <text>Schulabschluss</text>
+        <shorttext>Schulabschluss</shorttext>
+        <date>02-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="Hauptschule" id="10017">
+            <text>Hauptschule</text>
+            <shorttext>Hauptschule</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Abitur" id="10018">
+            <text>Abitur</text>
+            <shorttext>Abitur</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Mittlere Reife" id="10019">
+            <text>Mittlere Reife</text>
+            <shorttext>Mittlere Reife</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Fachabitur" id="10020">
+            <text>Fachabitur</text>
+            <shorttext>Fachabitur</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="ohne" id="10021">
+            <text>ohne</text>
+            <shorttext>ohne</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="KREBSART" id="10022">
+        <text>Krebsart</text>
+        <shorttext>Krebsart</shorttext>
+        <date>02-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="Lunge" id="10023">
+            <text>Lunge/Bronchien</text>
+            <shorttext>Lunge/Bronchien</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Prostata" id="10024">
+            <text>Prostata</text>
+            <shorttext>Prostata</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Hoden" id="10025">
+            <text>Hoden</text>
+            <shorttext>Hoden</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Gyn. Tumore" id="10026">
+            <text>Gyn. Tumore</text>
+            <shorttext>Gyn. Tumore</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="MAMMA" id="10027">
+            <text>Mamma</text>
+            <shorttext>Mamma</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Darm" id="10028">
+            <text>Darm</text>
+            <shorttext>Darm</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Pankreas" id="10029">
+            <text>Pankreas</text>
+            <shorttext>Pankreas</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Hirn" id="10030">
+            <text>Hirn</text>
+            <shorttext>Hirn</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Urologisch" id="10031">
+            <text>Urologisch</text>
+            <shorttext>Urologisch</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Haut" id="10032">
+            <text>Haut</text>
+            <shorttext>Haut</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Haematologisch" id="10033">
+            <text>Haematologisch</text>
+            <shorttext>Haematologisch</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Magen" id="10034">
+            <text>Magen</text>
+            <shorttext>Magen</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="HNO" id="10035">
+            <text>HNO</text>
+            <shorttext>HNO</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Weichteile" id="10036">
+            <text>Weichteile</text>
+            <shorttext>Weichteile</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="GENESE" id="10037">
+        <text>GENESE</text>
+        <shorttext>GENESE</shorttext>
+        <date>02-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="Remission" id="10038">
+            <text>Remission</text>
+            <shorttext>Remission</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Rezidiv" id="10039">
+            <text>Rezidiv</text>
+            <shorttext>Rezidiv</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Ersterkrankung" id="10040">
+            <text>Ersterkrankung</text>
+            <shorttext>Ersterkrankung</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Zweit" id="10041">
+            <text>Zweittumor</text>
+            <shorttext>Zweittumor</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="THERAPIE" id="10042">
+        <text>THERAPIE</text>
+        <shorttext>THERAPIE</shorttext>
+        <date>02-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="SONSTIGE" id="10043">
+            <text>Sonstige</text>
+            <shorttext>Sonstige</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="Keine" id="10044">
+            <text>Keine</text>
+            <shorttext>Keine</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="HORMON" id="10045">
+            <text>Hormon</text>
+            <shorttext>Hormon</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="CHEMO" id="10046">
+            <text>Chemo</text>
+            <shorttext>Chemo</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="OP" id="10047">
+            <text>OP</text>
+            <shorttext>OP</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="RADIO" id="10048">
+            <text>Bestrahlung</text>
+            <shorttext>Bestrahlung</shorttext>
+            <date>02-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="KONTAKTART" id="10049">
+        <text />
+        <shorttext />
+        <date>05-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="PERSOENLICH" id="10050">
+            <text>persoenlich</text>
+            <shorttext>persoenlich</shorttext>
+            <date>05-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="SCHRIFTLICH" id="10051">
+            <text>schriftlich</text>
+            <shorttext>schriftlich</shorttext>
+            <date>05-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="TELEFONISCH" id="10052">
+            <text>telefonisch</text>
+            <shorttext>telefonisch</shorttext>
+            <date>05-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="ORT" id="10053">
+        <text />
+        <shorttext />
+        <date>05-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="PRAXIS" id="10054">
+            <text>Praxis</text>
+            <shorttext>Praxis</shorttext>
+            <date>05-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="HAUS" id="10055">
+            <text>Haus</text>
+            <shorttext>Haus</shorttext>
+            <date>05-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="KLINIK" id="10056">
+            <text>Klinik</text>
+            <shorttext>Klinik</shorttext>
+            <date>05-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="AUSSENSTELLE" id="10077">
+            <text>Aussenstelle</text>
+            <shorttext>Aussenstelle</shorttext>
+            <date>09-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="FRAGESTELLUNG" id="10057">
+        <text />
+        <shorttext />
+        <date>05-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="SOZIALRECHTLICH" id="10058">
+            <text />
+            <shorttext />
+            <date>05-Jul-2012 00:00:00</date>
+            <children>
+              <catalog code="P" id="10059">
+                <text>Pflege</text>
+                <shorttext>P</shorttext>
+                <date>05-Jul-2012 00:00:00</date>
+                <children />
+              </catalog>
+              <catalog code="F" id="10060">
+                <text>finanziell</text>
+                <shorttext>F</shorttext>
+                <date>05-Jul-2012 00:00:00</date>
+                <children />
+              </catalog>
+              <catalog code="B" id="10061">
+                <text>Beruf, Ausbildung, Umschulung,
+                Berentung</text>
+                <shorttext>B</shorttext>
+                <date>05-Jul-2012 00:00:00</date>
+                <children />
+              </catalog>
+              <catalog code="K" id="10062">
+                <text>Kur, sonst. ReHa</text>
+                <shorttext>K</shorttext>
+                <date>05-Jul-2012 00:00:00</date>
+                <children />
+              </catalog>
+              <catalog code="W" id="10063">
+                <text>Widerspruchsverfahren</text>
+                <shorttext>W</shorttext>
+                <date>05-Jul-2012 00:00:00</date>
+                <children />
+              </catalog>
+              <catalog code="S" id="10064">
+                <text>Schwerbehindertenstatus</text>
+                <shorttext>S</shorttext>
+                <date>05-Jul-2012 00:00:00</date>
+                <children />
+              </catalog>
+            </children>
+          </catalog>
+        </children>
+      </catalog>
+      <catalog code="GESPRAECHSPARTNER" id="10065">
+        <text />
+        <shorttext />
+        <date>06-Jul-2012 00:00:00</date>
+        <children>
+          <catalog code="PATIENT" id="10072">
+            <text>Patient</text>
+            <shorttext>P</shorttext>
+            <date>08-Jul-2012 00:00:00</date>
+            <logicalOrder>1</logicalOrder>
+            <children />
+          </catalog>
+          <catalog code="VATER" id="10066">
+            <text>Vater</text>
+            <shorttext>V</shorttext>
+            <date>08-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="MUTTER" id="10067">
+            <text>Mutter</text>
+            <shorttext>M</shorttext>
+            <date>08-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="EHEPARTNER" id="10068">
+            <text>Ehepartner</text>
+            <shorttext>E</shorttext>
+            <date>08-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="LEBENSGEFAEHRTE" id="10069">
+            <text>Lebensgefaehrte</text>
+            <shorttext>L</shorttext>
+            <date>08-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="SOHN" id="10070">
+            <text>Sohn</text>
+            <shorttext>S</shorttext>
+            <date>08-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+          <catalog code="TOCHTER" id="10071">
+            <text>Tochter</text>
+            <shorttext>T</shorttext>
+            <date>08-Jul-2012 00:00:00</date>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+    </children>
+  </catalog>
+</catalogs>

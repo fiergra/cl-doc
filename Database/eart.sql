@@ -1,8 +1,12 @@
+insert into Catalog (id, parent, code, text, shorttext) values (54, 51, 'EART_USER', 'EART_USER', 'EART_USER');
 
-insert into Catalog (id, parent, code, text, shorttext) values (1005, 1000, 'Landkreis', 'Landkreis', 'Landkreis');
-insert into Catalog (id, parent, code, text, shorttext) values (1006, 1000, 'Verbandsgemeinde', 'Verbandsgemeinde', 'Verbandsgemeinde');
-insert into Catalog (id, parent, code, text, shorttext) values (1007, 1000, 'Gemeinde', 'Gemeinde', 'Gemeinde');
-insert into Catalog (id, parent, code, text, shorttext) values (1008, 1000, 'Gebaeude', 'Gebaeude', 'Gebaeude');
+insert into Catalog (parent, code, text, shorttext, logical_order, number1) values (2, 'Suche LK', 'Suche', 'Suche', 1, 1001);
+
+
+insert into Catalog (id, parent, code, text, shorttext) values (1005, 180, 'Landkreis', 'Landkreis', 'Landkreis');
+insert into Catalog (id, parent, code, text, shorttext) values (1006, 180, 'Verbandsgemeinde', 'Verbandsgemeinde', 'Verbandsgemeinde');
+insert into Catalog (id, parent, code, text, shorttext) values (1007, 180, 'Gemeinde', 'Gemeinde', 'Gemeinde');
+insert into Catalog (id, parent, code, text, shorttext) values (1008, 180, 'Gebaeude', 'Gebaeude', 'Gebaeude');
 
 insert into Catalog (id, parent, code, text, shorttext) values (10001, 150, 'Gebaeudetyp', 'Gebaeudetyp', 'Typ');
 insert into Catalog (parent, code, text, shorttext) values (10001, 'Rathaus', 'Rathaus', 'Rathaus');
@@ -14,6 +18,31 @@ insert into Catalog (parent, code, text, shorttext) values (10001, 'Buergerhaus'
 insert into Catalog (id, parent, code, text, shorttext) values (20002, 150, 'Verfahren', 'Verfahren', 'Verfahren');
 insert into Catalog (parent, code, text, shorttext) values (20002, 'ausfuehrlich', 'ausfuehrlich', 'ausfuehrlich');
 insert into Catalog (parent, code, text, shorttext) values (20002, 'kurz', 'kurz', 'kurz');
+
+
+insert into Entity (ID, TYPE, NAME) values (5, 181, 'Stefan Metzdorf');
+insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME) 
+values (5, 45679, 'Stefan', 'Metzdorf');
+
+insert into Entity (ID,TYPE,NAME) values (23, 182, 'EART');
+insert into Organisation (Id) values (23);
+
+insert into Entity (ID,TYPE,NAME) values (24, 182, 'mevik');
+insert into Organisation (Id) values (24);
+
+/* Stefan is member of mevik */
+insert into EntityRelation (type, subjectid, objectid) values (155, 5, 24);
+
+insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'eart', 23);
+insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'eart_admin', 23);
+
+
+insert into Assignment(userid, role, startdate) values ((select id from User where name='eart_admin'), 51, CURRENT_DATE);
+insert into Assignment(userid, role, startdate) values ((select id from User where name='eart'), 54, CURRENT_DATE);
+insert into Assignment(userid, role, startdate) values ((select id from User where name='eart_user'), 54, CURRENT_DATE);
+
+
+insert into Policy (role, objectType, action, startDate) values (54,(select id from Catalog where code ='Suche LK'),71, CURRENT_DATE);
 
 
 

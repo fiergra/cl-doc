@@ -89,6 +89,10 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 		});
 	}
 
+	public void refresh() {
+		retrieve(getText());
+	}
+	
 	protected void retrieve(String value) {
 		listRetrievalService.retrieve(value, new DefaultCallback<List<T>>(clDoc, "retrieve") {
 

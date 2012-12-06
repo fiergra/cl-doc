@@ -17,7 +17,9 @@ public class EntityFile <T extends Entity> extends LayoutPanel {
 		this.entity = entity;
 		add(header);
 		setWidgetLeftWidth(header, 220, Unit.PX, 100, Unit.PCT);
-		TabLayoutPanel tab = new ConfiguredTabPanel<T>(clDoc, config, entity);
+//		TabLayoutPanel tab = new ConfiguredTabPanel<T>(clDoc, config, entity);
+		TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM);
+		tab.add(new HistoryView(clDoc, entity, tab), "Formulare");
 		tab.addStyleName("personalFile");
 		add(tab);
 	}

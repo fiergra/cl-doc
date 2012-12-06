@@ -9,24 +9,25 @@ public class LayoutDefinition implements Serializable {
 
 	public static final int FORM_LAYOUT = 1;
 	public static final int PRINT_LAYOUT = 2;
-	public static final int MASTER_DATA_LAYOUT = 3;
+//	public static final int MASTER_DATA_LAYOUT = 3;
 
 	public Long id;
-	public String name;
 	public String xmlLayout;
 	public Date validTo;
 	public int type;
+
+	public ActClass actClass;
+
+	public LayoutDefinition(){}
 	
-	private LayoutDefinition(){}
-
-	public LayoutDefinition(int type, String name, String xmlLayout) {
-		this(null, type, name, xmlLayout);
-	}
-
-	public LayoutDefinition(Long id, int type, String name, String xmlLayout) {
+	public LayoutDefinition(ActClass actClass, int type, String xmlLayout) {
+		this(null, actClass, type, xmlLayout);
+	}	
+	
+	public LayoutDefinition(Long id, ActClass actClass, int type, String xmlLayout) {
 		this.id = id;
 		this.type = type;
-		this.name = name;
+		this.actClass = actClass;
 		this.xmlLayout = xmlLayout;
 	}
 }

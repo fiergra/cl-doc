@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -23,15 +24,14 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	}
 
 	@Override
-	public void listClassNames(Session session, String filter,
-			AsyncCallback<List<String>> callback) {
-		SRV.configurationService.listClassNames(session, filter, callback);
+	public void listClasses(Session session, String filter,
+			AsyncCallback<List<ActClass>> callback) {
+		SRV.configurationService.listClasses(session, filter, callback);
 	}
 
 	@Override
-	public void saveLayoutDefinition(Session session, int type, String className,
-			String xmlLayoutDesc, AsyncCallback<Void> callback) {
-		SRV.configurationService.saveLayoutDefinition(session, type, className, xmlLayoutDesc, callback);
+	public void saveLayoutDefinition(Session session, LayoutDefinition ld, AsyncCallback<LayoutDefinition> callback) {
+		SRV.configurationService.saveLayoutDefinition(session, ld, callback);
 	}
 
 	private final HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
@@ -86,7 +86,13 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 
 				@Override
 				public void onSuccess(List<Catalog> result) {
-					catalogsByParentCode.put(parentCode, result);
+					if (result != null) {
+						for (Catalog c:result) {
+							catalogByCode.put(c.parent != null ? c.parent.code + "." + c.code : c.code, c);
+							catalogById.put(c.id, c);
+						}
+						catalogsByParentCode.put(parentCode, result);
+					}
 					callback.onSuccess(result);
 				}
 			});
@@ -202,8 +208,8 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	}
 
 	@Override
-	public void listLayoutDefinitions(Session session, int typeId, AsyncCallback<List<LayoutDefinition>> defaultCallback) {
-		SRV.configurationService.listLayoutDefinitions(session, typeId, defaultCallback);
+	public void listLayoutDefinitions(Session session, int typeId, Long entityType, Boolean isSingleton, AsyncCallback<List<LayoutDefinition>> defaultCallback) {
+		SRV.configurationService.listLayoutDefinitions(session, typeId, entityType, isSingleton, defaultCallback);
 	}
 
 }

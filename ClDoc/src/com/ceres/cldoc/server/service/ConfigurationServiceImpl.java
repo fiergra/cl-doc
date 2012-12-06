@@ -18,6 +18,7 @@ import com.ceres.cldoc.IReportService;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.ConfigurationService;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -86,9 +87,9 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<String> listClassNames(Session session, String filter) {
+	public List<ActClass> listClasses(Session session, String filter) {
 		IActService actService = Locator.getActService();
-		return actService.listClassNames(session, filter);
+		return actService.listClasses(session, filter);
 	}
 
 //	@Override
@@ -98,10 +99,10 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 //	}
 
 	@Override
-	public void saveLayoutDefinition(Session session, int type, String formClass, String xmlLayout) {
+	public LayoutDefinition saveLayoutDefinition(Session session, LayoutDefinition ld) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
-		LayoutDefinition ld = new LayoutDefinition(type, formClass, xmlLayout);
 		lds.save(session, ld);
+		return ld;
 	}
 
 	@Override
@@ -111,9 +112,9 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<LayoutDefinition> listLayoutDefinitions(Session session, int typeId) {
+	public List<LayoutDefinition> listLayoutDefinitions(Session session, int typeId, Long entityType, Boolean isSingleton) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
-		return lds.listLayoutDefinitions(session, null, typeId);
+		return lds.listLayoutDefinitions(session, null, typeId, entityType, isSingleton);
 	}
 	
 	@Override

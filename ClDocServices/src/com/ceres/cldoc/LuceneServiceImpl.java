@@ -1,7 +1,13 @@
 package com.ceres.cldoc;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -54,18 +60,30 @@ public class LuceneServiceImpl implements ILuceneService {
 		w.deleteAll();
 		w.close();
 	}
+
+	private byte[] serialize(Entity e) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream sout = new ObjectOutputStream(out);
+		sout.writeObject(e);
+
+		return out.toByteArray();
+	}
 	
 	@Override
-	public void addToIndex(Entity entity, Act masterData) throws CorruptIndexException, LockObtainFailedException, IOException {
-	    if (entity.id != null) {
+	public void addToIndex(Entity entity, Act masterData) throws CorruptIndexException, LockObtainFailedException, IOException, ClassNotFoundException, ParseException {
+	    if (entity.id != null && masterData.fields != null && !masterData.fields.isEmpty()) {
 			IndexWriter w = getIndexWriter();
-		    Document doc = new Document();
-		    StringBuffer content = new StringBuffer(entity.getName());
+			// todo: update instead of delete
+			w.deleteDocuments(query("id", String.valueOf(entity.id)));
+			StringBuffer content = new StringBuffer(entity.getName());
 		    Iterator<Entry<String, IActField>> fieldsIter = masterData.fields.entrySet().iterator();
-		    
+
+		    Document doc = new Document();
 			doc.add(new Field("id", String.valueOf(entity.id), Field.Store.YES, Field.Index.ANALYZED));
 			doc.add(new Field("name", entity.getName(), Field.Store.YES, Field.Index.ANALYZED));
-		    while (fieldsIter.hasNext()) {
+			doc.add(new Field("entity", serialize(entity)));
+			
+			while (fieldsIter.hasNext()) {
 		    	Entry<String, IActField> next = fieldsIter.next();
 		    	IActField field = next.getValue();
 		    	if (field.getType() == IActField.FT_STRING && field.getStringValue() != null) {
@@ -76,35 +94,59 @@ public class LuceneServiceImpl implements ILuceneService {
 			doc.add(new Field("content", content.toString(), Field.Store.NO, Field.Index.ANALYZED));
 		    w.addDocument(doc);
 		    w.close();
-	    }
+    	}
 	}
 	
 
+	private Entity getEntity(Document d) throws IOException, ClassNotFoundException {
+	      InputStream in = new ByteArrayInputStream(d.getFieldable("entity").getBinaryValue());
+	      ObjectInputStream oin = new ObjectInputStream(in);
+	      Entity e = (Entity) oin.readObject();
+	      
+	      return e;
+	}
+	
 	@Override
-	public List<Entity> retrieve(String criteria) throws CorruptIndexException, IOException, ParseException {
-		Query q = new QueryParser(Version.LUCENE_36, "content", analyzer).parse(criteria);
+	public List<Entity> retrieve(String criteria) throws CorruptIndexException, IOException, ParseException, ClassNotFoundException {
+	    IndexSearcher searcher = new IndexSearcher(getIndexReader());
+		ScoreDoc[] hits = search(searcher, criteria);
+		List<Entity> result = new ArrayList<Entity>(hits.length);
 
-	    // 3. search
-	    int hitsPerPage = 10;
-	    IndexReader reader = IndexReader.open(getIndex());
-	    IndexSearcher searcher = new IndexSearcher(reader);
-	    TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
-	    searcher.search(q, collector);
-	    ScoreDoc[] hits = collector.topDocs().scoreDocs;
-	    
-	    // 4. display results
-	    System.out.println("Found " + hits.length + " hits.");
-	    for(int i=0;i<hits.length;++i) {
+		for(int i = 0; i < hits.length; ++i) {
 	      int docId = hits[i].doc;
 	      Document d = searcher.doc(docId);
-	      System.out.println((i + 1) + ". " + d.get("name"));
+//		  HashMap<String, Object> record = new HashMap<String, Object>();
+//	      for (Fieldable f:d.getFields()) {
+//	    	  if (f instanceof Field) {
+//	    		  Field field = (Field)f;
+//	    		  record.put(field.name(), field.stringValue());
+//	    	  }
+//	      }
+	      result.add(getEntity(d));
 	    }
 
 	    // searcher can only be closed when there
 	    // is no need to access the documents any more. 
 	    searcher.close();		
 		
-		return null;
+		return result;
+	}
+
+	private Query query(String fieldName, String criteria) throws ParseException {
+		return new QueryParser(Version.LUCENE_36, fieldName, analyzer).parse(criteria);
+	}
+	
+	private ScoreDoc[] search(IndexSearcher searcher, String criteria) throws CorruptIndexException, IOException, ParseException, ClassNotFoundException {
+		Query q = query("content", criteria);
+	    int hitsPerPage = 10;
+	    TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
+	    searcher.search(q, collector);
+	    ScoreDoc[] hits = collector.topDocs().scoreDocs;
+	    return hits;
+	}	    
+
+	private IndexReader getIndexReader() throws CorruptIndexException, IOException {
+		return IndexReader.open(getIndex());
 	}
 
 	private Directory getIndex() throws IOException {

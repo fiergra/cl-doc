@@ -13,7 +13,7 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 	
 	private List<Catalog> catalogs;
 	private Catalog selected;
-	private boolean isMandatory = false;
+	private final boolean isMandatory = false;
 	private Catalog emptyRecord;
 
 	public CatalogListBox(ClDoc clDoc, String parentCode) {
@@ -26,6 +26,7 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 				
 				if (!isMandatory) {
 					emptyRecord = new Catalog();
+					emptyRecord.id = -1l;
 					emptyRecord.code = "";
 					emptyRecord.shortText = "---";
 					emptyRecord.text = "---";
@@ -74,6 +75,28 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 		return found;
 	}
 
+	public boolean setSelected(Long id) {
+		boolean found = false;
+		
+		if (catalogs != null) {
+			Iterator<Catalog> i = catalogs.iterator();
+			int index = 0;
+			
+			while (!found && i.hasNext()) {
+				if (i.next().id.equals(id)) {
+					found = true;
+				} else {
+					index++;
+				}
+			}
+			
+			if (found) {
+				setSelectedIndex(index);
+			}
+		}
+		return found;
+	}
+
 	@Override
 	public Catalog getSelected() {
 		int index = getSelectedIndex();
@@ -81,4 +104,6 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 		
 		return selected != null && !selected.equals(emptyRecord) ? selected : null;
 	}
+
+
 }

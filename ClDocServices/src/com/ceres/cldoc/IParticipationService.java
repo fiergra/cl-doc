@@ -1,11 +1,12 @@
 package com.ceres.cldoc;
 
-import java.util.Collection;
+import java.util.HashMap;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Participation;
 
 public interface IParticipationService {
 	void save(Session session, Participation participation);
-	Collection<Participation> load(Session session, Act act);
+	HashMap<Long, Participation> load(Session session, Act act);
+	void delete(Session session, long actId, long roleId);
 }
