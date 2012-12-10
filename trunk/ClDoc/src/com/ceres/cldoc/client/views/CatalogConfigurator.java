@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
@@ -171,7 +172,7 @@ public class CatalogConfigurator extends DockLayoutPanel {
 		};
 
 		SplitLayoutPanel mainSplit = new SplitLayoutPanel();
-		mainSplit.addWest(tree, 300);
+		mainSplit.addWest(new ScrollPanel(tree), 300);
 		mainSplit.add(childGrid);
 		refreshTree(tree);
 		

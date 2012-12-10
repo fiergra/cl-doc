@@ -127,7 +127,6 @@ public class AssignmentsPanel extends DockLayoutPanel {
 			}}.show();
 	}
 	
-	private PopupPanel popup;
 	private Catalog selected = null;
 	
 	private void addRole(final User user) {
@@ -139,10 +138,10 @@ public class AssignmentsPanel extends DockLayoutPanel {
 			}
 		};
 
-		OnClick<Catalog> onSave = new OnClick<Catalog>() {
+		OnClick<PopupPanel> onSave = new OnClick<PopupPanel>() {
 			
 			@Override
-			public void onClick(Catalog role) {
+			public void onClick(final PopupPanel popup) {
 				if (selected != null) {
 					SRV.userService.addRole(clDoc.getSession(), user, selected, new DefaultCallback<Void>(clDoc, ""){
 
@@ -154,16 +153,9 @@ public class AssignmentsPanel extends DockLayoutPanel {
 				}
 			}
 		};
-		OnClick<Catalog> onCancel = new OnClick<Catalog>() {
-			
-			@Override
-			public void onClick(Catalog role) {
-				popup.hide();
-			}
-		};
 		Widget content = new CatalogSelectionTree(clDoc, onSelect, "ROLES");
 		content.setPixelSize(400, 300);
-		popup = PopupManager.showModal((Catalog)null, "Rolle hinzufuegen", content, onSave , null, onCancel );
+		PopupManager.showModal("Rolle hinzufuegen", content, onSave , null);
 		
 	}
 }

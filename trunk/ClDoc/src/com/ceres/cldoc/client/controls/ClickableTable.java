@@ -1,5 +1,6 @@
 package com.ceres.cldoc.client.controls;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
@@ -25,6 +26,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 	private final ClDoc clDoc;
 	private final FlexTable table;
 	private List<T> list;
+	private List<T> displayList;
 	private HorizontalPanel buttonsPanel;
 	private ListRetrievalService<T> listRetrieval;
 	
@@ -80,7 +82,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				Cell cell = table.getCellForEvent(event);
-				T entry = list.get(cell.getRowIndex());
+				T entry = displayList.get(cell.getRowIndex());
 
 				onClick.onClick(entry);
 			}
@@ -95,6 +97,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 			@Override
 			public void onSuccess(List<T> result) {
 				list = result;
+				displayList = new ArrayList<T>();
 				update();
 			}
 		});
@@ -108,6 +111,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 		rf.addStyleName(row, "resultTable");
 		for (T entry:list) {
 			if (addRow(table, row, entry)) {
+				displayList.add(entry);
 				rf.addStyleName(row, "resultRow");
 				if (row % 2 == 0) {
 					rf.addStyleName(row, "evenRow");

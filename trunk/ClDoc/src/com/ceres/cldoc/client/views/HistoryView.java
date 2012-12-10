@@ -50,6 +50,7 @@ public class HistoryView extends DockLayoutPanel {
 			}
 		}, new OnClick<Act>() {
 
+			
 			@Override
 			public void onClick(final Act act) {
 				SRV.actService.findById(clDoc.getSession(), act.id, new DefaultCallback<Act>(clDoc, "load act"){

@@ -9,10 +9,12 @@ import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ERTree;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
+import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
@@ -28,8 +30,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class EntityConfigurator extends DockLayoutPanel {
 
@@ -227,6 +231,60 @@ public class EntityConfigurator extends DockLayoutPanel {
 	private void createMasterData(final ClDoc clDoc,
 			final ClickableTable<Entity> entityTable,
 			final Catalog type, Entity selectedEntity) {
+
+		if (selectedEntity == null) {
+			final Entity entity = createNewEntity(type);
+	
+			SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, type.id, true, new DefaultCallback<List<LayoutDefinition>>(clDoc, "list masterdata layouts") {
+	
+				@Override
+				public void onSuccess(List<LayoutDefinition> result) {
+					if (result != null && !result.isEmpty()) {
+						if (result.size() == 1) {
+							LayoutDefinition ld = result.get(0);
+							final Act act = new Act(ld.actClass);
+							IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
+							OnClick<PopupPanel> onClickSave = new OnClick<PopupPanel>() {
+
+								@Override
+								public void onClick(final PopupPanel popup) {
+									entity.setName(act.getString("name"));
+									SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
+
+										@Override
+										public void onSuccess(Entity e) {
+											act.setParticipant(e, Participation.PROTAGONIST);
+											SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "saveAct") {
+
+												@Override
+												public void onSuccess(Act result) {
+													popup.hide();
+													entityTable.refresh();
+												}
+											});
+										}
+									});
+								}
+							};
+							PopupManager.showModal("neu(e) " + type.shortText, ar, onClickSave, null); 
+						} else {
+							TabLayoutPanel tlp = new TabLayoutPanel(2.5, Unit.EM);
+							for (LayoutDefinition ld:result) {
+								final Act act = new Act(ld.actClass);
+								IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
+								tlp.add(ar, ld.actClass.name);
+							}
+							PopupManager.showModal("neu(e) " + type.shortText, tlp, null, null); 
+						}
+					} else {
+						new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + type.shortText + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
+					}
+				}
+			});
+		} else {
+	//		entity = selectedEntity;
+		}
+		
 		
 //		final Act model = new Act(type.code);
 //		final Entity entity;
