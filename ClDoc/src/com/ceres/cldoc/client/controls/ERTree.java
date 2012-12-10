@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ERTree extends ClickableTree<EntityRelation> {
 	private Entity entity;
 	private boolean asSubject = false;
-	private final OnClick<EntityRelation> onDoubleClick;
 	
 	public ERTree(final ClDoc clDoc,
 			OnClick<EntityRelation> onClick, 
@@ -43,7 +42,6 @@ public class ERTree extends ClickableTree<EntityRelation> {
 			}
 		});
 		setOnClick(onClick);
-		this.onDoubleClick = onDoubleClick;
 	}
 
 	@Override
@@ -141,8 +139,6 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		return hp;
 	}
 
-	private PopupPanel popup;
-	
 	protected void deleteRelation(EntityRelation er) {
 		SRV.entityService.delete(clDoc.getSession(), entity, new DefaultCallback<Void>(clDoc, "delete ER") {
 
@@ -230,11 +226,11 @@ public class ERTree extends ClickableTree<EntityRelation> {
 			content.setWidget(row, 1, new Label(entity.getName()));
 		}
 
-		popup = PopupManager.showModal(er, "Neue Beziehung", content, 
-				new OnClick<EntityRelation>() {
+		PopupManager.showModal("Neue Beziehung", content, 
+				new OnClick<PopupPanel>() {
 
 					@Override
-					public void onClick(EntityRelation er) {
+					public void onClick(final PopupPanel popup) {
 						if (cmbRelationTypes.getSelected() != null) {
 							er.type = cmbRelationTypes.getSelected();
 							SRV.entityService.save(clDoc.getSession(), er, new DefaultCallback<EntityRelation>(clDoc, "saveER") {
@@ -248,14 +244,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 						}
 					}
 				}, 
-				null, 
-				new OnClick<EntityRelation>() {
-
-					@Override
-					public void onClick(EntityRelation er) {
-						popup.hide();
-					}
-				});
+				null);
 		
 	}
 

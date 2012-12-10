@@ -74,16 +74,18 @@ public class DocServiceImpl implements IDocService {
 		Font boldFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 		Font italicFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.ITALIC);
 
-		Iterator<Entry<String, IActField>> iter = act.fields.entrySet()
-				.iterator();
-		while (iter.hasNext()) {
-			Entry<String, IActField> next = iter.next();
-			Paragraph paragraph = new Paragraph(next.getKey() + ": ", boldFont);
-			document.add(paragraph);
-			Paragraph paragraph2 = new Paragraph(next.getValue().toString(),
-					italicFont);
-			paragraph2.setIndentationLeft(72);
-			document.add(paragraph2);
+		if (act.fields != null) {
+			Iterator<Entry<String, IActField>> iter = act.fields.entrySet()
+					.iterator();
+			while (iter.hasNext()) {
+				Entry<String, IActField> next = iter.next();
+				Paragraph paragraph = new Paragraph(next.getKey() + ": ", boldFont);
+				document.add(paragraph);
+				Paragraph paragraph2 = new Paragraph(next.getValue().toString(),
+						italicFont);
+				paragraph2.setIndentationLeft(72);
+				document.add(paragraph2);
+			}
 		}
 	}
 
