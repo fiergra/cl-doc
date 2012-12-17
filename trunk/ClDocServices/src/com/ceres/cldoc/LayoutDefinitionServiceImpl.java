@@ -69,7 +69,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 				s.setInt(2, ld.type);
 				s.setString(3, ld.xmlLayout);
 				ld.id = Jdbc.exec(s);
-				log.info("inserted new layoutdef #" + ld.id);
+				log.info("inserted new layoutdef #" + ld.id + " '" + ld.actClass.name + "'.");
 				s.close();
 			}
 		});
@@ -225,7 +225,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 					db = factory.newDocumentBuilder();
 					Document doc = db.parse(new ByteArrayInputStream(xml.getBytes()));
 					Element document = doc.getDocumentElement();
-					document.setAttribute("classid", String.valueOf(actClass.id));
+//					document.setAttribute("classid", String.valueOf(actClass.id));
 					document.setAttribute("classname", actClass.name);
 					if (actClass.entityType != null) {
 						document.setAttribute("entitytype", String.valueOf(actClass.entityType));
@@ -284,7 +284,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 							read = zin.read(buffer);
 						}
 						String xml = new String(bOut.toByteArray(), "UTF-8");
-						log.info(name + ": " + xml);
+//						log.info(name + ": " + xml);
 						if (name.endsWith(".xml")) {
 							int type = -1;
 							if (name.startsWith("form/")) {
@@ -321,7 +321,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 					db = factory.newDocumentBuilder();
 					Document doc = db.parse(new ByteArrayInputStream(xml.getBytes()));
 					Element document = doc.getDocumentElement();
-					String id = document.hasAttribute("classid") ? document.getAttribute("classid") : null;
+					String id = null; //document.hasAttribute("classid") ? document.getAttribute("classid") : null;
 					String name = document.hasAttribute("classname") ? document.getAttribute("classname") : fileName;
 					String entityType = null;
 					if (document.hasAttribute("entitytype")) {
