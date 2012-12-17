@@ -313,6 +313,11 @@ public class ActServiceImpl implements IActService {
 			s.setBoolean(i++, actClass.isSingleton);
 			s.setLong(i++, actClass.id);
 			int rows = s.executeUpdate();
+			if (rows == 1) {
+				log.info("updated act class #" + actClass.id + " '" + actClass.name + "'");
+			} else {
+				log.severe("could not find act class '" + actClass.name + "' with id #" + actClass.id);
+			}
 			s.close();
 		}
 	}

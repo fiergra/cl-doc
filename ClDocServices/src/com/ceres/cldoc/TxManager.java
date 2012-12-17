@@ -26,12 +26,18 @@ public class TxManager {
 				if (dataSource instanceof MysqlConnectionPoolDataSource) {
 					MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
 					ds.setDatabaseName("ClDoc");
-					ds.setUser("root");
+					ds.setUser("ralph4");
 					ds.setPassword("sql4");
 					ds.setProfileSQL(false);
 					ds.setDumpMetadataOnColumnNotFound(true);
 					ds.setDumpQueriesOnException(true);
-					ds.getConnection().close();
+					try {
+						ds.getConnection().close();
+					} catch (SQLException x) {
+						ds.setUser("root");
+						ds.setPassword("sql4");
+						ds.getConnection().close();
+					}
 					dataSource = ds;
 				}
 				

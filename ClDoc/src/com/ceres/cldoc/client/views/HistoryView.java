@@ -65,31 +65,7 @@ public class HistoryView extends DockLayoutPanel {
 			@Override
 			public boolean addRow(FlexTable table, int row, final Act act) {
 				if (act.actClass.isSingleton) {
-					ActRenderer ar = getActRenderer(tab, act.actClass);
-					if (ar == null) {
-							SRV.configurationService.getLayoutDefinition(clDoc.getSession(), act.actClass.name, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "load layout definition") {
-
-									private ActRenderer ar;
-
-									@Override
-									public void onSuccess(LayoutDefinition result) {
-										ar = new ActRenderer(clDoc,
-												new OnOkHandler<Act>() {
-
-													@Override
-													public void onOk(Act result) {
-														if (result == null) {
-															tab.remove(ar);
-														}
-													}
-												}, null);
-										ar.setAct(result, act);
-										tab.add(ar, act.actClass.name);
-									}
-								});
-					} else {
-					ar.resetAct(act);
-					}
+					addMasterDataTab(act);
 				} else {
 					int column = 0;
 					String imgSource = ActClass.EXTERNAL_DOC.name.equals(act.actClass.name) ? 
@@ -105,21 +81,7 @@ public class HistoryView extends DockLayoutPanel {
 				return !act.actClass.isSingleton;
 			}
 
-			private ActRenderer getActRenderer(TabLayoutPanel tab, ActClass actClass) {
-				int i = 0;
-				ActRenderer ar = null;
-				while (i < tab.getWidgetCount()) {
-					Widget w = tab.getWidget(i);
-					if (w instanceof ActRenderer) {
-						Act act = ((ActRenderer)w).getAct();
-						if (act.actClass.name.equals(actClass.name)) {
-							ar = (ActRenderer)w;
-						}
-					}
-					i++;
-				}
-				return ar;
-			}};
+			};
 
 		historyPanel.getColumnFormatter().addStyleName(2, "hundertPercentWidth");
 		Image pbUpload = historyPanel.addButton("upload file", "icons/32/Button-Upload-icon.png", new ClickHandler() {
@@ -189,6 +151,56 @@ public class HistoryView extends DockLayoutPanel {
 		}
 	}
 	
+	private ActRenderer getActRenderer(TabLayoutPanel tab, ActClass actClass) {
+		int i = 0;
+		ActRenderer ar = null;
+		while (i < tab.getWidgetCount()) {
+			Widget w = tab.getWidget(i);
+			if (w instanceof ActRenderer) {
+				Act act = ((ActRenderer)w).getAct();
+				if (act.actClass.name.equals(actClass.name)) {
+					ar = (ActRenderer)w;
+				}
+			}
+			i++;
+		}
+		return ar;
+	}
+	
+	protected void addMasterDataTab(Act act) {
+		ActRenderer ar = getActRenderer(tab, act.actClass);
+		if (ar == null) {
+			SRV.actService.findById(clDoc.getSession(), act.id, new DefaultCallback<Act>(clDoc, "reload master data act") {
+
+				@Override
+				public void onSuccess(final Act reloaded) {
+					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), reloaded.actClass.name, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "load layout definition") {
+
+						private ActRenderer ar;
+
+						@Override
+						public void onSuccess(LayoutDefinition result) {
+							ar = new ActRenderer(clDoc,
+									new OnOkHandler<Act>() {
+
+										@Override
+										public void onOk(Act result) {
+											if (result == null) {
+												tab.remove(ar);
+											}
+										}
+									}, null);
+							ar.setAct(result, reloaded);
+							tab.add(ar, reloaded.actClass.name);
+						}
+					});
+				}
+			});
+		} else {
+		ar.resetAct(act);
+		}
+	}
+
 	public void setModel(Entity entity) {
 		e = entity;
 		refresh(null);
