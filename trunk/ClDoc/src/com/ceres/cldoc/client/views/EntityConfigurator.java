@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -114,7 +115,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.MASTERDATA.id, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
+						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.PROTAGONIST.id, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
 
 							@Override
 							public void onSuccess(List<Act> result) {
@@ -232,8 +233,9 @@ public class EntityConfigurator extends DockLayoutPanel {
 			final ClickableTable<Entity> entityTable,
 			final Catalog type, Entity selectedEntity) {
 
+		final Entity entity;
 		if (selectedEntity == null) {
-			final Entity entity = createNewEntity(type);
+			entity = createNewEntity(type);
 	
 			SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, type.id, true, new DefaultCallback<List<LayoutDefinition>>(clDoc, "list masterdata layouts") {
 	
@@ -269,12 +271,40 @@ public class EntityConfigurator extends DockLayoutPanel {
 							PopupManager.showModal("neu(e) " + type.shortText, ar, onClickSave, null); 
 						} else {
 							TabLayoutPanel tlp = new TabLayoutPanel(2.5, Unit.EM);
+							final Collection<Act> acts = new ArrayList<Act>();
 							for (LayoutDefinition ld:result) {
-								final Act act = new Act(ld.actClass);
+								Act act = new Act(ld.actClass);
+								acts.add(act);
 								IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
 								tlp.add(ar, ld.actClass.name);
 							}
-							PopupManager.showModal("neu(e) " + type.shortText, tlp, null, null); 
+							PopupManager.showModal("neu(e) " + type.shortText, tlp, new OnClick<PopupPanel>(){
+
+								@Override
+								public void onClick(final PopupPanel pp) {
+									SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
+
+										@Override
+										public void onSuccess(Entity e) {
+											for (Act act:acts) {
+												String name = act.getString("name");
+												if (name != null) {
+													entity.setName(name);
+												}
+												act.setParticipant(e, Participation.PROTAGONIST);
+											}
+											SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<Collection<Act>>(clDoc, "save masterdata" ) {
+
+												@Override
+												public void onSuccess(Collection<Act> result) {
+													pp.hide();
+													entityTable.refresh();
+												}
+											});
+										}
+									});
+									
+								}}, null); 
 						}
 					} else {
 						new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + type.shortText + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
@@ -282,7 +312,14 @@ public class EntityConfigurator extends DockLayoutPanel {
 				}
 			});
 		} else {
-	//		entity = selectedEntity;
+			entity = selectedEntity;
+			SRV.actService.findByEntity(clDoc.getSession(), entity, Participation.PROTAGONIST.id, new DefaultCallback<List<Act>>(clDoc, "load acts") {
+
+				@Override
+				public void onSuccess(List<Act> result) {
+//					editMasterDataActs(result);
+				}
+			});
 		}
 		
 		
@@ -300,6 +337,74 @@ public class EntityConfigurator extends DockLayoutPanel {
 		
 	}
 	
+	private void editMasterDataActs(ClDoc clDoc, List<Act> result) {
+//		SRV.configurationService.l
+		
+//		if (result.size() == 1) {
+//			final Act act = new Act(ld.actClass);
+//			IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
+//			OnClick<PopupPanel> onClickSave = new OnClick<PopupPanel>() {
+//
+//				@Override
+//				public void onClick(final PopupPanel popup) {
+//					entity.setName(act.getString("name"));
+//					SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
+//
+//						@Override
+//						public void onSuccess(Entity e) {
+//							act.setParticipant(e, Participation.PROTAGONIST);
+//							SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "saveAct") {
+//
+//								@Override
+//								public void onSuccess(Act result) {
+//									popup.hide();
+//									entityTable.refresh();
+//								}
+//							});
+//						}
+//					});
+//				}
+//			};
+//			PopupManager.showModal("neu(e) " + type.shortText, ar, onClickSave, null); 
+//		} else {
+//			TabLayoutPanel tlp = new TabLayoutPanel(2.5, Unit.EM);
+//			final Collection<Act> acts = new ArrayList<Act>();
+//			for (LayoutDefinition ld:result) {
+//				Act act = new Act(ld.actClass);
+//				acts.add(act);
+//				IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
+//				tlp.add(ar, ld.actClass.name);
+//			}
+//			PopupManager.showModal("neu(e) " + type.shortText, tlp, new OnClick<PopupPanel>(){
+//
+//				@Override
+//				public void onClick(final PopupPanel pp) {
+//					SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
+//
+//						@Override
+//						public void onSuccess(Entity e) {
+//							for (Act act:acts) {
+//								String name = act.getString("name");
+//								if (name != null) {
+//									entity.setName(name);
+//								}
+//								act.setParticipant(e, Participation.PROTAGONIST);
+//							}
+//							SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<Collection<Act>>(clDoc, "save masterdata" ) {
+//
+//								@Override
+//								public void onSuccess(Collection<Act> result) {
+//									pp.hide();
+//									entityTable.refresh();
+//								}
+//							});
+//						}
+//					});
+//					
+//				}}, null); 
+//		}
+	}
+
 	private Entity createNewEntity(Catalog type) {
 		Entity entity;
 		int t = type.id.intValue();

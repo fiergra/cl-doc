@@ -1,5 +1,6 @@
 package com.ceres.cldoc.client.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
@@ -18,6 +19,7 @@ public interface ActService extends RemoteService {
 	List<LogEntry> listRecent(Session session);
 	Act findById(Session session, long id);
 	Act save(Session session, Act act);
+	Collection<Act> save(Session session, Collection<Act> acts);
 	String print(Session session, Act act);
 	void delete(Session session, Act act);
 }

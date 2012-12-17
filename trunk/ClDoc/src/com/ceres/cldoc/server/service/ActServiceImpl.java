@@ -1,5 +1,6 @@
 package com.ceres.cldoc.server.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.ceres.cldoc.IActService;
@@ -68,6 +69,12 @@ public class ActServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public List<LogEntry> listRecent(Session session) {
 		return Locator.getLogService().listRecent(session);
+	}
+
+	@Override
+	public Collection<Act> save(Session session, Collection<Act> acts) {
+		getActService().save(session, acts);
+		return acts;
 	}
 
 }

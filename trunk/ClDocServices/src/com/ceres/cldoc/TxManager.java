@@ -22,24 +22,25 @@ public class TxManager {
 				Context initCtx = new InitialContext();
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				dataSource = (DataSource) envCtx.lookup("jdbc/ClDoc");
-				
-				if (dataSource instanceof MysqlConnectionPoolDataSource) {
-					MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
-					ds.setDatabaseName("ClDoc");
-					ds.setUser("ralph4");
-					ds.setPassword("sql4");
-					ds.setProfileSQL(false);
-					ds.setDumpMetadataOnColumnNotFound(true);
-					ds.setDumpQueriesOnException(true);
-					try {
-						ds.getConnection().close();
-					} catch (SQLException x) {
-						ds.setUser("root");
-						ds.setPassword("sql4");
-						ds.getConnection().close();
-					}
-					dataSource = ds;
-				}
+				dataSource.getConnection().close();
+//				
+//				if (dataSource instanceof MysqlConnectionPoolDataSource) {
+//					MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
+//					ds.setDatabaseName("ClDoc");
+//					ds.setUser("ralph4");
+//					ds.setPassword("sql4");
+//					ds.setProfileSQL(false);
+//					ds.setDumpMetadataOnColumnNotFound(true);
+//					ds.setDumpQueriesOnException(true);
+//					try {
+//						ds.getConnection().close();
+//					} catch (SQLException x) {
+//						ds.setUser("root");
+//						ds.setPassword("sql4");
+//						ds.getConnection().close();
+//					}
+//					dataSource = ds;
+//				}
 				
 				log.info("datasource resource found!");
 			} catch (Exception x) {

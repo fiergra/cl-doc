@@ -30,6 +30,14 @@ public class ActServiceImpl implements IActService {
 	private static Logger log = Logger.getLogger("GenericActService");
 
 	@Override
+	public void save(final Session session, final Collection<Act> acts) {
+		for (Act act:acts) {
+			save(session, act);
+		}
+	}
+	
+	
+	@Override
 	public void save(final Session session, final Act act) {
 		Act i = Jdbc.doTransactional(session, new ITransactional() {
 			

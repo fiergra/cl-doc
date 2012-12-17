@@ -17,12 +17,14 @@ public class LuceneServiceTest extends TransactionalTest {
 		entity.setName("TestEntity");
 		entity.type = Entity.ENTITY_TYPE_ORGANISATION; 
 				
-		Act masterData = new Act(new ActClass("TestEntity"));
+		ActClass ac = new ActClass("TestEntity");
+		ac.isSingleton = true;
+		Act masterData = new Act(ac);
 		masterData.set("feld1", "value1");
 		masterData.set("feld2", "wert2");
 
 		Locator.getEntityService().save(getSession(), entity);
-		masterData.setParticipant(entity, Participation.MASTERDATA, null, null);
+		masterData.setParticipant(entity, Participation.PROTAGONIST, null, null);
 		Locator.getActService().save(getSession(), masterData);
 		
 		ls.addToIndex(entity, masterData);
