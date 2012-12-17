@@ -2,6 +2,7 @@ package com.ceres.cldoc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 import com.ceres.cldoc.model.Act;
@@ -22,4 +23,5 @@ public interface IActService {
 	
 	CatalogList loadCatalogList(Session session, long listId);
 	void rebuildIndex(Session session);
+	void save(Session session, Collection<Act> acts);
 }

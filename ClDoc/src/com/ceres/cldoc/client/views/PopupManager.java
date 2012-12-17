@@ -1,5 +1,7 @@
 package com.ceres.cldoc.client.views;
 
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
+
 import com.ceres.cldoc.client.service.SRV;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -9,6 +11,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PopupManager {
@@ -47,6 +50,11 @@ public class PopupManager {
 		final PopupPanel popup = PopupManager.createPopup(title, vp, false);
 		HorizontalPanel buttons = addButtons(popup, onClickSave, onClickDelete);//, onClickCancel);
 		vp.add(buttons);
+		
+		int height = RootLayoutPanel.get().getOffsetHeight() - 120;
+		int width = RootLayoutPanel.get().getOffsetWidth() - 80;
+		content.asWidget().setPixelSize(width, height);
+		
 		popup.center();
 		return popup;
 	}
