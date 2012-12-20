@@ -2,8 +2,6 @@ package com.ceres.cldoc.client.controls;
 
 import java.util.List;
 
-import com.allen_sauer.gwt.dnd.client.drop.DropController;
-import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
@@ -60,11 +58,6 @@ public class XERTree extends Tree {
 		HTML html = new HTML(er.id + "|<b>" + er.type.shortText + "</b> - <i>" + (asSubject ? er.object.getName() : er.subject.getName()) + "</i>");
 		TreeItem ti = new TreeItem(html);
 
-		DropController dc = new SimpleDropController(html) {
-			
-		};
-		clDoc.getDragController().registerDropController(dc);
-		
 		ti.setUserObject(er);
 		return ti;
 	}
