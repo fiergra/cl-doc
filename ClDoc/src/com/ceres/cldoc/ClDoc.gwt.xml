@@ -16,7 +16,6 @@
   <!-- Other module inherits                                      -->
   <!-- Specify the app entry point class.                         -->
   <inherits name="com.google.gwt.xml.XML" />
-  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
   <entry-point class='com.ceres.cldoc.client.ClDoc'/>
 
   <!-- Specify the paths for translatable code                    -->
