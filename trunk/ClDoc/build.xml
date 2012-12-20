@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     ${date} ${time}                                                        
+
+     ${project}    
+     ${description}
+                   
+     ${user}                                                                
+     ====================================================================== -->
+<project name="${project}" default="${default}">
+
+	<!-- ================================= 
+          target: ${default}              
+         ================================= -->
+	<target name="${default}" depends="color_blue,war">
+    </target>
+
+	<target name="dkg" depends="color_green,war">
+    </target>
+
+	<target name="eart" depends="color_eart,war">
+    </target>
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: ${depends}                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="war" depends="compress">
+		<delete file="../../Tomcat6/ClDoc.war"></delete>
+		<war destfile="../../Tomcat6/ClDoc.war" basedir="war"></war>
+	</target>
+
+	<target name="compress">
+		<jar destfile="war/WEB-INF/lib/ClDocServices.jar" basedir="../ClDocServices/bin"></jar>
+	</target>
+	
+	<target name="color_blue">
+		<copy overwrite="true"  tofile="war/ClDoc.css" file="war/no-color.css"/>
+		<replace token="$COLOR_1" value="#CFE2FF" file="war/ClDoc.css"/>
+		<replace token="$COLOR_2" value="#77AEFF" file="war/ClDoc.css"/>
+		<replace token="$COLOR_WHITE" value="#FFF" file="war/ClDoc.css"/>
+	</target>
+
+	<target name="color_green">
+		<copy overwrite="true" tofile="war/ClDoc.css" file="war/no-color.css"/>
+		<replace token="$COLOR_1" value="#DEE7D6" file="war/ClDoc.css"/>
+		<replace token="$COLOR_2" value="#31A639" file="war/ClDoc.css"/>
+		<replace token="$COLOR_WHITE" value="#FAFAFA" file="war/ClDoc.css"/>
+	</target>
+
+	<target name="color_eart">
+		<copy overwrite="true" tofile="war/ClDoc.css" file="war/no-color.css"/>
+		<replace token="$COLOR_1" value="#9C9E9C" file="war/ClDoc.css"/>
+		<replace token="$COLOR_2" value="#B5CF00" file="war/ClDoc.css"/>
+		<replace token="$COLOR_WHITE" value="#FAFAFA" file="war/ClDoc.css"/>
+	</target>
+
+</project>
