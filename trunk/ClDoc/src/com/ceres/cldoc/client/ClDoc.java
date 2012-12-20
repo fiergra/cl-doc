@@ -2,7 +2,6 @@ package com.ceres.cldoc.client;
 
 import java.util.List;
 
-import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.ceres.cldoc.IUserService;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
@@ -24,7 +23,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -41,26 +39,6 @@ public class ClDoc implements EntryPoint {
 //	private final Label statusMessage = new Label();
 	private Session session;
 	private LogOutput logOutput;
-	private final PickupDragController dragController = new PickupDragController(RootPanel.get(), false) {
-
-		@Override
-		protected void restoreSelectedWidgetsLocation() {
-		}
-
-		@Override
-		protected void restoreSelectedWidgetsStyle() {
-		}
-
-		@Override
-		protected void saveSelectedWidgetsLocationAndStyle() {
-		}
-		
-	};
-	
-	public PickupDragController getDragController() {
-		return dragController;
-	}
-	
 	public Session getSession() {
 		return session;
 	}
