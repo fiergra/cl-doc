@@ -331,12 +331,12 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<Act> load(final Session session, final Entity entity, final Long roleId) {
+	public List<Act> load(final Session session, final Entity entity, final Long roleId, final boolean masterDataOnly) {
 		List<Act> acts = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public List<Act> execute(Connection con) throws SQLException {
-				return executeSelect(session, con, null, entity, roleId, null);
+				return executeSelect(session, con, null, entity, roleId, masterDataOnly ? Boolean.TRUE : null);
 			}
 		});
 		

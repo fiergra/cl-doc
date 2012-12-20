@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
-import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -32,8 +31,8 @@ public class EntityServiceImpl implements IEntityService {
 					insertEntity(con, entity);
 					if (entity instanceof Person) {
 						insertPerson(con, (Person) entity);
-					} else if (entity instanceof Organisation) {
-						insertOrganisation(con, (Organisation) entity);
+//					} else if (entity instanceof Organisation) {
+//						insertOrganisation(con, (Organisation) entity);
 					}
 				} else {
 					updateEntity(con, entity);
@@ -118,14 +117,14 @@ public class EntityServiceImpl implements IEntityService {
 		s.close();
 	}
 
-	private void insertOrganisation(Connection con, Organisation entity) throws SQLException {
-		PreparedStatement s = con.prepareStatement(
-				"insert into Organisation (id) values (?)");
-		s.setLong(1, entity.id);
-		s.execute();
-		s.close();
-	}
-
+//	private void insertOrganisation(Connection con, Organisation entity) throws SQLException {
+//		PreparedStatement s = con.prepareStatement(
+//				"insert into Organisation (id) values (?)");
+//		s.setLong(1, entity.id);
+//		s.execute();
+//		s.close();
+//	}
+//
 	private void insertPerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
@@ -218,10 +217,10 @@ public class EntityServiceImpl implements IEntityService {
 				Person p = fetchPerson(session, rs, prefix, entityId);
 				e = p;
 			break;
-			case Entity.ENTITY_TYPE_ORGANISATION: 
-				Organisation o = fetchOrganisation(rs, prefix, entityId);
-				e = o;
-			break;
+//			case Entity.ENTITY_TYPE_ORGANISATION: 
+//				Organisation o = fetchOrganisation(rs, prefix, entityId);
+//				e = o;
+//			break;
 			default:
 				e = new Entity();
 			}
@@ -249,7 +248,7 @@ public class EntityServiceImpl implements IEntityService {
 		List<Entity> result = new ArrayList<Entity>();
 		String sql = "select e.id entityId, e.name, e.type, pers.gender, pers.per_id, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, street, number, city, postcode, co from Entity e "
 				+ "left outer join Person pers on pers.id = e.id "
-				+ "left outer join Organisation orga on orga.id = e.id "
+//				+ "left outer join Organisation orga on orga.id = e.id "
 				+ "left outer join Address adr on adr.entity_id = e.id " 
 				+ "where 1=1 ";
 		
@@ -288,12 +287,12 @@ public class EntityServiceImpl implements IEntityService {
 		return result;
 	}
 
-	private Organisation fetchOrganisation(ResultSet rs, String prefix, long entityId) {
-		Organisation o = new Organisation();
-		o.id = entityId;
-		return o;
-	}
-
+//	private Organisation fetchOrganisation(ResultSet rs, String prefix, long entityId) {
+//		Organisation o = new Organisation();
+//		o.id = entityId;
+//		return o;
+//	}
+//
 	private Person fetchPerson(Session session, ResultSet rs, String prefix, long entityId) throws SQLException {
 		Person p = new Person();
 		long genderId = rs.getLong(prefix + "gender");
@@ -423,10 +422,10 @@ public class EntityServiceImpl implements IEntityService {
 						" from EntityRelation er" +
 						" inner join Entity subject on subjectID = subject.id" +
 						" left outer join Person subjectPers on subjectPers.id = subject.id" +
-						" left outer join Organisation subjectOrga on subjectOrga.id = subject.id" +
+//						" left outer join Organisation subjectOrga on subjectOrga.id = subject.id" +
 						" inner join Entity object on objectID = object.id" +
 						" left outer join Person objectPers on objectPers.id = object.id" +
-						" left outer join Organisation objectOrga on objectOrga.id = object.id" +
+//						" left outer join Organisation objectOrga on objectOrga.id = object.id" +
 						" inner join Catalog type on er.type = type.id" +
 						" where 1=1 ";
 				

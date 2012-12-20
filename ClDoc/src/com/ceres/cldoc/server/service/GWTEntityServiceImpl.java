@@ -69,7 +69,17 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 				s.setLong(1, entity.id);
 				s.execute();
 				s.close();
+				 
+				s = con.prepareStatement("delete from LogEntry where entityid = ?");
+				s.setLong(1, entity.id);
+				s.execute();
+				s.close();
 				
+				s = con.prepareStatement("delete from Person where id = ?");
+				s.setLong(1, entity.id);
+				s.execute();
+				s.close();
+						
 				s = con.prepareStatement("delete from Entity where id = ?");
 				s.setLong(1, entity.id);
 				s.execute();

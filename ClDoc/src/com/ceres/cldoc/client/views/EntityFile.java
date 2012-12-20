@@ -3,6 +3,7 @@ package com.ceres.cldoc.client.views;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.model.Entity;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -16,8 +17,7 @@ public class EntityFile <T extends Entity> extends LayoutPanel {
 		super();
 		this.entity = entity;
 		add(header);
-		setWidgetLeftWidth(header, 220, Unit.PX, 100, Unit.PCT);
-//		TabLayoutPanel tab = new ConfiguredTabPanel<T>(clDoc, config, entity);
+		setWidgetHorizontalPosition(header, Alignment.END);
 		TabLayoutPanel tab = new TabLayoutPanel(2.5, Unit.EM);
 		tab.add(new HistoryView(clDoc, entity, tab), "Formulare");
 		tab.addStyleName("personalFile");

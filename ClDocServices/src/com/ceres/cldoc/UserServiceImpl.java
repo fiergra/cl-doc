@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.Organisation;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.AccessControl;
@@ -29,7 +29,7 @@ public class UserServiceImpl implements IUserService {
 				IEntityService entityService = Locator.getEntityService();
 				User user = null;
 				String hash = Strings.hash(password);
-				String sql = "select * from User u inner join Organisation o on o.ID = ORGANISATION_ID " +
+				String sql = "select * from User u inner join Entity o on o.ID = ORGANISATION_ID " +
 						"where u.name = ? ";
 				if (hash == null) {
 					sql += " and hash is null";
@@ -60,7 +60,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public User register(final Session session, final Person person, final Organisation organisation, final String userName, final String password) {
+	public User register(final Session session, final Person person, final Entity organisation, final String userName, final String password) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -152,7 +152,7 @@ public class UserServiceImpl implements IUserService {
 					p.firstName = rs.getString("firstName");
 					p.lastName = rs.getString("lastName");
 					u.person = p;
-					Organisation o = new Organisation();
+					Entity o = new Entity();
 					o.id = rs.getLong("organisationId");
 					o.setName(rs.getString("name"));
 					o.type = rs.getInt("type");

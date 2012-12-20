@@ -16,7 +16,6 @@ import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.Organisation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -210,7 +209,7 @@ public class ClDoc implements EntryPoint {
 	}
 
 	private Image getSessionLogo(Session session) {
-		Organisation organisation = session.getUser().organisation;
+		Entity organisation = session.getUser().organisation;
 		Image logo = new Image("icons/" + organisation.getName() + ".png");
 		
 		return logo;
