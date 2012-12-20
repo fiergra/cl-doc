@@ -46,7 +46,7 @@ public class HistoryView extends DockLayoutPanel {
 
 			@Override
 			public void retrieve(String filter, AsyncCallback<List<Act>> callback) {
-				SRV.actService.findByEntity(clDoc.getSession(), e, Participation.PROTAGONIST.id,  callback);
+				SRV.actService.findByEntity(clDoc.getSession(), e, Participation.PROTAGONIST.id, false, callback);
 			}
 		}, new OnClick<Act>() {
 
@@ -191,6 +191,7 @@ public class HistoryView extends DockLayoutPanel {
 										}
 									}, null);
 							ar.setAct(result, reloaded);
+							
 							tab.add(ar, reloaded.actClass.name);
 						}
 					});

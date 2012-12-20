@@ -9,16 +9,18 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ERTree;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
+import com.ceres.cldoc.client.controls.PagesView;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -34,7 +36,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class EntityConfigurator extends DockLayoutPanel {
 
@@ -50,12 +51,13 @@ public class EntityConfigurator extends DockLayoutPanel {
 		setup(clDoc);
 	}
 
+	private ClickableTable<Entity> entityTable;
+
 	private void setup(final ClDoc clDoc) {
 		DockLayoutPanel listPanel = new DockLayoutPanel(Unit.EM);
 		DockLayoutPanel treePanel = new DockLayoutPanel(Unit.EM);
 		final ListBox cmbTypes = new ListBox();
 		final ArrayList<Catalog> entityTypes = new ArrayList<Catalog>();
-		final ClickableTable<Entity> entityTable;
 		
 		final ERTree etree = new ERTree(clDoc, 
 				new OnClick<EntityRelation>() {
@@ -115,24 +117,12 @@ public class EntityConfigurator extends DockLayoutPanel {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.PROTAGONIST.id, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
+						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.PROTAGONIST.id, true, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
 
 							@Override
-							public void onSuccess(List<Act> result) {
+							public void onSuccess(List<Act> masterData) {
 								Catalog type = getSelectedType(cmbTypes, entityTypes);
-								Act act = null;
-								Iterator<Act> iter = result.iterator();
-								while (iter.hasNext() && act == null) {
-									Act next = iter.next();
-									if (next.actClass.name.equals(type.code)) {
-										act = next;
-									}
-								}
-								if (act != null) {
-									editEntityMasterData(clDoc, null, act, entry);
-								} else {
-									createMasterData(clDoc, null, type, entry);
-								}
+								editOrCreateMasterData(clDoc, type, entry, masterData);
 							}
 						});
 					}
@@ -164,7 +154,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				createMasterData(clDoc, entityTable, getSelectedType(cmbTypes, entityTypes), null);
+				editOrCreateMasterData(clDoc, getSelectedType(cmbTypes, entityTypes), null, new ArrayList<Act>());
 			}
 
 		});
@@ -229,98 +219,143 @@ public class EntityConfigurator extends DockLayoutPanel {
 		return type;
 	}
 
-	private void createMasterData(final ClDoc clDoc,
-			final ClickableTable<Entity> entityTable,
-			final Catalog type, Entity selectedEntity) {
-
-		final Entity entity;
-		if (selectedEntity == null) {
-			entity = createNewEntity(type);
 	
+    private void createMasterDataEditor(final ClDoc clDoc, final Entity entity, final Collection<Act> masterData, List<LayoutDefinition> result, final Catalog entityType, final Runnable onSave) {
+		if (result != null && !result.isEmpty()) {
+
+//			if (result.size() == 1) {
+//				LayoutDefinition ld = result.get(0);
+//				final Act act = new Act(ld.actClass);
+//				final IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
+//				OnClick<PopupPanel> onClickSave = new OnClick<PopupPanel>() {
+//
+//					@Override
+//					public void onClick(final PopupPanel popup) {
+//						SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
+//
+//							@Override
+//							public void onSuccess(Entity e) {
+//								act.setParticipant(e, Participation.PROTAGONIST);
+//								SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "saveAct") {
+//
+//									@Override
+//									public void onSuccess(Act result) {
+//										popup.hide();
+//										onSave.run();
+//									}
+//								});
+//							}
+//						});
+//					}
+//				};
+//				PopupManager.showModal("neu(e) " + entityType.shortText, ar, onClickSave, null); 
+//			} else {
+				
+				final PagesView<Act> tlp = new PagesView<Act>(null);
+				final Collection<Act> acts = new ArrayList<Act>();
+				for (LayoutDefinition ld:result) {
+					Act act = getMasterDataAct(masterData, ld.actClass);
+					acts.add(act);
+					IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, new Runnable() {
+						
+						@Override
+						public void run() {
+							// something was modified...
+						}
+					});
+					tlp.addPage(ar, ld.actClass.name);
+				}
+				
+				PopupManager.showModal("neu(e) " + entityType.shortText, tlp, new OnClick<PopupPanel>(){
+
+					@Override
+					public void onClick(final PopupPanel pp) {
+						if (!setName(entity, masterData)) {
+							entity.setName("NO NAME");
+							GWT.log("missing field '" + Entity.DISPLAY_NAME + "' in masterdata forms.");
+						}
+						SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
+
+							@Override
+							public void onSuccess(Entity e) {
+								tlp.fromDialog();
+								for (Act act:acts) {
+									act.setParticipant(e, Participation.PROTAGONIST);
+								}
+								SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<Collection<Act>>(clDoc, "save masterdata" ) {
+
+									@Override
+									public void onSuccess(Collection<Act> result) {
+										pp.hide();
+										onSave.run();
+									}
+								});
+							}
+						});
+						
+					}}, null); 
+				tlp.toDialog();
+//			}
+		} else {
+			new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + entityType.shortText + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
+		}
+    	
+    }
+	
+    protected boolean setName(Entity entity, Collection<Act> masterData) {
+    	String name = null;
+    	boolean result = false;
+    	
+    	for (Act a:masterData) {
+    		if (a.getString(Entity.DISPLAY_NAME) != null) {
+    			if (name != null) {
+    				GWT.log("name already set: " + name + " - " + a.getString(Entity.DISPLAY_NAME));
+    			} else {
+    				entity.setName(a.getString(Entity.DISPLAY_NAME));
+    				result = true;
+    			}
+    		}
+    	}
+    	return result;
+	}
+
+	private Act getMasterDataAct(Collection<Act> masterData, ActClass actClass) {
+    	Act masterDataAct = null; 
+    	Iterator<Act> iter = masterData != null ? masterData.iterator() : null;
+    	
+    	while (iter != null && iter.hasNext() && masterDataAct == null) {
+    		Act next = iter.next();
+    		if (next.actClass.equals(actClass)) {
+    			masterDataAct = next;
+    		}
+    	}
+    	
+    	if (masterDataAct == null) {
+    		masterDataAct = new Act(actClass);
+    		masterData.add(masterDataAct);
+    	}
+    	
+		return masterDataAct;
+	}
+
+	private void editOrCreateMasterData(final ClDoc clDoc,
+			final Catalog type, final Entity selectedEntity, final List<Act> masterData) {
+
 			SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, type.id, true, new DefaultCallback<List<LayoutDefinition>>(clDoc, "list masterdata layouts") {
 	
 				@Override
-				public void onSuccess(List<LayoutDefinition> result) {
-					if (result != null && !result.isEmpty()) {
-						if (result.size() == 1) {
-							LayoutDefinition ld = result.get(0);
-							final Act act = new Act(ld.actClass);
-							IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
-							OnClick<PopupPanel> onClickSave = new OnClick<PopupPanel>() {
-
-								@Override
-								public void onClick(final PopupPanel popup) {
-									entity.setName(act.getString("name"));
-									SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
-
-										@Override
-										public void onSuccess(Entity e) {
-											act.setParticipant(e, Participation.PROTAGONIST);
-											SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "saveAct") {
-
-												@Override
-												public void onSuccess(Act result) {
-													popup.hide();
-													entityTable.refresh();
-												}
-											});
-										}
-									});
-								}
-							};
-							PopupManager.showModal("neu(e) " + type.shortText, ar, onClickSave, null); 
-						} else {
-							TabLayoutPanel tlp = new TabLayoutPanel(2.5, Unit.EM);
-							final Collection<Act> acts = new ArrayList<Act>();
-							for (LayoutDefinition ld:result) {
-								Act act = new Act(ld.actClass);
-								acts.add(act);
-								IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
-								tlp.add(ar, ld.actClass.name);
-							}
-							PopupManager.showModal("neu(e) " + type.shortText, tlp, new OnClick<PopupPanel>(){
-
-								@Override
-								public void onClick(final PopupPanel pp) {
-									SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
-
-										@Override
-										public void onSuccess(Entity e) {
-											for (Act act:acts) {
-												String name = act.getString("name");
-												if (name != null) {
-													entity.setName(name);
-												}
-												act.setParticipant(e, Participation.PROTAGONIST);
-											}
-											SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<Collection<Act>>(clDoc, "save masterdata" ) {
-
-												@Override
-												public void onSuccess(Collection<Act> result) {
-													pp.hide();
-													entityTable.refresh();
-												}
-											});
-										}
-									});
-									
-								}}, null); 
+				public void onSuccess(final List<LayoutDefinition> layoutDefinitions) {
+					final Runnable refresh = new Runnable() {
+						
+						@Override
+						public void run() {
+							entityTable.refresh();
 						}
-					} else {
-						new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + type.shortText + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
-					}
-				}
-			});
-		} else {
-			entity = selectedEntity;
-			SRV.actService.findByEntity(clDoc.getSession(), entity, Participation.PROTAGONIST.id, new DefaultCallback<List<Act>>(clDoc, "load acts") {
+					};
 
-				@Override
-				public void onSuccess(List<Act> result) {
-//					editMasterDataActs(result);
+					createMasterDataEditor(clDoc, selectedEntity == null ? createNewEntity(type) : selectedEntity, masterData, layoutDefinitions, type, refresh);
 				}
 			});
-		}
 		
 		
 //		final Act model = new Act(type.code);
@@ -337,74 +372,6 @@ public class EntityConfigurator extends DockLayoutPanel {
 		
 	}
 	
-	private void editMasterDataActs(ClDoc clDoc, List<Act> result) {
-//		SRV.configurationService.l
-		
-//		if (result.size() == 1) {
-//			final Act act = new Act(ld.actClass);
-//			IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
-//			OnClick<PopupPanel> onClickSave = new OnClick<PopupPanel>() {
-//
-//				@Override
-//				public void onClick(final PopupPanel popup) {
-//					entity.setName(act.getString("name"));
-//					SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
-//
-//						@Override
-//						public void onSuccess(Entity e) {
-//							act.setParticipant(e, Participation.PROTAGONIST);
-//							SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "saveAct") {
-//
-//								@Override
-//								public void onSuccess(Act result) {
-//									popup.hide();
-//									entityTable.refresh();
-//								}
-//							});
-//						}
-//					});
-//				}
-//			};
-//			PopupManager.showModal("neu(e) " + type.shortText, ar, onClickSave, null); 
-//		} else {
-//			TabLayoutPanel tlp = new TabLayoutPanel(2.5, Unit.EM);
-//			final Collection<Act> acts = new ArrayList<Act>();
-//			for (LayoutDefinition ld:result) {
-//				Act act = new Act(ld.actClass);
-//				acts.add(act);
-//				IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
-//				tlp.add(ar, ld.actClass.name);
-//			}
-//			PopupManager.showModal("neu(e) " + type.shortText, tlp, new OnClick<PopupPanel>(){
-//
-//				@Override
-//				public void onClick(final PopupPanel pp) {
-//					SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
-//
-//						@Override
-//						public void onSuccess(Entity e) {
-//							for (Act act:acts) {
-//								String name = act.getString("name");
-//								if (name != null) {
-//									entity.setName(name);
-//								}
-//								act.setParticipant(e, Participation.PROTAGONIST);
-//							}
-//							SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<Collection<Act>>(clDoc, "save masterdata" ) {
-//
-//								@Override
-//								public void onSuccess(Collection<Act> result) {
-//									pp.hide();
-//									entityTable.refresh();
-//								}
-//							});
-//						}
-//					});
-//					
-//				}}, null); 
-//		}
-	}
-
 	private Entity createNewEntity(Catalog type) {
 		Entity entity;
 		int t = type.id.intValue();
@@ -412,9 +379,9 @@ public class EntityConfigurator extends DockLayoutPanel {
 		case Entity.ENTITY_TYPE_PERSON:
 			entity = new Person();
 			break;
-		case Entity.ENTITY_TYPE_ORGANISATION:
-			entity = new Organisation();
-			break;
+//		case Entity.ENTITY_TYPE_ORGANISATION:
+//			entity = new Organisation();
+//			break;
 		default:
 			entity = new Entity();
 			entity.type = t;
@@ -422,87 +389,6 @@ public class EntityConfigurator extends DockLayoutPanel {
 		
 		return entity;
 	}
-
-	private void editEntityMasterData(
-			final ClDoc clDoc,
-			final ClickableTable<Entity> entityTable,
-			final Act model,
-			final Entity entity
-			) {
-		int et = new Long(entity.type).intValue();
-		switch (et) {
-		case Entity.ENTITY_TYPE_PERSON:
-			PersonEditor.editPerson(clDoc, (Person) entity);
-			break;
-		case Entity.ENTITY_TYPE_ORGANISATION:
-		default:
-			editGenericMasterData(clDoc, entityTable, model, entity);
-		}
-	}	
-	
-	private void editGenericMasterData(
-			final ClDoc clDoc,
-			final ClickableTable<Entity> entityTable,
-			final Act model,
-			final Entity entity
-			) {
-/*		
-		SRV.configurationService.getLayoutDefinition(clDoc.getSession(), model.actClass.name, LayoutDefinition.MASTER_DATA_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "loadLayout") {
-
-			@Override
-			public void onSuccess(LayoutDefinition result) {
-				final Form<Act> form = new Form<Act>(clDoc, model, null) {
-
-					@Override
-					protected void setup() {
-					}
-				};
-				
-				if (result != null) {
-					final TextBox txtName = new TextBox();
-					form.addLine("Anzeigename", txtName);
-					txtName.setText(entity.getName());
-					form.parseAndCreate(result.xmlLayout, false);
-					form.showModal("Neu", 
-						new OnClick<Act>() {
-
-							@Override
-							public void onClick(Act pp) {
-								form.fromDialog();
-								entity.setName(txtName.getText());
-								SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "saveEntity") {
-
-									@Override
-									public void onSuccess(Entity result) {
-										entity.id = result.id;
-										SRV.actService.save(clDoc.getSession(), model, new DefaultCallback<Act>(clDoc, "") {
-
-											@Override
-											public void onSuccess(Act result) {
-												if (entityTable != null) {
-													entityTable.refresh();
-												}
-											}
-										});
-									}
-								});
-							}
-						}, 
-						null, 
-						new OnClick<Act>() {
-
-						@Override
-						public void onClick(Act pp) {
-//							form.close();
-						}
-					});
-					form.toDialog();
-				} else {
-					new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + model.actClass.name + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
-				}
-			}
-		});
-*/	}
 	
 	
 	

@@ -102,20 +102,20 @@ CREATE TABLE IF NOT EXISTS Person(
     SNDX_LASTNAME VARCHAR(400)
 );
 
-CREATE TABLE IF NOT EXISTS Organisation(
+/*CREATE TABLE IF NOT EXISTS Organisation(
     Id INTEGER PRIMARY KEY NOT NULL,
     CONSTRAINT FK_Organisation_ENTITY FOREIGN KEY (Id)
         REFERENCES ENTITY (Id)
 );
-
+*/
 CREATE TABLE IF NOT EXISTS User(
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
     PERSON_ID INTEGER NOT NULL,
     CONSTRAINT FK_USER_PERSON FOREIGN KEY (PERSON_ID)
         REFERENCES PERSON (Id),
     ORGANISATION_ID INTEGER NOT NULL,
-    CONSTRAINT FK_USER_ORGANISATION FOREIGN KEY (ORGANISATION_ID)
-        REFERENCES ORGANISATION (Id),
+    CONSTRAINT FK_USER_ENTITY FOREIGN KEY (ORGANISATION_ID)
+        REFERENCES ENTITY (Id),
     NAME VARCHAR(400),
     HASH VARCHAR(400)
 );
@@ -365,10 +365,10 @@ insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME)
 values (6, 45680, 'Kypros', 'Kyprianou');
 
 insert into Entity (ID,TYPE,NAME) values (20, 182, 'CeRES');
-insert into Organisation (Id) values (20);
+/*insert into Organisation (Id) values (20);*/
 
 insert into Entity (ID,TYPE,NAME) values (25, 182, 'C.I.T');
-insert into Organisation (Id) values (25);
+/*insert into Organisation (Id) values (25);
 
 /* Ralph is member of CERES */
 insert into EntityRelation (type, subjectid, objectid) values (155, 1, 20);

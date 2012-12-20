@@ -19,14 +19,14 @@ insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME, DATEOFBIRTH)
 values (4, 45678, 'Carlita', 'Metzdorf-Klos', '1962-07-07');
 
 insert into Entity (ID,TYPE,NAME) values (21, 182, 'Krebsgesellschaft-Rheinland-Pfalz');
-insert into Organisation (Id) values (21);
+/*insert into Organisation (Id) values (21);*/
 
 insert into Entity (ID,TYPE,NAME) values (210, 182, 'Krebsgesellschaft-Trier');
-insert into Organisation (Id) values (210);
+/*insert into Organisation (Id) values (210);*/
 insert into Address(entity_id, street, number, postcode, city) values(210, 'Brotstr.', '22a', 54290, 'Trier');
 
 insert into Entity (ID,TYPE,NAME) values (211, 182, 'Krebsgesellschaft-Koblenz');
-insert into Organisation (Id) values (211);
+/*insert into Organisation (Id) values (211);*/
 insert into Address(entity_id, street, number, postcode, city) values(211, 'Hauptstr.', '45', 52239, 'Koblenz');
 
 /* DKG Trier is-part-of DKG RLP */
