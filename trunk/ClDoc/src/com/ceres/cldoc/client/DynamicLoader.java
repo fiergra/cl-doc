@@ -21,7 +21,7 @@ public class DynamicLoader {
 		
 		if (name.equals("Personen")) {
 			result = new Persons((ClDoc) model);
-		} else if (name.equals("Suche")) {
+		} else if (catalog.code.equals("SucheDKG") || catalog.code.equals("SucheEART")) {
 			result = new EntitySearch((ClDoc) model, catalog.number1);
 		} else if (name.equals("Configuration")) {
 			result = new Configurator((ClDoc) model);

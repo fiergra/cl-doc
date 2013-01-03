@@ -6,6 +6,8 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class PersonEditor extends Form <PersonWrapper> {
 
@@ -22,44 +24,40 @@ public class PersonEditor extends Form <PersonWrapper> {
 
 	@Override
 	protected void setup() {
-		addLine("id", "id", Form.DataTypes.FT_INTEGER, 5);
-		addLine(SRV.c.firstName(), "firstName", Form.DataTypes.FT_STRING, 50, true);
-		addLine(SRV.c.lastName(), "lastName", Form.DataTypes.FT_STRING, 50);
-		addLine(SRV.c.birthDate(), "dateOfBirth", Form.DataTypes.FT_DATE);
+		addLine("id", "id", Form.DataType.FT_INTEGER, 5);
+		addLine(SRV.c.firstName(), "firstName", Form.DataType.FT_STRING, 50, true);
+		addLine(SRV.c.lastName(), "lastName", Form.DataType.FT_STRING, 50);
+		addLine(SRV.c.birthDate(), "dateOfBirth", Form.DataType.FT_DATE);
 		HashMap<String, String> attributes = new HashMap<String, String>();
 		attributes.put("parent", "MASTERDATA.GENDER");
-		addLine(SRV.c.gender(), "gender", Form.DataTypes.FT_OPTION_SELECTION, attributes );
-		addLine(SRV.c.street(), "primaryAddress.street", Form.DataTypes.FT_STRING, 50);
-		addLine(SRV.c.no(), "primaryAddress.number", Form.DataTypes.FT_STRING, 3);
-		addLine(SRV.c.co(), "primaryAddress.co", Form.DataTypes.FT_STRING, 50);
-		addLine(SRV.c.postCode(), "primaryAddress.postCode", Form.DataTypes.FT_STRING, 6);
-		addLine(SRV.c.city(), "primaryAddress.city", Form.DataTypes.FT_STRING, 50);
+		addLine(SRV.c.gender(), "gender", Form.DataType.FT_OPTION_SELECTION, attributes );
+		addLine(SRV.c.street(), "primaryAddress.street", Form.DataType.FT_STRING, 50);
+		addLine(SRV.c.no(), "primaryAddress.number", Form.DataType.FT_STRING, 3);
+		addLine(SRV.c.co(), "primaryAddress.co", Form.DataType.FT_STRING, 50);
+		addLine("fon", "primaryAddress.phone", Form.DataType.FT_STRING, 50);
+		addLine("Bemerkung", "primaryAddress.note", Form.DataType.FT_TEXT, 400);
+		addLine(SRV.c.postCode(), "primaryAddress.postCode", Form.DataType.FT_STRING, 6);
+		addLine(SRV.c.city(), "primaryAddress.city", Form.DataType.FT_STRING, 50);
 	}
 
 	public static void editPerson(final ClDoc clDoc, final Person humanBeing) {
 		final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(humanBeing));
-		pe.showModal("PersonEditor", 
-		new OnClick<PersonWrapper>() {
+		final ScrollPanel sp = new ScrollPanel(pe);
+		PopupManager.showModal("PersonEditor", sp, 
+		new OnClick<PopupPanel>() {
 			
 			@Override
-			public void onClick(PersonWrapper v) {
-				pe.close();
+			public void onClick(final PopupPanel v) {
+				v.hide();
 				pe.savePerson(clDoc, humanBeing);
 			}
 		},
-		new OnClick<PersonWrapper>() {
+		new OnClick<PopupPanel>() {
 			
 			@Override
-			public void onClick(PersonWrapper v) {
-				pe.close();
+			public void onClick(PopupPanel v) {
+				v.hide();
 				pe.deletePerson(clDoc, humanBeing);
-			}
-		},
-		new OnClick<PersonWrapper>() {
-			
-			@Override
-			public void onClick(PersonWrapper v) {
-				pe.close();
 			}
 		}
 		);

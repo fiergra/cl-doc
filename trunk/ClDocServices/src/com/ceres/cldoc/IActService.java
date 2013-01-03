@@ -18,7 +18,7 @@ public interface IActService {
 			throws SQLException;
 	
 	List<ActClass> listClasses(Session session, String filter);
-	List<Act> load(Session session, Entity entity, Long roleId, boolean masterDataOnly);
+	List<Act> load(Session session, Entity entity, Long roleId);
 	void delete(Session session, Act act);
 	
 	CatalogList loadCatalogList(Session session, long listId);

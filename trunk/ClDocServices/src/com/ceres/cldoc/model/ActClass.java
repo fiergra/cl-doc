@@ -41,22 +41,5 @@ public class ActClass implements Serializable {
 		this.entityType = actClass.entityType;
 		this.isSingleton = actClass.isSingleton;
 	}
-
-
-
-	@Override
-	public boolean equals(Object obj) {
-		return obj != null && getClass().equals(getClass()) ? ((ActClass)obj).name.equals(name): super.equals(obj);
-	}
-
-
-
-	@Override
-	public String toString() {
-		return "#" + id + ":" + name;
-	}
-	
-	
-	
 	
 }

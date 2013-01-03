@@ -54,7 +54,7 @@ import com.google.gwt.xml.client.XMLParser;
 
 public class Form<T extends IAct> extends FlexTable implements IView<T>{
 
-	public enum DataTypes {
+	public enum DataType {
 		FT_STRING, FT_TEXT, FT_DATE, FT_ACTDATE, FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE, FT_SEPARATOR
 	};
 
@@ -86,10 +86,10 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 	private static class Field {
 		public String name;
 		public Widget widget;
-		public DataTypes dataType;
+		public DataType dataType;
 		public boolean isMandatory;
 
-		public Field(String name, Widget widget, DataTypes dataType, boolean isMandatory) {
+		public Field(String name, Widget widget, DataType dataType, boolean isMandatory) {
 			super();
 			this.name = name;
 			this.widget = widget;
@@ -416,7 +416,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		row++;
 	}
 
-	protected Widget addLine(String labelText, String fieldName, DataTypes dataType, int width, boolean focused) {
+	protected Widget addLine(String labelText, String fieldName, DataType dataType, int width, boolean focused) {
 		Widget w = addLine(labelText, fieldName, dataType, width);
 		if (w instanceof Focusable) {
 			((Focusable)w).setFocus(focused);
@@ -425,19 +425,19 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 	}
 
 	protected Widget addLine(String labelText, String fieldName,
-			DataTypes dataType, int width) {
+			DataType dataType, int width) {
 		Widget w = addLine(labelText, fieldName, dataType, null);
 //		w.setWidth(width + "em");
 		return w;
 	}
 
 	protected Widget addLine(String labelText, String fieldName,
-			DataTypes dataType) {
+			DataType dataType) {
 		return addLine(labelText, fieldName, dataType, null);
 	}
 
 	protected Widget addLine(String labelText, String fieldName,
-			DataTypes dataType, HashMap <String, String> attributes) {
+			DataType dataType, HashMap <String, String> attributes) {
 		Widget widget = createWidgetForType(dataType, attributes);
 		addLine(labelText, widget);
 		if (fieldName != null) {
@@ -446,7 +446,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		return widget;
 	}
 
-	private Widget createWidgetForType(DataTypes dataType, HashMap<String, String> attributes) {
+	protected Widget createWidgetForType(DataType dataType, HashMap<String, String> attributes) {
 		Widget w = null;
 
 		switch (dataType) {
@@ -701,7 +701,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 					for (int j=0; j < subChildren.getLength(); j++) {
 						Element sub = (Element) (subChildren.item(j) instanceof Element ? subChildren.item(j) : null);
 						if (sub != null) {
-							DataTypes dataType = getDataType(sub);
+							DataType dataType = getDataType(sub);
 							String subLabel = sub.getAttribute("label");
 							String subName = sub.getAttribute("name");
 							Label l = new Label(subLabel == null ? subName : subLabel);
@@ -803,46 +803,46 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		return pageContainer;
 	}
 
-	private DataTypes getDataType(Element sub) {
+	private DataType getDataType(Element sub) {
 		return getDataType(sub.getAttribute("type"));
 	}
 
-	private DataTypes getDataType(String type) {
-		DataTypes result = DataTypes.FT_UNDEF;
+	private DataType getDataType(String type) {
+		DataType result = DataType.FT_UNDEF;
 		
 		if (type != null) {
 			type = type.toLowerCase();
 	
 			if (type.equals("string")) {
-				result = DataTypes.FT_STRING;
+				result = DataType.FT_STRING;
 			} else if (type.equals("text")) {
-				result = DataTypes.FT_TEXT;
+				result = DataType.FT_TEXT;
 			} else if (type.equals("image")) {
-				result = DataTypes.FT_IMAGE;
+				result = DataType.FT_IMAGE;
 			} else if (type.equals("separator")) {
-				result = DataTypes.FT_SEPARATOR;
+				result = DataType.FT_SEPARATOR;
 			} else if (type.equals("date")) {
-				result = DataTypes.FT_DATE;
+				result = DataType.FT_DATE;
 			} else if (type.equals("actdate")) {
-				result = DataTypes.FT_ACTDATE;
+				result = DataType.FT_ACTDATE;
 			} else if (type.equals("integer")) {
-				result = DataTypes.FT_INTEGER;
+				result = DataType.FT_INTEGER;
 			} else if (type.equals("float")) {
-				result = DataTypes.FT_FLOAT;
+				result = DataType.FT_FLOAT;
 //				} else if (type.equals("time")) {
 //				result = DataTypes.FT_TIME;
 			} else if (type.equals("boolean")) {
-				result = DataTypes.FT_BOOLEAN;
+				result = DataType.FT_BOOLEAN;
 			} else if (type.equals("list")) {
-				result = DataTypes.FT_LIST_SELECTION;
+				result = DataType.FT_LIST_SELECTION;
 			} else if (type.equals("option")) {
-				result = DataTypes.FT_OPTION_SELECTION;
+				result = DataType.FT_OPTION_SELECTION;
 			} else if (type.equals("multiselect")) {
-				result = DataTypes.FT_MULTI_SELECTION;
+				result = DataType.FT_MULTI_SELECTION;
 			} else if (type.equals("participation")) {
-				result = DataTypes.FT_PARTICIPATION;
+				result = DataType.FT_PARTICIPATION;
 			} else if (type.equals("humanbeing")) {
-				result = DataTypes.FT_HUMANBEING;
+				result = DataType.FT_HUMANBEING;
 			}
 		}		
 		

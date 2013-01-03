@@ -40,6 +40,10 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 				humanBeing.getPrimaryAddress().co = (String)value;
 			} else if (fieldName.equals("primaryAddress.postCode")) {
 				humanBeing.getPrimaryAddress().postCode = (String)value;
+			} else if (fieldName.equals("primaryAddress.phone")) {
+				humanBeing.getPrimaryAddress().phone = (String)value;
+			} else if (fieldName.equals("primaryAddress.note")) {
+				humanBeing.getPrimaryAddress().note = (String)value;
 			}
 			return null;
 		}
@@ -66,6 +70,10 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 				return new ActField(fieldName, humanBeing.getPrimaryAddress().co);
 			} else if (fieldName.equals("primaryAddress.postCode")) {
 				return new ActField(fieldName, humanBeing.getPrimaryAddress().postCode);
+			} else if (fieldName.equals("primaryAddress.phone")) {
+				return new ActField(fieldName, humanBeing.getPrimaryAddress().phone);
+			} else if (fieldName.equals("primaryAddress.note")) {
+				return new ActField(fieldName, humanBeing.getPrimaryAddress().note);
 			} else {
 				return null;
 			}

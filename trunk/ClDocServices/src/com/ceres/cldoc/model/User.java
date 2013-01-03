@@ -10,7 +10,7 @@ public class User implements Serializable {
 	public String userName;
 	public String hash;
 	public Person person;
-	public Entity organisation;
+	public Organisation organisation;
 	public Set<Catalog> roles;
 	
 	public User() {

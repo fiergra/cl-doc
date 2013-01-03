@@ -13,6 +13,7 @@ import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
+import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 
 public class EntityServiceImplTest extends TransactionalTest {
@@ -22,11 +23,11 @@ public class EntityServiceImplTest extends TransactionalTest {
 		ICatalogService catalogService = Locator.getCatalogService();
 		IActService actService = Locator.getActService();
 		
-		List<Entity> Entitys = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
+		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
 		List<Person> persons = entityService.list(getSession(), Entity.ENTITY_TYPE_PERSON);
 
-		Iterator<Entity> oi = Entitys.iterator();
-		Entity p1 = oi.next();
+		Iterator<Organisation> oi = organisations.iterator();
+		Organisation p1 = oi.next();
 		Person p2 = persons.iterator().next();
 
 		Catalog rO = catalogService.load(getSession(), "ROLES.ORGANISATION");
@@ -45,15 +46,15 @@ public class EntityServiceImplTest extends TransactionalTest {
 	
 	public void testRelations() {
 		IEntityService entityService = Locator.getEntityService();
-		List<Entity> Entitys = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
+		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
 		List<Person> persons = entityService.list(getSession(), Entity.ENTITY_TYPE_PERSON);
 		
-		List<EntityRelation> relations = entityService.listRelations(getSession(), Entitys.get(0), true);
+		List<EntityRelation> relations = entityService.listRelations(getSession(), organisations.get(0), true);
 	}
 	
 	public void testSelectByType() {
 		IEntityService entityService = Locator.getEntityService();
-		List<Entity> Entitys = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
+		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
 		List<Person> persons = entityService.list(getSession(), Entity.ENTITY_TYPE_PERSON);
 		
 	}
@@ -93,7 +94,7 @@ public class EntityServiceImplTest extends TransactionalTest {
 		Person person = new Person();
 		person.firstName = "Heinz";
 		person.lastName = "Achmed";
-		Entity o = entityService.load(getSession(), 20);
+		Organisation o = entityService.load(getSession(), 20);
 		userService.register(getSession(), person, o, "heinz", "achmed");
 		session = userService.login(getSession(), "heinz", "achmed");
 		Assert.assertNotNull(session);
@@ -109,6 +110,8 @@ public class EntityServiceImplTest extends TransactionalTest {
 		a.co = "dritte Stiege";
 		a.postCode = "A1015";
 		a.city = "Wien";
+		a.phone = "+43445133";
+		a.note = "wasnsads";
 		
 		person.addAddress(a);
 		IEntityService entityService = Locator.getEntityService();
@@ -121,6 +124,9 @@ public class EntityServiceImplTest extends TransactionalTest {
 		
 		Assert.assertNotNull(person.addresses);
 		Assert.assertFalse(person.addresses.isEmpty());
+		Address aReloaded = person.addresses.get(0);
+		
+		assertEquals(a.note, aReloaded.note);
 	}
 
 }
