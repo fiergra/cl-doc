@@ -20,5 +20,5 @@ public interface ActServiceAsync {
 	void save(Session session, Collection<Act> acts, AsyncCallback<Collection<Act>> callback);
 	void print(Session session, Act act, AsyncCallback<String> callback);
 	void findById(Session session, long id, AsyncCallback<Act> callback);
-	void findByEntity(Session session, Entity entity, Long roleId, boolean masterDataOnly, AsyncCallback<List<Act>> callback);
+	void findByEntity(Session session, Entity entity, Long roleId, AsyncCallback<List<Act>> callback);
 }

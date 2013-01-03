@@ -2,7 +2,6 @@ package com.ceres.cldoc.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class Entity implements Serializable {
@@ -13,8 +12,6 @@ public class Entity implements Serializable {
 	public static final int ENTITY_TYPE_ROOM = 183;
 
 	public static final String DISPLAY_NAME = "name";
-	
-	public Collection<Act> masterData;
 
 	public Long id;
 

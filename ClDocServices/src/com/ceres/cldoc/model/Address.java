@@ -13,5 +13,7 @@ public class Address implements Serializable {
 	public String co;
 	public String city;
 	public String postCode;
+	public String phone;
+	public String note;
 	
 }
