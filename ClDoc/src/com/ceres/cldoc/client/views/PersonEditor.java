@@ -1,6 +1,8 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
@@ -8,41 +10,71 @@ import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class PersonEditor extends Form <PersonWrapper> {
 
 	private final OnClick<Person> onSave;
 
-	public PersonEditor(ClDoc clDoc, final PersonWrapper result, Runnable setModified, OnClick<Person> onSave) {
-		super(clDoc, result, setModified);
+	public PersonEditor(ClDoc clDoc, final PersonWrapper personWrapper, Runnable setModified, OnClick<Person> onSave) {
+		super(clDoc, personWrapper, setModified);
 		this.onSave = onSave;
 	}
 
-	public PersonEditor(ClDoc clDoc, final PersonWrapper result) {
-		this(clDoc, result, null, null);
+	public PersonEditor(ClDoc clDoc, final PersonWrapper personWrapper) {
+		this(clDoc, personWrapper, null, null);
 	}
 
 	@Override
 	protected void setup() {
-		addLine("id", "id", Form.DataType.FT_INTEGER, 5);
-		addLine(SRV.c.firstName(), "firstName", Form.DataType.FT_STRING, 50, true);
-		addLine(SRV.c.lastName(), "lastName", Form.DataType.FT_STRING, 50);
-		addLine(SRV.c.birthDate(), "dateOfBirth", Form.DataType.FT_DATE);
+		final Widget id = addLine("id", "id", Form.DataType.FT_INTEGER, 5);
+		
+		if (this.getModel().getLong("id").equals(0l)) {
+			SRV.humanBeingService.getUniqueId(getClDoc().getSession(), new DefaultCallback<Long>(getClDoc(), "get unique id") {
+
+				@Override
+				public void onSuccess(Long newId) {
+					((TextBox)id).setValue(String.valueOf(newId));
+				}
+			});
+		}
+		
 		HashMap<String, String> attributes = new HashMap<String, String>();
+		attributes.put("width", "20em");
+		List<LineDef> lineDefs = new ArrayList<LineDef>();
+		lineDefs.add(new LineDef("", "lastName", Form.DataType.FT_STRING, attributes));
+		lineDefs.add(new LineDef(SRV.c.firstName(), "firstName", Form.DataType.FT_STRING, attributes));
+		addWidgetsAndFields("Name", lineDefs);
+		
+		lineDefs.clear();
 		attributes.put("parent", "MASTERDATA.GENDER");
-		addLine(SRV.c.gender(), "gender", Form.DataType.FT_OPTION_SELECTION, attributes );
-		addLine(SRV.c.street(), "primaryAddress.street", Form.DataType.FT_STRING, 50);
-		addLine(SRV.c.no(), "primaryAddress.number", Form.DataType.FT_STRING, 3);
+		lineDefs.add(new LineDef("", "dateOfBirth", Form.DataType.FT_DATE));
+		lineDefs.add(new LineDef(SRV.c.gender(), "gender", Form.DataType.FT_OPTION_SELECTION, attributes));
+		addWidgetsAndFields(SRV.c.birthDate(), lineDefs);
+		
+		lineDefs.clear();
+		attributes.put("width", "50em");
+		lineDefs.add(new LineDef("", "primaryAddress.street", Form.DataType.FT_STRING, attributes));
+		lineDefs.add(new LineDef(SRV.c.no(), "primaryAddress.number", Form.DataType.FT_STRING));
+		addWidgetsAndFields(SRV.c.street(), lineDefs);
+
 		addLine(SRV.c.co(), "primaryAddress.co", Form.DataType.FT_STRING, 50);
 		addLine("fon", "primaryAddress.phone", Form.DataType.FT_STRING, 50);
-		addLine("Bemerkung", "primaryAddress.note", Form.DataType.FT_TEXT, 400);
-		addLine(SRV.c.postCode(), "primaryAddress.postCode", Form.DataType.FT_STRING, 6);
-		addLine(SRV.c.city(), "primaryAddress.city", Form.DataType.FT_STRING, 50);
+		addLine("Bemerkung", "primaryAddress.note", Form.DataType.FT_TEXT);
+
+		lineDefs.clear();
+		attributes.put("width", "50em");
+		lineDefs.add(new LineDef("", "primaryAddress.postCode", Form.DataType.FT_STRING));
+		lineDefs.add(new LineDef(SRV.c.city(), "primaryAddress.city", Form.DataType.FT_STRING, attributes));
+		addWidgetsAndFields(SRV.c.postCode(), lineDefs);
 	}
 
 	public static void editPerson(final ClDoc clDoc, final Person humanBeing) {
 		final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(humanBeing));
+		pe.setWidth("100%");
 		final ScrollPanel sp = new ScrollPanel(pe);
+		sp.addStyleName("docform");
 		PopupManager.showModal("PersonEditor", sp, 
 		new OnClick<PopupPanel>() {
 			
@@ -63,6 +95,7 @@ public class PersonEditor extends Form <PersonWrapper> {
 		);
 	}
 	private void savePerson(ClDoc clDoc, Person result) {
+		fromDialog();
 		SRV.humanBeingService.save(clDoc.getSession(), result, new DefaultCallback<Person>(clDoc, "save") {
 
 			@Override

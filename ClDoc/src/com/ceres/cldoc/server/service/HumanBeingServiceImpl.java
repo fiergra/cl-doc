@@ -46,4 +46,9 @@ public class HumanBeingServiceImpl extends RemoteServiceServlet implements
 		return getEntityService().load(session, filter, roleCode);
 	}
 
+	@Override
+	public Long getUniqueId(Session session) {
+		return getEntityService().getUniqueId(session);
+	}
+
 }

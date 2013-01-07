@@ -88,8 +88,8 @@ public class ClDoc implements EntryPoint {
 
 			@Override
 			protected void setup() {
-				addLine("Passwort", pwdField1);
-				addLine("Passwort Wiederholung", pwdField2);
+				addLabeledWidget("Passwort", pwdField1);
+				addLabeledWidget("Passwort Wiederholung", pwdField2);
 			}
 		};
 		

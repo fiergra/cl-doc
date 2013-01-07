@@ -16,4 +16,5 @@ public interface HumanBeingServiceAsync {
 	void save(Session session, Person person, AsyncCallback<Person> callback);
 	void findById(Session session, long id, AsyncCallback<Person> callback);
 	void findByAssignment(Session session, String criteria, String roleCode, AsyncCallback<List<Person>> callback);
+	void getUniqueId(Session session, AsyncCallback<Long> callback);
 }

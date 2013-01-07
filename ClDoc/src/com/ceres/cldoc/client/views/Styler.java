@@ -48,6 +48,9 @@ public class Styler extends DockLayoutPanel {
 		final DockLayoutPanel printLayoutPanel = new DockLayoutPanel(Unit.EM);
 //		final CheckBox cbMasterData = new CheckBox("Stammdaten");
 
+		formLayoutDescTextArea.addStyleName("sourceCode");
+		printLayoutPanel.addStyleName("sourceCode");
+		
 		final CheckBox cbSingleton = new CheckBox("Stammdaten");
 		final CatalogListBox lbEntityTypes = new CatalogListBox(clDoc, "MASTERDATA.EntityTypes");
 		

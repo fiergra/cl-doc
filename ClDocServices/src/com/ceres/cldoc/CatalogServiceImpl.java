@@ -83,8 +83,11 @@ public class CatalogServiceImpl implements ICatalogService {
 							catalog.id = null;
 							insert(con, catalog);
 						} else if (catalog.id == null) {
-							s = con.prepareStatement("select id from Catalog where code = ?");
+							s = con.prepareStatement("select id from Catalog where code = ? and parent " + (catalog.parent == null ? "is null" : "= ?"));
 							s.setString(1, catalog.code);
+							if (catalog.parent != null) {
+								s.setLong(2, catalog.parent.id);
+							}
 							ResultSet rs = s.executeQuery();
 							rs.next();
 							catalog.id = rs.getLong("id");
@@ -511,13 +514,21 @@ public class CatalogServiceImpl implements ICatalogService {
 		return child;
 	}
 	
+	private String getNodeText(Element catalogNode, String elementName) {
+		Element child = getChildByName(catalogNode, elementName); 
+		return child != null ? child.getTextContent() : null;
+	}
+	
 	private void importCatalog(Session session, Element catalogNode, Catalog parent) {
 		Catalog catalog = new Catalog();
 		catalog.parent = parent;
 		catalog.id = getLong(catalogNode.getAttributes(), "id");
+		if (catalog.id != null && catalog.id > 1000) {
+			catalog.id = null;
+		}
 		catalog.code = getString(catalogNode.getAttributes(), "code");
-		catalog.text = catalogNode.getElementsByTagName("text").item(0).getTextContent();
-		catalog.shortText = catalogNode.getElementsByTagName("shorttext").item(0).getTextContent();
+		catalog.text = getNodeText(catalogNode, "text");
+		catalog.shortText = getNodeText(catalogNode, "shorttext");
 		
 		Element child = getChildByName(catalogNode, "date"); 
 		if (child != null) {

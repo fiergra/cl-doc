@@ -55,10 +55,10 @@ public class ActServiceImpl implements IActService {
 				saveFields(session, con, act);
 				saveParticipations(session, act);
 				
-				if (act.actClass.isSingleton) {
-					Participation p = act.getParticipation(Participation.PROTAGONIST);
-					Locator.getLuceneService().addToIndex(p.entity, act);
-				}
+//				if (act.actClass.isSingleton) {
+//					Participation p = act.getParticipation(Participation.PROTAGONIST);
+//					Locator.getLuceneService().addToIndex(p.entity, act);
+//				}
 				
 				return act;
 			}
