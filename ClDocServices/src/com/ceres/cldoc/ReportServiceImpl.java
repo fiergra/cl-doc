@@ -3,6 +3,7 @@ package com.ceres.cldoc;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,11 +15,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import jxl.Workbook;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.IAct;
@@ -67,7 +77,11 @@ public class ReportServiceImpl implements IReportService {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public List<HashMap<String, Serializable>> execute(Connection con) throws SQLException {
+			public List<HashMap<String, Serializable>> execute(Connection con) throws Exception {
+				String query = getQuery(rd, filters);
+				
+				
+				
 				List<HashMap<String, Serializable>> result = new ArrayList<HashMap<String, Serializable>>();
 				PreparedStatement s;
 				
@@ -115,6 +129,21 @@ public class ReportServiceImpl implements IReportService {
 				return result ;
 			}
 		});
+	}
+
+	protected String getQuery(ReportDefinition reportDefinition, IAct filters) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db;
+
+		db = dbf.newDocumentBuilder();
+		Document document = db.parse(new InputSource(new StringReader(reportDefinition.xml)));
+		document.getDocumentElement().normalize();
+		NodeList params = document.getElementsByTagName("param");
+		NodeList queries = document.getElementsByTagName("query");
+
+		String query = queries.item(0).getTextContent();
+		
+		return query;
 	}
 
 	@Override

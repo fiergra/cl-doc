@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.client.views.Form.DataTypes;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.ReportDefinition;

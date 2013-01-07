@@ -807,7 +807,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		return getDataType(sub.getAttribute("type"));
 	}
 
-	private DataType getDataType(String type) {
+	DataType getDataType(String type) {
 		DataType result = DataType.FT_UNDEF;
 		
 		if (type != null) {
