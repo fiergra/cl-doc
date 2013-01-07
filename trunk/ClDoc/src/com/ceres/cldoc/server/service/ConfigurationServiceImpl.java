@@ -22,6 +22,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
@@ -202,8 +203,8 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public List<HashMap<String, Serializable>> executeReport(Session session,
-			ReportDefinition rd) {
-		return getReportService().execute(session, rd);
+			ReportDefinition rd, IAct filters) {
+		return getReportService().execute(session, rd, filters);
 	}
 
 }

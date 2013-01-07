@@ -10,6 +10,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
@@ -48,6 +49,6 @@ public interface ConfigurationService extends RemoteService {
 	
 	List<ReportDefinition> listReportDefinitions(Session session);
 	ReportDefinition loadReportDefinition(Session session, Catalog catalog);
-	List<HashMap<String, Serializable>> executeReport(Session session, ReportDefinition rd);
+	List<HashMap<String, Serializable>> executeReport(Session session, ReportDefinition rd, IAct filters);
 	
 }

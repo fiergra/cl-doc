@@ -58,7 +58,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 				HumanBeingListBox.this.role = result;
 			}
 		});
-		setSize("25em", "2em");
+//		setSize("25em", "2em");
 		addStyleName("humanBeingListBox");
 	}
 

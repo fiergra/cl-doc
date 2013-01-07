@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mortbay.log.Log;
+
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
@@ -46,7 +48,8 @@ public class DownloadServlet extends HttpServlet {
 				resp.setContentType("application/x-msexcel");
 				final String reportId = req.getParameter("id");
 				if (reportId != null) {
-					out = Locator.getReportService().exportXLS(session, Long.valueOf(reportId));
+					Log.warn("FILTERS ARE NOT YET SUPPORTED!!!");
+					out = Locator.getReportService().exportXLS(session, Long.valueOf(reportId), null);
 				}
 			} else if ("pdf".equals(type)) {
 				final String sid = req.getParameter("id");

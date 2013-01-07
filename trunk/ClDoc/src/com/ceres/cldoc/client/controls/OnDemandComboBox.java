@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.ToggleButton;
 
-public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySelector<T> {
+public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySelector<T> {
 
 	private final ListRetrievalService<T> listRetrievalService;
 	private final LabelFunction<T> labelFunction;
@@ -40,9 +40,10 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 			LabelFunction <T> labelFunxtion, 
 			OnDemandChangeListener<T>changeListener,
 			final Runnable onClick) {
-		super(Unit.EM);
+		super();
 		this.clDoc = clDoc;
-		setHeight("2em");
+//		setHeight("2em");
+		setVerticalAlignment(ALIGN_MIDDLE);
 		this.listRetrievalService = listRetrievalService;
 		this.labelFunction = labelFunxtion;
 		this.changeListener = changeListener;
@@ -73,8 +74,10 @@ public class OnDemandComboBox <T> extends DockLayoutPanel implements IEntitySele
 				}
 			});
 		}
-		addEast(hp, hp.getWidgetCount() * 2);
+//		addEast(hp, hp.getWidgetCount() * 2);
+		txtFilter.setWidth("100%");
 		add(txtFilter);
+		add(hp);
 		txtFilter.addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override

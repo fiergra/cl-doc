@@ -10,6 +10,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
@@ -196,9 +197,9 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	}
 
 	@Override
-	public void executeReport(Session session, ReportDefinition rd,
+	public void executeReport(Session session, ReportDefinition rd, IAct filters,
 			AsyncCallback<List<HashMap<String, Serializable>>> callback) {
-		SRV.configurationService.executeReport(session, rd, callback);
+		SRV.configurationService.executeReport(session, rd, filters, callback);
 	}
 
 	@Override

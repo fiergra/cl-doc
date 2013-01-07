@@ -17,7 +17,7 @@ public class ReportServiceTest extends TransactionalTest {
 
 	public void testExec() {
 		IReportService reportService = Locator.getReportService();
-		List<HashMap<String, Serializable>> result = reportService.execute(getSession(), null);
+		List<HashMap<String, Serializable>> result = reportService.execute(getSession(), null, null);
 		assertNotNull(result);
 		assertFalse(result.isEmpty());
 	}
