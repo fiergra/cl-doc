@@ -107,6 +107,7 @@ public class HistoryView extends DockLayoutPanel {
 					@Override
 					public void onOk(Act act) {
 						act.setParticipant(e, Participation.PROTAGONIST, new Date(), null);
+						act.setParticipant(e, Participation.ADMINISTRATOR, new Date(), null);
 						act.setParticipant(clDoc.getSession().getUser().organisation, Participation.ORGANISATION, new Date(), null);
 						
 						SRV.actService.save(clDoc.getSession(), act,

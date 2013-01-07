@@ -123,9 +123,9 @@ public class LoginScreen extends LayoutPanel {
 					
 					@Override
 					protected void setup() {
-						addLine("Username", txtNewUserName);
-						addLine("Password", txtPwd1);
-						addLine("confirm password", txtPwd2);
+						addLabeledWidget("Username", txtNewUserName);
+						addLabeledWidget("Password", txtPwd1);
+						addLabeledWidget("confirm password", txtPwd2);
 						super.setup();
 					}
 

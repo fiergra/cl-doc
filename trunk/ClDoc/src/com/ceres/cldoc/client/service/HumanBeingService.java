@@ -12,6 +12,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("humanbeing")
 public interface HumanBeingService extends RemoteService {
+	Long getUniqueId(Session session);
 	Person save(Session session, Person humanBeing);
 	void delete(Session session, Person person);
 	Person findById(Session session, long id);

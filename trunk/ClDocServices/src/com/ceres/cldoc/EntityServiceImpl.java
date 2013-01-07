@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -509,6 +510,22 @@ public class EntityServiceImpl implements IEntityService {
 				s.execute();
 				s.close();
 				return null;
+			}
+		});
+	}
+
+	@Override
+	public long getUniqueId(Session session) {
+		return Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Long execute(Connection con) throws SQLException {
+				Statement s = con.createStatement();
+				ResultSet rs = s.executeQuery("select MAX(PER_ID)+1 newid from Person");
+				rs.next();
+				long newId = rs.getLong("newid");
+				s.close();
+				return newId;
 			}
 		});
 	}

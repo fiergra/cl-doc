@@ -45,6 +45,13 @@ public class LongTextBox extends TextBox {
 		
 		setText(value != null ? String.valueOf(value) : null);
 	}
+
+	@Override
+	public void setValue(String value) {
+		super.setValue(value);
+		parseValue();
+	}
+	
 	
 	
 	

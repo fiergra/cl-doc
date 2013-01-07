@@ -18,5 +18,6 @@ public interface IEntityService {
 	List<Entity> list(Session session, String criteria, int type);
 	EntityRelation save(Session session, EntityRelation er);
 	void delete(Session session, EntityRelation er);
+	long getUniqueId(Session session);
 
 }

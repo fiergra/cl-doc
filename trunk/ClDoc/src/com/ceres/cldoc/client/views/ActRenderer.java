@@ -60,6 +60,7 @@ public class ActRenderer extends DockLayoutPanel {
 	
 	
 	private void setup() {
+		addStyleName("docform");
 		HorizontalPanel titlePanel = new HorizontalPanel();
 		titlePanel.setWidth("100%");
 		titlePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);

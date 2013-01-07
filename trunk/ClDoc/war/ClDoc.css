@@ -13,11 +13,9 @@ body, table td, select, button {
 	height:auto !important;  
 	height:100%;  
 	overflow: hidden !important;  
-	background-color: white;
 /*
 	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#DEE7D6));
-	background: -moz-linear-gradient(top,  #FAFAFA,  #DEE7D6);
-*/
+	background: -moz-linear-gradient(top,  #FAFAFA,  #DEE7D6); */
 }
 
 
@@ -28,6 +26,11 @@ body, table td, select, button {
 }
 
 .resultTable {
+}
+
+.sourceCode {
+	font-family: monospace;
+	font-size: small;
 }
 
 .hundertPercentWidth {
@@ -156,14 +159,27 @@ body, table td, select, button {
 	padding-top: 0px;
 }
 
+.formSectionTitle {
+	text-align: left;
+	vertical-align: top;
+	font-variant: small-caps;
+	font-size: large;
+	padding-left: 10px;
+	padding-top: 0px;
+}
+
 .formItem {
 	vertical-align: bottom;
-	padding-left: 30px;
+	padding-left: 35px;
 	padding-top: 0px;
 }
 
 .formSubLabel {
 	font-style: italic;
+}
+
+.formSubLine {
+	margin-left: -5px;
 }
 
 .invalidContent {
@@ -174,6 +190,7 @@ body, table td, select, button {
 .docform {
 	text-align: left;
 	vertical-align: top;
+	background-color: #d5D5D5;
 }
 
 

@@ -323,7 +323,7 @@ insert into Catalog (id, parent, code, text, shorttext) values (74, 70, 'CREATE'
 
 insert into Catalog (id, parent, code, text, shorttext) values (101, 50, 'PROTAGONIST', 'PROTAGONIST', 'PROTAGONIST');
 insert into Catalog (id, parent, code, text, shorttext) values (102, 50, 'ORGANISATION', 'ORGANISATION', 'ORGANISATION');
-insert into Catalog (id, parent, code, text, shorttext) values (103, 50, 'MASTERDATA', 'MASTERDATA', 'MASTERDATA');
+insert into Catalog (id, parent, code, text, shorttext) values (103, 50, 'ADMINISTRATOR', 'ADMINISTRATOR', 'ADMINISTRATOR');
 
 insert into Catalog (id, parent, code, text, shorttext) values (13, null, 'BEISPIEL', '', '');
 insert into Catalog (id, parent, code, text, shorttext) values (14, 13, 'BEISPIEL1', 'b1', 'b1');
@@ -360,11 +360,11 @@ insert into Catalog (id, parent, code, text, shorttext) values (182, 180, 'Organ
 
 insert into Entity (ID, TYPE, NAME) values (1, 181, 'Ralph FIERGOLLA');
 insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
-values (1, 36762, 'Ralph', 'Fiergolla', '1969-08-05');
+values (1, 101, 'Ralph', 'Fiergolla', '1969-08-05');
 
 insert into Entity (ID, TYPE, NAME) values (6, 181, 'Kypros Kyprianou');
 insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME) 
-values (6, 45680, 'Kypros', 'Kyprianou');
+values (6, 102, 'Kypros', 'Kyprianou');
 
 insert into Entity (ID,TYPE,NAME) values (20, 182, 'CeRES');
 insert into Organisation (Id) values (20);

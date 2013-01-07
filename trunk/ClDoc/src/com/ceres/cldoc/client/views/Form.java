@@ -1,8 +1,10 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 
 import com.ceres.cldoc.client.ClDoc;
@@ -79,6 +81,10 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		toDialog();
 	}
 
+	protected ClDoc getClDoc() {
+		return clDoc;
+	}
+	
 	public void setModel(T model) {
 		this.model = model;
 	}
@@ -386,7 +392,8 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		}
 	}
 
-	protected void addLine(String label, IsWidget... widgets) {
+	
+	protected void addLabeledWidget(String label, IsWidget... widgets) {
 		if (label == null && widgets.length == 1) {
 			setWidget(row, 0, widgets[0]);
 			getFlexCellFormatter().setColSpan(row, 0, 2);
@@ -426,27 +433,59 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 
 	protected Widget addLine(String labelText, String fieldName,
 			DataType dataType, int width) {
-		Widget w = addLine(labelText, fieldName, dataType, null);
-//		w.setWidth(width + "em");
+		Widget w = addWidgetAndField(labelText, fieldName, dataType, null);
+		w.setWidth(width + "em");
 		return w;
 	}
 
-	protected Widget addLine(String labelText, String fieldName,
-			DataType dataType) {
-		return addLine(labelText, fieldName, dataType, null);
+	protected Widget addLine(String labelText, String fieldName, DataType dataType) {
+		return addWidgetAndField(labelText, fieldName, dataType, null);
 	}
 
-	protected Widget addLine(String labelText, String fieldName,
+	protected Widget addLine(String labelText, String fieldName, DataType dataType, HashMap<String, String> attributes) {
+		return addWidgetAndField(labelText, fieldName, dataType, attributes);
+	}
+
+	private Widget addWidgetAndField(String labelText, String fieldName,
 			DataType dataType, HashMap <String, String> attributes) {
 		Widget widget = createWidgetForType(dataType, attributes);
-		addLine(labelText, widget);
+		addLabeledWidget(labelText, widget);
 		if (fieldName != null) {
 			fields.put(fieldName, new Field(fieldName, widget, dataType, attributes != null ? "true".equals(attributes.get("mandatory")) : false));
 		}
 		return widget;
 	}
+	
+	private boolean getBoolean(String name, HashMap<String, String> attributes) {
+		return attributes != null ? "true".equals(attributes.get(name)) : false;
+	}
+	
+	protected void addWidgetsAndFields(String label, List<LineDef> lineDefs) {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setSpacing(5);
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hp.addStyleName("formSubLine");
 
-	protected Widget createWidgetForType(DataType dataType, HashMap<String, String> attributes) {
+		for (LineDef ld:lineDefs) {
+			DataType dataType = ld.dataType;
+			String subLabel = ld.label;
+			String subName = ld.fieldName;
+			subLabel = subLabel == null ? subName : subLabel;
+			
+			if (subLabel != null && subLabel.length() > 0) {
+				Label l = new Label(subLabel);
+				l.addStyleName("formSubLabel");
+				hp.add(l);
+			}
+			Widget w = createWidgetForType(dataType, ld.attributes);
+			hp.add(w);
+			fields.put(subName, new Field(subName, w, dataType, getBoolean("mandatory", ld.attributes)));
+		}
+		addLabeledWidget(label, hp);
+	}
+	
+
+	private Widget createWidgetForType(DataType dataType, HashMap<String, String> attributes) {
 		Widget w = null;
 
 		switch (dataType) {
@@ -454,7 +493,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			TextBox t = new TextBox();
 			t.addKeyUpHandler(new WidgetKeyUpHandler(t));
 			w = t;
-			w.setWidth("60%");
+			w.setWidth("10em");
 			break;
 		case FT_BOOLEAN:
 			CheckBox c = new CheckBox();
@@ -500,7 +539,7 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			w = crg;
 			break;
 		case FT_MULTI_SELECTION:
-			CatalogMultiSelect cms = new CatalogMultiSelect(clDoc, attributes.get("parent"), 8, attributes.get("orientation"));
+			CatalogMultiSelect cms = new CatalogMultiSelect(clDoc, attributes.get("parent"), getMaxCol(attributes), attributes.get("orientation"));
 			cms.addChangeHandler(new ChangeHandler() {
 				
 				@Override
@@ -572,8 +611,13 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			w = img;
 			break;
 		case FT_SEPARATOR:
-			HTML separator = new HTML("<hr noshade=\"noshade\" size=\"1\"/>");
-			w = separator;
+			String title = attributes.get("title");
+			HTML separator;
+			String html = "<hr noshade=\"noshade\" size=\"1\"/>";
+			if (title != null) {
+				html = "</br></br><div class=\"formSectionTitle\"><b>" + title + "</b></div>" + html;
+			}
+			w = new HTML(html);
 			break;
 //		case FT_TIME:
 //			TimeTextBox tbx = new TimeTextBox();
@@ -657,6 +701,11 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 //
 	
 
+	private int getMaxCol(HashMap<String, String> attributes) {
+		String sMax = attributes.get("columns");
+		return sMax != null ? Integer.valueOf(sMax) : 6;
+	}
+
 	public void parseAndCreate(String xml) {
 		parseAndCreate(xml, true);
 	}
@@ -692,11 +741,10 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 				String fieldName = child.getAttribute("name");
 				
 				if (child.getChildNodes().getLength() == 0) {
-					addLine(label == null ? fieldName : label, fieldName, getDataType(child.getAttribute("type")), getAttributesMap(child));//child.getAttributes());
+					addWidgetAndField(label == null ? fieldName : label, fieldName, getDataType(child.getAttribute("type")), getAttributesMap(child));//child.getAttributes());
 				} else {
-					HorizontalPanel hp = new HorizontalPanel();
-					hp.setSpacing(5);
-					hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+					List<LineDef> lineDefs = new ArrayList<LineDef>();
+					
 					NodeList subChildren = child.getChildNodes();
 					for (int j=0; j < subChildren.getLength(); j++) {
 						Element sub = (Element) (subChildren.item(j) instanceof Element ? subChildren.item(j) : null);
@@ -704,16 +752,13 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 							DataType dataType = getDataType(sub);
 							String subLabel = sub.getAttribute("label");
 							String subName = sub.getAttribute("name");
-							Label l = new Label(subLabel == null ? subName : subLabel);
-							l.addStyleName("formSubLabel");
+							subLabel = subLabel == null ? subName : subLabel;
 							HashMap<String, String> subAttributes = getAttributesMap(sub);
-							Widget w = createWidgetForType(dataType, subAttributes);
-							hp.add(l);
-							hp.add(w);
-							fields.put(subName, new Field(subName, w, dataType, "true".equals(subAttributes.get("mandatory"))));
+							
+							lineDefs.add(new LineDef(subLabel, subName, dataType, subAttributes));
 						}
 					}
-					addLine(label == null ? fieldName : label, hp);
+					addWidgetsAndFields(label, lineDefs);
 				}
 			}
 		}		

@@ -1,6 +1,6 @@
 insert into Catalog (id, parent, code, text, shorttext) values (54, 51, 'EART_USER', 'EART_USER', 'EART_USER');
 
-insert into Catalog (parent, code, text, shorttext, logical_order, number1) values (2, 'Suche LK', 'Suche', 'Suche', 1, 1001);
+insert into Catalog (parent, code, text, shorttext, logical_order, number1) values (2, 'SucheEART', 'Suche', 'Suche', 1, 1001);
 
 
 insert into Catalog (id, parent, code, text, shorttext) values (1005, 180, 'Landkreis', 'Landkreis', 'Landkreis');

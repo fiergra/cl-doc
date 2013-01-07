@@ -14,13 +14,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 
 public class CatalogMultiSelect extends FlexTable implements
 		IEntitySelector<CatalogList> {
 	protected HashMap<Long, CheckBox> buttons;
 	private CatalogList selected;
 
-	public CatalogMultiSelect(ClDoc clDoc, String parentCode, final int maxCol,
+	public CatalogMultiSelect(ClDoc clDoc, final String parentCode, final int maxCol,
 			String orientation) {
 		super();
 		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode,
@@ -28,22 +29,26 @@ public class CatalogMultiSelect extends FlexTable implements
 
 					@Override
 					public void onSuccess(List<Catalog> result) {
-						buttons = new HashMap<Long, CheckBox>(result.size());
-
-						// if (result.size() >= maxCol) {
-						int row = 0;
-						int col = 0;
-
-						for (final Catalog c : result) {
-							setWidget(row, col++, createCheckBox(c));
-							if (col % maxCol == 0) {
-								row++;
-								col = 0;
+						if (result != null) {
+							buttons = new HashMap<Long, CheckBox>(result.size());
+	
+							// if (result.size() >= maxCol) {
+							int row = 0;
+							int col = 0;
+	
+							for (final Catalog c : result) {
+								setWidget(row, col++, createCheckBox(c));
+								if (col % maxCol == 0) {
+									row++;
+									col = 0;
+								}
 							}
-						}
-
-						if (selected != null) {
-							setSelected(selected);
+	
+							if (selected != null) {
+								setSelected(selected);
+							}
+						} else {
+							setWidget(0,0, new HTML("<font color=\"red\">error</font>: catalog <b>" + parentCode + "</b> does not exist!"));
 						}
 					}
 				});
@@ -51,8 +56,22 @@ public class CatalogMultiSelect extends FlexTable implements
 	}
 
 	private CheckBox createCheckBox(final Catalog c) {
-		final CheckBox rb = new CheckBox(c.shortText);
-		rb.setTitle(c.text);
+		String labelText;
+		String toolTipText = null;
+		
+		if (c.shortText == null) {
+			labelText = c.text;
+		} else if (c.text == null) {
+			labelText = c.shortText;
+		} else {
+			labelText = c.shortText;
+			toolTipText = c.text;
+		}
+		
+		final CheckBox rb = new CheckBox(labelText);
+		if (toolTipText != null) {
+			rb.setTitle(toolTipText);
+		}
 		buttons.put(c.id, rb);
 		rb.addClickHandler(new ClickHandler() {
 

@@ -36,6 +36,7 @@ public class DateTextBox extends TextBox {
 		DateTimeFormat.getFormat("ddMMyy")
 	};
 
+	@SuppressWarnings("deprecation")
 	public Date parseValue() {
 		String sValue = getValue();
 		Date date = null;
@@ -44,6 +45,9 @@ public class DateTextBox extends TextBox {
 		while (date == null && i < dateFormats.length) {
 			try {
 				date = dateFormats[i++].parseStrict(sValue);
+//				if (date.getYear() < 100) {
+//					date.setYear(date.getYear() + 1900);
+//				}
 			} catch (IllegalArgumentException x) {
 				
 			}
