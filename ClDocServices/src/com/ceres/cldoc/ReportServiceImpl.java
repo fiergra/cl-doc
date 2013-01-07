@@ -21,6 +21,7 @@ import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -62,7 +63,7 @@ public class ReportServiceImpl implements IReportService {
 	}
 
 	@Override
-	public List<HashMap<String, Serializable>> execute(Session session, final ReportDefinition rd) {
+	public List<HashMap<String, Serializable>> execute(Session session, final ReportDefinition rd, final IAct filters) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -117,14 +118,14 @@ public class ReportServiceImpl implements IReportService {
 	}
 
 	@Override
-	public byte[] exportXLS(Session session, long reportId) throws IOException {
+	public byte[] exportXLS(Session session, long reportId, IAct filters) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		WritableWorkbook workbook = Workbook.createWorkbook(out); 
 		WritableSheet sheet = workbook.createSheet("First Sheet", 0); 
 
 		Catalog c = Locator.getCatalogService().load(session, reportId);
 		
-		List<HashMap<String, Serializable>> result = execute(session, new ReportDefinition(c));
+		List<HashMap<String, Serializable>> result = execute(session, new ReportDefinition(c), filters);
 		
 		Iterator<HashMap<String, Serializable>> iter = result.iterator();
 		int row = 0;

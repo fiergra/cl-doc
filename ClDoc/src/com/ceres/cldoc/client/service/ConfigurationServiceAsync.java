@@ -10,6 +10,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
@@ -55,6 +56,10 @@ public interface ConfigurationServiceAsync {
 	void listReportDefinitions(Session session, AsyncCallback<List<ReportDefinition>> callback);
 	void loadReportDefinition(Session session, Catalog catalog, AsyncCallback<ReportDefinition> callback);
 
-	void executeReport(Session session, ReportDefinition rd, AsyncCallback<List<HashMap<String, Serializable>>> callback);
+	void executeReport(
+			Session session,
+			ReportDefinition rd,
+			IAct filters,
+			AsyncCallback<List<HashMap<String, Serializable>>> callback);
 
 }

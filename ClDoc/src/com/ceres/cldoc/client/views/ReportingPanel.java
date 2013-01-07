@@ -19,6 +19,7 @@ public class ReportingPanel extends DockLayoutPanel {
 	
 	public ReportingPanel(ClDoc clDoc, Catalog catalog) {
 		super(Unit.PX);
+
 		buttons = new HorizontalPanel();
 		setupButtons();
 		HorizontalPanel buttonsContainer = new HorizontalPanel();
