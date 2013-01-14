@@ -14,8 +14,8 @@ body, table td, select, button {
 	height:100%;  
 	overflow: hidden !important;  
 /*
-	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#9B9597));
-	background: -moz-linear-gradient(top,  #FAFAFA,  #9B9597); */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to($COLOR_2));
+	background: -moz-linear-gradient(top,  #FAFAFA,  $COLOR_2); */
 }
 
 
@@ -62,13 +62,17 @@ body, table td, select, button {
 }
 
 .evenRow {
-	background: #9B9597;
+	background: $COLOR_2;
 }
 
 .resultRow {
 	cursor: pointer;
 	width: 100%;
-	font-size: larger;
+	font-size: large;
+}
+
+.resultCell {
+	font-size: large;
 }
 
 .tableHeader {
@@ -77,7 +81,7 @@ body, table td, select, button {
 }
 
 .resultRow:hover {
-	background-color: #910029
+	background-color: $COLOR_1
 }
 
 .viewer {
@@ -106,13 +110,13 @@ body, table td, select, button {
 }
 
 .actTitle {
-	background-color: #9B9597;
+	background-color: $COLOR_2;
 	font-size: larger;
 	height: 100%;
 }
 
 .historyEntry {
-	border: solid 1px #9B9597;
+	border: solid 1px $COLOR_2;
 	padding: .5em;
 	width: 100%;
 }
@@ -127,7 +131,7 @@ body, table td, select, button {
 	padding-right: 5px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	background-color: #9B9597;
+	background-color: $COLOR_2;
 }
 
 .valueBagTitle {
@@ -209,19 +213,19 @@ body, table td, select, button {
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: #910029;
+  border-color: $COLOR_1;
   border-style: solid;
   border-width: 1px;
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
-  background: #9B9597;
+  background: $COLOR_2;
   color: black;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
-  background: #910029;
+  background: $COLOR_1;
   color: white;
 }
 
@@ -269,10 +273,10 @@ body, table td, select, button {
 }
 
 .gwt-SplitLayoutPanel-HDragger {
-background: #9B9597 url(images/thumb_vertical.png) center center no-repeat;
+background: $COLOR_2 url(images/thumb_vertical.png) center center no-repeat;
 cursor: col-resize;
 }
 
 .gwt-Tree .gwt-TreeItem-selected {
-background: #910029;
+background: $COLOR_1;
 }

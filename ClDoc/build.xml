@@ -37,8 +37,8 @@
 	<target name="color_palais">
 		<copy overwrite="true"  tofile="war/ClDoc.css" file="war/no-color.css"/>
 		<replace token="$COLOR_1" value="#910029" file="war/ClDoc.css"/>
-		<replace token="$COLOR_2" value="#c10a30" file="war/ClDoc.css"/>
-		<replace token="$COLOR_WHITE" value="#FFF" file="war/ClDoc.css"/>
+		<replace token="$COLOR_2" value="#9B9597" file="war/ClDoc.css"/>
+		<replace token="$COLOR_WHITE" value="#CFC4C7" file="war/ClDoc.css"/>
 	</target>
 
 	<target name="color_blue">
