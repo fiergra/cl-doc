@@ -33,6 +33,14 @@
 		<jar destfile="war/WEB-INF/lib/ClDocServices.jar" basedir="../ClDocServices/bin"></jar>
 	</target>
 	
+	
+	<target name="color_palais">
+		<copy overwrite="true"  tofile="war/ClDoc.css" file="war/no-color.css"/>
+		<replace token="$COLOR_1" value="#910029" file="war/ClDoc.css"/>
+		<replace token="$COLOR_2" value="#c10a30" file="war/ClDoc.css"/>
+		<replace token="$COLOR_WHITE" value="#FFF" file="war/ClDoc.css"/>
+	</target>
+
 	<target name="color_blue">
 		<copy overwrite="true"  tofile="war/ClDoc.css" file="war/no-color.css"/>
 		<replace token="$COLOR_1" value="#CFE2FF" file="war/ClDoc.css"/>
