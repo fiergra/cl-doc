@@ -34,6 +34,7 @@ body, table td, select, button {
 	font-size: small;
 }
 
+
 .hundertPercentWidth {
 	width: 100%;
 }
@@ -172,7 +173,7 @@ body, table td, select, button {
 
 .formItem {
 	vertical-align: bottom;
-	padding-left: 35px;
+	padding-left: 30px;
 	padding-top: 0px;
 }
 
@@ -183,6 +184,8 @@ body, table td, select, button {
 .formSubLine {
 	margin-left: -5px;
 }
+
+
 
 .invalidContent {
 	border-color: red;

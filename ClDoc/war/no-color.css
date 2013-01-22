@@ -1,4 +1,4 @@
-﻿/** Add css rules here for your application. */
+/** Add css rules here for your application. */
 
 
 body, table td, select, button {
@@ -14,8 +14,8 @@ body, table td, select, button {
 	height:100%;  
 	overflow: hidden !important;  
 /*
-	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to($COLOR_2));
-	background: -moz-linear-gradient(top,  #FAFAFA,  $COLOR_2); */
+	background: -webkit-gradient(linear, left top, left bottom, from($COLOR_WHITE), to($COLOR_1));
+	background: -moz-linear-gradient(top,  $COLOR_WHITE,  $COLOR_1); */
 }
 
 
@@ -26,13 +26,13 @@ body, table td, select, button {
 }
 
 .resultTable {
-	font-size: larger;
 }
 
 .sourceCode {
 	font-family: monospace;
 	font-size: small;
 }
+
 
 .hundertPercentWidth {
 	width: 100%;
@@ -58,21 +58,16 @@ body, table td, select, button {
 	border-width: 1px;
 	border-radius: 5px;
 	vertical-align: middle;
-	background-color: #FAFAFA;
+	background-color: $COLOR_WHITE;
 }
 
 .evenRow {
-	background: $COLOR_2;
+	background: $COLOR_1;
 }
 
 .resultRow {
 	cursor: pointer;
 	width: 100%;
-	font-size: large;
-}
-
-.resultCell {
-	font-size: large;
 }
 
 .tableHeader {
@@ -81,7 +76,7 @@ body, table td, select, button {
 }
 
 .resultRow:hover {
-	background-color: $COLOR_1
+	background-color: $COLOR_2
 }
 
 .viewer {
@@ -110,13 +105,13 @@ body, table td, select, button {
 }
 
 .actTitle {
-	background-color: $COLOR_2;
+	background-color: $COLOR_1;
 	font-size: larger;
 	height: 100%;
 }
 
 .historyEntry {
-	border: solid 1px $COLOR_2;
+	border: solid 1px $COLOR_1;
 	padding: .5em;
 	width: 100%;
 }
@@ -131,7 +126,7 @@ body, table td, select, button {
 	padding-right: 5px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	background-color: $COLOR_2;
+	background-color: $COLOR_1;
 }
 
 .valueBagTitle {
@@ -153,7 +148,7 @@ body, table td, select, button {
 }
 
 .linkButton:hover {
-	background: #FAFAFA;
+	background: $COLOR_WHITE;
 }
 
 
@@ -176,7 +171,7 @@ body, table td, select, button {
 
 .formItem {
 	vertical-align: bottom;
-	padding-left: 35px;
+	padding-left: 30px;
 	padding-top: 0px;
 }
 
@@ -187,6 +182,8 @@ body, table td, select, button {
 .formSubLine {
 	margin-left: -5px;
 }
+
+
 
 .invalidContent {
 	border-color: red;
@@ -213,19 +210,19 @@ body, table td, select, button {
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: $COLOR_1;
+  border-color: $COLOR_2;
   border-style: solid;
   border-width: 1px;
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
-  background: $COLOR_2;
+  background: $COLOR_1;
   color: black;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
-  background: $COLOR_1;
+  background: $COLOR_2;
   color: white;
 }
 
@@ -273,10 +270,10 @@ body, table td, select, button {
 }
 
 .gwt-SplitLayoutPanel-HDragger {
-background: $COLOR_2 url(images/thumb_vertical.png) center center no-repeat;
+background: $COLOR_1 url(images/thumb_vertical.png) center center no-repeat;
 cursor: col-resize;
 }
 
 .gwt-Tree .gwt-TreeItem-selected {
-background: $COLOR_1;
+background: $COLOR_2;
 }
