@@ -32,7 +32,7 @@ public class LayoutDefinitionServiceImplTest extends TransactionalTest {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		IActService actService = Locator.getActService();
 		
-		ActClass actClass = new ActClass(null, "TESTCLASS", null, false);
+		ActClass actClass = new ActClass(null, "TESTCLASS", null, null, false);
 		LayoutDefinition ld = new LayoutDefinition(actClass, LayoutDefinition.FORM_LAYOUT, "<asdf/>");
 		lds.save(getSession(), ld);
 		

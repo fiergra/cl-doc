@@ -13,13 +13,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -31,9 +26,9 @@ public class LoginScreen extends LayoutPanel {
 
 	private static class OkEnabler implements KeyUpHandler {
 
-		private TextBox tb1;
-		private TextBox tb2;
-		private Button button;
+		private final TextBox tb1;
+		private final TextBox tb2;
+		private final Button button;
 
 		public OkEnabler(TextBox tb1, TextBox tb2, Button button) {
 			this.tb1 = tb1;
@@ -55,7 +50,7 @@ public class LoginScreen extends LayoutPanel {
 		
 	}
 
-	private ClDoc clDoc;;
+	private final ClDoc clDoc;;
 	
 	public LoginScreen(final ClDoc clDoc, final OnOkHandler<Session> onOk) {
 		super();
@@ -119,7 +114,7 @@ public class LoginScreen extends LayoutPanel {
 				final PasswordTextBox txtPwd1 = new PasswordTextBox();
 				final PasswordTextBox txtPwd2 = new PasswordTextBox();
 
-				final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(person)) {
+				final PersonEditor pe = new PersonEditor(clDoc, person) {
 					
 					@Override
 					protected void setup() {

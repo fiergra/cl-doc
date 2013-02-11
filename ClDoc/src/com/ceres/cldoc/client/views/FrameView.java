@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.Frame;
 
 public class FrameView<T> extends Frame implements IView<T> {
 
-	private T model;
+	private final T model;
 
 	public FrameView(T model, String url) {
 		super(url);

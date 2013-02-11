@@ -1,4 +1,4 @@
-﻿/** Add css rules here for your application. */
+/** Add css rules here for your application. */
 
 
 body, table td, select, button {
@@ -14,8 +14,8 @@ body, table td, select, button {
 	height:100%;  
 	overflow: hidden !important;  
 /*
-	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#9B9597));
-	background: -moz-linear-gradient(top,  #FAFAFA,  #9B9597); */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#DEE7D6));
+	background: -moz-linear-gradient(top,  #FAFAFA,  #DEE7D6); */
 }
 
 
@@ -26,7 +26,6 @@ body, table td, select, button {
 }
 
 .resultTable {
-	font-size: larger;
 }
 
 .sourceCode {
@@ -63,13 +62,12 @@ body, table td, select, button {
 }
 
 .evenRow {
-	background: #9B9597;
+	background: #DEE7D6;
 }
 
 .resultRow {
 	cursor: pointer;
 	width: 100%;
-	font-size: larger;
 }
 
 .tableHeader {
@@ -78,7 +76,7 @@ body, table td, select, button {
 }
 
 .resultRow:hover {
-	background-color: #910029
+	background-color: #31A639
 }
 
 .viewer {
@@ -107,13 +105,18 @@ body, table td, select, button {
 }
 
 .actTitle {
-	background-color: #9B9597;
+	background-color: #DEE7D6;
 	font-size: larger;
 	height: 100%;
 }
 
+.theMessage {
+	font-size: larger;
+}
+
+
 .historyEntry {
-	border: solid 1px #9B9597;
+	border: solid 1px #DEE7D6;
 	padding: .5em;
 	width: 100%;
 }
@@ -128,7 +131,7 @@ body, table td, select, button {
 	padding-right: 5px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	background-color: #9B9597;
+	background-color: #DEE7D6;
 }
 
 .valueBagTitle {
@@ -212,19 +215,19 @@ body, table td, select, button {
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: #910029;
+  border-color: #31A639;
   border-style: solid;
   border-width: 1px;
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
-  background: #9B9597;
+  background: #DEE7D6;
   color: black;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
-  background: #910029;
+  background: #31A639;
   color: white;
 }
 
@@ -272,10 +275,10 @@ body, table td, select, button {
 }
 
 .gwt-SplitLayoutPanel-HDragger {
-background: #9B9597 url(images/thumb_vertical.png) center center no-repeat;
+background: #DEE7D6 url(images/thumb_vertical.png) center center no-repeat;
 cursor: col-resize;
 }
 
 .gwt-Tree .gwt-TreeItem-selected {
-background: #910029;
+background: #31A639;
 }

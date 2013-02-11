@@ -9,6 +9,7 @@ public class ActClass implements Serializable {
 
 	public Long id;
 	public String name;
+	public String summaryDef;
 	public Long entityType;
 	public boolean isSingleton = false;
 
@@ -20,9 +21,10 @@ public class ActClass implements Serializable {
 
 
 
-	public ActClass(Long id, String name, Long entityType, boolean isSingleton) {
+	public ActClass(Long id, String name, String summaryDef, Long entityType, boolean isSingleton) {
 		this.id = id;
 		this.name = name;
+		this.summaryDef = summaryDef;
 		this.entityType = entityType;
 		this.isSingleton = isSingleton;
 	}
@@ -30,7 +32,7 @@ public class ActClass implements Serializable {
 
 
 	public ActClass(String name) {
-		this(null, name, null, false);
+		this(null, name, null, null, false);
 	}
 
 

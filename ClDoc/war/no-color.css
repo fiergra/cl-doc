@@ -110,6 +110,10 @@ body, table td, select, button {
 	height: 100%;
 }
 
+.theMessage {
+	font-size: larger;
+}
+
 .historyEntry {
 	border: solid 1px $COLOR_1;
 	padding: .5em;

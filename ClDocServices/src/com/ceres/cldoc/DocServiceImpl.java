@@ -3,8 +3,6 @@ package com.ceres.cldoc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -160,7 +158,7 @@ public class DocServiceImpl implements IDocService {
 				if (numChildren == 1
 						&& childNodes.item(0).getNodeType() == Node.TEXT_NODE) {
 					Font font = getFont(defaults, domNode);
-					String text = replaceVars(session, act, childNodes
+					String text = ActFieldVisitor.replaceVars(session, act, childNodes
 							.item(0).getNodeValue());
 					if (font != null) {
 						p = new Paragraph(text, font);
@@ -183,9 +181,9 @@ public class DocServiceImpl implements IDocService {
 						childNodes);
 			} else if (elementName.equals("phrase")) {
 				Font font = getFont(defaults, domNode);
-				Phrase phrase = font != null ? new Phrase(replaceVars(session,
+				Phrase phrase = font != null ? new Phrase(ActFieldVisitor.replaceVars(session,
 						act, childNodes.item(0).getNodeValue()), font)
-						: new Phrase(replaceVars(session, act,
+						: new Phrase(ActFieldVisitor.replaceVars(session, act,
 								childNodes.item(0).getNodeValue()));
 				((Paragraph) pdfNode).add(phrase);
 			} else {
@@ -356,86 +354,5 @@ public class DocServiceImpl implements IDocService {
 		return sValue != null ? Float.parseFloat(sValue) : null;
 	}
 
-	private String replaceVars(Session session, Act act, String text) {
-		int index = text.indexOf('{');
 
-		while (index != -1) {
-			String varName = getVarName(text, index);
-			String value = getValue(session, act, varName);
-			text = text.replace("{" + varName + "}", value);
-			index = text.indexOf('{');
-		}
-		return text;
-	}
-
-	private String getValue(Session session, Act act, String varName) {
-		Serializable value = null;
-		int index = varName.indexOf('.');
-		
-		if (index != -1) {
-			if (varName.startsWith("PATIENT.")) {
-				Participation participation = act
-						.getParticipation(Participation.PROTAGONIST);
-				if (participation != null) {
-					value = getEntityProperty(participation.entity,
-							varName.substring("PATIENT.".length()));
-				}
-			} else {
-				Object object = act.getValue(varName.substring(0, index));
-				value = object != null ? getEntityProperty(object,
-						varName.substring(index + 1)) : null;
-			}
-		} else {
-			value = act.getValue(varName);
-		}
-		return value != null ? value.toString() : "";
-	}
-
-	private Serializable getEntityProperty(Object entity, String propertyName) {
-		Serializable value = null;
-//		try {
-//			PropertyDescriptor pd = new PropertyDescriptor(propertyName, entity.getClass());
-//			Method read = pd.getReadMethod();
-//			value = (Serializable)read.invoke(entity, null);
-//		} catch (IntrospectionException e) {
-//			e.printStackTrace();
-//		} catch (IllegalArgumentException e) {
-//			e.printStackTrace();
-//		} catch (IllegalAccessException e) {
-//			e.printStackTrace();
-//		} catch (InvocationTargetException e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-		
-//		if (entity instanceof Person) {
-//			Person p = (Person)entity;
-//			if (propertyName.equals("firstName")) { return p.firstName; }
-//			if (propertyName.equals("lastName")) { return p.lastName; }
-//			if (propertyName.equals("dateOfBirth")) { return p.dateOfBirth; }
-//		}
-//		return null;
-//		
-		try {
-			Class clazz = entity.getClass();
-			Field field = clazz.getDeclaredField(propertyName);
-			return (Serializable) (field != null ? field.get(entity) : null);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "class: " + entity.getClass().getCanonicalName() + "[" + propertyName + "] ==> " + e;
-		}
-	}
-
-	private String format(IActField field) {
-		if (field.getType() == IActField.FT_STRING) {
-			return field.getStringValue();
-		}
-		return null;
-	}
-
-	private String getVarName(String text, int beginIndex) {
-		int endIndex = text.indexOf('}');
-		String varName = text.substring(beginIndex + 1, endIndex);
-		return varName;
-	}
 }

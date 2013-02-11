@@ -46,12 +46,10 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NamedNodeMap;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
-import com.google.gwt.xml.client.XMLParser;
 
 
 public class Form<T extends IAct> extends FlexTable implements IView<T>{
@@ -706,28 +704,30 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 		return sMax != null ? Integer.valueOf(sMax) : 6;
 	}
 
-	public void parseAndCreate(String xml) {
-		parseAndCreate(xml, true);
-	}
-	
-	
-	public void parseAndCreate(String xml, boolean clear) {
-		if (clear) {
-			clear();
-		}
-		
-		Document document = XMLParser.parse(xml);
-		NodeList childNodes = document.getChildNodes();
-		
-		for (int i = 0; i < childNodes.getLength(); i++) {
-			Node item = childNodes.item(i);
-			
-			if (item.getNodeName().equals("form")) {
-				createAndLayout(item);
-			}
-		}
-	}
-	
+//	public void parseAndCreate(String xml) {
+//		parseAndCreate(xml, true);
+//	}
+//	
+//	
+//	public void parseAndCreate(String xml, boolean clear) {
+//		if (clear) {
+//			clear();
+//		}
+//		
+//		Document document = XMLParser.parse(xml);
+//		NodeList childNodes = document.getChildNodes();
+//		
+//		for (int i = 0; i < childNodes.getLength(); i++) {
+//			Node item = childNodes.item(i);
+//			
+//			if (item.getNodeName().equals("form")) {
+//				createAndLayout(item);
+//			} else if (item.getNodeName().equals("summary")) {
+//			    summary = ((Element)item).getNodeValue();
+//			}
+//		}
+//	}
+//	
 	
 	protected void createAndLayout(Node layoutElement) {
 		NodeList children = layoutElement.getChildNodes();
@@ -736,29 +736,31 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 			Node item = children.item(i);
 			Element child = item instanceof Element ? (Element)item : null;
 			
-			if (child != null && child.getNodeName().equals("line")) {
-				String label = child.getAttribute("label");
-				String fieldName = child.getAttribute("name");
-				
-				if (child.getChildNodes().getLength() == 0) {
-					addWidgetAndField(label == null ? fieldName : label, fieldName, getDataType(child.getAttribute("type")), getAttributesMap(child));//child.getAttributes());
-				} else {
-					List<LineDef> lineDefs = new ArrayList<LineDef>();
+			if (child != null) {
+				if (child.getNodeName().equals("line")) {
+					String label = child.getAttribute("label");
+					String fieldName = child.getAttribute("name");
 					
-					NodeList subChildren = child.getChildNodes();
-					for (int j=0; j < subChildren.getLength(); j++) {
-						Element sub = (Element) (subChildren.item(j) instanceof Element ? subChildren.item(j) : null);
-						if (sub != null) {
-							DataType dataType = getDataType(sub);
-							String subLabel = sub.getAttribute("label");
-							String subName = sub.getAttribute("name");
-							subLabel = subLabel == null ? subName : subLabel;
-							HashMap<String, String> subAttributes = getAttributesMap(sub);
-							
-							lineDefs.add(new LineDef(subLabel, subName, dataType, subAttributes));
+					if (child.getChildNodes().getLength() == 0) {
+						addWidgetAndField(label == null ? fieldName : label, fieldName, getDataType(child.getAttribute("type")), getAttributesMap(child));//child.getAttributes());
+					} else {
+						List<LineDef> lineDefs = new ArrayList<LineDef>();
+						
+						NodeList subChildren = child.getChildNodes();
+						for (int j=0; j < subChildren.getLength(); j++) {
+							Element sub = (Element) (subChildren.item(j) instanceof Element ? subChildren.item(j) : null);
+							if (sub != null) {
+								DataType dataType = getDataType(sub);
+								String subLabel = sub.getAttribute("label");
+								String subName = sub.getAttribute("name");
+								subLabel = subLabel == null ? subName : subLabel;
+								HashMap<String, String> subAttributes = getAttributesMap(sub);
+								
+								lineDefs.add(new LineDef(subLabel, subName, dataType, subAttributes));
+							}
 						}
+						addWidgetsAndFields(label, lineDefs);
 					}
-					addWidgetsAndFields(label, lineDefs);
 				}
 			}
 		}		
@@ -897,6 +899,6 @@ public class Form<T extends IAct> extends FlexTable implements IView<T>{
 	@Override
 	public T getModel() {
 		return model;
-	}	
+	}
 
 }

@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class PagesView<T> extends TabLayoutPanel implements IView<T> {
 
-	private T model;
-	private List<IView<T>> pages = new ArrayList<IView<T>>();
+	private final T model;
+	private final List<IView<T>> pages = new ArrayList<IView<T>>();
 
 	public PagesView(T model) {
 		super(2, Unit.EM);
@@ -35,7 +35,7 @@ public class PagesView<T> extends TabLayoutPanel implements IView<T> {
 		for (IView<T> page:pages) {
 			page.fromDialog();
 		}
-	}
+	}		
 
 	@Override
 	public void toDialog() {

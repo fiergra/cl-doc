@@ -6,7 +6,6 @@ public class Person extends Entity {
 
 	private static final long serialVersionUID = -6144522368213126601L;
 
-	public long perId;
 	public String firstName;
 	public String lastName;
 	public String maidenName;
@@ -23,11 +22,5 @@ public class Person extends Entity {
 		return firstName + " " + lastName;
 	}
 
-	@Override
-	public Long getDisplayId() {
-		return perId;
-	}
-	
-	
 	
 }

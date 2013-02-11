@@ -16,6 +16,7 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LogEntry;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -61,11 +62,12 @@ public class LogServiceImpl implements ILogService {
 			public List<LogEntry> execute(Connection con) throws SQLException {
 				List<LogEntry> result = new ArrayList<LogEntry>();
 				PreparedStatement s = con.prepareStatement(
-						"select pers.id entId, pers.*, le.id leId, le.actId, le.type, le.logDate, le.logEntry, a.date actDate, acf.name fieldName, acf.type fieldType, ac.name classname, af.id actFieldId, af.* " +
+						"select pers.id entId, pers.*, pat.*, le.id leId, le.actId, le.type, le.logDate, le.logEntry, a.date actDate, acf.name fieldName, acf.type fieldType, ac.name classname, af.id actFieldId, af.* " +
 						"from LogEntry le " +
 						"left outer join Act a on le.actId = a.id " +
 						"inner join Participation part on part.actId = a.id AND role = 101 " +
 						"inner join Person pers on part.EntityId = pers.id " +
+						"left outer join Patient pat on pers.id = pat.id " +
 						"left outer join ActClass ac on ac.id = a.ActClassid " +
 						"left outer join ActField af on af.actId = a.id " +
 						"left outer join ActClassField acf on acf.id = af.ClassFieldId " +
@@ -86,13 +88,25 @@ public class LogServiceImpl implements ILogService {
 					}
 					if (le == null || le.id != leId) {
 						le = new LogEntry(leId, rs.getInt("type"), act, null, rs.getString("logEntry"), rs.getTimestamp("logDate"));
-						Person person = new Person();
-						person.id = rs.getLong("entId");
-						if (!rs.wasNull()) {
-							person.firstName = rs.getString("firstName");
-							person.lastName = rs.getString("lastName");
-							person.perId  = rs.getLong("per_id");
-							le.entity = person;
+						Long perId  = rs.getLong("per_id");
+
+						if (rs.wasNull()) {
+							Person person = new Person();
+							person.id = rs.getLong("entId");
+							if (!rs.wasNull()) {
+								person.firstName = rs.getString("firstName");
+								person.lastName = rs.getString("lastName");
+								le.entity = person;
+							}
+						} else {
+							Patient patient = new Patient();
+							patient.id = rs.getLong("entId");
+							if (!rs.wasNull()) {
+								patient.firstName = rs.getString("firstName");
+								patient.lastName = rs.getString("lastName");
+								patient.perId = perId;
+								le.entity = patient;
+							}
 						}
 						result.add(le);
 					}
