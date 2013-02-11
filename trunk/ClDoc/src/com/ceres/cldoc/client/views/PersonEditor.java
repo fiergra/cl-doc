@@ -6,7 +6,9 @@ import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.shared.domain.PatientWrapper;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -16,30 +18,32 @@ import com.google.gwt.user.client.ui.Widget;
 public class PersonEditor extends Form <PersonWrapper> {
 
 	private final OnClick<Person> onSave;
-
-	public PersonEditor(ClDoc clDoc, final PersonWrapper personWrapper, Runnable setModified, OnClick<Person> onSave) {
-		super(clDoc, personWrapper, setModified);
+	
+	public PersonEditor(ClDoc clDoc, final Person person, Runnable setModified, OnClick<Person> onSave) {
+		super(clDoc, wrap(person), setModified);
 		this.onSave = onSave;
 	}
 
-	public PersonEditor(ClDoc clDoc, final PersonWrapper personWrapper) {
-		this(clDoc, personWrapper, null, null);
+	public PersonEditor(ClDoc clDoc, final Person person) {
+		this(clDoc, person, null, null);
 	}
 
 	@Override
 	protected void setup() {
-		final Widget id = addLine("id", "id", Form.DataType.FT_INTEGER, 5);
-		
-		if (this.getModel().getLong("id").equals(0l)) {
-			SRV.humanBeingService.getUniqueId(getClDoc().getSession(), new DefaultCallback<Long>(getClDoc(), "get unique id") {
-
-				@Override
-				public void onSuccess(Long newId) {
-					((TextBox)id).setValue(String.valueOf(newId));
-				}
-			});
-		}
-		
+		boolean isPatient = getModel().getPerson() instanceof Patient;
+		if (isPatient) {
+			final Widget id = addLine("id", "id", Form.DataType.FT_INTEGER, 5);
+			
+			if (this.getModel().getLong("id").equals(0l)) {
+				SRV.humanBeingService.getUniqueId(getClDoc().getSession(), new DefaultCallback<Long>(getClDoc(), "get unique id") {
+	
+					@Override
+					public void onSuccess(Long newId) {
+						((TextBox)id).setValue(String.valueOf(newId));
+					}
+				});
+			}
+		}			
 		HashMap<String, String> attributes = new HashMap<String, String>();
 		attributes.put("width", "20em");
 		List<LineDef> lineDefs = new ArrayList<LineDef>();
@@ -70,8 +74,13 @@ public class PersonEditor extends Form <PersonWrapper> {
 		addWidgetsAndFields(SRV.c.postCode(), lineDefs);
 	}
 
-	public static void editPerson(final ClDoc clDoc, final Person humanBeing) {
-		final PersonEditor pe = new PersonEditor(clDoc, new PersonWrapper(humanBeing));
+	public static void editPerson(final ClDoc clDoc, final Person person, final OnClick<Person> onSave) {
+		final PersonEditor pe = new PersonEditor(clDoc, person, new Runnable() {
+			
+			@Override
+			public void run() {
+			}
+		}, onSave);
 		pe.setWidth("100%");
 		final ScrollPanel sp = new ScrollPanel(pe);
 		sp.addStyleName("docform");
@@ -81,7 +90,7 @@ public class PersonEditor extends Form <PersonWrapper> {
 			@Override
 			public void onClick(final PopupPanel v) {
 				v.hide();
-				pe.savePerson(clDoc, humanBeing);
+				pe.savePerson(clDoc, person);
 			}
 		},
 		new OnClick<PopupPanel>() {
@@ -89,11 +98,15 @@ public class PersonEditor extends Form <PersonWrapper> {
 			@Override
 			public void onClick(PopupPanel v) {
 				v.hide();
-				pe.deletePerson(clDoc, humanBeing);
+				pe.deletePerson(clDoc, person);
 			}
 		}
 		);
 	}
+	private static PersonWrapper wrap(Person person) {
+		return person instanceof Patient ? new PatientWrapper((Patient) person) : new PersonWrapper(person);
+	}
+
 	private void savePerson(ClDoc clDoc, Person result) {
 		fromDialog();
 		SRV.humanBeingService.save(clDoc.getSession(), result, new DefaultCallback<Person>(clDoc, "save") {

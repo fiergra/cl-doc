@@ -14,6 +14,7 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Organisation;
+import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 
 public class EntityServiceImplTest extends TransactionalTest {
@@ -103,6 +104,36 @@ public class EntityServiceImplTest extends TransactionalTest {
 	public void testSave() {
 		Person person = new Person();
 		person.firstName = "Heinz";
+		
+		Address a = new Address();
+		a.street = "Strassenname";
+		a.number = "10b";
+		a.co = "dritte Stiege";
+		a.postCode = "A1015";
+		a.city = "Wien";
+		a.phone = "+43445133";
+		a.note = "wasnsads";
+		
+		person.addAddress(a);
+		IEntityService entityService = Locator.getEntityService();
+		
+//		TxManager.cancel(getSession());
+		
+		entityService.save(getSession(), person);
+		long id = person.id;
+		person = entityService.load(getSession(), id);
+		
+		Assert.assertNotNull(person.addresses);
+		Assert.assertFalse(person.addresses.isEmpty());
+		Address aReloaded = person.addresses.get(0);
+		
+		assertEquals(a.note, aReloaded.note);
+	}
+
+	public void testSavePatient() {
+		Patient person = new Patient();
+		person.firstName = "Heinz";
+		person.perId = 4711;
 		
 		Address a = new Address();
 		a.street = "Strassenname";

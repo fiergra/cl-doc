@@ -35,8 +35,8 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 		new LabelFunction<Person>() {
 
 			@Override
-			public String getLabel(Person act) {
-				return act.lastName + ", " + act.firstName;
+			public String getLabel(Person person) {
+				return person.lastName + ", " + person.firstName;
 			}
 
 			@Override
@@ -47,7 +47,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 			
 			@Override
 			public void run() {
-				PersonEditor.editPerson(clDoc, new Person());
+				PersonEditor.editPerson(clDoc, new Person(), null);
 			}
 		});
 		

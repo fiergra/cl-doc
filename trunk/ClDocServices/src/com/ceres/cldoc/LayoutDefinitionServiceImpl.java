@@ -131,7 +131,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	protected List<LayoutDefinition> fecthLayoutDefinitions(ResultSet rs) throws SQLException {
 		List<LayoutDefinition> result = new ArrayList<LayoutDefinition>();
 		while (rs.next()) {
-			ActClass actClass = new ActClass(rs.getLong("actClassId"), rs.getString("classname"), Jdbc.getLong(rs, "entityType"), rs.getBoolean("singleton"));
+			ActClass actClass = new ActClass(rs.getLong("actClassId"), rs.getString("classname"), rs.getString("summary"), Jdbc.getLong(rs, "entityType"), rs.getBoolean("singleton"));
 			LayoutDefinition ld = new LayoutDefinition(rs.getLong("id"), actClass, rs.getInt("typeid"), rs.getString("xml"));
 			result.add(ld);
 		}
@@ -323,12 +323,13 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 					Element document = doc.getDocumentElement();
 					String id = null; //document.hasAttribute("classid") ? document.getAttribute("classid") : null;
 					String name = document.hasAttribute("classname") ? document.getAttribute("classname") : fileName;
+					String summary = document.hasAttribute("summary") ? document.getAttribute("summary") : null;
 					String entityType = null;
 					if (document.hasAttribute("entitytype")) {
 						entityType = document.getAttribute("entitytype");
 					}
 					String isSingleton = document.getAttribute("singleton");
-					actClass = new ActClass(id != null ? Long.valueOf(id) : null, name, entityType != null ? Long.valueOf(entityType): null, Boolean.valueOf(isSingleton));
+					actClass = new ActClass(id != null ? Long.valueOf(id) : null, name, summary, entityType != null ? Long.valueOf(entityType): null, Boolean.valueOf(isSingleton));
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
 				} catch (UnsupportedEncodingException e) {

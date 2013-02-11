@@ -20,7 +20,7 @@ public class PersonalFileHeader extends HorizontalPanel {
 	private void setup() {
 		setSpacing(5);
 		setVerticalAlignment(ALIGN_MIDDLE);
-		Label nameAndId = new Label(hb.perId + " " + hb.lastName + ", " + hb.firstName);
+		Label nameAndId = new Label(hb.getDisplayId() + " " + hb.lastName + ", " + hb.firstName);
 		nameAndId.setStylePrimaryName("nameAndId");
 		add(nameAndId);
 		if (hb.dateOfBirth != null) {

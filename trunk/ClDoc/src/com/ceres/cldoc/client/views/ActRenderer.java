@@ -111,6 +111,7 @@ public class ActRenderer extends DockLayoutPanel {
 			}
 		});
 		pbSave.enable(false);
+
 		addLinkButton(buttons, index++, SRV.c.delete(), "icons/32/File-Delete-icon.png", null, new ClickHandler() {
 			
 			@Override
@@ -135,7 +136,16 @@ public class ActRenderer extends DockLayoutPanel {
 			}
 		});
 
-		
+		buttons.add(new HTML("<vr width=\"15\" height=\"32\" />"));
+		LinkButton pbAttachments = addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				PopupManager.showModal("Anhang", new AttachmentsPanel());
+			}
+		});
+		pbAttachments.enable(false);
+
 		HorizontalPanel textPanel = new HorizontalPanel();
 		textPanel.setWidth("100%");
 		title = new HTML();
@@ -279,7 +289,6 @@ public class ActRenderer extends DockLayoutPanel {
 	}
 
 
-	
 	public static IView<Act> getActRenderer(ClDoc clDoc, String xml, final Act act, Runnable onChange) {
 		IView<Act> result = null;
 		
@@ -298,15 +307,18 @@ public class ActRenderer extends DockLayoutPanel {
 						if (subItems.item(j) instanceof Element) {
 							Element subItem = (Element) subItems.item(j);
 							
-							Form<Act> form = new Form<Act>(clDoc, act, onChange);
-							form.createAndLayout(subItem);
-							form.setWidth("100%");
-							pages.addPage(form, subItem.getAttribute("label"));
+							if (subItem.getNodeName().equals("form")) {
+								Form<Act> form = new Form<Act>(clDoc, act, onChange);
+								form.createAndLayout(subItem);
+								form.setWidth("100%");
+								pages.addPage(form, subItem.getAttribute("label"));
+							}
 						}
 					}
+					// todo: add scrollpanel
 					result = pages;
 					pages.setSize("100%", "100%");
-				} else {
+				} else if (item.getNodeName().equals("form")) {
 					Form<Act> form = new Form<Act>(clDoc, act, onChange);
 					form.createAndLayout(item);
 					form.setWidth("100%");

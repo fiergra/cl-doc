@@ -4,9 +4,7 @@ import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.PersonEditor;
-import com.ceres.cldoc.client.views.ScrollView;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.shared.domain.PersonWrapper;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,7 +12,6 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,8 +25,7 @@ public class PersonDetails extends DockLayoutPanel {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.humanBeing = humanBeing;
-		PersonWrapper wrapped = new PersonWrapper(humanBeing);
-		this.personEditor = new PersonEditor(clDoc, wrapped, new Runnable() {
+		this.personEditor = new PersonEditor(clDoc, humanBeing, new Runnable() {
 			
 			@Override
 			public void run() {

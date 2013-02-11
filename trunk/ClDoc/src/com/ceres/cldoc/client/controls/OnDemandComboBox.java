@@ -5,7 +5,11 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.IEntitySelector;
-import com.google.gwt.dom.client.Style.Unit;
+import com.ceres.cldoc.client.views.MessageBox;
+import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
+import com.ceres.cldoc.client.views.OnClick;
+import com.ceres.cldoc.client.views.PersonEditor;
+import com.ceres.cldoc.model.Person;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,14 +17,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.ToggleButton;
 
 public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySelector<T> {
 
@@ -28,14 +28,14 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 	private final LabelFunction<T> labelFunction;
 	private final TextBox txtFilter = new TextBox();
 	
-	private final ToggleButton pbOpen = new ToggleButton("...");
-	private final Image pbNew = new Image("icons/16/Button-Add-01.png");
+//	private final ToggleButton pbOpen = new ToggleButton("...");
+//	private final Image pbNew = new Image("icons/16/Button-Add-01.png");
 	
-	private List<T> actList;
+	private List<T> itemList;
 	private final ClDoc clDoc;
 	private final OnDemandChangeListener<T> changeListener;
 	
-	public OnDemandComboBox(ClDoc clDoc, 
+	public OnDemandComboBox(final ClDoc clDoc, 
 			ListRetrievalService<T> listRetrievalService, 
 			LabelFunction <T> labelFunxtion, 
 			OnDemandChangeListener<T>changeListener,
@@ -48,48 +48,82 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 		this.labelFunction = labelFunxtion;
 		this.changeListener = changeListener;
 		
-		pbOpen.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if (pbOpen.isDown()) {
-					showPopup();
-				} else {
-					hidePopup();
-				}
-			}
-		});
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		hp.add(pbOpen);
-		
-		if (onClick != null) {
-			hp.add(pbNew);
-			
-			pbNew.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					onClick.run();
-				}
-			});
-		}
-//		addEast(hp, hp.getWidgetCount() * 2);
+////		pbOpen.addClickHandler(new ClickHandler() {
+////			
+////			@Override
+////			public void onClick(ClickEvent event) {
+////				if (pbOpen.isDown()) {
+////					showPopup();
+////				} else {
+////					hidePopup();
+////				}
+////			}
+////		});
+//		HorizontalPanel hp = new HorizontalPanel();
+//		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//		hp.add(pbOpen);
+//		
+//		if (onClick != null) {
+//			hp.add(pbNew);
+//			
+//			pbNew.addClickHandler(new ClickHandler() {
+//				
+//				@Override
+//				public void onClick(ClickEvent event) {
+//					onClick.run();
+//				}
+//			});
+//		}
 		txtFilter.setWidth("100%");
 		add(txtFilter);
-		add(hp);
+//		add(hp);
 		txtFilter.addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				if (event.isDownArrow() && pp != null) {
+				if (event.isDownArrow() && dropDownPopup != null) {
 					listBox.setFocus(true);
+					listBox.setSelectedIndex(0);
 				} else if (event.getNativeKeyCode() != KeyCodes.KEY_TAB) {
 					selectedItem = null;
 					retrieve(txtFilter.getValue());
 				}
 			}
 		});
+		txtFilter.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				if (selectedItem == null && txtFilter.getText().length() > 0 && dropDownPopup == null) {
+					new MessageBox(
+							"Neu", "Wollen Sie eine neue Person '" + txtFilter.getText() + "' anlegen?", 
+							MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION){
+
+								@Override
+								protected void onClick(int result) {
+									if (result == MessageBox.MB_YES) {
+										Person person = new Person();
+										person.lastName = txtFilter.getText();
+										PersonEditor.editPerson(clDoc, person, new OnClick<Person>() {
+											
+											@Override
+											public void onClick(Person person) {
+												txtFilter.setText(person.getName());
+												setSelectedItem((T) person);
+											}
+										});
+									}
+								}}.show();
+				}
+			}
+		});
+//		txtFilter.addFocusHandler(new FocusHandler() {
+//			
+//			@Override
+//			public void onFocus(FocusEvent event) {
+//				System.out.println(event);	
+//			}
+//		});
 	}
 
 	public void refresh() {
@@ -101,8 +135,8 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 
 			@Override
 			public void onSuccess(List<T> result) {
-				actList = result;
-				if (actList.isEmpty()) {
+				itemList = result;
+				if (itemList.isEmpty()) {
 					hidePopup();
 				} else {
 					createOrUpdatePopup(result);
@@ -111,15 +145,15 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 		});
 	}
 
-	private void showPopup() {
-		retrieve(txtFilter.getValue());
-	}
+//	private void showPopup() {
+//		retrieve(txtFilter.getValue());
+//	}
 
 	private void hidePopup() {
-		if (pp != null) {
-			pp.hide();
-			pp = null;
-			pbOpen.setDown(false);
+		if (dropDownPopup != null) {
+			dropDownPopup.hide();
+			dropDownPopup = null;
+//			pbOpen.setDown(false);
 			txtFilter.setFocus(true);
 		}
 	}
@@ -132,13 +166,13 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 		return labelFunction.getValue(act);
 	}
 
-	private PopupPanel pp = null;
+	private PopupPanel dropDownPopup = null;
 	private ListBox listBox = null;
 	private T selectedItem;
 
 	private void createOrUpdatePopup(List<T> list) {
-		if (pp == null) {
-			pp = new PopupPanel(false);
+		if (dropDownPopup == null) {
+			dropDownPopup = new PopupPanel(false);
 			listBox = new ListBox();
 			listBox.setSize((txtFilter.getOffsetWidth() * 2) + "px", "150px");
 			listBox.setVisibleItemCount(Integer.MAX_VALUE);
@@ -173,9 +207,9 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 				}
 			});
 			
-			pp.setWidget(listBox);
-			pp.setPopupPosition(txtFilter.getAbsoluteLeft(), txtFilter.getAbsoluteTop() + txtFilter.getOffsetHeight());
-			pp.show();
+			dropDownPopup.setWidget(listBox);
+			dropDownPopup.setPopupPosition(txtFilter.getAbsoluteLeft(), txtFilter.getAbsoluteTop() + txtFilter.getOffsetHeight());
+			dropDownPopup.show();
 		} else {
 			listBox.clear();
 		}
@@ -185,24 +219,24 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 		}
 	}
 
-	private void setSelectedAct(T act) {
+	private void setSelectedItem(T item) {
 		T oldValue = selectedItem;
-		selectedItem = act;
+		selectedItem = item;
 		changeListener.onChange(oldValue, selectedItem);
 	}
 	
 	private void setSelectedIndex(int selectedIndex) {
-		setSelectedAct(actList.get(selectedIndex));
+		setSelectedItem(itemList.get(selectedIndex));
 		txtFilter.setValue(labelFunction(selectedItem));
 	}
 
 	@Override
-	public boolean setSelected(T act) {
-		if ((act == null && selectedItem != null) || (act != null && !act.equals(selectedItem))) {
-			selectedItem = act;
-			txtFilter.setValue(labelFunction(act));
+	public boolean setSelected(T item) {
+		if ((item == null && selectedItem != null) || (item != null && !item.equals(selectedItem))) {
+			selectedItem = item;
+			txtFilter.setValue(labelFunction(item));
 		}
-		return actList != null && actList.contains(selectedItem);
+		return itemList != null && itemList.contains(selectedItem);
 	}
 	
 	@Override

@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class Styler extends DockLayoutPanel {
 	private IView<Act> form;
@@ -51,6 +52,7 @@ public class Styler extends DockLayoutPanel {
 		formLayoutDescTextArea.addStyleName("sourceCode");
 		printLayoutPanel.addStyleName("sourceCode");
 		
+		final TextBox txtSummary = new TextBox();
 		final CheckBox cbSingleton = new CheckBox("Stammdaten");
 		final CatalogListBox lbEntityTypes = new CatalogListBox(clDoc, "MASTERDATA.EntityTypes");
 		
@@ -109,6 +111,7 @@ public class Styler extends DockLayoutPanel {
 							if (result != null) {
 								if (result.type == LayoutDefinition.FORM_LAYOUT/* || result.type == LayoutDefinition.MASTER_DATA_LAYOUT*/) {
 									formLayoutDescTextArea.setText(result.xmlLayout);
+									txtSummary.setText(result.actClass.summaryDef);
 									cbSingleton.setValue(result.actClass.isSingleton);
 									lbEntityTypes.setSelected(result.actClass.entityType);
 									updateForm.run();
@@ -128,6 +131,8 @@ public class Styler extends DockLayoutPanel {
 		}, null);
 		cmbClasses.setWidth("200px");
 		hp.add(cmbClasses);
+		hp.add(new Label("Summary"));
+		hp.add(txtSummary);
 		hp.add(cbSingleton);
 		hp.add(lbEntityTypes);
 
@@ -192,6 +197,7 @@ public class Styler extends DockLayoutPanel {
 					}
 					actClass.entityType = lbEntityTypes.getSelected() != null ? lbEntityTypes.getSelected().id : null;
 					actClass.isSingleton = cbSingleton.getValue();
+					actClass.summaryDef = txtSummary.getText();
 					
 					LayoutDefinition ld = new LayoutDefinition(
 							actClass,

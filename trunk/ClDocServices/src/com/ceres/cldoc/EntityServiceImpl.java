@@ -16,6 +16,7 @@ import com.ceres.cldoc.model.Address;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Organisation;
+import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -33,6 +34,9 @@ public class EntityServiceImpl implements IEntityService {
 					insertEntity(con, entity);
 					if (entity instanceof Person) {
 						insertPerson(con, (Person) entity);
+						if (entity instanceof Patient) {
+							insertPatient(con, (Patient) entity);
+						}
 					} else if (entity instanceof Organisation) {
 						insertOrganisation(con, (Organisation) entity);
 					}
@@ -40,6 +44,9 @@ public class EntityServiceImpl implements IEntityService {
 					updateEntity(con, entity);
 					if (entity instanceof Person) {
 						updatePerson(con, (Person) entity);
+						if (entity instanceof Patient) {
+							updateOrInsertPatient(con, (Patient) entity);
+						}
 					}
 				}
 
@@ -134,7 +141,7 @@ public class EntityServiceImpl implements IEntityService {
 	private void insertPerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("insert into Person(gender,id,per_id,firstname,lastname,sndx_firstname,sndx_lastname,dateofbirth) values (?,?,?,?,?,soundex(?),soundex(?),?)");
+				.prepareStatement("insert into Person(gender,id,firstname,lastname,sndx_firstname,sndx_lastname,dateofbirth) values (?,?,?,?,soundex(?),soundex(?),?)");
 		int i = 1;
 		if (person.gender != null) {
 			s.setLong(i++, person.gender.id);
@@ -142,7 +149,6 @@ public class EntityServiceImpl implements IEntityService {
 			s.setNull(i++, Types.INTEGER);
 		}
 		s.setLong(i++, person.id);
-		s.setLong(i++, person.perId);
 		s.setString(i++, person.firstName);
 		s.setString(i++, person.lastName);
 		s.setString(i++, person.firstName);
@@ -156,13 +162,23 @@ public class EntityServiceImpl implements IEntityService {
 		s.close();
 	}
 
+	private void insertPatient(Connection con, Patient person)
+			throws SQLException {
+		PreparedStatement s = con
+				.prepareStatement("insert into Patient(id,per_id) values (?,?)");
+		int i = 1;
+		s.setLong(i++, person.id);
+		s.setLong(i++, person.perId);
+		s.executeUpdate();
+		s.close();
+	}
+
 	private void updatePerson(Connection con, Person person)
 			throws SQLException {
 		PreparedStatement s = con
-				.prepareStatement("update Person set per_id = ?, gender = ?, firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?), dateofbirth = ? where id = ?");
+				.prepareStatement("update Person set gender = ?, firstname = ?,lastname = ?, sndx_firstname = soundex(?), sndx_lastname = soundex(?), dateofbirth = ? where id = ?");
 		int i = 1;
 
-		s.setLong(i++, person.perId);
 		if (person.gender != null) {
 			s.setLong(i++, person.gender.id);
 		} else {
@@ -180,6 +196,22 @@ public class EntityServiceImpl implements IEntityService {
 		s.setLong(i++, person.id);
 		s.executeUpdate();
 		s.close();
+	}
+
+	private void updateOrInsertPatient(Connection con, Patient person)
+			throws SQLException {
+		PreparedStatement s = con
+				.prepareStatement("update Patient set per_id = ? where id = ?");
+		int i = 1;
+
+		s.setLong(i++, person.perId);
+		s.setLong(i++, person.id);
+		int rows = s.executeUpdate();
+		s.close();
+		
+		if (rows == 0) {
+			insertPatient(con, person);
+		}
 	}
 
 	@Override
@@ -215,12 +247,19 @@ public class EntityServiceImpl implements IEntityService {
 	
 	private Entity fetchEntity(Session session, Entity e, ResultSet rs, String prefix) throws SQLException {
 		long entityId = rs.getLong(prefix + "entityId");
+		Long perId = Jdbc.getLong(rs, prefix + "per_Id");
+		
 		
 		if (e == null || !e.id.equals(entityId)) {
 			int typeId = rs.getInt(prefix + "type");
 			switch (typeId) {
 			case Entity.ENTITY_TYPE_PERSON: 
-				Person p = fetchPerson(session, rs, prefix, entityId);
+				Person p;
+				if (perId == null) {
+					p = fetchPerson(session, null, rs, prefix, entityId);
+				} else {
+					p = fetchPatient(session, rs, prefix, entityId);
+				}
 				e = p;
 			break;
 			case Entity.ENTITY_TYPE_ORGANISATION: 
@@ -254,8 +293,9 @@ public class EntityServiceImpl implements IEntityService {
 	@SuppressWarnings("unchecked")
 	private List<Entity> list(Session session, Connection con, String name, Integer typeId, Long id) throws SQLException {
 		List<Entity> result = new ArrayList<Entity>();
-		String sql = "select e.id entityId, e.name, e.type, pers.gender, pers.per_id, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, phone, note, street, number, city, postcode, co from Entity e "
+		String sql = "select e.id entityId, e.name, e.type, pers.gender, pat.per_id, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, phone, note, street, number, city, postcode, co from Entity e "
 				+ "left outer join Person pers on pers.id = e.id "
+				+ "left outer join Patient pat on pers.id = pat.id "
 				+ "left outer join Organisation orga on orga.id = e.id "
 				+ "left outer join Address adr on adr.entity_id = e.id " 
 				+ "where 1=1 ";
@@ -301,8 +341,10 @@ public class EntityServiceImpl implements IEntityService {
 		return o;
 	}
 
-	private Person fetchPerson(Session session, ResultSet rs, String prefix, long entityId) throws SQLException {
-		Person p = new Person();
+	private Person fetchPerson(Session session, Person p, ResultSet rs, String prefix, long entityId) throws SQLException {
+		if (p == null) {
+			p = new Person();
+		}
 		long genderId = rs.getLong(prefix + "gender");
 		if (!rs.wasNull()) {
 			p.gender = Locator.getCatalogService().load(session, genderId);
@@ -310,8 +352,14 @@ public class EntityServiceImpl implements IEntityService {
 		p.firstName = rs.getString(prefix + "firstname");
 		p.lastName = rs.getString(prefix + "lastname");
 		p.id = entityId;
-		p.perId = rs.getLong(prefix + "per_id");
 		p.dateOfBirth = rs.getDate(prefix + "dateofbirth");
+		return p;
+	}
+
+	private Patient fetchPatient(Session session, ResultSet rs, String prefix, long entityId) throws SQLException {
+		Patient p = new Patient();
+		fetchPerson(session, p, rs, prefix, entityId);
+		p.perId = rs.getLong(prefix + "per_id");
 		return p;
 	}
 
@@ -345,7 +393,7 @@ public class EntityServiceImpl implements IEntityService {
 		Collection<String> names = new ArrayList<String>();
 		Collection<Long> ids = new ArrayList<Long>();
 
-		String sql = "select * from Person p ";
+		String sql = "select * from Person p left outer join Patient pat on pat.id = p.id ";
 		String where = " where 1=1 ";
 		
 		if (role != null) {
@@ -395,7 +443,14 @@ public class EntityServiceImpl implements IEntityService {
 		
 		ResultSet rs = s.executeQuery();
 		while (rs.next()) {
-			Person p = fetchPerson(session, rs, "", rs.getLong("id"));
+			Long perId = Jdbc.getLong(rs, "per_Id");
+			long entityId = rs.getLong("id");
+			Person p; 
+			if (perId == null) {
+				p = fetchPerson(session, null, rs, "", entityId);
+			} else {
+				p = fetchPatient(session, rs, "", entityId);
+			}
 			result.add(p);
 		}
 		rs.close();
@@ -521,7 +576,7 @@ public class EntityServiceImpl implements IEntityService {
 			@Override
 			public Long execute(Connection con) throws SQLException {
 				Statement s = con.createStatement();
-				ResultSet rs = s.executeQuery("select MAX(PER_ID)+1 newid from Person");
+				ResultSet rs = s.executeQuery("select MAX(PER_ID)+1 newid from Patient");
 				rs.next();
 				long newId = rs.getLong("newid");
 				s.close();

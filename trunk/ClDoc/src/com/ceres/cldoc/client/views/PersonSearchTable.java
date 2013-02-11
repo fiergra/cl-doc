@@ -6,6 +6,8 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
+import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -37,14 +39,24 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		setOnClick(new OnClick<Person>() {
 
 			@Override
-			public void onClick(Person person) {
-				SRV.humanBeingService.findById(clDoc.getSession(), person.id, new DefaultCallback<Person>(clDoc, "findById") {
+			public void onClick(final Person person) {
+				if (person instanceof Patient) {
+					findAndOpen((Patient)person);
+				} else {
+					new MessageBox("Neue Patientenakte", "Wollen Sie eine Patientenakte fuer " + person.getName() + " anlegen?", MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION){
 
-					@Override
-					public void onSuccess(Person result) {
-						clDoc.openEntityFile(result, new PersonalFileHeader(result), "CLDOC.PERSONALFILE");
-					}
-				});
+						@Override
+						protected void onClick(int result) {
+							if (result == MB_YES) {
+								PersonEditor.editPerson(clDoc, new Patient(person), new OnClick<Person>(){
+
+									@Override
+									public void onClick(Person person) {
+										findAndOpen((Patient) person);
+									}});
+							}
+						}}.show();
+				}
 			}
 		});
 		this.clDoc = clDoc;
@@ -77,7 +89,13 @@ public class PersonSearchTable extends ClickableTable<Person> {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				PersonEditor.editPerson(clDoc, new Person());
+				PersonEditor.editPerson(clDoc, new Patient(), new OnClick<Person>(){
+
+					@Override
+					public void onClick(Person person) {
+						searchBox.setText(person.getName());
+					}});
+
 			}
 		});
 		pbNew.setPixelSize(32, 32);
@@ -113,10 +131,24 @@ public class PersonSearchTable extends ClickableTable<Person> {
 	
 */	
 
+	protected void findAndOpen(Patient person) {
+		SRV.humanBeingService.findById(clDoc.getSession(), person.id, new DefaultCallback<Person>(clDoc, "findById") {
+
+			@Override
+			public void onSuccess(Person result) {
+				clDoc.openEntityFile(result, new PersonalFileHeader(result), "CLDOC.PERSONALFILE");
+			}
+		});
+		
+	}
+
+
 	@Override
 	public boolean addRow(FlexTable grid, int row, Person person) {
 		DateTimeFormat f = DateTimeFormat.getFormat("dd.MM.yyyy");
-		Label id = new Label(String.valueOf(person.getDisplayId()));
+		Label id = new Label(
+				person instanceof Patient ? 
+						String.valueOf(person.getDisplayId()) : "-");
 		
 		grid.setWidget(row, 0, id);
 		HTML lastName = new HTML("<b>" + person.lastName + "</b>");

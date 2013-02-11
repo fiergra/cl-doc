@@ -43,7 +43,7 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public Act execute(Connection con) throws Exception {
-				act.summary = generateSummary(act);
+				act.summary = generateSummary(session, act);
 				if (act.id == null) {
 					insert(session, con, act, true);
 					Locator.getLogService().log(session, ILogService.INSERT, act, act.snapshot());
@@ -65,12 +65,14 @@ public class ActServiceImpl implements IActService {
 		});
 	}
 
-	protected String generateSummary(Act act) {
+	protected String generateSummary(Session session, Act act) {
 		String summary;
 		if (act.actClass.name.equals(ActClass.EXTERNAL_DOC.name)) {
 			String comment = act.getString("comment");
 			String fileName = act.getString("fileName");
 			summary = comment != null ? comment + " - <i>" + fileName + "</i>": fileName;
+		} else if (act.actClass.summaryDef != null) {
+			summary = ActFieldVisitor.replaceVars(session, act, act.actClass.summaryDef);
 		} else {
 			summary = act.actClass.name;
 		}
@@ -292,8 +294,13 @@ public class ActServiceImpl implements IActService {
 		int i = 1;
 		if (actClass.id == null) {
 			try {
-				s = con.prepareStatement("insert into ActClass (name, entitytype, singleton) values (?,?,?)", new String[]{"ID"});
+				s = con.prepareStatement("insert into ActClass (name, summarydef, entitytype, singleton) values (?,?,?,?)", new String[]{"ID"});
 				s.setString(i++, actClass.name);
+				if (actClass.summaryDef == null){
+					s.setNull(i++, Types.VARCHAR);
+				} else {
+					s.setString(i++, actClass.summaryDef);
+				}
 				if (actClass.entityType == null) {
 					s.setNull(i++, Types.NUMERIC);
 				} else {
@@ -312,7 +319,12 @@ public class ActServiceImpl implements IActService {
 				}
 			}
 		} else {
-			s = con.prepareStatement("update ActClass set entitytype=?, singleton=? where id=?");
+			s = con.prepareStatement("update ActClass set summarydef=?, entitytype=?, singleton=? where id=?");
+			if (actClass.summaryDef == null){
+				s.setNull(i++, Types.VARCHAR);
+			} else {
+				s.setString(i++, actClass.summaryDef);
+			}
 			if (actClass.entityType == null) {
 				s.setNull(i++, Types.NUMERIC);
 			} else {
@@ -345,7 +357,7 @@ public class ActServiceImpl implements IActService {
 
 	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity, Long roleId, Boolean singleton) throws SQLException {
 		String sql = "select " +
-				"i.id actid, i.date, i.summary, actclass.id classid, actclass.name classname, actclass.entitytype entitytype, actclass.singleton singleton, actclassfield.name fieldname, actclassfield.type, field.*," +
+				"i.id actid, i.date, i.summary, actclass.id classid, actclass.name classname, actclass.summarydef, actclass.entitytype entitytype, actclass.singleton singleton, actclassfield.name fieldname, actclassfield.type, field.*," +
 				"uc.id createdByUserId, uc.name createdByUserName, um.id modifiedByUserId, um.name modifiedByUserName " +
 				"from Act i " +
 				"left outer join ActField field on i.id = field.actid " +
@@ -416,7 +428,7 @@ public class ActServiceImpl implements IActService {
 		while (rs.next()) {
 			long actId = rs.getLong("actid");
 			if (act == null || !act.id.equals(actId)) {
-				act = new Act(new ActClass(rs.getLong("classid"), rs.getString("classname"), rs.getLong("entityType"), rs.getBoolean("singleton")));
+				act = new Act(new ActClass(rs.getLong("classid"), rs.getString("classname"), rs.getString("summaryDef"), rs.getLong("entityType"), rs.getBoolean("singleton")));
 				act.id = actId;
 				act.summary = rs.getString("summary");
 				Timestamp timeStamp = rs.getTimestamp("date");
@@ -552,7 +564,7 @@ public class ActServiceImpl implements IActService {
 		while (rs.next()) {
 			Long entityType = rs.getLong("entitytype");
 			if (rs.wasNull()) { entityType = null;}
-			ActClass actClass = new ActClass(rs.getLong("id"), rs.getString("name"), entityType, rs.getBoolean("singleton"));
+			ActClass actClass = new ActClass(rs.getLong("id"), rs.getString("name"), rs.getString("summaryDef"), entityType, rs.getBoolean("singleton"));
 			result.add(actClass);
 		}
 		return result;

@@ -1,12 +1,11 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.model.Act;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ScrollView<T> extends ScrollPanel implements IView<T> {
 
-	private IView<T> content;
+	private final IView<T> content;
 
 	public ScrollView(IView<T> content) {
 		super((Widget) content);

@@ -237,7 +237,7 @@ public class CatalogServiceImpl implements ICatalogService {
 						} else {
 							sql += "= ?";
 						}
-						sql += " order by IFNULL(logical_order, 999)";
+						sql += " order by IFNULL(logical_order, 1), shorttext, text";
 						PreparedStatement s = con.prepareStatement(sql);
 						if (parent != null) {
 							s.setLong(1, parent.id);

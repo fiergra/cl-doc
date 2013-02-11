@@ -45,6 +45,7 @@ public class MessageBox extends DialogBox {
 		dlgWidget.setSize("400px", "150px");
 //		vp.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		HTML theMessage = new HTML(htmlMessage);
+		theMessage.addStyleName("theMessage");
 		
 		HorizontalPanel buttonsPanel = new HorizontalPanel();
 		HorizontalPanel innerButtonsPanel = new HorizontalPanel();
@@ -98,16 +99,19 @@ public class MessageBox extends DialogBox {
 	
 	private void addButton(HorizontalPanel buttonsPanel, String label, final int result) {
 
-		Button pbOk = new Button(label);
-		pbOk.addClickHandler(new ClickHandler(){
+		Button pushButton = new Button(label);
+		pushButton.addClickHandler(new ClickHandler(){
 
+			@Override
 			public void onClick(ClickEvent arg0) {
 				hide(result);
 			}});
 		
-		pbOk.setWidth("80px");
-		buttonsPanel.add(pbOk);
-		
+		pushButton.setWidth("80px");
+		buttonsPanel.add(pushButton);
+		if (buttonsPanel.getWidgetCount() == 1) {
+			pushButton.setFocus(true);
+		}
 	}
 
 	private void hide(int result) {

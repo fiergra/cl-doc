@@ -17,8 +17,12 @@ import com.ceres.cldoc.model.Person;
 public class ActServiceImplTest extends TransactionalTest {
 
 	
+	public void testSummary() throws Exception {
+		fail();
+	}
+	
 	public void testMasterdata() throws Exception {
-		ActClass ac = new ActClass(null, "Masterdata", null, true);
+		ActClass ac = new ActClass(null, "Masterdata", null, null, true);
 		Person p = new Person();
 		p.firstName = "Heinz";
 		p.lastName = "Achmed";
