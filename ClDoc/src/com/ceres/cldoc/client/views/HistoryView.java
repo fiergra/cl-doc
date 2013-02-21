@@ -73,7 +73,7 @@ public class HistoryView extends DockLayoutPanel {
 					table.setWidget(row, column++, new Image(imgSource));
 					String sDate = act.date != null ? DateTimeFormat.getFormat("dd.MM.yyyy").format(act.date) : "--.--.----";
 					table.setWidget(row, column++, new Label(sDate));
-					table.setWidget(row, column++, new HTML("<b>" + act.summary + "</b>"));
+					table.setWidget(row, column++, new HTML(act.summary));
 					HTML user = new HTML("<i>" + act.modifiedBy.userName + "</i>");
 					user.setTitle(act.createdBy.userName);
 					table.setWidget(row, column++, user);
