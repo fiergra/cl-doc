@@ -96,7 +96,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	private List<LayoutDefinition> listLayoutDefinitions(Connection con,
 			final String filter, final Integer typeId, final Long entityType, final Boolean isSingleton) throws SQLException {
 
-		String sql = "select ld.id, ld.typeid, icl.id actClassId, icl.name classname, icl.entitytype,icl.singleton, valid_To, xml  "
+		String sql = "select ld.id, ld.typeid, icl.summaryDef, icl.id actClassId, icl.name classname, icl.entitytype,icl.singleton, valid_To, xml  "
 				+ "from LayoutDefinition ld "
 				+ "inner join ActClass icl on icl.id = ld.actclassid " 
  				+ "where upper(icl.name) like ? and (valid_To >= CURRENT_TIMESTAMP or valid_to is null)";
@@ -131,7 +131,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	protected List<LayoutDefinition> fecthLayoutDefinitions(ResultSet rs) throws SQLException {
 		List<LayoutDefinition> result = new ArrayList<LayoutDefinition>();
 		while (rs.next()) {
-			ActClass actClass = new ActClass(rs.getLong("actClassId"), rs.getString("classname"), rs.getString("summary"), Jdbc.getLong(rs, "entityType"), rs.getBoolean("singleton"));
+			ActClass actClass = new ActClass(rs.getLong("actClassId"), rs.getString("classname"), rs.getString("summaryDef"), Jdbc.getLong(rs, "entityType"), rs.getBoolean("singleton"));
 			LayoutDefinition ld = new LayoutDefinition(rs.getLong("id"), actClass, rs.getInt("typeid"), rs.getString("xml"));
 			result.add(ld);
 		}

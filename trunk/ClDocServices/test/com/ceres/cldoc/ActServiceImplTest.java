@@ -18,7 +18,13 @@ public class ActServiceImplTest extends TransactionalTest {
 
 	
 	public void testSummary() throws Exception {
-		fail();
+		ActClass ac = new ActClass(null, "ClassWithSummaryDef", "kurzgesagt <b>{feld1}</b> und <i>{feld2}</i>", null, false);
+		Act a = new Act(ac);
+		a.set("feld1", "xxx");
+		a.set("feld2", "yyy");
+		Locator.getActService().save(getSession(), a);
+		Act reloaded = Locator.getActService().load(getSession(), a.id);
+		assertNotNull(reloaded.summary);
 	}
 	
 	public void testMasterdata() throws Exception {
