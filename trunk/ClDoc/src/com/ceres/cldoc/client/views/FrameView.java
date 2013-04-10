@@ -1,18 +1,19 @@
 package com.ceres.cldoc.client.views;
 
+import com.ceres.cldoc.model.IAct;
 import com.google.gwt.user.client.ui.Frame;
 
-public class FrameView<T> extends Frame implements IView<T> {
+public class FrameView extends Frame implements IForm {
 
-	private final T model;
+	private final IAct model;
 
-	public FrameView(T model, String url) {
+	public FrameView(IAct model, String url) {
 		super(url);
 		this.model = model;
 	}
 	
 	@Override
-	public T getModel() {
+	public IAct getModel() {
 		return model;
 	}
 

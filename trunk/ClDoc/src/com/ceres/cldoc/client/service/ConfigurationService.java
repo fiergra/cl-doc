@@ -51,4 +51,10 @@ public interface ConfigurationService extends RemoteService {
 	ReportDefinition loadReportDefinition(Session session, Catalog catalog);
 	List<HashMap<String, Serializable>> executeReport(Session session, ReportDefinition rd, IAct filters);
 	
+	String getLuceneIndexPath();
+	void setLuceneIndexPath(Session session, String path);
+	
+	String getDocArchivePath();
+	void setDocArchivePath(Session session, String path);
+	
 }

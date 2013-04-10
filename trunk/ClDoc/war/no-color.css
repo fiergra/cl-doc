@@ -28,6 +28,10 @@ body, table td, select, button {
 .resultTable {
 }
 
+.resultCell {
+	font-size: large;
+}
+
 .sourceCode {
 	font-family: monospace;
 	font-size: small;

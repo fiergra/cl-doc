@@ -3,27 +3,29 @@ package com.ceres.cldoc.client.controls;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ceres.cldoc.client.views.IForm;
 import com.ceres.cldoc.client.views.IView;
+import com.ceres.cldoc.model.IAct;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 
-public class PagesView<T> extends TabLayoutPanel implements IView<T> {
+public class PagesView extends TabLayoutPanel implements IForm {
 
-	private final T model;
-	private final List<IView<T>> pages = new ArrayList<IView<T>>();
+	private final IAct model;
+	private final List<IForm> pages = new ArrayList<IForm>();
 
-	public PagesView(T model) {
+	public PagesView(IAct model) {
 		super(2, Unit.EM);
 		this.model = model;
 	}
 
 	@Override
-	public T getModel() {
+	public IAct getModel() {
 		return model;
 	}
 
-	public void addPage(IView<T> page, String label) {
+	public void addPage(IForm page, String label) {
 		pages.add(page);
 		DockLayoutPanel dp = new DockLayoutPanel(Unit.EM);
 		dp.add(page);
@@ -32,14 +34,14 @@ public class PagesView<T> extends TabLayoutPanel implements IView<T> {
 	
 	@Override
 	public void fromDialog() {
-		for (IView<T> page:pages) {
+		for (IForm page:pages) {
 			page.fromDialog();
 		}
 	}		
 
 	@Override
 	public void toDialog() {
-		for (IView<T> page:pages) {
+		for (IForm page:pages) {
 			page.toDialog();
 		}
 	}
@@ -48,7 +50,7 @@ public class PagesView<T> extends TabLayoutPanel implements IView<T> {
 	public boolean isModified() {
 		boolean isModified = false;
 
-		for (IView<T> page:pages) {
+		for (IForm page:pages) {
 			isModified |= page.isModified();
 		}
 		
@@ -57,7 +59,7 @@ public class PagesView<T> extends TabLayoutPanel implements IView<T> {
 
 	@Override
 	public void clearModification() {
-		for (IView<T> page:pages) {
+		for (IForm page:pages) {
 			page.clearModification();
 		}
 		

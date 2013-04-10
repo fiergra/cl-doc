@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class Styler extends DockLayoutPanel {
-	private IView<Act> form;
+	private IForm form;
 	private final ClDoc clDoc;
 	
 	public Styler(ClDoc clDoc) {
@@ -72,6 +72,7 @@ public class Styler extends DockLayoutPanel {
 			@Override
 			public void run() {
 				if (form != null) {
+					int index = formContainer.getWidgetIndex(form);
 					formContainer.remove(form);
 				}
 				form = ActRenderer.getActRenderer(clDoc, formLayoutDescTextArea.getText(), null, null);
@@ -98,11 +99,12 @@ public class Styler extends DockLayoutPanel {
 			public String getValue(ActClass actClass) {
 				return String.valueOf(actClass.id);
 			}
-		}, new OnDemandChangeListener<ActClass>() {
-
+		}, null);
+		cmbClasses.addSelectionChangedHandler(new ChangeHandler() {
+			
 			@Override
-			public void onChange(ActClass oldValue, ActClass newValue) {
-				
+			public void onChange(ChangeEvent event) {
+				ActClass newValue = cmbClasses.getSelected(); 
 				if (newValue != null) {
 					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "") {
 
@@ -128,7 +130,7 @@ public class Styler extends DockLayoutPanel {
 					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), newValue.name, LayoutDefinition.PRINT_LAYOUT, callback );
 				}
 			}
-		}, null);
+		});
 		cmbClasses.setWidth("200px");
 		hp.add(cmbClasses);
 		hp.add(new Label("Summary"));

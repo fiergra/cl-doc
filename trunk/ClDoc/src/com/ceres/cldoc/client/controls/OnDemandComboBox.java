@@ -1,5 +1,6 @@
 package com.ceres.cldoc.client.controls;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
@@ -12,6 +13,7 @@ import com.ceres.cldoc.client.views.PersonEditor;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -33,12 +35,11 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 	
 	private List<T> itemList;
 	private final ClDoc clDoc;
-	private final OnDemandChangeListener<T> changeListener;
+//	private final OnDemandChangeListener<T> changeListener;
 	
 	public OnDemandComboBox(final ClDoc clDoc, 
 			ListRetrievalService<T> listRetrievalService, 
 			LabelFunction <T> labelFunxtion, 
-			OnDemandChangeListener<T>changeListener,
 			final Runnable onClick) {
 		super();
 		this.clDoc = clDoc;
@@ -46,7 +47,7 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 		setVerticalAlignment(ALIGN_MIDDLE);
 		this.listRetrievalService = listRetrievalService;
 		this.labelFunction = labelFunxtion;
-		this.changeListener = changeListener;
+//		this.changeListener = changeListener;
 		
 ////		pbOpen.addClickHandler(new ClickHandler() {
 ////			
@@ -222,7 +223,12 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 	private void setSelectedItem(T item) {
 		T oldValue = selectedItem;
 		selectedItem = item;
-		changeListener.onChange(oldValue, selectedItem);
+//		changeListener.onChange(oldValue, selectedItem);
+
+		for (ChangeHandler ch:changeHandlers) {
+			ch.onChange(null);
+		}
+
 	}
 	
 	private void setSelectedIndex(int selectedIndex) {
@@ -247,4 +253,12 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 	public String getText() {
 		return txtFilter.getText();
 	}
+
+	private final List<ChangeHandler> changeHandlers = new ArrayList<ChangeHandler>();
+
+	@Override
+	public void addSelectionChangedHandler(ChangeHandler changeHandler) {
+		changeHandlers.add(changeHandler);
+	}
+
 }

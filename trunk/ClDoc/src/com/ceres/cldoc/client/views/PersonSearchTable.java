@@ -82,8 +82,10 @@ public class PersonSearchTable extends ClickableTable<Person> {
 
 //		hp.setSpacing(2);
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		hp.add(new Label(SRV.c.search()));
-		hp.add(searchBox);
+//		hp.add(new Label(SRV.c.search()));
+//		hp.add(searchBox);
+		addWidget(new Label(SRV.c.search()));
+		addWidget(searchBox);
 
 		Image pbNew = addButton(SRV.c.newPPP(), "icons/32/Person-New-icon.png", new ClickHandler() {
 			
@@ -102,7 +104,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		hp.add(pbNew);
 		
 		
-		addWidget(hp);
+//		addWidget(hp);
 		getColumnFormatter().addStyleName(4, "hundertPercentWidth");
 
 	}
@@ -149,15 +151,19 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		Label id = new Label(
 				person instanceof Patient ? 
 						String.valueOf(person.getDisplayId()) : "-");
-		
+		id.addStyleName("resultCell");
 		grid.setWidget(row, 0, id);
 		HTML lastName = new HTML("<b>" + person.lastName + "</b>");
 		lastName.setWidth("10em");
+		lastName.addStyleName("resultCell");
 		grid.setWidget(row, 1, lastName);
 		Label firstName = new Label(person.firstName);
 		firstName.setWidth("10em");
+		firstName.addStyleName("resultCell");
 		grid.setWidget(row, 2, firstName);
-		grid.setWidget(row, 3, new Label(person.dateOfBirth != null ? ("*" + f.format(person.dateOfBirth)) : "" ));
+		Label dob = new Label(person.dateOfBirth != null ? ("*" + f.format(person.dateOfBirth)) : "" );
+		dob.addStyleName("resultCell");
+		grid.setWidget(row, 3, dob);
 		
 		if (person.gender != null) {
 			Image gender = person.gender.id.equals(152l) ? new Image("icons/male-sign.png") : new Image("icons/female-sign.png");

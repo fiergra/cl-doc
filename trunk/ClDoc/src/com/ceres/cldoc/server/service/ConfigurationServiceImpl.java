@@ -1,5 +1,6 @@
 package com.ceres.cldoc.server.service;
 
+import java.io.File;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.Collection;
@@ -13,7 +14,10 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.ceres.cldoc.IActService;
 import com.ceres.cldoc.ICatalogService;
+import com.ceres.cldoc.IDocArchive;
+import com.ceres.cldoc.IDocService;
 import com.ceres.cldoc.ILayoutDefinitionService;
+import com.ceres.cldoc.ILuceneService;
 import com.ceres.cldoc.IReportService;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
@@ -142,6 +146,19 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 		return Locator.getReportService();
 	}
 	
+	private IActService getActService() {
+		return Locator.getActService();
+	}
+
+	
+	private ILuceneService getLuceneService() {
+		return Locator.getLuceneService();
+	}
+	
+	private IDocArchive getDocArchive() {
+		return Locator.getDocArchive();
+	}
+	
 	@Override
 	public Catalog getCatalog(Session session, long id) {
 		return getCatalogService().load(session, id);
@@ -205,6 +222,31 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	public List<HashMap<String, Serializable>> executeReport(Session session,
 			ReportDefinition rd, IAct filters) {
 		return getReportService().execute(session, rd, filters);
+	}
+
+	@Override
+	public String getLuceneIndexPath() {
+		return getLuceneService().getIndexPath().getAbsolutePath();
+	}
+
+	@Override
+	public void setLuceneIndexPath(Session session, String path) {
+		File indexPath = new File(path);
+		indexPath.mkdirs();
+		getLuceneService().setIndexPath(indexPath);
+		getActService().rebuildIndex(session);
+	}
+
+	@Override
+	public String getDocArchivePath() {
+		return getDocArchive().getArchivePath().getAbsolutePath();
+	}
+
+	@Override
+	public void setDocArchivePath(Session session, String path) {
+		File archivePath = new File(path);
+		archivePath.mkdirs();
+		getDocArchive().setArchivePath(archivePath);
 	}
 
 }

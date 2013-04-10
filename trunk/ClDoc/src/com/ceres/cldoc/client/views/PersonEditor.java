@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class PersonEditor extends Form <PersonWrapper> {
+public class PersonEditor extends Form {
 
 	private final OnClick<Person> onSave;
 	
@@ -30,7 +30,9 @@ public class PersonEditor extends Form <PersonWrapper> {
 
 	@Override
 	protected void setup() {
-		boolean isPatient = getModel().getPerson() instanceof Patient;
+		PersonWrapper model = (PersonWrapper) getModel();
+		boolean isPatient = model.getPerson() instanceof Patient;
+		
 		if (isPatient) {
 			final Widget id = addLine("id", "id", Form.DataType.FT_INTEGER, 5);
 			

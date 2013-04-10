@@ -65,7 +65,7 @@ public class CatalogRadioGroup extends HorizontalPanel implements IEntitySelecto
 	
 	private final List<ChangeHandler> changeHandlers = new ArrayList<ChangeHandler>();
 	
-	public void addChangeHandler(ChangeHandler changeHandler) {
+	public void addSelectionChangedHandler(ChangeHandler changeHandler) {
 		changeHandlers.add(changeHandler);
 	}
 

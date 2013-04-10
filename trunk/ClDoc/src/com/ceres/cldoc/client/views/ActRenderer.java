@@ -47,7 +47,7 @@ public class ActRenderer extends DockLayoutPanel {
 		setup();
 	}
 
-	private IView<Act> formContent;
+	private IForm formContent;
 	private Act act;
 	private LayoutDefinition layoutDefinition;
 	
@@ -121,7 +121,7 @@ public class ActRenderer extends DockLayoutPanel {
 					@Override
 					protected void onClick(int result) {
 						if (result == MessageBox.MB_YES) {
-							SRV.actService.delete(clDoc.getSession(), formContent.getModel(), new DefaultCallback<Void>(clDoc, "delete") {
+							SRV.actService.delete(clDoc.getSession(), (Act) formContent.getModel(), new DefaultCallback<Void>(clDoc, "delete") {
 	
 								@Override
 								public void onSuccess(Void result) {
@@ -184,7 +184,7 @@ public class ActRenderer extends DockLayoutPanel {
 
 	private void saveForm(final boolean doSelect, final Runnable callback) {
 		formContent.fromDialog();
-		SRV.actService.save(clDoc.getSession(), formContent.getModel(), new DefaultCallback<Act>(clDoc, "listCatalogs") {
+		SRV.actService.save(clDoc.getSession(), (Act) formContent.getModel(), new DefaultCallback<Act>(clDoc, "listCatalogs") {
 
 			@Override
 			public void onSuccess(Act act) {
@@ -247,7 +247,7 @@ public class ActRenderer extends DockLayoutPanel {
 		if (act.actClass.name.equals(ActClass.EXTERNAL_DOC.name)) {
 			IActField field = act.get("docId");
 			String baseUrl = GWT.getModuleBaseURL();
-			FrameView<Act> frame = new FrameView<Act>(act, baseUrl + "download?id=" + field.getLongValue());
+			FrameView frame = new FrameView(act, baseUrl + "download?id=" + field.getLongValue());
 			int h = getOffsetHeight() - 2 * BORDER_WIDTH;
 			int w = getOffsetWidth() - 2 * BORDER_WIDTH; 
 			frame.setPixelSize(w, h);
@@ -289,8 +289,8 @@ public class ActRenderer extends DockLayoutPanel {
 	}
 
 
-	public static IView<Act> getActRenderer(ClDoc clDoc, String xml, final Act act, Runnable onChange) {
-		IView<Act> result = null;
+	public static IForm getActRenderer(ClDoc clDoc, String xml, final Act act, Runnable onChange) {
+		IForm result = null;
 		
 		if (xml != null) {
 			
@@ -301,14 +301,14 @@ public class ActRenderer extends DockLayoutPanel {
 				Node item = childNodes.item(i);
 				
 				if (item.getNodeName().equals("pages")) {
-					PagesView<Act> pages = new PagesView<Act>(act);
+					PagesView pages = new PagesView(act);
 					NodeList subItems = item.getChildNodes();
 					for (int j = 0; j < subItems.getLength(); j++) {
 						if (subItems.item(j) instanceof Element) {
 							Element subItem = (Element) subItems.item(j);
 							
 							if (subItem.getNodeName().equals("form")) {
-								Form<Act> form = new Form<Act>(clDoc, act, onChange);
+								Form form = new Form(clDoc, act, onChange);
 								form.createAndLayout(subItem);
 								form.setWidth("100%");
 								pages.addPage(form, subItem.getAttribute("label"));
@@ -319,7 +319,7 @@ public class ActRenderer extends DockLayoutPanel {
 					result = pages;
 					pages.setSize("100%", "100%");
 				} else if (item.getNodeName().equals("form")) {
-					Form<Act> form = new Form<Act>(clDoc, act, onChange);
+					Form form = new Form(clDoc, act, onChange);
 					form.createAndLayout(item);
 					form.setWidth("100%");
 					result = new ScrollView(form);

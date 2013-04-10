@@ -101,7 +101,7 @@ public class CatalogMultiSelect extends FlexTable implements
 
 	private final List<ChangeHandler> changeHandlers = new ArrayList<ChangeHandler>();
 
-	public void addChangeHandler(ChangeHandler changeHandler) {
+	public void addSelectionChangedHandler(ChangeHandler changeHandler) {
 		changeHandlers.add(changeHandler);
 	}
 

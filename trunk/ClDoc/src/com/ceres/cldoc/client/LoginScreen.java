@@ -124,17 +124,6 @@ public class LoginScreen extends LayoutPanel {
 						super.setup();
 					}
 
-					@Override
-					protected void onModification() {
-						super.onModification();
-						String pwd1 = txtPwd1.getText();
-						String pwd2 = txtPwd2.getText();
-						
-						
-					}
-					
-					
-					
 				};
 				
 				OnClick<PersonWrapper> onClickSave = new OnClick<PersonWrapper>() {

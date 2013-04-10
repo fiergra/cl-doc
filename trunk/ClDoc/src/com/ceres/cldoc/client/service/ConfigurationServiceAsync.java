@@ -62,4 +62,11 @@ public interface ConfigurationServiceAsync {
 			IAct filters,
 			AsyncCallback<List<HashMap<String, Serializable>>> callback);
 
+	void getLuceneIndexPath(AsyncCallback<String> callback);
+	void setLuceneIndexPath(Session session, String path, AsyncCallback<Void> callback);
+
+	void getDocArchivePath(AsyncCallback<String> callback);
+	void setDocArchivePath(Session session, String path, AsyncCallback<Void> callback);
+
+	
 }

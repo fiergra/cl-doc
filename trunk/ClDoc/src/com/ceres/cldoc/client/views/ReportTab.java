@@ -52,7 +52,7 @@ public class ReportTab extends SplitLayoutPanel {
 	}
 
 
-	private HorizontalPanel setupButtons(final Form<IAct> rc) {
+	private HorizontalPanel setupButtons(final Form rc) {
 		HorizontalPanel buttonsPanel = new HorizontalPanel();
 		buttonsPanel.addStyleName("buttonsPanel");
 		HorizontalPanel buttons = new HorizontalPanel();
@@ -89,7 +89,7 @@ public class ReportTab extends SplitLayoutPanel {
 
 	private Widget createReportControls() {
 		DockLayoutPanel reportControls = new DockLayoutPanel(Unit.EM);
-		Form<IAct> rc = new Form<IAct>(clDoc, filters, new Runnable(){
+		Form rc = new Form(clDoc, filters, new Runnable(){
 
 			@Override
 			public void run() {
@@ -105,7 +105,7 @@ public class ReportTab extends SplitLayoutPanel {
 		return reportControls;
 	}
 
-	private void setupParams(Form<IAct> rc) {
+	private void setupParams(Form rc) {
 		if (reportDefinition.xml != null && reportDefinition.xml.length() > 0) {
 			Document document = XMLParser.parse(reportDefinition.xml);
 			NodeList params = document.getElementsByTagName("param");
@@ -120,7 +120,7 @@ public class ReportTab extends SplitLayoutPanel {
 		}
 	}
 
-	private void addParam(Form<IAct> rc, int i, Element child) {
+	private void addParam(Form rc, int i, Element child) {
 		String fieldName = child.getAttribute("name");
 		String labelText = child.getAttribute("label") == null ? fieldName : child.getAttribute("label");
 		String sType = child.getAttribute("type");

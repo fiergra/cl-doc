@@ -213,4 +213,26 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 		SRV.configurationService.listLayoutDefinitions(session, typeId, entityType, isSingleton, defaultCallback);
 	}
 
+	@Override
+	public void getLuceneIndexPath(AsyncCallback<String> callback) {
+		SRV.configurationService.getLuceneIndexPath(callback);
+	}
+
+	@Override
+	public void setLuceneIndexPath(Session session, String path,
+			AsyncCallback<Void> callback) {
+		SRV.configurationService.setLuceneIndexPath(session, path, callback);
+	}
+
+	@Override
+	public void getDocArchivePath(AsyncCallback<String> callback) {
+		SRV.configurationService.getDocArchivePath(callback);
+	}
+
+	@Override
+	public void setDocArchivePath(Session session, String path,
+			AsyncCallback<Void> callback) {
+		SRV.configurationService.setDocArchivePath(session, path, callback);
+	}
+
 }

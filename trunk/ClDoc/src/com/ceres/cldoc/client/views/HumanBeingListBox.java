@@ -16,7 +16,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 	
 	private Catalog role;
 	
-	public HumanBeingListBox(final ClDoc clDoc, final String role, OnDemandChangeListener<Person> changeHandler) {
+	public HumanBeingListBox(final ClDoc clDoc, final String role) {
 		super(clDoc, 
 			role == null ?
 			new ListRetrievalService<Person>() {
@@ -43,7 +43,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 			public String getValue(Person act) {
 				return getLabel(act);
 			}
-		}, changeHandler, new Runnable() {
+		}, new Runnable() {
 			
 			@Override
 			public void run() {

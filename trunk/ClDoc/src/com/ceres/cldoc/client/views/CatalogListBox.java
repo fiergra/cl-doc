@@ -7,6 +7,7 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.ListBox;
 
 public class CatalogListBox extends ListBox implements IEntitySelector <Catalog> {
@@ -103,6 +104,12 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 		Catalog selected = index >= 0 ? catalogs.get(index) : null; 
 		
 		return selected != null && !selected.equals(emptyRecord) ? selected : null;
+	}
+
+
+	@Override
+	public void addSelectionChangedHandler(ChangeHandler changeHandler) {
+		addChangeHandler(changeHandler);
 	}
 
 
