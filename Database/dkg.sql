@@ -52,12 +52,12 @@ from smd_participations p
 insert into Report(NAME, TYPE, XML) values ('Beratungen', 161, '');
 
 insert into Entity (ID, TYPE, NAME) values (2, 181, 'Christian LASCHEK');
-insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
-values (2, 103, 'Christian', 'Laschek', '1978-07-07');
+insert into Person (ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
+values (2, 'Christian', 'Laschek', '1978-07-07');
 
 insert into Entity (ID, TYPE, NAME) values (4, 181, 'Carlita Metzdorf-Klos');
-insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
-values (4, 104, 'Carlita', 'Metzdorf-Klos', '1962-07-07');
+insert into Person (ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
+values (4, 'Carlita', 'Metzdorf-Klos', '1962-07-07');
 
 insert into Entity (ID,TYPE,NAME) values (21, 182, 'Krebsgesellschaft-Rheinland-Pfalz');
 insert into Organisation (Id) values (21);

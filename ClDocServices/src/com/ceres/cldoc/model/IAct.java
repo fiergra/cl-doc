@@ -10,6 +10,7 @@ public interface IAct extends Serializable {
 	public abstract String getString(String fieldName);
 
 	public abstract Date getDate();
+	
 	public abstract void setDate(Date date);
 
 	public abstract Date getDate(String fieldName);

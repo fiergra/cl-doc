@@ -13,15 +13,17 @@ import java.util.logging.Logger;
 
 public class DocArchive implements IDocArchive {
 
-	private File path;
+	private File archivePath = new File(System.getProperty("user.dir") + File.separator + "DocArchive");;
 	private static long docId = 0;
 	private static Logger log = Logger.getLogger(DocArchive.class.getCanonicalName());
 	
 	public DocArchive() {
-		String pathName = System.getProperty("user.dir") + File.separator + "DocArchive";
-		path = new File(pathName);
-		path.mkdirs();
-		String[] names = path.list();
+		init();
+	}
+	
+	private void init() {
+		archivePath.mkdirs();
+		String[] names = archivePath.list();
 		for (String name:names) {
 			try {
 				if (name.endsWith(".data")) {
@@ -37,9 +39,21 @@ public class DocArchive implements IDocArchive {
 				log.warning(rx.toString());
 			}
 		}
-		log.info("init doc archive at " + path + " starting with id " + docId);
+		log.info("init doc archive at " + archivePath + " starting with id " + docId);
 	}
 	
+	
+	@Override
+	public File getArchivePath() {
+		return archivePath;
+	}
+
+	@Override
+	public void setArchivePath(File archivePath) {
+		this.archivePath = archivePath;
+		init();
+	}
+
 	@Override
 	public long store(String name, InputStream data, HashMap<String, Serializable> metaData) throws IOException {
 		File file = getFile(name);
@@ -55,12 +69,12 @@ public class DocArchive implements IDocArchive {
 	}
 
 	private File getFile(String name) {
-		File file = new File(path, String.valueOf(docId) + "." + name + ".data");
+		File file = new File(archivePath, String.valueOf(docId) + "." + name + ".data");
 		return file;
 	}
 
 	private File getFile(final long id) {
-		File[] files = path.listFiles(new FilenameFilter() {
+		File[] files = archivePath.listFiles(new FilenameFilter() {
 			
 			@Override
 			public boolean accept(File file, String name) {
@@ -68,7 +82,7 @@ public class DocArchive implements IDocArchive {
 			}
 		});
 		
-		return files[0];
+		return files.length > 0 ? files[0] : null;
 	}
 
 	@Override

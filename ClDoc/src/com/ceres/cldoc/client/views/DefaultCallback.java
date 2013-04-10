@@ -11,6 +11,9 @@ public abstract class DefaultCallback<T> implements AsyncCallback<T> {
 		clDoc.status(name);
 	}
 	
+	public DefaultCallback() {
+	}
+	
 	@Override
 	public void onFailure(Throwable caught) {
 		caught.printStackTrace();

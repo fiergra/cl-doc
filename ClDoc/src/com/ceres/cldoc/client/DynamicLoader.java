@@ -8,6 +8,7 @@ import com.ceres.cldoc.client.views.EntityConfigurator;
 import com.ceres.cldoc.client.views.EntitySearch;
 import com.ceres.cldoc.client.views.Persons;
 import com.ceres.cldoc.client.views.Reporting;
+import com.ceres.cldoc.client.views.SettingsPanel;
 import com.ceres.cldoc.client.views.Styler;
 import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,6 +40,8 @@ public class DynamicLoader {
 			result = new Reporting(clDoc);
 		} else if (name.equals("Debug")) {
 			result = new DebugPanel(clDoc);
+		} else if (name.equals("Einstellungen")) {
+			result = new SettingsPanel(clDoc);
 		} else if (name.equals("Kataloge")) {
 			result = new CatalogConfigurator(clDoc);
 		} else if (name.equals("Layouts")) {

@@ -12,6 +12,8 @@ import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.PopupManager;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -157,7 +159,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		final CatalogListBox cmbTypes = new CatalogListBox(clDoc, "MASTERDATA.EntityTypes");
 		final CatalogListBox cmbRelationTypes = new CatalogListBox(clDoc, "MASTERDATA.ER");
 		
-		OnDemandComboBox<Entity> cmbEntities = new OnDemandComboBox<Entity>(clDoc, 
+		final OnDemandComboBox<Entity> cmbEntities = new OnDemandComboBox<Entity>(clDoc, 
 				new ListRetrievalService<Entity>() {
 
 					@Override
@@ -182,19 +184,19 @@ public class ERTree extends ClickableTree<EntityRelation> {
 					public String getValue(Entity entity) {
 						return String.valueOf(entity.id);
 					}
-				}, 
-				new OnDemandChangeListener<Entity>() {
-
-					@Override
-					public void onChange(Entity oldValue, Entity newValue) {
-						if (!asSubject) {
-							er.subject = newValue;
-						} else {
-							er.object = newValue;
-						}
-					}
-				}, null);
+				} , null);
 		
+		cmbEntities.addSelectionChangedHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				if (!asSubject) {
+					er.subject = cmbEntities.getSelected();
+				} else {
+					er.object = cmbEntities.getSelected();
+				}
+			}
+		});
 		if (asSubject) {
 			er.subject = entity;
 			content.setWidget(row, 0, newLabel("Subject"));

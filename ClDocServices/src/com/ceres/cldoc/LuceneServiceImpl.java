@@ -39,6 +39,19 @@ public class LuceneServiceImpl implements ILuceneService {
 	private final StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
 	private Directory index;
 
+	private File indexPath = new File("./lucene");
+	
+	@Override
+	public File getIndexPath() {
+		return indexPath;
+	}
+
+	@Override
+	public void setIndexPath(File path) {
+		indexPath = path;
+		index = null;
+	}
+
 	
 	private IndexWriter getIndexWriter() throws CorruptIndexException, LockObtainFailedException, IOException {
 		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_36, analyzer);
@@ -47,13 +60,6 @@ public class LuceneServiceImpl implements ILuceneService {
 		return w;
 	}
 	
-	private File getPath() {
-		File path = new File("./lucene");
-		path.mkdirs();
-		
-		return path;
-	}
-
 	@Override
 	public void deleteIndex() throws CorruptIndexException, LockObtainFailedException, IOException {
 		IndexWriter w = getIndexWriter();
@@ -151,7 +157,7 @@ public class LuceneServiceImpl implements ILuceneService {
 
 	private Directory getIndex() throws IOException {
 		if (index == null) {
-			index = new SimpleFSDirectory(getPath());
+			index = new SimpleFSDirectory(getIndexPath());
 		}
 		return index;
 	}

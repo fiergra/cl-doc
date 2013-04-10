@@ -1,10 +1,9 @@
 package com.ceres.cldoc.client.views;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import com.ceres.cldoc.model.IAct;
 
-
-public interface IView<T> extends IsWidget {
-	T getModel();
+public interface IView {
+	IAct getModel();
 	void fromDialog();
 	void toDialog();
 	

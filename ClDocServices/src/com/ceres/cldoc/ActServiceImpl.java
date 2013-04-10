@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -401,6 +403,17 @@ public class ActServiceImpl implements IActService {
 		rs.close();
 		s.close();
 		
+		Collections.sort(acts, new Comparator<Act>() {
+
+			@Override
+			public int compare(Act o1, Act o2) {
+				Date d1 = o1.date == null ? new Date() : o1.date;
+				Date d2 = o2.date == null ? new Date() : o2.date;
+				
+				return d2.compareTo(d1);
+			}
+		});
+		
 		return acts;
 	}
 
@@ -528,7 +541,7 @@ public class ActServiceImpl implements IActService {
 				log.info("deleted " + rows + " field(s).");
 				s.close();
 				
-				s = con.prepareStatement("delete from Logentry where actid = ?");
+				s = con.prepareStatement("delete from LogEntry where actid = ?");
 				s.setLong(1, act.id);
 				rows = s.executeUpdate();
 				log.info("deleted " + rows + " logentries.");

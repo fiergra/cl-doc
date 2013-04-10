@@ -312,6 +312,7 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (22, 5, 'Kataloge', 'Kataloge', 'Kataloge', 2);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (23, 5, 'Entitaeten', 'Entitaeten', 'Entitaeten', 3);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (24, 5, 'Berechtigungen', 'Berechtigungen', 'Berechtigungen', 4);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
@@ -368,12 +369,12 @@ insert into Catalog (id, parent, code, text, shorttext) values (181, 180, 'Perso
 insert into Catalog (id, parent, code, text, shorttext) values (182, 180, 'Organisation', 'Organisation', 'Organisation');
 
 insert into Entity (ID, TYPE, NAME) values (1, 181, 'Ralph FIERGOLLA');
-insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
-values (1, 101, 'Ralph', 'Fiergolla', '1969-08-05');
+insert into Person (ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
+values (1, 'Ralph', 'Fiergolla', '1969-08-05');
 
 insert into Entity (ID, TYPE, NAME) values (6, 181, 'Kypros Kyprianou');
-insert into Person (ID, PER_ID, FIRSTNAME, LASTNAME) 
-values (6, 102, 'Kypros', 'Kyprianou');
+insert into Person (ID, FIRSTNAME, LASTNAME) 
+values (6, 'Kypros', 'Kyprianou');
 
 insert into Entity (ID,TYPE,NAME) values (20, 182, 'CeRES');
 insert into Organisation (Id) values (20);
@@ -404,6 +405,7 @@ insert into Policy (role, objectType, action, startDate) values (56,21,71, CURRE
 insert into Policy (role, objectType, action, startDate) values (56,22,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,23,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,24,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (56,25,71, CURRENT_DATE);
 
 
 insert into ActClass (Id,Name) values (1, 'Beispiel1');

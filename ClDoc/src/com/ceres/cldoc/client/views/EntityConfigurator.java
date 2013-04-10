@@ -251,12 +251,12 @@ public class EntityConfigurator extends DockLayoutPanel {
 //				PopupManager.showModal("neu(e) " + entityType.shortText, ar, onClickSave, null); 
 //			} else {
 				
-				final PagesView<Act> tlp = new PagesView<Act>(null);
+				final PagesView tlp = new PagesView(null);
 				final Collection<Act> acts = new ArrayList<Act>();
 				for (LayoutDefinition ld:result) {
 					Act act = getMasterDataAct(masterData, ld.actClass);
 					acts.add(act);
-					IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, new Runnable() {
+					IForm ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, new Runnable() {
 						
 						@Override
 						public void run() {

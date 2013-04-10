@@ -13,7 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class ParticipationListBox extends OnDemandComboBox <Person> {
 	
-	public ParticipationListBox(final ClDoc clDoc, final String role, OnDemandChangeListener<Person> changeHandler) {
+	public ParticipationListBox(final ClDoc clDoc, final String role) {
 		super(clDoc, 
 			role == null ?
 			new ListRetrievalService<Person>() {
@@ -40,7 +40,7 @@ public class ParticipationListBox extends OnDemandComboBox <Person> {
 			public String getValue(Person act) {
 				return getLabel(act);
 			}
-		}, changeHandler, null);
+		}, null);
 		setSize("25em", "2em");
 		addStyleName("humanBeingListBox");
 	}

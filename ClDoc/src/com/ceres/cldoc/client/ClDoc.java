@@ -39,6 +39,7 @@ public class ClDoc implements EntryPoint {
 //	private final Label statusMessage = new Label();
 	private Session session;
 	private LogOutput logOutput;
+	
 	public Session getSession() {
 		return session;
 	}
