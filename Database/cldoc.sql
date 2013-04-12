@@ -175,6 +175,8 @@ CREATE TABLE IF NOT EXISTS ActClassField(
     Name VARCHAR(250)
 );
 
+
+
 CREATE TABLE IF NOT EXISTS LayoutDefinition (
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
     ActClassId INTEGER NOT NULL,
@@ -240,6 +242,19 @@ CREATE TABLE IF NOT EXISTS ActField(
         references List (ID)
 );
 
+
+CREATE TABLE IF NOT EXISTS Attachment (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    ActId INTEGER NOT NULL,
+    CONSTRAINT FK_Attachment_Act FOREIGN KEY (ActId)
+        references Act (Id),
+    Filename VARCHAR(400) NOT NULL,
+    Description VARCHAR(400),
+    type INTEGER,
+    CONSTRAINT FK_Attachment_CATALOG FOREIGN KEY (type)
+        references Catalog (ID),
+    DOCID INTEGER NOT NULL
+);
 
 
 CREATE TABLE IF NOT EXISTS LogEntry (
@@ -312,7 +327,6 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (22, 5, 'Kataloge', 'Kataloge', 'Kataloge', 2);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (23, 5, 'Entitaeten', 'Entitaeten', 'Entitaeten', 3);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (24, 5, 'Berechtigungen', 'Berechtigungen', 'Berechtigungen', 4);
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
@@ -405,7 +419,6 @@ insert into Policy (role, objectType, action, startDate) values (56,21,71, CURRE
 insert into Policy (role, objectType, action, startDate) values (56,22,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,23,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,24,71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (56,25,71, CURRENT_DATE);
 
 
 insert into ActClass (Id,Name) values (1, 'Beispiel1');

@@ -22,6 +22,7 @@ import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
+import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Participation;
 
@@ -69,8 +70,10 @@ public class UploadService extends HttpServlet {
 						}
 					}
 				} else if (ActClass.EXTERNAL_DOC.name.equals(type)) {
-					Act act = new Act(ActClass.EXTERNAL_DOC);
 					Long entityId = null;
+					Long actId = null;
+					Attachment attachment = new Attachment();
+					
 					for (FileItem fItem : items) {
 						// process only file upload - discard other form act
 						// types
@@ -78,12 +81,13 @@ public class UploadService extends HttpServlet {
 							if (fItem.getFieldName().equals("entityId")) {
 								String sId = fItem.getString();
 								entityId = Long.valueOf(sId);
-							} else if (fItem.getFieldName().equals("userId")) {
-
-							} else {
+							} else if (fItem.getFieldName().equals("actId")) {
+								String sId = fItem.getString();
+								actId = Long.valueOf(sId);
+							} else if (fItem.getFieldName().equals("comment")) {
 								String value = fItem.getString();
 								if (value != null && value.length() > 0) {
-									act.set(fItem.getFieldName(), value);
+									attachment.description = value;
 								}
 							}
 						} else {
@@ -92,16 +96,28 @@ public class UploadService extends HttpServlet {
 							if (fileName != null) {
 								
 								fileName = FilenameUtils.getName(fileName);
-								act.set("fileName", fileName);
-								long docId = Locator.getDocArchive().store(fileName, fItem.getInputStream(), null);
-								act.set("docId", docId);
+								attachment.filename = fileName;
+//								act.set("fileName", fileName);
+								attachment.docId = Locator.getDocArchive().store(fileName, fItem.getInputStream(), null);
+//								act.set("docId", docId);
 							}
 						}
 					}
-					Entity entity = Locator.getEntityService().load(session, entityId);
-					act.setParticipant(entity, Participation.PROTAGONIST, new Date(), null);
-					act.date = new Date();
-					Locator.getActService().save(session, act);
+
+					if (entityId != null) {
+						Act act = new Act(ActClass.EXTERNAL_DOC);
+						act.set("fileName", attachment.filename);
+						act.set("docId", attachment.docId);
+						act.set("comment", attachment.description);
+						Entity entity = Locator.getEntityService().load(session, entityId);
+						act.setParticipant(entity, Participation.PROTAGONIST, new Date(), null);
+						act.date = new Date();
+						Locator.getActService().save(session, act);
+					} else if (actId != null) {
+						attachment.act = new Act();
+						attachment.act.id = actId;
+						Locator.getActService().saveAttachment(session, attachment);
+					}
 				}
 			} catch (Exception e) {
 				resp.sendError(

@@ -2,6 +2,7 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
@@ -23,27 +24,21 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class UploadDialog extends DialogBox {
 
 	private final OnOkHandler<Void> onOk;
 
-	public UploadDialog(ClDoc clDoc, String type, Entity humanBeing, OnOkHandler<Void> onOk) {
+	public UploadDialog(ClDoc clDoc, String type, Entity humanBeing, Act act, OnOkHandler<Void> onOk) {
 		this.onOk = onOk;
-		setup(clDoc, type, humanBeing);
+		setup(clDoc, type, humanBeing, act);
 	}
 
-	private FormPanel createUploadPanel(ClDoc clDoc, String type, Entity humanBeing) {
+	private FormPanel createUploadPanel(ClDoc clDoc, String type, Entity humanBeing, Act act) {
 		final FormPanel form = new FormPanel();
 		final FileUpload fup = new FileUpload();
 		fup.setName("fup");
-		final TextBox rweKey = new TextBox();
-		
-		if (humanBeing != null) {
-			rweKey.setName("entityId");
-			rweKey.setVisible(false);
-			rweKey.setText(humanBeing.id.toString());
-		}
 		
 		final TextBox fileName = new TextBox();
 		fileName.setName("fileName");
@@ -59,7 +54,14 @@ public class UploadDialog extends DialogBox {
 
 		String baseUrl = GWT.getModuleBaseURL();
 		form.setAction(baseUrl + "uploadService?type="+type+"&sid=" + clDoc.getSession().getId() + "&uid=" + clDoc.getSession().getUser().id);
-		formWidget.add(rweKey);
+
+		if (humanBeing != null) {
+			formWidget.add(createIdField("entityId", humanBeing.id));
+		}
+		if (act != null) {
+			formWidget.add(createIdField("actId", act.id));
+		}
+		
 		formWidget.add(fileName);
 		formWidget.add(fup);
 		formWidget.add(new Label(SRV.c.comment()));
@@ -96,7 +98,15 @@ public class UploadDialog extends DialogBox {
 	}
 	
 	
-	private void setup(ClDoc clDoc, String type, Entity humanBeing) {
+	private Widget createIdField(String name, Long id) {
+		final TextBox rweKey = new TextBox();
+		rweKey.setName(name);
+		rweKey.setVisible(false);
+		rweKey.setText(id.toString());
+		return rweKey;
+	}
+
+	private void setup(ClDoc clDoc, String type, Entity humanBeing, Act act) {
 		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		HorizontalPanel buttons = new HorizontalPanel();
@@ -105,7 +115,7 @@ public class UploadDialog extends DialogBox {
 		
 		Button pbOk = new Button(SRV.c.ok());
 		
-		final FormPanel form = createUploadPanel(clDoc, type, humanBeing);
+		final FormPanel form = createUploadPanel(clDoc, type, humanBeing, act);
 		
 		pbOk.addClickHandler(new ClickHandler() {
 			
@@ -140,19 +150,23 @@ public class UploadDialog extends DialogBox {
 	}
 
 	public static void uploadExternalDoc(ClDoc clDoc, Entity humanBeing, OnOkHandler<Void> onOk) {
-		uploadFile(clDoc, ActClass.EXTERNAL_DOC.name, humanBeing, onOk);
+		uploadFile(clDoc, ActClass.EXTERNAL_DOC.name, humanBeing, null, onOk);
+	}
+
+	public static void uploadExternalDoc(ClDoc clDoc, Act act, OnOkHandler<Void> onOk) {
+		uploadFile(clDoc, ActClass.EXTERNAL_DOC.name, null, act, onOk);
 	}
 
 	public static void uploadLayouts(ClDoc clDoc, int layoutType, OnOkHandler<Void> onOk) {
-		uploadFile(clDoc, layoutType == LayoutDefinition.FORM_LAYOUT ? "form_layouts" : "print_layouts", null, onOk);
+		uploadFile(clDoc, layoutType == LayoutDefinition.FORM_LAYOUT ? "form_layouts" : "print_layouts", null, null, onOk);
 	}
 
 	public static void uploadCatalogs(ClDoc clDoc, OnOkHandler<Void> onOk) {
-		uploadFile(clDoc, "catalogs", null, onOk);
+		uploadFile(clDoc, "catalogs", null, null, onOk);
 	}
 
-	private static void uploadFile(ClDoc clDoc, String type, Entity humanBeing, OnOkHandler<Void> onOk) {
-		UploadDialog avb = new UploadDialog(clDoc, type, humanBeing, onOk);
+	private static void uploadFile(ClDoc clDoc, String type, Entity humanBeing, Act act, OnOkHandler<Void> onOk) {
+		UploadDialog avb = new UploadDialog(clDoc, type, humanBeing, act, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);
 		avb.center();

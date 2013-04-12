@@ -60,4 +60,8 @@ public interface StringConstants extends Constants {
 	String catalogs();
 
 	String gender();
+
+	String attachments();
+
+	String addAttachment();
 }

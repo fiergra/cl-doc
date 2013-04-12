@@ -589,7 +589,7 @@ public class Form extends FlexTable implements IForm {
 				result = DataType.FT_MULTI_SELECTION;
 			} else if (type.equals("participation")) {
 				result = DataType.FT_PARTICIPATION;
-			} else if (type.equals("humanbeing")) {
+			} else if (type.equals("humanbeing") || type.equals("person")) {
 				result = DataType.FT_HUMANBEING;
 			}
 		}		

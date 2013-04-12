@@ -98,18 +98,26 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 			public void onSuccess(List<T> result) {
 				list = result;
 				displayList = new ArrayList<T>();
-				update();
+				beforeUpdate(result);
+				update(result);
+				afterUpdate(result);
 			}
 		});
 	}
 
-	protected void update() {
+	protected void afterUpdate(List<T> result) {
+	}
+
+	protected void beforeUpdate(List<T> result) {
+	}
+
+	protected void update(List<T> result) {
 		int row = 0;
 		table.removeAllRows();
 		table.clear();
 		RowFormatter rf = table.getRowFormatter();
 		rf.addStyleName(row, "resultTable");
-		for (T entry:list) {
+		for (T entry:result) {
 			if (addRow(table, row, entry)) {
 				displayList.add(entry);
 				rf.addStyleName(row, "resultRow");

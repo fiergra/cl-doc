@@ -13,17 +13,20 @@ import java.util.logging.Logger;
 
 public class DocArchive implements IDocArchive {
 
-	private File archivePath = new File(System.getProperty("user.dir") + File.separator + "DocArchive");;
-	private static long docId = 0;
+	private File path;
+	private long docId = 0;
 	private static Logger log = Logger.getLogger(DocArchive.class.getCanonicalName());
 	
 	public DocArchive() {
-		init();
+		String pathName = System.getProperty("user.dir") + File.separator + "DocArchive";
+		init(pathName);
 	}
-	
-	private void init() {
-		archivePath.mkdirs();
-		String[] names = archivePath.list();
+
+	private void init(String pathName) {
+		docId = 0;
+		path = new File(pathName);
+		path.mkdirs();
+		String[] names = path.list();
 		for (String name:names) {
 			try {
 				if (name.endsWith(".data")) {
@@ -39,21 +42,9 @@ public class DocArchive implements IDocArchive {
 				log.warning(rx.toString());
 			}
 		}
-		log.info("init doc archive at " + archivePath + " starting with id " + docId);
+		log.info("init doc archive at " + path + " starting with id " + docId);
 	}
 	
-	
-	@Override
-	public File getArchivePath() {
-		return archivePath;
-	}
-
-	@Override
-	public void setArchivePath(File archivePath) {
-		this.archivePath = archivePath;
-		init();
-	}
-
 	@Override
 	public long store(String name, InputStream data, HashMap<String, Serializable> metaData) throws IOException {
 		File file = getFile(name);
@@ -69,12 +60,12 @@ public class DocArchive implements IDocArchive {
 	}
 
 	private File getFile(String name) {
-		File file = new File(archivePath, String.valueOf(docId) + "." + name + ".data");
+		File file = new File(path, String.valueOf(docId) + "." + name + ".data");
 		return file;
 	}
 
 	private File getFile(final long id) {
-		File[] files = archivePath.listFiles(new FilenameFilter() {
+		File[] files = path.listFiles(new FilenameFilter() {
 			
 			@Override
 			public boolean accept(File file, String name) {
@@ -82,7 +73,7 @@ public class DocArchive implements IDocArchive {
 			}
 		});
 		
-		return files.length > 0 ? files[0] : null;
+		return files != null && files.length > 0 ? files[0] : null;
 	}
 
 	@Override
@@ -116,6 +107,72 @@ public class DocArchive implements IDocArchive {
 	public HashMap<String, Serializable> retrieveMetaData(long docId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getFileName(long docId) {
+		File file = getFile(docId);
+		String name = null;
+		if (file != null) {
+			name = file.getName();
+			int firstDot = name.indexOf('.');
+			if (firstDot > 0) {
+				name = name.substring(firstDot + 1);
+			}
+			
+			if (name.endsWith(".data")) {	
+				name = name.substring(0, name.length() - ".data".length());
+			}
+		}
+		return name;
+	}
+
+	@Override
+	public long store(File file, HashMap<String, Serializable> metaData) throws IOException {
+		return store(file.getName(), new FileInputStream(file), metaData);
+	}
+
+	@Override
+	public long store(File file) throws IOException {
+		return store(file, null);
+	}
+
+	@Override
+	public void setPath(String pathName, boolean copy) throws IOException {
+		File newPath = new File(pathName);
+		newPath.mkdirs();
+		
+		if (copy) {
+			File[] files = path.listFiles();
+			for (File f:files) {
+				FileInputStream in = new FileInputStream(f);
+				File newFile = new File(newPath.getAbsolutePath() + File.separator + f.getName());
+				FileOutputStream out = new FileOutputStream(newFile);
+				log.info("copy " + f.getAbsolutePath() + " to " + newFile.getAbsolutePath());
+				byte[] buffer = new byte[4096];
+				int read = in.read(buffer);
+				while (read > 0) {
+					out.write(buffer, 0, read);
+					read = in.read(buffer);
+				}
+				in.close();
+				out.close();
+			}
+		}
+		
+		init(pathName);
+	}
+
+	@Override
+	public File getArchivePath() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setArchivePath(File archivePath) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

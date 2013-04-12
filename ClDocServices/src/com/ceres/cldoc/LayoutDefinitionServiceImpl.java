@@ -22,7 +22,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -30,6 +29,10 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import com.ceres.cldoc.model.ActClass;
@@ -158,15 +161,17 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public byte[] exportZip(Session session) {
+	public byte[] exportZip(final Session session) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@SuppressWarnings("unchecked")
 			@Override
-			public byte[] execute(Connection con) throws SQLException {
+			public byte[] execute(Connection con) throws Exception {
 				try {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					ZipOutputStream zout = new ZipOutputStream(out);
+					
+					exportClasses(session, con, zout);
 					
 					ZipEntry zipEntry = new ZipEntry("form/");
 					zout.putNextEntry(zipEntry);
@@ -191,7 +196,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 				
 				for (LayoutDefinition ld:definitions) {
 					String name = ld.actClass.name;
-					String xml = addClassInfo(ld.xmlLayout, ld.actClass);
+					String xml = ld.xmlLayout;//addClassInfo(ld.xmlLayout, ld.actClass);
 					String entryName = path + name + ".xml";
 					log.info("add: " + entryName);
 					ZipEntry zipEntry = new ZipEntry(entryName);
@@ -217,51 +222,103 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 //				s.close();
 			}
 
-			private String addClassInfo(String xml, ActClass actClass) {
-				DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory
-						.newInstance();
-				DocumentBuilder db;
-				try {
-					db = factory.newDocumentBuilder();
-					Document doc = db.parse(new ByteArrayInputStream(xml.getBytes()));
-					Element document = doc.getDocumentElement();
-//					document.setAttribute("classid", String.valueOf(actClass.id));
-					document.setAttribute("classname", actClass.name);
-					if (actClass.entityType != null) {
-						document.setAttribute("entitytype", String.valueOf(actClass.entityType));
-					}
-					document.setAttribute("singleton", String.valueOf(actClass.isSingleton));
-					
-					TransformerFactory transfac = TransformerFactory.newInstance();
-					Transformer trans = transfac.newTransformer();
-					trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-					trans.setOutputProperty(OutputKeys.INDENT, "yes");
-
-					// create string from xml tree
-					StringWriter sw = new StringWriter();
-					StreamResult result = new StreamResult(sw);
-					DOMSource source = new DOMSource(doc);
-					trans.transform(source, result);
-					xml = sw.toString();
-
-					
-					
-				} catch (ParserConfigurationException e) {
-					e.printStackTrace();
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				} catch (SAXException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (TransformerConfigurationException e) {
-					e.printStackTrace();
-				} catch (TransformerException e) {
-					e.printStackTrace();
-				}
-				return xml;
-			}
+//			private String addClassInfo(String xml, ActClass actClass) {
+//				DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory
+//						.newInstance();
+//				DocumentBuilder db;
+//				try {
+//					db = factory.newDocumentBuilder();
+//					Document doc = db.parse(new ByteArrayInputStream(xml.getBytes()));
+//					Element document = doc.getDocumentElement();
+////					document.setAttribute("classid", String.valueOf(actClass.id));
+//					document.setAttribute("classname", actClass.name);
+//					if (actClass.entityType != null) {
+//						document.setAttribute("entitytype", String.valueOf(actClass.entityType));
+//					}
+//					document.setAttribute("singleton", String.valueOf(actClass.isSingleton));
+//					
+//					TransformerFactory transfac = TransformerFactory.newInstance();
+//					Transformer trans = transfac.newTransformer();
+//					trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+//					trans.setOutputProperty(OutputKeys.INDENT, "yes");
+//
+//					// create string from xml tree
+//					StringWriter sw = new StringWriter();
+//					StreamResult result = new StreamResult(sw);
+//					DOMSource source = new DOMSource(doc);
+//					trans.transform(source, result);
+//					xml = sw.toString();
+//
+//					
+//					
+//				} catch (ParserConfigurationException e) {
+//					e.printStackTrace();
+//				} catch (UnsupportedEncodingException e) {
+//					e.printStackTrace();
+//				} catch (SAXException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				} catch (TransformerConfigurationException e) {
+//					e.printStackTrace();
+//				} catch (TransformerException e) {
+//					e.printStackTrace();
+//				}
+//				return xml;
+//			}
 		});
+	}
+
+	protected void exportClasses(Session session, Connection con, ZipOutputStream zout) throws IOException, ParserConfigurationException, TransformerException {
+		List<ActClass> classes = Locator.getActService().listClasses(session, null);
+
+		DocumentBuilderFactory dbfac = DocumentBuilderFactory
+				.newInstance();
+		DocumentBuilder docBuilder;
+		docBuilder = dbfac.newDocumentBuilder();
+		Document doc = docBuilder.newDocument();
+		Element root = doc.createElement("actclasses");
+		doc.appendChild(root);
+		
+		for (ActClass actClass:classes) {
+			actClassToXml(doc, root, actClass);
+		}
+		TransformerFactory transfac = TransformerFactory.newInstance();
+		Transformer trans = transfac.newTransformer();
+		trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+		// create string from xml tree
+		StringWriter sw = new StringWriter();
+		StreamResult result = new StreamResult(sw);
+		DOMSource source = new DOMSource(doc);
+		trans.transform(source, result);
+		String xml = sw.toString();
+
+		String entryName = "actclasses.xml";
+		ZipEntry zipEntry = new ZipEntry(entryName);
+		zout.putNextEntry(zipEntry);
+		zout.write(xml.getBytes("UTF-8"));
+		
+	}
+
+	private void actClassToXml(Document doc, Node parentNode, ActClass actClass) {
+		Element classNode = doc.createElement("actclass");
+		
+		classNode.setAttribute("name", actClass.name);
+		classNode.setAttribute("isSingleton", String.valueOf(actClass.isSingleton));
+
+		if (actClass.entityType != null) {
+			classNode.setAttribute("entityType", actClass.entityType.toString());
+		}
+		
+		if (actClass.summaryDef != null) {
+			Element textNode = doc.createElement("summaryDef");
+			Text text = doc.createTextNode(actClass.summaryDef);
+			textNode.appendChild(text);
+			classNode.appendChild(textNode);
+		}
+		parentNode.appendChild(classNode);
 	}
 
 	@Override
@@ -270,23 +327,29 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 			
 			@SuppressWarnings("unchecked")
 			@Override
-			public Void execute(Connection con) throws SQLException {
+			public Void execute(Connection con) throws Exception {
 				try {
 					ZipInputStream zin = new ZipInputStream(in);
 					ZipEntry zipEntry = zin.getNextEntry();
+					boolean classesImported = false;
+					while (!classesImported && zipEntry != null) {
+						String name = zipEntry.getName();
+						if (name.equals("actclasses.xml")) {
+							importActClasses(con, getText(zin));
+							classesImported = true;
+						}
+						zipEntry = zin.getNextEntry();
+					}
+					
+					zin = new ZipInputStream(in);
+					zipEntry = zin.getNextEntry();
 					while (zipEntry != null) {
 						String name = zipEntry.getName();
-						ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-						byte[] buffer = new byte[1024];
-						int read = zin.read(buffer);
-						while (read != -1) {
-							bOut.write(buffer, 0, read);
-							read = zin.read(buffer);
-						}
-						String xml = new String(bOut.toByteArray(), "UTF-8");
+						String xml = getText(zin);
 //						log.info(name + ": " + xml);
 						if (name.endsWith(".xml")) {
 							int type = -1;
+						
 							if (name.startsWith("form/")) {
 								type = LayoutDefinition.FORM_LAYOUT;
 								name = name.substring(5);
@@ -310,6 +373,79 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 					throw new RuntimeException(e);
 				}
 				return null;
+			}
+
+			private void importActClasses(Connection con, String xml) throws SAXException, IOException, ParserConfigurationException, SQLException {
+				DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+				DocumentBuilder db = factory.newDocumentBuilder();
+				Document doc = db.parse(new ByteArrayInputStream(xml.getBytes()));
+				Element document = doc.getDocumentElement();
+				NodeList children = document.getChildNodes();
+				for (int i = 0; i < children.getLength(); i++) {
+					Node child = children.item(i);
+					if (child.getNodeName().equals("actclass")) {
+						importActClass(con, (Element) child);
+					}
+				}
+				
+			}
+
+
+			private Long getLong(NamedNodeMap attributes, String name) {
+				String value = getString(attributes, name);
+				return value != null ? Long.parseLong(value) : null;
+			}
+
+			private String getString(NamedNodeMap attributes, String name) {
+				Node node = attributes.getNamedItem(name);
+				return node != null ? node.getTextContent() : null;
+			}
+
+			private String getNodeText(Element catalogNode, String elementName) {
+				Element child = getChildByName(catalogNode, elementName); 
+				return child != null ? child.getTextContent() : null;
+			}
+
+			private Element getChildByName(Element node, String childName) {
+				Element child = null;
+				
+				NodeList children = node.getChildNodes();
+				int length = children.getLength();
+				int index = 0;
+				
+				while (child == null && index < length) {
+					Node curChild = children.item(index++);
+					
+					if (childName.equals(curChild.getNodeName())) {
+						child = (Element) curChild;
+					}
+					
+				}
+				return child;
+			}
+			
+
+
+			private void importActClass(Connection con, Element catalogNode) throws SQLException {
+				ActClass actClass = new ActClass();
+				actClass.name = getString(catalogNode.getAttributes(), "name");
+				actClass.entityType = getLong(catalogNode.getAttributes(), "entityType");
+				actClass.summaryDef = getNodeText(catalogNode, "summaryDef");
+				actClass.isSingleton = "true".equals(getString(catalogNode.getAttributes(), "isSingleton"));
+			
+				Locator.getActService().registerActClass(con, actClass);
+			}
+
+			private String getText(InputStream zin) throws IOException {
+				ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+				byte[] buffer = new byte[1024];
+				int read = zin.read(buffer);
+				while (read != -1) {
+					bOut.write(buffer, 0, read);
+					read = zin.read(buffer);
+				}
+				String xml = new String(bOut.toByteArray(), "UTF-8");
+				return xml;
 			}
 
 			private ActClass getActClass(String xml, String fileName) {

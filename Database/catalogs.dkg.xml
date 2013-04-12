@@ -1,467 +1,661 @@
-﻿<catalogs>
-  <catalog code="MASTERDATA" id="150">
-    <text>MASTERDATA</text>
-    <shorttext>MASTERDATA</shorttext>
-    <date>02-Jul-2012 00:00:00</date>
-    <children>
-      <catalog code="Familienstand">
-        <text>Familienstand</text>
-        <shorttext>Familienstand</shorttext>
-        <date>02-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="VERWITWET">
-            <text>verwitwet</text>
-            <shorttext>verwitwet</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="VERHEIRATET">
-            <text>verheiratet</text>
-            <shorttext>verheiratet</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="LEDIG">
-            <text>ledig</text>
-            <shorttext>ledig</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="GESCHIEDEN">
-            <text>geschieden</text>
-            <shorttext>geschieden</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-	  
-      <catalog code="KRANKENKASSEN">
-        <text>Krankenkassen</text>
-        <children>
-          <catalog code="AOK">
-            <shorttext>AOK</shorttext>
-          </catalog>
-          <catalog code="DAK">
-            <shorttext>DAK</shorttext>
-          </catalog>
-          <catalog code="BEK">
-            <shorttext>BEK</shorttext>
-          </catalog>
-          <catalog code="TK">
-            <shorttext>TK</shorttext>
-          </catalog>
-          <catalog code="IKK">
-            <shorttext>IKK</shorttext>
-          </catalog>
-          <catalog code="DKK">
-            <shorttext>DKK</shorttext>
-          </catalog>
-          <catalog code="PKK">
-            <shorttext>privat</shorttext>
-          </catalog>
-        </children>
-      </catalog>
-	  
-      <catalog code="Schulabschluss">
-        <text>Schulabschluss</text>
-        <shorttext>Schulabschluss</shorttext>
-        <date>02-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="Hauptschule">
-            <text>Hauptschule</text>
-            <shorttext>Hauptschule</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Abitur">
-            <text>Abitur</text>
-            <shorttext>Abitur</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Mittlere Reife">
-            <text>Mittlere Reife</text>
-            <shorttext>Mittlere Reife</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Fachabitur">
-            <text>Fachabitur</text>
-            <shorttext>Fachabitur</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="ohne">
-            <text>ohne</text>
-            <shorttext>ohne</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="KREBSART">
-        <text>Krebsart</text>
-        <shorttext>Krebsart</shorttext>
-        <date>02-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="Lunge">
-            <text>Lunge/Bronchien</text>
-            <shorttext>Lunge/Bronchien</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Prostata">
-            <text>Prostata</text>
-            <shorttext>Prostata</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Hoden">
-            <text>Hoden</text>
-            <shorttext>Hoden</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Gyn. Tumore">
-            <text>Gyn. Tumore</text>
-            <shorttext>Gyn. Tumore</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="MAMMA">
-            <text>Mamma</text>
-            <shorttext>Mamma</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Darm">
-            <text>Darm</text>
-            <shorttext>Darm</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Pankreas">
-            <text>Pankreas</text>
-            <shorttext>Pankreas</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Hirn">
-            <text>Hirn</text>
-            <shorttext>Hirn</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Urologisch">
-            <text>Urologisch</text>
-            <shorttext>Urologisch</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Haut">
-            <text>Haut</text>
-            <shorttext>Haut</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Haematologisch">
-            <text>Haematologisch</text>
-            <shorttext>Haematologisch</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Magen">
-            <text>Magen</text>
-            <shorttext>Magen</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="HNO">
-            <text>HNO</text>
-            <shorttext>HNO</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Weichteile">
-            <text>Weichteile</text>
-            <shorttext>Weichteile</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="GENESE">
-        <text>GENESE</text>
-        <shorttext>GENESE</shorttext>
-        <date>02-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="Remission">
-            <text>Remission</text>
-            <shorttext>Remission</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Rezidiv">
-            <text>Rezidiv</text>
-            <shorttext>Rezidiv</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Ersterkrankung">
-            <text>Ersterkrankung</text>
-            <shorttext>Ersterkrankung</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Zweit">
-            <text>Zweittumor</text>
-            <shorttext>Zweittumor</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="THERAPIE">
-        <text>THERAPIE</text>
-        <shorttext>THERAPIE</shorttext>
-        <date>02-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="SONSTIGE">
-            <text>Sonstige</text>
-            <shorttext>Sonstige</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="Keine">
-            <text>Keine</text>
-            <shorttext>Keine</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="HORMON">
-            <text>Hormon</text>
-            <shorttext>Hormon</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="CHEMO">
-            <text>Chemo</text>
-            <shorttext>Chemo</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="OP">
-            <text>OP</text>
-            <shorttext>OP</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="RADIO">
-            <text>Bestrahlung</text>
-            <shorttext>Bestrahlung</shorttext>
-            <date>02-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="KONTAKTART">
-        <text />
-        <shorttext />
-        <date>05-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="PERSOENLICH">
-            <text>persönlich</text>
-            <shorttext>persönlich</shorttext>
-            <date>05-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="SCHRIFTLICH">
-            <text>schriftlich</text>
-            <shorttext>schriftlich</shorttext>
-            <date>05-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="TELEFONISCH">
-            <text>telefonisch</text>
-            <shorttext>telefonisch</shorttext>
-            <date>05-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="ORT">
-        <text />
-        <shorttext />
-        <date>05-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="PRAXIS">
-            <text>Praxis</text>
-            <shorttext>Praxis</shorttext>
-            <date>05-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="HAUS">
-            <text>Haus</text>
-            <shorttext>Haus</shorttext>
-            <date>05-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="KLINIK">
-            <text>Klinik</text>
-            <shorttext>Klinik</shorttext>
-            <date>05-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="AUSSENSTELLE">
-            <text>Aussenstelle</text>
-            <shorttext>Aussenstelle</shorttext>
-            <date>09-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="BERATUNG">
-        <text />
-        <shorttext />
-        <children>
-          <catalog code="ANGELEGENHEIT">
-            <text />
-            <shorttext />
-            <children>
-              <catalog code="BETROFFENER">
-                <text>von Betroffenem</text>
-              </catalog>
-              <catalog code="VEREIN">
-                <text>des Vereins</text>
-              </catalog>
-              <catalog code="SPENDEN">
-                <text>der Spenden</text>
-              </catalog>
-              <catalog code="PRAEVENTION">
-                <text>der Prävention</text>
-              </catalog>
-            </children>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="FRAGESTELLUNG">
-        <text />
-        <shorttext />
-        <children>
-          <catalog code="BEHANDLUNG">
-            <text />
-            <shorttext />
-            <children>
-              <catalog code="MEDIZINISCH">
-                <text>Medizinische Behandlung</text>
-                <shorttext>Medizinische Behandlung</shorttext>
-              </catalog>
-              <catalog code="KOMPLEMENTAER">
-                <text>Fragen nach komplementärer
-                Behandlung</text>
-                <shorttext>Fragen nach komplementärer
-                Behandlung</shorttext>
-              </catalog>
-            </children>
-          </catalog>
-          <catalog code="BEFINDLICHKEIT">
-            <text />
-            <shorttext />
-            <children>
-              <catalog code="psych">
-                <text>psychologisch</text>
-                <shorttext>psychologisch</shorttext>
-              </catalog>
-              <catalog code="phys">
-                <text>körperlich</text>
-                <shorttext>körperlich</shorttext>
-              </catalog>
-            </children>
-          </catalog>
-          <catalog code="SONSTIGE">
-            <text />
-            <shorttext />
-            <children>
-              <catalog code="SCHMERZ">
-                <text>Schmerz</text>
-                <shorttext>Schmerz</shorttext>
-              </catalog>
-              <catalog code="SEX">
-                <text>Sexualität</text>
-                <shorttext>Sexualität</shorttext>
-              </catalog>
-              <catalog code="Ernährung">
-                <text>Ernährung</text>
-                <shorttext>Ernährung</shorttext>
-              </catalog>
-              <catalog code="Ernährung">
-                <text>Ernährung</text>
-                <shorttext>Ernährung</shorttext>
-              </catalog>
-              <catalog code="SITUATION">
-                <text>Lebenssituation</text>
-                <shorttext>Lebenssituation</shorttext>
-              </catalog>
-              <catalog code="VERMITTLUNG">
-                <text>Vermittlung weiterführender
-                Hilfen</text>
-                <shorttext>Vermittlung weiterführender
-                Hilfen</shorttext>
-              </catalog>
-              <catalog code="SINN">
-                <text>Sinn- und Glaubensfragen</text>
-                <shorttext>Sinn- und Glaubensfragen</shorttext>
-              </catalog>
-              <catalog code="TOD">
-                <text>Sterben und Tod</text>
-                <shorttext>Sterben und Tod</shorttext>
-              </catalog>
-            </children>
-          </catalog>
-          <catalog code="SOZIALRECHTLICH">
-            <text />
-            <shorttext />
-            <date>05-Jul-2012 00:00:00</date>
-            <children>
-              <catalog code="P">
-                <text>Pflege</text>
-                <shorttext>P</shorttext>
-                <date>05-Jul-2012 00:00:00</date>
-              </catalog>
-              <catalog code="F">
-                <text>finanziell</text>
-                <shorttext>F</shorttext>
-                <date>05-Jul-2012 00:00:00</date>
-              </catalog>
-              <catalog code="B">
-                <text>Beruf, Ausbildung, Umschulung,
-                Berentung</text>
-                <shorttext>B</shorttext>
-                <date>05-Jul-2012 00:00:00</date>
-              </catalog>
-              <catalog code="K">
-                <text>Kur, sonst. ReHa</text>
-                <shorttext>K</shorttext>
-                <date>05-Jul-2012 00:00:00</date>
-              </catalog>
-              <catalog code="W">
-                <text>Widerspruchsverfahren</text>
-                <shorttext>W</shorttext>
-                <date>05-Jul-2012 00:00:00</date>
-              </catalog>
-              <catalog code="S">
-                <text>Schwerbehindertenstatus</text>
-                <shorttext>S</shorttext>
-                <date>05-Jul-2012 00:00:00</date>
-              </catalog>
-            </children>
-          </catalog>
-        </children>
-      </catalog>
-      <catalog code="GESPRAECHSPARTNER">
-        <text />
-        <shorttext />
-        <date>06-Jul-2012 00:00:00</date>
-        <children>
-          <catalog code="PATIENT">
-            <text>Patient</text>
-            <shorttext>P</shorttext>
-            <date>08-Jul-2012 00:00:00</date>
-            <logicalOrder>1</logicalOrder>
-          </catalog>
-          <catalog code="VATER">
-            <text>Vater</text>
-            <shorttext>V</shorttext>
-            <date>08-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="MUTTER">
-            <text>Mutter</text>
-            <shorttext>M</shorttext>
-            <date>08-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="EHEPARTNER">
-            <text>Ehepartner</text>
-            <shorttext>E</shorttext>
-            <date>08-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="LEBENSGEFAEHRTE">
-            <text>Lebensgefaehrte</text>
-            <shorttext>L</shorttext>
-            <date>08-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="SOHN">
-            <text>Sohn</text>
-            <shorttext>S</shorttext>
-            <date>08-Jul-2012 00:00:00</date>
-          </catalog>
-          <catalog code="TOCHTER">
-            <text>Tochter</text>
-            <shorttext>T</shorttext>
-            <date>08-Jul-2012 00:00:00</date>
-          </catalog>
-        </children>
-      </catalog>
-    </children>
-  </catalog>
+<catalogs>
+	<catalog code="ACTIONS" id="70">
+		<text>ACTIONS</text>
+		<shorttext>ACTIONS</shorttext>
+		<children>
+			<catalog code="CREATE" id="74">
+				<text>CREATE</text>
+				<shorttext>CREATE</shorttext>
+			</catalog>
+			<catalog code="DELETE" id="73">
+				<text>DELETE</text>
+				<shorttext>DELETE</shorttext>
+			</catalog>
+			<catalog code="EDIT" id="72">
+				<text>EDIT</text>
+				<shorttext>EDIT</shorttext>
+			</catalog>
+			<catalog code="VIEW" id="71">
+				<text>VIEW</text>
+				<shorttext>VIEW</shorttext>
+			</catalog>
+		</children>
+	</catalog>
+	<catalog code="BEISPIEL" id="13">
+		<text/>
+		<shorttext/>
+		<children>
+			<catalog code="BEISPIEL1" id="14">
+				<text>b1</text>
+				<shorttext>b1</shorttext>
+				<children>
+					<catalog code="BEISPIEL1.1" id="16">
+						<text>b1.1</text>
+						<shorttext>b1.1</shorttext>
+					</catalog>
+					<catalog code="BEISPIEL1.2" id="17">
+						<text>b1.2</text>
+						<shorttext>b1.2</shorttext>
+					</catalog>
+					<catalog code="BEISPIEL1.3" id="18">
+						<text>b1.3</text>
+						<shorttext>b1.3</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="BEISPIEL2" id="15">
+				<text>b2</text>
+				<shorttext>b2</shorttext>
+				<children>
+					<catalog code="BEISPIEL2.1" id="19">
+						<text>b2.1</text>
+						<shorttext>b2.1</shorttext>
+					</catalog>
+					<catalog code="BEISPIEL2.2" id="20">
+						<text>b2.2</text>
+						<shorttext>b2.2</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+		</children>
+	</catalog>
+	<catalog code="CLDOC" id="1">
+		<text>CLDOC</text>
+		<shorttext>CLDOC</shorttext>
+		<children>
+			<catalog code="MAIN" id="2">
+				<text>MAIN</text>
+				<shorttext>MAIN</shorttext>
+				<children>
+					<catalog code="SucheDKG">
+						<text>Organisation</text>
+						<shorttext>Organisation</shorttext>
+						<number1>21</number1>
+						<logicalOrder>1</logicalOrder>
+					</catalog>
+					<catalog code="Personen" id="3">
+						<text>Personen</text>
+						<shorttext>Personen</shorttext>
+						<logicalOrder>2</logicalOrder>
+					</catalog>
+					<catalog code="Configuration" id="5">
+						<text>Configuration</text>
+						<shorttext>CONFIG</shorttext>
+						<logicalOrder>3</logicalOrder>
+						<children>
+							<catalog code="Layouts" id="21">
+								<text>Layouts</text>
+								<shorttext>Layouts</shorttext>
+								<logicalOrder>1</logicalOrder>
+							</catalog>
+							<catalog code="Kataloge" id="22">
+								<text>Kataloge</text>
+								<shorttext>Kataloge</shorttext>
+								<logicalOrder>2</logicalOrder>
+							</catalog>
+							<catalog code="Entitaeten" id="23">
+								<text>Entitaeten</text>
+								<shorttext>Entitaeten</shorttext>
+								<logicalOrder>3</logicalOrder>
+							</catalog>
+							<catalog code="Berechtigungen" id="24">
+								<text>Berechtigungen</text>
+								<shorttext>Berechtigungen</shorttext>
+								<logicalOrder>4</logicalOrder>
+							</catalog>
+							<catalog code="Einstellungen">
+								<text>Einstellungen</text>
+								<shorttext>Einstellungen</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+					<catalog code="Reporting" id="6">
+						<text>Reporting</text>
+						<shorttext>Reporting</shorttext>
+						<logicalOrder>4</logicalOrder>
+						<children>
+							<catalog code="Beratungen">
+								<text>Beratungen</text>
+								<shorttext>Beratungen</shorttext>
+							</catalog>
+							<catalog code="Veranstaltungen">
+								<text>Veranstaltungen</text>
+								<shorttext>Veranstaltungen</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="PERSONALFILE" id="7">
+				<text>PERSONALFILE</text>
+				<shorttext>PERSONALFILE</shorttext>
+				<children>
+					<catalog code="Formulare" id="8">
+						<text>Formulare</text>
+						<shorttext>Formulare</shorttext>
+						<logicalOrder>1</logicalOrder>
+					</catalog>
+					<catalog code="Stammdaten" id="9">
+						<text>Stammdaten</text>
+						<shorttext>Stammdaten</shorttext>
+						<logicalOrder>2</logicalOrder>
+					</catalog>
+				</children>
+			</catalog>
+		</children>
+	</catalog>
+	<catalog code="MASTERDATA" id="150">
+		<text>MASTERDATA</text>
+		<shorttext>MASTERDATA</shorttext>
+		<children>
+			<catalog code="BERATUNG">
+				<text/>
+				<shorttext/>
+				<children>
+					<catalog code="ANGELEGENHEIT">
+						<text/>
+						<shorttext/>
+						<children>
+							<catalog code="BETROFFENER">
+								<text>von Betroffenem</text>
+								<shorttext>BETROFFENER</shorttext>
+							</catalog>
+							<catalog code="PRAEVENTION">
+								<text>der Prävention</text>
+								<shorttext>PRAEVENTION</shorttext>
+							</catalog>
+							<catalog code="SPENDEN">
+								<text>der Spenden</text>
+								<shorttext>SPENDEN</shorttext>
+							</catalog>
+							<catalog code="VEREIN">
+								<text>des Vereins</text>
+								<shorttext>VEREIN</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="Schulabschluss">
+				<text>Schulabschluss</text>
+				<shorttext>Schulabschluss</shorttext>
+				<children>
+					<catalog code="Abitur">
+						<text>Abitur</text>
+						<shorttext>Abitur</shorttext>
+					</catalog>
+					<catalog code="Fachabitur">
+						<text>Fachabitur</text>
+						<shorttext>Fachabitur</shorttext>
+					</catalog>
+					<catalog code="Hauptschule">
+						<text>Hauptschule</text>
+						<shorttext>Hauptschule</shorttext>
+					</catalog>
+					<catalog code="Mittlere Reife">
+						<text>Mittlere Reife</text>
+						<shorttext>Mittlere Reife</shorttext>
+					</catalog>
+					<catalog code="ohne">
+						<text>ohne</text>
+						<shorttext>ohne</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="REPORTTYPE" id="160">
+				<text>REPORTTYPE</text>
+				<shorttext>REPORTTYPE</shorttext>
+				<children>
+					<catalog code="SYSTEM" id="161">
+						<text>SYSTEM</text>
+						<shorttext>SYSTEM</shorttext>
+					</catalog>
+					<catalog code="USERDEF" id="162">
+						<text>USERDEF</text>
+						<shorttext>USERDEF</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="ORT">
+				<text/>
+				<shorttext/>
+				<children>
+					<catalog code="AUSSENSTELLE">
+						<text>Aussenstelle</text>
+						<shorttext>Aussenstelle</shorttext>
+					</catalog>
+					<catalog code="HAUS">
+						<text>Haus</text>
+						<shorttext>Haus</shorttext>
+					</catalog>
+					<catalog code="KLINIK">
+						<text>Klinik</text>
+						<shorttext>Klinik</shorttext>
+					</catalog>
+					<catalog code="PRAXIS">
+						<text>Praxis</text>
+						<shorttext>Praxis</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="KREBSART">
+				<text>Krebsart</text>
+				<shorttext>Krebsart</shorttext>
+				<children>
+					<catalog code="Andere">
+						<text>Andere</text>
+						<shorttext>Andere</shorttext>
+						<logicalOrder>999</logicalOrder>
+					</catalog>
+					<catalog code="Urologisch">
+						<text>Urologisch</text>
+						<shorttext>Urologisch</shorttext>
+					</catalog>
+					<catalog code="Prostata">
+						<text>Prostata</text>
+						<shorttext>Prostata</shorttext>
+					</catalog>
+					<catalog code="Pankreas">
+						<text>Pankreas</text>
+						<shorttext>Pankreas</shorttext>
+					</catalog>
+					<catalog code="MAMMA">
+						<text>Mamma</text>
+						<shorttext>Mamma</shorttext>
+					</catalog>
+					<catalog code="Magen">
+						<text>Magen</text>
+						<shorttext>Magen</shorttext>
+					</catalog>
+					<catalog code="Lunge">
+						<text>Lunge/Bronchien</text>
+						<shorttext>Lunge/Bronchien</shorttext>
+					</catalog>
+					<catalog code="Hoden">
+						<text>Hoden</text>
+						<shorttext>Hoden</shorttext>
+					</catalog>
+					<catalog code="HNO">
+						<text>HNO</text>
+						<shorttext>HNO</shorttext>
+					</catalog>
+					<catalog code="Hirn">
+						<text>Hirn</text>
+						<shorttext>Hirn</shorttext>
+					</catalog>
+					<catalog code="Haut">
+						<text>Haut</text>
+						<shorttext>Haut</shorttext>
+					</catalog>
+					<catalog code="Haematologisch">
+						<text>Haematologisch</text>
+						<shorttext>Haematologisch</shorttext>
+					</catalog>
+					<catalog code="Gyn. Tumore">
+						<text>Gyn. Tumore</text>
+						<shorttext>Gyn. Tumore</shorttext>
+					</catalog>
+					<catalog code="Darm">
+						<text>Darm</text>
+						<shorttext>Darm</shorttext>
+					</catalog>
+					<catalog code="Weichteile">
+						<text>Weichteile</text>
+						<shorttext>Weichteile</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="KRANKENKASSEN">
+				<text>Krankenkassen</text>
+				<shorttext>KRANKENKASSEN</shorttext>
+				<children>
+					<catalog code="AOK">
+						<text>AOK</text>
+						<shorttext>AOK</shorttext>
+					</catalog>
+					<catalog code="BEK">
+						<text>BEK</text>
+						<shorttext>BEK</shorttext>
+					</catalog>
+					<catalog code="DAK">
+						<text>DAK</text>
+						<shorttext>DAK</shorttext>
+					</catalog>
+					<catalog code="DKK">
+						<text>DKK</text>
+						<shorttext>DKK</shorttext>
+					</catalog>
+					<catalog code="IKK">
+						<text>IKK</text>
+						<shorttext>IKK</shorttext>
+					</catalog>
+					<catalog code="PKK">
+						<text>PKK</text>
+						<shorttext>privat</shorttext>
+					</catalog>
+					<catalog code="TK">
+						<text>TK</text>
+						<shorttext>TK</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="KONTAKTART">
+				<text/>
+				<shorttext/>
+				<children>
+					<catalog code="PERSOENLICH">
+						<text>persönlich</text>
+						<shorttext>persönlich</shorttext>
+					</catalog>
+					<catalog code="SCHRIFTLICH">
+						<text>schriftlich</text>
+						<shorttext>schriftlich</shorttext>
+					</catalog>
+					<catalog code="TELEFONISCH">
+						<text>telefonisch</text>
+						<shorttext>telefonisch</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="GESPRAECHSPARTNER">
+				<text/>
+				<shorttext/>
+				<children>
+					<catalog code="PATIENT">
+						<text>Patient</text>
+						<shorttext>Patient</shorttext>
+						<logicalOrder>1</logicalOrder>
+					</catalog>
+					<catalog code="EHEPARTNER">
+						<text>Ehepartner</text>
+						<shorttext>Ehepartner</shorttext>
+					</catalog>
+					<catalog code="LEBENSGEFAEHRTE">
+						<text>Lebensgefaehrte</text>
+						<shorttext>Lebensgefährte</shorttext>
+					</catalog>
+					<catalog code="MUTTER">
+						<text>Mutter</text>
+						<shorttext>Mutter</shorttext>
+					</catalog>
+					<catalog code="SOHN">
+						<text>Sohn</text>
+						<shorttext>Sohn</shorttext>
+					</catalog>
+					<catalog code="SONSTIGE">
+						<text>Sonstige</text>
+						<shorttext>Sonstige</shorttext>
+					</catalog>
+					<catalog code="TOCHTER">
+						<text>Tochter</text>
+						<shorttext>Tochter</shorttext>
+					</catalog>
+					<catalog code="VATER">
+						<text>Vater</text>
+						<shorttext>Vater</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="GENESE">
+				<text>GENESE</text>
+				<shorttext>GENESE</shorttext>
+				<children>
+					<catalog code="Ersterkrankung">
+						<text>Ersterkrankung</text>
+						<shorttext>Ersterkrankung</shorttext>
+					</catalog>
+					<catalog code="Remission">
+						<text>Remission</text>
+						<shorttext>Remission</shorttext>
+					</catalog>
+					<catalog code="Rezidiv">
+						<text>Rezidiv</text>
+						<shorttext>Rezidiv</shorttext>
+					</catalog>
+					<catalog code="Zweit">
+						<text>Zweittumor</text>
+						<shorttext>Zweittumor</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="GENDER" id="151">
+				<text>GENDER</text>
+				<shorttext>GENDER</shorttext>
+				<children>
+					<catalog code="FEMALE" id="153">
+						<text>F</text>
+						<shorttext>F</shorttext>
+					</catalog>
+					<catalog code="MALE" id="152">
+						<text>M</text>
+						<shorttext>M</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="FRAGESTELLUNG">
+				<text/>
+				<shorttext/>
+				<children>
+					<catalog code="BEFINDLICHKEIT">
+						<text/>
+						<shorttext/>
+						<children>
+							<catalog code="phys">
+								<text>körperlich</text>
+								<shorttext>körperlich</shorttext>
+							</catalog>
+							<catalog code="psych">
+								<text>psychisch</text>
+								<shorttext>psychisch</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+					<catalog code="BEHANDLUNG">
+						<text/>
+						<shorttext/>
+						<children>
+							<catalog code="KOMPLEMENTAER">
+								<text>Fragen nach komplementärer Behandlung</text>
+								<shorttext>Fragen nach komplementärer Behandlung</shorttext>
+							</catalog>
+							<catalog code="MEDIZINISCH">
+								<text>Medizinische Behandlung</text>
+								<shorttext>Medizinische Behandlung</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+					<catalog code="SONSTIGE">
+						<text/>
+						<shorttext/>
+						<children>
+							<catalog code="Ernährung">
+								<text>Ernährung</text>
+								<shorttext>Ernährung</shorttext>
+							</catalog>
+							<catalog code="SCHMERZ">
+								<text>Schmerz</text>
+								<shorttext>Schmerz</shorttext>
+							</catalog>
+							<catalog code="SEX">
+								<text>Sexualität</text>
+								<shorttext>Sexualität</shorttext>
+							</catalog>
+							<catalog code="SINN">
+								<text>Sinn- und Glaubensfragen</text>
+								<shorttext>Sinn- und Glaubensfragen</shorttext>
+							</catalog>
+							<catalog code="SITUATION">
+								<text>Lebenssituation</text>
+								<shorttext>Lebenssituation</shorttext>
+							</catalog>
+							<catalog code="TOD">
+								<text>Sterben und Tod</text>
+								<shorttext>Sterben und Tod</shorttext>
+							</catalog>
+							<catalog code="VERMITTLUNG">
+								<text>Vermittlung weiterführender Hilfen</text>
+								<shorttext>Vermittlung weiterführender Hilfen</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+					<catalog code="SOZIALRECHTLICH">
+						<text/>
+						<shorttext/>
+						<children>
+							<catalog code="B">
+								<text>Beruf, Ausbildung, Umschulung, Berentung</text>
+								<shorttext>B</shorttext>
+							</catalog>
+							<catalog code="F">
+								<text>finanziell</text>
+								<shorttext>F</shorttext>
+							</catalog>
+							<catalog code="K">
+								<text>Kur, sonst. ReHa</text>
+								<shorttext>K</shorttext>
+							</catalog>
+							<catalog code="P">
+								<text>Pflege</text>
+								<shorttext>P</shorttext>
+							</catalog>
+							<catalog code="S">
+								<text>Schwerbehindertenstatus</text>
+								<shorttext>S</shorttext>
+							</catalog>
+							<catalog code="W">
+								<text>Widerspruchsverfahren</text>
+								<shorttext>W</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="Familienstand">
+				<text>Familienstand</text>
+				<shorttext>Familienstand</shorttext>
+				<children>
+					<catalog code="GESCHIEDEN">
+						<text>geschieden</text>
+						<shorttext>geschieden</shorttext>
+					</catalog>
+					<catalog code="LEDIG">
+						<text>ledig</text>
+						<shorttext>ledig</shorttext>
+					</catalog>
+					<catalog code="VERHEIRATET">
+						<text>verheiratet</text>
+						<shorttext>verheiratet</shorttext>
+					</catalog>
+					<catalog code="VERWITWET">
+						<text>verwitwet</text>
+						<shorttext>verwitwet</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="ER" id="154">
+				<text>EntityRelation</text>
+				<shorttext>E.R.</shorttext>
+				<children>
+					<catalog code="IsLocatedIn" id="156">
+						<text>IsLocatedIn</text>
+						<shorttext>IsLocatedIn</shorttext>
+					</catalog>
+					<catalog code="IsMemberOf" id="155">
+						<text>IsMemberOf</text>
+						<shorttext>IsMemberOf</shorttext>
+					</catalog>
+					<catalog code="IsPartOf" id="157">
+						<text>IsPartOf</text>
+						<shorttext>IsPartOf</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="EntityTypes" id="180">
+				<text>EntityTypes</text>
+				<shorttext>E.T.</shorttext>
+				<children>
+					<catalog code="Organisation" id="182">
+						<text>Organisation</text>
+						<shorttext>Organisation</shorttext>
+					</catalog>
+					<catalog code="Person" id="181">
+						<text>Person</text>
+						<shorttext>Person</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="THERAPIE">
+				<text>THERAPIE</text>
+				<shorttext>THERAPIE</shorttext>
+				<children>
+					<catalog code="CHEMO">
+						<text>Chemo</text>
+						<shorttext>Chemo</shorttext>
+					</catalog>
+					<catalog code="HORMON">
+						<text>Hormon</text>
+						<shorttext>Hormon</shorttext>
+					</catalog>
+					<catalog code="Keine">
+						<text>Keine</text>
+						<shorttext>Keine</shorttext>
+					</catalog>
+					<catalog code="OP">
+						<text>OP</text>
+						<shorttext>OP</shorttext>
+					</catalog>
+					<catalog code="RADIO">
+						<text>Bestrahlung</text>
+						<shorttext>Bestrahlung</shorttext>
+					</catalog>
+					<catalog code="SONSTIGE">
+						<text>Sonstige</text>
+						<shorttext>Sonstige</shorttext>
+					</catalog>
+				</children>
+			</catalog>
+		</children>
+	</catalog>
+	<catalog code="ROLES" id="50">
+		<text>ROLES</text>
+		<shorttext>ROLES</shorttext>
+		<children>
+			<catalog code="ADMIN" id="51">
+				<text>ADMIN</text>
+				<shorttext>ADMIN</shorttext>
+				<children>
+					<catalog code="CONFIGURATOR" id="56">
+						<text>CONFIGURATOR</text>
+						<shorttext>CONFIGURATOR</shorttext>
+					</catalog>
+					<catalog code="DKG_USER" id="55">
+						<text>DKG_USER</text>
+						<shorttext>DKG_USER</shorttext>
+					</catalog>
+					<catalog code="USER" id="52">
+						<text>USER</text>
+						<shorttext>USER</shorttext>
+						<children>
+							<catalog code="GUEST" id="53">
+								<text>GUEST</text>
+								<shorttext>GUEST</shorttext>
+							</catalog>
+						</children>
+					</catalog>
+				</children>
+			</catalog>
+			<catalog code="ADMINISTRATOR" id="103">
+				<text>ADMINISTRATOR</text>
+				<shorttext>ADMINISTRATOR</shorttext>
+			</catalog>
+			<catalog code="ORGANISATION" id="102">
+				<text>ORGANISATION</text>
+				<shorttext>ORGANISATION</shorttext>
+			</catalog>
+			<catalog code="PROTAGONIST" id="101">
+				<text>PROTAGONIST</text>
+				<shorttext>PROTAGONIST</shorttext>
+			</catalog>
+		</children>
+	</catalog>
 </catalogs>

@@ -33,6 +33,7 @@ public class LogServiceImpl implements ILogService {
 				PreparedStatement s = con.prepareStatement("insert into LogEntry (UserId, ActId, EntityId, type, logEntry) values (?, ?, ?, ?, ?)");
 				int i = 1;
 				s.setLong(i++, session.getUser().id);
+				
 				if (act.id != null) {
 					s.setLong(i++, act.id);
 				} else {
