@@ -79,9 +79,7 @@ public class ReportServiceImpl implements IReportService {
 			@Override
 			public List<HashMap<String, Serializable>> execute(Connection con) throws Exception {
 				String query = getQuery(rd, filters);
-				
-				
-				
+
 				List<HashMap<String, Serializable>> result = new ArrayList<HashMap<String, Serializable>>();
 				PreparedStatement s;
 				

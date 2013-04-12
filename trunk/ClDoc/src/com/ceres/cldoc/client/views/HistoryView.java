@@ -2,7 +2,9 @@ package com.ceres.cldoc.client.views;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTable;
@@ -14,6 +16,8 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -23,6 +27,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,6 +47,9 @@ public class HistoryView extends DockLayoutPanel {
 		this.clDoc = clDoc;
 		this.e = entity;
 		this.tab = tab;
+		final ListBox cmbFilter = new ListBox();
+//		cmbFilter.setVisibleItemCount(1);
+		
 		historyPanel = new ClickableTable<Act>(clDoc, new ListRetrievalService<Act>() {
 
 			@Override
@@ -63,20 +71,50 @@ public class HistoryView extends DockLayoutPanel {
 		}, true){
 
 			@Override
+			protected void beforeUpdate(List<Act> result) {
+				Set<String> classNames = new HashSet<String>();
+				for (Act a:result) {
+					if (!a.actClass.isSingleton) {
+						classNames.add(a.actClass.name);
+					}
+				}
+				int sindex = cmbFilter.getSelectedIndex();
+				String selected = sindex > 0 ? cmbFilter.getItemText(sindex) : null;
+				sindex = -1;
+				cmbFilter.clear();
+				cmbFilter.addItem("<Alle anzeigen>");
+				for (String s:classNames) {
+					if (s.equals(selected)) {
+						sindex = cmbFilter.getItemCount();
+					}
+					cmbFilter.addItem(s);
+				}
+				
+				if (sindex > 0) {
+					cmbFilter.setSelectedIndex(sindex);
+				}
+			}
+
+			@Override
 			public boolean addRow(FlexTable table, int row, final Act act) {
 				if (act.actClass.isSingleton) {
 					addMasterDataTab(act);
 				} else {
-					int column = 0;
-					String imgSource = ActClass.EXTERNAL_DOC.name.equals(act.actClass.name) ? 
-							"icons/16/Adobe-PDF-Document-icon.png" : "icons/16/Document-icon.png";
-					table.setWidget(row, column++, new Image(imgSource));
-					String sDate = act.date != null ? DateTimeFormat.getFormat("dd.MM.yyyy").format(act.date) : "--.--.----";
-					table.setWidget(row, column++, new Label(sDate));
-					table.setWidget(row, column++, new HTML(act.summary));
-					HTML user = new HTML("<i>" + act.modifiedBy.userName + "</i>");
-					user.setTitle(act.createdBy.userName);
-					table.setWidget(row, column++, user);
+					int sIndex = cmbFilter.getSelectedIndex();
+					String filter = sIndex > 0 ? cmbFilter.getItemText(sIndex) : null;
+					
+					if (filter == null || filter.equals(act.actClass.name)) {
+						int column = 0;
+						String imgSource = ActClass.EXTERNAL_DOC.name.equals(act.actClass.name) ? 
+								"icons/16/Adobe-PDF-Document-icon.png" : "icons/16/Document-icon.png";
+						table.setWidget(row, column++, new Image(imgSource));
+						String sDate = act.date != null ? DateTimeFormat.getFormat("dd.MM.yyyy").format(act.date) : "--.--.----";
+						table.setWidget(row, column++, new Label(sDate));
+						table.setWidget(row, column++, new HTML(act.summary));
+						HTML user = new HTML("<i>" + act.modifiedBy.userName + "</i>");
+						user.setTitle(act.createdBy.userName);
+						table.setWidget(row, column++, user);
+					}					
 				}
 				return !act.actClass.isSingleton;
 			}
@@ -125,7 +163,15 @@ public class HistoryView extends DockLayoutPanel {
 				});
 			}
 		});
-
+		
+		cmbFilter.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				historyPanel.refresh();
+			}
+		});
+		historyPanel.addWidget(cmbFilter);
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 		historyPanel.addStyleName("roundCorners");
 		splitPanel.addWest(historyPanel, 400);

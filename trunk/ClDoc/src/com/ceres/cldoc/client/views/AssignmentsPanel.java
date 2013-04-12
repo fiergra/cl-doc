@@ -82,8 +82,8 @@ public class AssignmentsPanel extends DockLayoutPanel {
 			}
 
 			@Override
-			protected void update() {
-				super.update();
+			protected void update(List<User> users) {
+				super.update(users);
 				getColumnFormatter().addStyleName(2, "hundertPercentWidth");
 			}
 			

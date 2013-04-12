@@ -4,8 +4,9 @@ import java.util.Collection;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Attachment;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LogEntry;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -22,4 +23,9 @@ public interface ActService extends RemoteService {
 	Collection<Act> save(Session session, Collection<Act> acts);
 	String print(Session session, Act act);
 	void delete(Session session, Act act);
+	
+	List<Attachment> listAttachments(Session session, Act act);
+	Attachment saveAttachment(Session session, Attachment attachment);
+	void deleteAttachment(Session session, Attachment attachment);
+
 }

@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -57,8 +57,7 @@ public class DownloadServlet extends HttpServlet {
 				Act act = Locator.getActService().load(session, id);
 				out = Locator.getDocService().print(session, act);
 			} else {
-				resp.setContentType("application/pdf");
-				final String fileName = req.getParameter("file");
+				String fileName = req.getParameter("file");
 				if (fileName != null) {
 					File file = new File(fileName);
 					InputStream in = new FileInputStream(file);
@@ -73,30 +72,17 @@ public class DownloadServlet extends HttpServlet {
 				} else {
 					final String id = req.getParameter("id");
 					long docId = Long.parseLong(id);
-					
+					fileName = Locator.getDocArchive().getFileName(docId);
 					out = Locator.getDocArchive().retrieve(docId);
-//					
-//					out = Jdbc.doTransactional(session,
-//							new ITransactional() {
-//	
-//								@Override
-//								public byte[] execute(Connection con)
-//										throws SQLException {
-//									PreparedStatement s = con
-//											.prepareStatement("select blobvalue from ActField where id = ?");
-//									s.setString(1, id);
-//									ResultSet rs = s.executeQuery();
-//									byte[] bytes = null;
-//									if (rs.next()) {
-//										bytes = rs.getBytes("blobvalue");
-//									}
-//									rs.close();
-//									s.close();
-//	
-//									return bytes;
-//								}
-//							});
 				}
+				String mimeType;
+				
+				if (fileName.toLowerCase().endsWith(".pdf")) {
+					mimeType = "application/pdf";
+				} else {
+					mimeType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(fileName);
+				}
+				resp.setContentType(mimeType + "; name=" + fileName + "\nContent-Disposition: attachment; filename=" + fileName + "\n\n");
 			}
 		}
 		if (out != null) {
@@ -104,17 +90,6 @@ public class DownloadServlet extends HttpServlet {
 		} else {
 			resp.getOutputStream().write(("invalid key or type. ").getBytes());
 		}
-
-	}
-
-	private void fromIn2Out(InputStream in, OutputStream out) throws IOException {
-		byte[] bytes = new byte[4096];
-		int read = in.read(bytes);
-		while (read > 0) {
-			out.write(bytes, 0, read);
-			read = in.read(bytes);
-		}
-		in.close();
 
 	}
 	

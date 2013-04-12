@@ -9,7 +9,7 @@ public class LayoutDefinition implements Serializable {
 
 	public static final int FORM_LAYOUT = 1;
 	public static final int PRINT_LAYOUT = 2;
-//	public static final int MASTER_DATA_LAYOUT = 3;
+
 
 	public Long id;
 	public String xmlLayout;

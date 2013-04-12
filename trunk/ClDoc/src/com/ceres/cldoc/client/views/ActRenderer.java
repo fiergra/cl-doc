@@ -1,5 +1,8 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.controls.PagesView;
@@ -15,10 +18,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -50,6 +50,7 @@ public class ActRenderer extends DockLayoutPanel {
 	private IForm formContent;
 	private Act act;
 	private LayoutDefinition layoutDefinition;
+	private final Collection<LinkButton> actButtons = new ArrayList<LinkButton>();
 	
 	private LinkButton addLinkButton(HorizontalPanel buttons, int index, String toolTip, String enabledImage, String disabledImage, 
 			ClickHandler clickHandler) {
@@ -78,8 +79,7 @@ public class ActRenderer extends DockLayoutPanel {
 //			}
 //		});
 		
-		final Anchor a = new Anchor("<img src=\"icons/32/Adobe-PDF-Document-icon.png\"/>", true);
-		a.addClickHandler(new ClickHandler() {
+		LinkButton pbPrint = addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Adobe-PDF-Document-icon.png", "icons/32/Adobe-PDF-Document-icon.disabled.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -100,9 +100,10 @@ public class ActRenderer extends DockLayoutPanel {
 				
 			}
 		});
-		buttons.add(a);
-		
-		
+		pbPrint.enable(false);
+		actButtons.add(pbPrint);
+		buttons.add(pbPrint);
+
 		pbSave = addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", new ClickHandler() {
 			
 			@Override
@@ -112,7 +113,7 @@ public class ActRenderer extends DockLayoutPanel {
 		});
 		pbSave.enable(false);
 
-		addLinkButton(buttons, index++, SRV.c.delete(), "icons/32/File-Delete-icon.png", null, new ClickHandler() {
+		LinkButton pbDelete = addLinkButton(buttons, index++, SRV.c.delete(), "icons/32/File-Delete-icon.png", "icons/32/File-Delete-icon.disabled.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -135,17 +136,20 @@ public class ActRenderer extends DockLayoutPanel {
 					}};
 			}
 		});
-
+		pbDelete.enable(false);
+		actButtons.add(pbDelete);
+			
 		buttons.add(new HTML("<vr width=\"15\" height=\"32\" />"));
-		LinkButton pbAttachments = addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", new ClickHandler() {
+		LinkButton pbAttachments = addLinkButton(buttons, index++, SRV.c.attachments(), "icons/32/Document-Attach-icon.png", "icons/32/Document-Attach-icon.disabled.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				PopupManager.showModal("Anhang", new AttachmentsPanel());
+				PopupManager.showModal(SRV.c.attachments(), new AttachmentsPanel(clDoc, (Act) formContent.getModel()), null, null);
 			}
 		});
 		pbAttachments.enable(false);
-
+		actButtons.add(pbAttachments);
+		
 		HorizontalPanel textPanel = new HorizontalPanel();
 		textPanel.setWidth("100%");
 		title = new HTML();
@@ -160,26 +164,26 @@ public class ActRenderer extends DockLayoutPanel {
 		
 		addStyleName("formContainer");
 	}
-
-	protected void print(Act act) {
-		SRV.actService.print(clDoc.getSession(), act, new DefaultCallback<String>(clDoc, "print") {
-
-			@Override
-			public void onSuccess(String result) {
-				DialogBox dlg = new DialogBox(true, true);
-				
-				Frame content = new Frame(result);
-				content.setSize("800px", "600px");
-				dlg.setWidget(content);
-				dlg.setText(SRV.c.print());
-				dlg.setGlassEnabled(true);
-				dlg.setAnimationEnabled(true);
-				dlg.center();
-			}
-		});
-		
-		
-	}
+//
+//	protected void print(Act act) {
+//		SRV.actService.print(clDoc.getSession(), act, new DefaultCallback<String>(clDoc, "print") {
+//
+//			@Override
+//			public void onSuccess(String result) {
+//				DialogBox dlg = new DialogBox(true, true);
+//				
+//				Frame content = new Frame(result);
+//				content.setSize("800px", "600px");
+//				dlg.setWidget(content);
+//				dlg.setText(SRV.c.print());
+//				dlg.setGlassEnabled(true);
+//				dlg.setAnimationEnabled(true);
+//				dlg.center();
+//			}
+//		});
+//		
+//		
+//	}
 
 
 	private void saveForm(final boolean doSelect, final Runnable callback) {
@@ -234,7 +238,17 @@ public class ActRenderer extends DockLayoutPanel {
 				doSetAct(layoutDef, act);
 			}
 		}
+		
+		enableActButtons(act != null);
+		
 		return true;
+	}
+
+
+	private void enableActButtons(boolean enabled) {
+		for (LinkButton w:actButtons) {
+			w.enable(enabled);
+		}
 	}
 
 
@@ -280,12 +294,6 @@ public class ActRenderer extends DockLayoutPanel {
 		title.setTitle("#" + act.id + " - <b>" + act.actClass.name + "</b>");
 		String sDate = act.date != null ? formatter.format(act.date) : "--.--.----";
 		title.setHTML("<b>" + act.actClass.name + "</b> - " + sDate );
-	}
-
-
-	private boolean wantToSave() {
-//		new MessageBox("Speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YES | MessageBox.MB_NO, MESSAGE_ICONS.MB_ICON_QUESTION).center();
-		return true;
 	}
 
 

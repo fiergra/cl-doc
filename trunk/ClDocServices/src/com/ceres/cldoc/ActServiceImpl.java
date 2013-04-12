@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.ActField;
+import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.CatalogList;
 import com.ceres.cldoc.model.Entity;
@@ -599,6 +600,87 @@ public class ActServiceImpl implements IActService {
 					
 					ls.addToIndex(p.entity, a);
 				}
+				return null;
+			}
+		});
+	}
+	
+	@Override
+	public List<Attachment> listAttachments(final Session session, final Act act) {
+		return Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public List<Attachment> execute(Connection con) throws Exception {
+				List<Attachment> attachments = new ArrayList<Attachment>();
+				PreparedStatement s = con.prepareStatement("select * from Attachment where ActId = ?");
+				s.setLong(1, act.id);
+				ResultSet rs = s.executeQuery();
+				while (rs.next()) {
+					Attachment a = new Attachment();
+					a.id = rs.getLong("id");
+					a.docId = rs.getLong("docId");
+					a.description = rs.getString("description");
+					a.filename = rs.getString("filename");
+					a.type = rs.getInt("type");
+					a.act = act;
+					attachments.add(a);
+				}
+				rs.close();
+				s.close();
+				return attachments;
+			}
+		});
+	}
+	
+	@Override
+	public void saveAttachment(final Session session, final Attachment attachment) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws Exception {
+				if (attachment.id != null) {
+					updateAttachment(con, attachment);
+				} else {
+					insertAttachment(con, attachment);
+				}
+				
+				return null;
+			}
+
+			private void insertAttachment(Connection con, Attachment attachment) throws SQLException {
+				PreparedStatement s = con.prepareStatement("insert into Attachment (ActId, filename, description, type, docId) values (?, ?, ?, ?, ?)", new String[]{"id"});
+				int i = 1;
+				s.setLong(i++, attachment.act.id);
+				s.setString(i++, attachment.filename);
+				s.setString(i++, attachment.description);
+//				s.setInt(i++, attachment.type);
+				s.setNull(i++, Types.INTEGER);
+				s.setLong(i++, attachment.docId);
+				attachment.id = Jdbc.exec(s);
+				s.close();
+
+				Locator.getLogService().log(session, ILogService.ADD_ATTACHMENT, attachment.act, "<attachment actId=\"" + attachment.act.id + "\" id=\"" + attachment.id + "\"/>");
+			}
+
+			private void updateAttachment(Connection con, Attachment attachment) throws SQLException {
+			}
+		});
+	}
+	
+	@Override
+	public void deleteAttachment(final Session session, final Attachment attachment) {
+		Jdbc.doTransactional(session, new ITransactional() {
+			
+			@Override
+			public Void execute(Connection con) throws Exception {
+				PreparedStatement s = con.prepareStatement("delete from Attachment where id = ?");
+				int i = 1;
+				s.setLong(i++, attachment.id);
+				s.executeUpdate();
+				s.close();
+				
+				Locator.getLogService().log(session, ILogService.DELETE_ATTACHMENT, attachment.act, "<attachment actId=\"" + attachment.act.id + "\" id=\"" + attachment.id + "\"/>");
+
 				return null;
 			}
 		});

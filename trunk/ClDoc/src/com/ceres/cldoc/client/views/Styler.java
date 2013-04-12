@@ -22,6 +22,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -30,6 +32,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 public class Styler extends DockLayoutPanel {
 	private IForm form;
@@ -44,6 +47,10 @@ public class Styler extends DockLayoutPanel {
 
 	private void setup() {
 		final TextArea formLayoutDescTextArea = new TextArea();
+		final Grid classDef = new Grid(5, 2);
+		classDef.setWidth("100%");
+		classDef.addStyleName("docform");
+
 		final DockLayoutPanel formLayoutPanel = new DockLayoutPanel(Unit.EM);
 		final TextArea printLayoutDescTextArea = new TextArea();
 		final DockLayoutPanel printLayoutPanel = new DockLayoutPanel(Unit.EM);
@@ -52,8 +59,24 @@ public class Styler extends DockLayoutPanel {
 		formLayoutDescTextArea.addStyleName("sourceCode");
 		printLayoutPanel.addStyleName("sourceCode");
 		
-		final TextBox txtSummary = new TextBox();
-		final CheckBox cbSingleton = new CheckBox("Stammdaten");
+		final TextBox txtName = new TextBox();
+		txtName.setEnabled(false);
+		
+		final TextArea txtSummary = new TextArea();
+		txtSummary.setWidth("100%");
+		
+		final HTML txtPreview = new HTML();
+		txtPreview.setWidth("100%");
+
+		txtSummary.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				txtPreview.setHTML(txtSummary.getText());
+			}
+		});
+		
+		final CheckBox cbSingleton = new CheckBox("");
 		final CatalogListBox lbEntityTypes = new CatalogListBox(clDoc, "MASTERDATA.EntityTypes");
 		
 		formLayoutPanel.add(formLayoutDescTextArea);
@@ -113,7 +136,9 @@ public class Styler extends DockLayoutPanel {
 							if (result != null) {
 								if (result.type == LayoutDefinition.FORM_LAYOUT/* || result.type == LayoutDefinition.MASTER_DATA_LAYOUT*/) {
 									formLayoutDescTextArea.setText(result.xmlLayout);
+									txtName.setText(result.actClass.name);
 									txtSummary.setText(result.actClass.summaryDef);
+									txtPreview.setHTML(result.actClass.summaryDef);
 									cbSingleton.setValue(result.actClass.isSingleton);
 									lbEntityTypes.setSelected(result.actClass.entityType);
 									updateForm.run();
@@ -133,10 +158,18 @@ public class Styler extends DockLayoutPanel {
 		});
 		cmbClasses.setWidth("200px");
 		hp.add(cmbClasses);
-		hp.add(new Label("Summary"));
-		hp.add(txtSummary);
-		hp.add(cbSingleton);
-		hp.add(lbEntityTypes);
+
+		int row = 0;
+		addLine(classDef, row++, "Name", txtName); 
+		addLine(classDef, row++, "Zusammenfassung", txtSummary); 
+		addLine(classDef, row++, "Vorschau", txtPreview); 
+		addLine(classDef, row++, "Stammdatum", cbSingleton); 
+		addLine(classDef, row++, "Entitaet", lbEntityTypes); 
+		
+//		hp.add(new Label("Summary"));
+//		hp.add(txtSummary);
+//		hp.add(cbSingleton);
+//		hp.add(lbEntityTypes);
 
 		Image pbUpload = new Image("icons/32/Button-Upload-icon.png");
 		pbUpload.addClickHandler(new ClickHandler() {
@@ -244,6 +277,7 @@ public class Styler extends DockLayoutPanel {
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
 			
 		TabLayoutPanel layouts = new TabLayoutPanel(2, Unit.EM);
+		layouts.add(classDef, "Classdef");
 		layouts.add(formLayoutPanel, "Layout");
 		layouts.add(printLayoutPanel, "Printout");
 		
@@ -266,6 +300,14 @@ public class Styler extends DockLayoutPanel {
 				updateForm.run();
 			}
 		});
+	}
+
+
+	private void addLine(Grid classDef, int row, String label, Widget w) {
+		Label l = new Label(label);
+		classDef.setWidget(row, 0, l);
+		classDef.getCellFormatter().addStyleName(row, 0, "formLabel");	
+		classDef.setWidget(row, 1, w);
 	}
 
 

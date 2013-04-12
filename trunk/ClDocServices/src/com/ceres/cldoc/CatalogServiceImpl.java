@@ -417,16 +417,18 @@ public class CatalogServiceImpl implements ICatalogService {
 		}
 		catalogNode.setAttribute("code", catalog.code);
 
-		Element textNode = doc.createElement("text");
-		Text text = doc.createTextNode(catalog.text);
-		textNode.appendChild(text);
-		catalogNode.appendChild(textNode);
-
-		Element shortTextNode = doc.createElement("shorttext");
-		Text shortText = doc.createTextNode(catalog.shortText);
-		shortTextNode.appendChild(shortText);
-		catalogNode.appendChild(shortTextNode);
-
+		if (catalog.text != null) {
+			Element textNode = doc.createElement("text");
+			Text text = doc.createTextNode(catalog.text);
+			textNode.appendChild(text);
+			catalogNode.appendChild(textNode);
+		}
+		if (catalog.shortText != null) {
+			Element shortTextNode = doc.createElement("shorttext");
+			Text shortText = doc.createTextNode(catalog.shortText);
+			shortTextNode.appendChild(shortText);
+			catalogNode.appendChild(shortTextNode);
+		}
 		if (catalog.date != null) {
 			Element dateNode = doc.createElement("date");
 			String sDate = DateFormat.getDateTimeInstance()

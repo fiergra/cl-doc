@@ -394,7 +394,7 @@ public class EntityServiceImpl implements IEntityService {
 		Collection<Long> ids = new ArrayList<Long>();
 
 		String sql = "select * from Person p left outer join Patient pat on pat.id = p.id ";
-		String where = " where 1=1 ";
+		String where = " where 1=2 ";
 		
 		if (role != null) {
 			sql +=  " inner join Assignment a on a.EntityId = p.Id" +
@@ -414,11 +414,11 @@ public class EntityServiceImpl implements IEntityService {
 			}
 			
 			for (String name: names) {
-				where += " AND (sndx_firstname = soundex(?) OR sndx_lastname = soundex(?) OR UPPER(firstname) like ? OR UPPER(lastname) like ?)";
+				where += " OR (sndx_firstname = soundex(?) OR sndx_lastname = soundex(?) OR UPPER(firstname) like ? OR UPPER(lastname) like ?)";
 			}
 			
 			for (Long id : ids) {
-				where += " AND (id = ? OR per_id = ?)";
+				where += " OR (id = ? OR per_id = ?)";
 			}
 		}
 		

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
+import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.CatalogList;
 import com.ceres.cldoc.model.Entity;
 
@@ -24,4 +25,8 @@ public interface IActService {
 	CatalogList loadCatalogList(Session session, long listId);
 	void rebuildIndex(Session session);
 	void save(Session session, Collection<Act> acts);
+	
+	List<Attachment> listAttachments(Session session, Act act);
+	void saveAttachment(Session session, Attachment attachment);
+	void deleteAttachment(Session session, Attachment attachment);
 }
