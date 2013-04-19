@@ -6,10 +6,8 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LabelFunction;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
-import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.google.gwt.core.client.GWT;
@@ -122,7 +120,7 @@ public class Styler extends DockLayoutPanel {
 			public String getValue(ActClass actClass) {
 				return String.valueOf(actClass.id);
 			}
-		}, null);
+		}, null, null);
 		cmbClasses.addSelectionChangedHandler(new ChangeHandler() {
 			
 			@Override

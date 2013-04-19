@@ -6,11 +6,7 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.IEntitySelector;
-import com.ceres.cldoc.client.views.MessageBox;
-import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.client.views.OnClick;
-import com.ceres.cldoc.client.views.PersonEditor;
-import com.ceres.cldoc.model.Person;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -40,6 +36,7 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 	public OnDemandComboBox(final ClDoc clDoc, 
 			ListRetrievalService<T> listRetrievalService, 
 			LabelFunction <T> labelFunxtion, 
+			final OnClick<TextBox> notFound,
 			final Runnable onClick) {
 		super();
 		this.clDoc = clDoc;
@@ -95,26 +92,8 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 			
 			@Override
 			public void onBlur(BlurEvent event) {
-				if (selectedItem == null && txtFilter.getText().length() > 0 && dropDownPopup == null) {
-					new MessageBox(
-							"Neu", "Wollen Sie eine neue Person '" + txtFilter.getText() + "' anlegen?", 
-							MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION){
-
-								@Override
-								protected void onClick(int result) {
-									if (result == MessageBox.MB_YES) {
-										Person person = new Person();
-										person.lastName = txtFilter.getText();
-										PersonEditor.editPerson(clDoc, person, new OnClick<Person>() {
-											
-											@Override
-											public void onClick(Person person) {
-												txtFilter.setText(person.getName());
-												setSelectedItem((T) person);
-											}
-										});
-									}
-								}}.show();
+				if (notFound != null && selectedItem == null && txtFilter.getText().length() > 0 && dropDownPopup == null) {
+					notFound.onClick(txtFilter);
 				}
 			}
 		});
