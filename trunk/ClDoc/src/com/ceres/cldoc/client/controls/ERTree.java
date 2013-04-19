@@ -184,7 +184,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 					public String getValue(Entity entity) {
 						return String.valueOf(entity.id);
 					}
-				} , null);
+				} , null , null);
 		
 		cmbEntities.addSelectionChangedHandler(new ChangeHandler() {
 			

@@ -331,23 +331,24 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 				try {
 					ZipInputStream zin = new ZipInputStream(in);
 					ZipEntry zipEntry = zin.getNextEntry();
-					boolean classesImported = false;
-					while (!classesImported && zipEntry != null) {
-						String name = zipEntry.getName();
-						if (name.equals("actclasses.xml")) {
-							importActClasses(con, getText(zin));
-							classesImported = true;
-						}
-						zipEntry = zin.getNextEntry();
-					}
+//					boolean classesImported = false;
+//					while (!classesImported && zipEntry != null) {
+//						String name = zipEntry.getName();
+//						if (name.equals("actclasses.xml")) {
+//							importActClasses(con, getText(zin));
+//							classesImported = true;
+//						}
+//						zipEntry = zin.getNextEntry();
+//					}
 					
-					zin = new ZipInputStream(in);
 					zipEntry = zin.getNextEntry();
 					while (zipEntry != null) {
 						String name = zipEntry.getName();
 						String xml = getText(zin);
-//						log.info(name + ": " + xml);
-						if (name.endsWith(".xml")) {
+						log.info(name + ": " + xml);
+						if (name.equals("actclasses.xml")) {
+							importActClasses(con, getText(zin));
+						} else if (name.endsWith(".xml")) {
 							int type = -1;
 						
 							if (name.startsWith("form/")) {

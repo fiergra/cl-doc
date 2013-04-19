@@ -5,7 +5,6 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LabelFunction;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
-import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Person;
@@ -40,7 +39,7 @@ public class ParticipationListBox extends OnDemandComboBox <Person> {
 			public String getValue(Person act) {
 				return getLabel(act);
 			}
-		}, null);
+		}, null, null);
 		setSize("25em", "2em");
 		addStyleName("humanBeingListBox");
 	}

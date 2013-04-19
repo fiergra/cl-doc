@@ -5,12 +5,13 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LabelFunction;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
-import com.ceres.cldoc.client.controls.OnDemandChangeListener;
 import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAssignedEntitySelector<Person>{
 	
@@ -43,7 +44,34 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 			public String getValue(Person act) {
 				return getLabel(act);
 			}
-		}, new Runnable() {
+		}, 
+		
+		new OnClick<TextBox>() {
+
+			@Override
+			public void onClick(final TextBox txtFilter) {
+				new MessageBox(
+						"Neu", "Wollen Sie eine neue Person '" + txtFilter.getText() + "' anlegen?", 
+						MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION){
+
+							@Override
+							protected void onClick(int result) {
+								if (result == MessageBox.MB_YES) {
+									Person person = new Person();
+									person.lastName = txtFilter.getText();
+									PersonEditor.editPerson(clDoc, person, new OnClick<Person>() {
+										
+										@Override
+										public void onClick(Person person) {
+											txtFilter.setText(person.getName());
+//											setSelectedItem((T) person);
+										}
+									});
+								}
+							}}.show();
+			}
+		}
+		,new Runnable() {
 			
 			@Override
 			public void run() {
