@@ -1,0 +1,115 @@
+<layouts>
+	<actclasses>
+		<actclass isSingleton="false" name="Beratungsgespraech"/>
+		<actclass isSingleton="false" name="Kostentraeger"/>
+		<actclass isSingleton="false" name="Kursangebot"/>
+		<actclass isSingleton="false" name="Medizinische Anamnese"/>
+		<actclass isSingleton="false" name="Sozio-Demographische Daten"/>
+		<actclass isSingleton="false" name="Veranstaltungsbericht"/>
+	</actclasses>
+	<layout name="Beratungsgespraech" type="1">
+		<pages classid="5" classname="Beratungsgespraech" entitytype="181" singleton="false">
+			<form label="Kontakt">
+				<line name="Kontakt" parent="MASTERDATA.KONTAKTART" type="option"/>
+				<line label="Datum">
+					<line type="actdate"/>
+					<line name="Erstkontakt" type="Boolean"/>
+				</line>
+				<line label="Ort">
+					<line label="" name="Ort" type="string"/>
+					<line label="" name="Ortauswahl" parent="MASTERDATA.ORT" type="option"/>
+				</line>
+				<line title="Gesprächspartner" type="separator"/>
+				<line name="Patient" type="boolean"/>
+				<line name="Angehörige" parent="MASTERDATA.GESPRAECHSPARTNER" type="multiselect"/>
+				<line>
+					<line name="patientenbezogen" type="boolean"/>
+					<line name="Sonstige" type="String"/>
+				</line>
+				<line label="Bemerkung" name="bemerkung" type="text"/>
+			</form>
+			<form label="Inhalt">
+				<line title="Inhalt" type="separator"/>
+				<line name="Sozialrechtliche Fragen" parent="MASTERDATA.FRAGESTELLUNG.SOZIALRECHTLICH" type="multiselect"/>
+				<line label="sonstiges" name="sonstigerInhalt" type="text"/>
+				<line name="Behandlung" parent="MASTERDATA.FRAGESTELLUNG.BEHANDLUNG" type="multiselect"/>
+				<line name="Befindlichkeit" parent="MASTERDATA.FRAGESTELLUNG.BEFINDLICHKEIT" type="multiselect"/>
+				<line columns="4" name="Sonstiges" parent="MASTERDATA.FRAGESTELLUNG.SONSTIGE" type="multiselect"/>
+				<line title="In Angelegenheit" type="separator"/>
+				<line label="" name="Angelegenheit" parent="MASTERDATA.BERATUNG.ANGELEGENHEIT" type="multiselect"/>
+				<line label="Sonstige Personen" name="sonstPers" type="text"/>
+			</form>
+			<form label="Gesprächsprotokoll">
+				<line height="100%" name="Protokoll" type="Text" width="100%"/>
+			</form>
+		</pages>
+	</layout>
+	<layout name="Kostentraeger" type="1">
+		<form classname="Kostentraeger" entitytype="181" singleton="true">
+			<line label="Krankenkasse" name="gkk" parent="MASTERDATA.KRANKENKASSEN" type="option"/>
+			<line name="sonstige" type="String"/>
+			<line type="separator"/>
+			<line name="Bemerkung" type="Text"/>
+		</form>
+	</layout>
+	<layout name="Kursangebot" type="1">
+		<form classname="Kursangebot" entitytype="182" singleton="false">
+			<line label="label" name="name" type="String"/>
+		</form>
+	</layout>
+	<layout name="Medizinische Anamnese" type="1">
+		<pages classid="6" classname="Medizinische Anamnese" entitytype="181" singleton="true">
+			<form label="Allgemein">
+				<line name="Behandelnder Hausarzt" type="String"/>
+				<line label="Adresse" name="AdresseHA" type="Text"/>
+				<line name="Behandelnde Fachaerzte" type="String"/>
+				<line label="Adresse" name="AdresseFA" type="Text"/>
+			</form>
+			<form label="Diagnosen">
+				<line label="Diagnose (Patientenangabe)" name="DiagnosePAT" type="Text"/>
+				<line label="Aerztliche Diagnose" name="DiagnoseARZT" type="Text"/>
+				<line name="Metastasiert" type="Boolean"/>
+				<line name="Details" type="Text"/>
+				<line label="Lokalisation" name="Tumorart" parent="MASTERDATA.KREBSART" type="multiselect"/>
+				<line name="Genese" parent="MASTERDATA.GENESE" type="multiselect"/>
+				<line label="Therapie" name="Therapie" parent="MASTERDATA.THERAPIE" type="multiselect"/>
+			</form>
+		</pages>
+	</layout>
+	<layout name="Sozio-Demographische Daten" type="1">
+		<form classid="7" classname="Sozio-Demographische Daten" entitytype="181" singleton="true">
+			<line name="Familienstand" parent="MASTERDATA.Familienstand" type="option"/>
+			<line name="Schulabschluss" parent="MASTERDATA.Schulabschluss" type="list"/>
+			<line name="Beruf" type="String"/>
+			<line name="Beruf des Ehepartners" type="String"/>
+			<!--   <line name="Kinder" type="integer"/> --><line name="Kind 1" type="Humanbeing"/>
+			<line name="Kind 2" type="Humanbeing"/>
+			<line name="Kind 3" type="Humanbeing"/>
+			<line name="Kind 4" type="Humanbeing"/>
+			<line name="Kind 5" type="Humanbeing"/>
+		</form>
+	</layout>
+	<layout name="Veranstaltungsbericht" type="1">
+		<pages classid="8" classname="Veranstaltungsbericht" entitytype="182" singleton="false">
+			<form label="Veranstaltung">
+				<line name="Thema" type="Text"/>
+				<line name="Termin" type="actdate"/>
+				<line name="von" type="Time"/>
+				<line name="bis" type="Time"/>
+				<line name="Ort/Lokal" type="Text"/>
+				<line name="Referent" type="HumanBeing"/>
+				<line name="Verantwortlicher" type="HumanBeing"/>
+				<line label="Zusatz" name="VerantwortlicherZusatz" type="String"/>
+				<line name="Organisation" type="Text"/>
+				<line name="Einladung/Ankuendigung" type="Text"/>
+			</form>
+			<form label="Ergebnis">
+				<line name="Teilnehmerzahl" type="Long"/>
+				<line name="Zielgruppe" type="Text"/>
+				<line name="Beurteilung/Eindruck" type="Text"/>
+				<line name="Medienberichte" type="Boolean"/>
+				<line name="Kosten" type="Text"/>
+			</form>
+		</pages>
+	</layout>
+</layouts>
