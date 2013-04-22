@@ -6,14 +6,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.mortbay.log.Log;
 
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
@@ -51,7 +50,7 @@ public class DownloadServlet extends HttpServlet {
 				resp.setContentType("application/x-msexcel");
 				final String reportId = req.getParameter("id");
 				if (reportId != null) {
-					Log.warn("FILTERS ARE NOT YET SUPPORTED!!!");
+					Logger.getAnonymousLogger().warning("FILTERS ARE NOT YET SUPPORTED!!!");
 					out = Locator.getReportService().exportXLS(session, Long.valueOf(reportId), null);
 				}
 			} else if ("pdf".equals(type)) {
