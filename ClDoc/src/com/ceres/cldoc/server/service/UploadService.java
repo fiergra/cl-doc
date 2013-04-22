@@ -56,7 +56,7 @@ public class UploadService extends HttpServlet {
 						if (!fItem.isFormField()) {
 							String fileName = fItem.getName();
 							if (fileName != null) {
-								Locator.getLayoutDefinitionService().importZip(session, fItem.getInputStream());
+								Locator.getLayoutDefinitionService().importLayouts(session, fItem.getInputStream());
 							}							
 						}
 					}

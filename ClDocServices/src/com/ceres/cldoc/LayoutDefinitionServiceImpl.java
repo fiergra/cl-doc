@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -36,6 +38,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import com.ceres.cldoc.model.ActClass;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -161,30 +164,85 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public byte[] exportZip(final Session session) {
+	public String exportLayouts(final Session session) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@SuppressWarnings("unchecked")
 			@Override
-			public byte[] execute(Connection con) throws Exception {
-				try {
-					ByteArrayOutputStream out = new ByteArrayOutputStream();
-					ZipOutputStream zout = new ZipOutputStream(out);
-					
-					exportClasses(session, con, zout);
-					
-					ZipEntry zipEntry = new ZipEntry("form/");
-					zout.putNextEntry(zipEntry);
-					exportType("form/", LayoutDefinition.FORM_LAYOUT, con, zout);
-					
-					zipEntry = new ZipEntry("print/");
-					zout.putNextEntry(zipEntry);
-					exportType("print/", LayoutDefinition.PRINT_LAYOUT, con, zout);
-					
-					zout.close();
-					return out.toByteArray();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
+			public String execute(Connection con) throws Exception {
+				DocumentBuilderFactory dbfac = DocumentBuilderFactory
+						.newInstance();
+				DocumentBuilder docBuilder;
+				docBuilder = dbfac.newDocumentBuilder();
+				Document doc = docBuilder.newDocument();
+				Element root = doc.createElement("layouts");
+				doc.appendChild(root);
+
+				Element classesRoot = doc.createElement("actclasses");
+				root.appendChild(classesRoot);
+				List<ActClass> classes = Locator.getActService().listClasses(session, null);
+				for (ActClass actClass:classes) {
+					actClassToXml(doc, classesRoot, actClass);
+				}
+
+				exportLayouts(con, doc, root, LayoutDefinition.FORM_LAYOUT);
+				exportLayouts(con, doc, root, LayoutDefinition.PRINT_LAYOUT);
+				
+				TransformerFactory transfac = TransformerFactory.newInstance();
+				Transformer trans = transfac.newTransformer();
+				trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+				// create string from xml tree
+				StringWriter sw = new StringWriter();
+				StreamResult result = new StreamResult(sw);
+				DOMSource source = new DOMSource(doc);
+				trans.transform(source, result);
+				
+				String xml = sw.toString();
+				return xml;
+
+//				
+//				
+//				try {
+//					ByteArrayOutputStream out = new ByteArrayOutputStream();
+//					ZipOutputStream zout = new ZipOutputStream(out);
+//					
+//					exportClasses(session, con, zout);
+//					
+//					ZipEntry zipEntry = new ZipEntry("form/");
+//					zout.putNextEntry(zipEntry);
+//					exportType("form/", LayoutDefinition.FORM_LAYOUT, con, zout);
+//					
+//					zipEntry = new ZipEntry("print/");
+//					zout.putNextEntry(zipEntry);
+//					exportType("print/", LayoutDefinition.PRINT_LAYOUT, con, zout);
+//					
+//					zout.close();
+//					return out.toByteArray();
+//				} catch (IOException e) {
+//					throw new RuntimeException(e);
+//				}
+			}
+
+			private void exportLayouts(Connection con, Document doc,
+					Element root, int type) throws SQLException,
+					ParserConfigurationException, SAXException, IOException {
+				List<LayoutDefinition> definitions = listLayoutDefinitions(con, null, type, null, null);
+				DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+				DocumentBuilder db;
+				db = factory.newDocumentBuilder();
+				for (LayoutDefinition ld:definitions) {
+					String name = ld.actClass.name;
+					String xml = ld.xmlLayout;//addClassInfo(ld.xmlLayout, ld.actClass);
+					Document formDoc = db.parse(new ByteArrayInputStream(xml.getBytes()));
+					Element formRoot = formDoc.getDocumentElement();
+
+					Element layoutRoot = doc.createElement("layout");
+					layoutRoot.setAttribute("name", name);
+					layoutRoot.setAttribute("type", String.valueOf(type));
+					layoutRoot.appendChild(doc.importNode(formRoot, true));
+					root.appendChild(layoutRoot);
 				}
 			}
 
@@ -322,58 +380,95 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public void importZip(final Session session, final InputStream in) {
+	public void importLayouts(final Session session, final InputStream in) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@SuppressWarnings("unchecked")
 			@Override
 			public Void execute(Connection con) throws Exception {
-				try {
-					ZipInputStream zin = new ZipInputStream(in);
-					ZipEntry zipEntry = zin.getNextEntry();
-//					boolean classesImported = false;
-//					while (!classesImported && zipEntry != null) {
+				DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+				DocumentBuilder db;
+				db = factory.newDocumentBuilder();
+				Document doc = db.parse(in);
+				NodeList actClasses = doc.getElementsByTagName("actclass");
+				HashMap <String, ActClass> actClassMap = new HashMap<String, ActClass>(); 
+				for (int i = 0; i < actClasses.getLength(); i++) {
+					ActClass actClass = importActClass(con, (Element)actClasses.item(i));
+					actClassMap.put(actClass.name, actClass);
+				}
+
+
+				TransformerFactory transfac = TransformerFactory.newInstance();
+				Transformer trans = transfac.newTransformer();
+				trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+				// create string from xml tree
+				NodeList layouts = doc.getElementsByTagName("layout");
+				for (int i = 0; i < layouts.getLength(); i++) {
+					Element layoutNode = (Element) layouts.item(i);
+					String name = layoutNode.getAttribute("name");
+					String sType = layoutNode.getAttribute("type");
+					ActClass actClass = actClassMap.get(name);
+					NodeList children = layoutNode.getElementsByTagName("*");
+					
+					DOMSource source = new DOMSource(children.item(0));
+					StringWriter sw = new StringWriter();
+					StreamResult result = new StreamResult(sw);
+					trans.transform(source, result);
+					String xml = sw.toString();
+					LayoutDefinition ld = new LayoutDefinition(actClass, Integer.valueOf(sType), xml);
+					save(session, ld);
+				}
+
+				return null;
+				
+//				try {
+//					ZipInputStream zin = new ZipInputStream(in);
+//					ZipEntry zipEntry = zin.getNextEntry();
+////					boolean classesImported = false;
+////					while (!classesImported && zipEntry != null) {
+////						String name = zipEntry.getName();
+////						if (name.equals("actclasses.xml")) {
+////							importActClasses(con, getText(zin));
+////							classesImported = true;
+////						}
+////						zipEntry = zin.getNextEntry();
+////					}
+//					
+//					zipEntry = zin.getNextEntry();
+//					while (zipEntry != null) {
 //						String name = zipEntry.getName();
+//						String xml = getText(zin);
+//						log.info(name + ": " + xml);
 //						if (name.equals("actclasses.xml")) {
 //							importActClasses(con, getText(zin));
-//							classesImported = true;
+//						} else if (name.endsWith(".xml")) {
+//							int type = -1;
+//						
+//							if (name.startsWith("form/")) {
+//								type = LayoutDefinition.FORM_LAYOUT;
+//								name = name.substring(5);
+//							} else if (name.startsWith("print/")){
+//								type = LayoutDefinition.PRINT_LAYOUT;
+//								name = name.substring(6);
+//							} 
+//							
+//							if (type != -1) {
+//								ActClass actClass = getActClass(xml, name.substring(0, name.length() - 4));
+//								LayoutDefinition ld = new LayoutDefinition(actClass, type, xml);
+//								save(session, ld);
+//							} else {
+//								log.warning(name + " cannot be imported!");
+//							}
 //						}
 //						zipEntry = zin.getNextEntry();
 //					}
-					
-					zipEntry = zin.getNextEntry();
-					while (zipEntry != null) {
-						String name = zipEntry.getName();
-						String xml = getText(zin);
-						log.info(name + ": " + xml);
-						if (name.equals("actclasses.xml")) {
-							importActClasses(con, getText(zin));
-						} else if (name.endsWith(".xml")) {
-							int type = -1;
-						
-							if (name.startsWith("form/")) {
-								type = LayoutDefinition.FORM_LAYOUT;
-								name = name.substring(5);
-							} else if (name.startsWith("print/")){
-								type = LayoutDefinition.PRINT_LAYOUT;
-								name = name.substring(6);
-							} 
-							
-							if (type != -1) {
-								ActClass actClass = getActClass(xml, name.substring(0, name.length() - 4));
-								LayoutDefinition ld = new LayoutDefinition(actClass, type, xml);
-								save(session, ld);
-							} else {
-								log.warning(name + " cannot be imported!");
-							}
-						}
-						zipEntry = zin.getNextEntry();
-					}
-					zin.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				return null;
+//					zin.close();
+//				} catch (IOException e) {
+//					throw new RuntimeException(e);
+//				}
+//				return null;
 			}
 
 			private void importActClasses(Connection con, String xml) throws SAXException, IOException, ParserConfigurationException, SQLException {
@@ -427,7 +522,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 			
 
 
-			private void importActClass(Connection con, Element catalogNode) throws SQLException {
+			private ActClass importActClass(Connection con, Element catalogNode) throws SQLException {
 				ActClass actClass = new ActClass();
 				actClass.name = getString(catalogNode.getAttributes(), "name");
 				actClass.entityType = getLong(catalogNode.getAttributes(), "entityType");
@@ -435,6 +530,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 				actClass.isSingleton = "true".equals(getString(catalogNode.getAttributes(), "isSingleton"));
 			
 				Locator.getActService().registerActClass(con, actClass);
+				return actClass;
 			}
 
 			private String getText(InputStream zin) throws IOException {
