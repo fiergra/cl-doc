@@ -35,8 +35,11 @@ public class DownloadServlet extends HttpServlet {
 		
 		if (session != null) {
 			if ("form_layouts".equals(type)) {
-				resp.setContentType("application/zip");
-				out = Locator.getLayoutDefinitionService().exportZip(session);
+//				resp.setContentType("application/zip");
+//				out = Locator.getLayoutDefinitionService().exportZip(session);
+				resp.setContentType("text/xml");
+				String xml = Locator.getLayoutDefinitionService().exportLayouts(session);
+				out = xml.getBytes("UTF-8");
 //			} else if ("print_layouts".equals(type)) {
 //				resp.setContentType("application/zip");
 //				out = Locator.getLayoutDefinitionService().exportZip(session, LayoutDefinition.PRINT_LAYOUT);

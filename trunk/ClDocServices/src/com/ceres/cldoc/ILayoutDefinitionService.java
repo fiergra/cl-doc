@@ -11,6 +11,6 @@ public interface ILayoutDefinitionService {
 	List<LayoutDefinition> listLayoutDefinitions(Session session, String filter, Integer typeId, Long entityType, Boolean isSingleton);
 	void delete(Session session, String className);
 	
-	byte[] exportZip(Session session);
-	void importZip(Session session, InputStream in);
+	String exportLayouts(Session session);
+	void importLayouts(Session session, InputStream in);
 }

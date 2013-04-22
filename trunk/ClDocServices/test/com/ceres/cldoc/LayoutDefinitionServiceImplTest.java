@@ -1,10 +1,7 @@
 package com.ceres.cldoc;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import com.ceres.cldoc.model.Act;
@@ -16,18 +13,27 @@ public class LayoutDefinitionServiceImplTest extends TransactionalTest {
 
 	public void testExport() throws InterruptedException, IOException {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
-		byte[] bytes = lds.exportZip(getSession());
-
-		File f = File.createTempFile("layout.", ".zip");
-		System.out.println(f.getAbsolutePath());
-		FileOutputStream w = new FileOutputStream(f);
-		w.write(bytes);
-		w.close();
+		String xml1 = lds.exportLayouts(getSession());
+		lds.importLayouts(getSession(), new ByteArrayInputStream(xml1.getBytes("UTF-8")));
+		String xml2 = lds.exportLayouts(getSession());
 		
-		InputStream in = new ByteArrayInputStream(bytes);
-		lds.importZip(getSession(), in);
+		assertEquals(xml1, xml2);
 	}
 	
+//	public void testExport() throws InterruptedException, IOException {
+//		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
+//		byte[] bytes = lds.exportLayouts(getSession());
+//
+//		File f = File.createTempFile("layout.", ".zip");
+//		System.out.println(f.getAbsolutePath());
+//		FileOutputStream w = new FileOutputStream(f);
+//		w.write(bytes);
+//		w.close();
+//		
+//		InputStream in = new ByteArrayInputStream(bytes);
+//		lds.importZip(getSession(), in);
+//	}
+//	
 	public void testAll() throws InterruptedException {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		IActService actService = Locator.getActService();

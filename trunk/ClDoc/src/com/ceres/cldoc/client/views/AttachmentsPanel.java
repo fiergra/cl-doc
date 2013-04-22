@@ -38,9 +38,9 @@ public class AttachmentsPanel extends DockLayoutPanel {
 				new OnClick<Attachment>() {
 
 					@Override
-					public void onClick(Attachment pp) {
-						// TODO Auto-generated method stub
-						
+					public void onClick(Attachment attachment) {
+						String baseUrl = GWT.getModuleBaseURL();
+						Window.open(baseUrl + "download?id=" + attachment.docId , "_blank", "");
 					}
 				}, false)
 				{
@@ -49,14 +49,14 @@ public class AttachmentsPanel extends DockLayoutPanel {
 					public boolean addRow(FlexTable table, int row, final Attachment attachment) {
 						int col = 0;
 						Image img = getMimeTypeImage(attachment.filename);
-						img.addClickHandler(new ClickHandler() {
-							
-							@Override
-							public void onClick(ClickEvent event) {
-								String baseUrl = GWT.getModuleBaseURL();
-								Window.open(baseUrl + "download?id=" + attachment.docId , "_blank", "");
-							}
-						});
+//						img.addClickHandler(new ClickHandler() {
+//							
+//							@Override
+//							public void onClick(ClickEvent event) {
+//								String baseUrl = GWT.getModuleBaseURL();
+//								Window.open(baseUrl + "download?id=" + attachment.docId , "_blank", "");
+//							}
+//						});
 						table.setWidget(row, col++, img);
 						table.setWidget(row, col++, new HTML("<b>" + attachment.filename + "</b>"));
 						table.setWidget(row, col++, new HTML("<i>" + attachment.description + "</i>"));
