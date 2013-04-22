@@ -235,7 +235,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 				for (LayoutDefinition ld:definitions) {
 					String name = ld.actClass.name;
 					String xml = ld.xmlLayout;//addClassInfo(ld.xmlLayout, ld.actClass);
-					Document formDoc = db.parse(new ByteArrayInputStream(xml.getBytes()));
+					Document formDoc = db.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
 					Element formRoot = formDoc.getDocumentElement();
 
 					Element layoutRoot = doc.createElement("layout");
