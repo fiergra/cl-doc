@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ceres.cldoc.client.views.IForm;
-import com.ceres.cldoc.client.views.IView;
 import com.ceres.cldoc.model.IAct;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -55,6 +54,17 @@ public class PagesView extends TabLayoutPanel implements IForm {
 		}
 		
 		return isModified;
+	}
+
+	@Override
+	public boolean isValid() {
+		boolean isValid = true;
+
+		for (IForm page:pages) {
+			isValid &= page.isValid();
+		}
+		
+		return isValid;
 	}
 
 	@Override

@@ -166,6 +166,7 @@ body, table td, select, button {
 	font-variant: small-caps;
 	padding-left: 10px;
 	padding-top: 0px;
+	padding-bottom: 0px;
 }
 
 .formSectionTitle {
@@ -177,11 +178,22 @@ body, table td, select, button {
 	padding-top: 0px;
 }
 
+.requiredLabel {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.required {
+}
+
+
 .formItem {
 	vertical-align: bottom;
 	padding-left: 30px;
 	padding-top: 0px;
+	padding-bottom: 0px;
 }
+
 
 .formSubLabel {
 	font-style: italic;

@@ -1,9 +1,12 @@
 package com.ceres.cldoc.client.controls;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -23,10 +26,20 @@ public class DateTextBox extends TextBox {
 					addStyleName("invalid");
 				} else {
 					removeStyleName("invalid");
+				}
+
+				if (value != dateValue || (value != null && !value.equals(dateValue))) {
 					setDate(value);
+					notifyDateChangeHandlers(value);
 				}
 			}
 		});
+	}
+
+	protected void notifyDateChangeHandlers(Date value) {
+		for (ValueChangeHandler<Date> h:dateChangeHandlers) {
+			h.onValueChange(null);
+		}
 	}
 
 	DateTimeFormat[] dateFormats = new DateTimeFormat[] {
@@ -66,6 +79,12 @@ public class DateTextBox extends TextBox {
 		} else {
 			setValue(null);
 		}
+	}
+
+	private final Collection<ValueChangeHandler<Date>> dateChangeHandlers = new ArrayList<ValueChangeHandler<Date>>();
+	
+	public void addDateChangeHandler(ValueChangeHandler<Date> dateChangeHandler) {
+		dateChangeHandlers.add(dateChangeHandler);
 	}
 	
 	

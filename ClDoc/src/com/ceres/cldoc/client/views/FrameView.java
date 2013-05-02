@@ -31,6 +31,11 @@ public class FrameView extends Frame implements IForm {
 	}
 
 	@Override
+	public boolean isValid() {
+		return true;
+	}
+
+	@Override
 	public void clearModification() {
 	}
 

@@ -46,19 +46,58 @@ public class Form extends FlexTable implements IForm {
 	protected DateTimeFormat df = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
 	private final ClDoc clDoc;
-	private Interactor interactor;
+	private final Interactor interactor;
 
 	final static int OK = 1;
 	final static int CLOSE = 2;
 	final static int CANCEL = 4;
 	private static final int SPACING = 3;
 
-	public Form(ClDoc clDoc, IAct model, Runnable setModified) {
+	private class FormItemValidationStatus implements ValidationStatus {
+
+		private final Image status;
+
+		public FormItemValidationStatus(Image status) {
+			super();
+			this.status = status;
+		}
+
+
+
+		@Override
+		public void set(States state) {
+			switch (state) {
+			case none: 
+				status.setUrl(""); 
+				status.setVisible(false);
+				break;
+			case required: 
+				status.setVisible(true);
+				status.setUrl("icons/16/star_red.png"); break;
+			case valid: 
+				status.setVisible(true);
+				status.setUrl("icons/16/valid.png"); break;
+			}
+		}	
+	}
+	
+	public Form(ClDoc clDoc, IAct model, Runnable setModified, final Runnable setValid) {
 		this.clDoc = clDoc;
 		addStyleName("docform");
 		setRowFormatter(new RowFormatter() {});
 		this.model = model;
-		interactor = new Interactor(clDoc.getSession(), model, setModified);
+		ValidationCallback validationCallback = new ValidationCallback() {
+			
+			@Override
+			public void setValid(InteractorLink link, boolean isValid) {
+				if (setValid != null) {
+					setValid.run();
+				}
+				
+			}
+		};
+
+		interactor = new Interactor(clDoc.getSession(), model, setModified, validationCallback );
 		setup();
 		interactor.toDialog();
 	}
@@ -166,18 +205,26 @@ public class Form extends FlexTable implements IForm {
 	}
 
 	
-	protected void addLabeledWidget(String label, IsWidget... widgets) {
+	protected Image addLabeledWidget(String label, boolean required, IsWidget... widgets) {
+		Image img = null;
 		if (label == null && widgets.length == 1) {
 			setWidget(row, 0, widgets[0]);
 			getFlexCellFormatter().setColSpan(row, 0, 2);
 		} else {
 			Label l = new Label(label);
 			setWidget(row, 0, l);
-			getCellFormatter().addStyleName(row, 0, "formLabel");	
+			l.addStyleName("formLabel");
+			if (required) {
+				l.addStyleName("requiredLabel");
+			}
 			getFlexCellFormatter().setColSpan(row, 0, 2);
 			row++;
 			IsWidget w;
-	
+			img = new Image();
+			img.setPixelSize(16,  16);
+			img.setVisible(false);
+			setWidget(row, 0, img);
+			
 			if (widgets.length > 1) {
 				HorizontalPanel hp = new HorizontalPanel();
 				hp.setSpacing(SPACING);
@@ -194,6 +241,7 @@ public class Form extends FlexTable implements IForm {
 			getFlexCellFormatter().setAlignment(row, 1, HasHorizontalAlignment.ALIGN_LEFT, HasVerticalAlignment.ALIGN_TOP);
 		}
 		row++;
+		return img;
 	}
 
 	protected Widget addLine(String labelText, String fieldName, DataType dataType, int width, boolean focused) {
@@ -221,14 +269,16 @@ public class Form extends FlexTable implements IForm {
 
 	private Widget addWidgetAndField(String labelText, String fieldName,
 			DataType dataType, HashMap <String, String> attributes) {
-		Widget widget = createWidgetForType(dataType, attributes);
-		addLabeledWidget(labelText, widget);
+		boolean required = getBoolean("required", attributes);
+		Widget widget = createWidgetForType(dataType, required, attributes);
+		final Image status = addLabeledWidget(labelText, required, widget);
 		if (fieldName != null) {
-			interactor.addLink(fieldName, new InteractorLink(fieldName, widget, dataType, attributes != null ? "true".equals(attributes.get("mandatory")) : false));
+			interactor.addLink(fieldName, new InteractorLink(interactor, new FormItemValidationStatus(status), fieldName, widget, dataType, required));
 		}
 		return widget;
 	}
 	
+
 	private boolean getBoolean(String name, HashMap<String, String> attributes) {
 		return attributes != null ? "true".equals(attributes.get(name)) : false;
 	}
@@ -238,7 +288,9 @@ public class Form extends FlexTable implements IForm {
 		hp.setSpacing(5);
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hp.addStyleName("formSubLine");
-
+		Image status = new Image();
+		hp.add(status);
+		
 		for (LineDef ld:lineDefs) {
 			DataType dataType = ld.dataType;
 			String subLabel = ld.label;
@@ -250,15 +302,16 @@ public class Form extends FlexTable implements IForm {
 				l.addStyleName("formSubLabel");
 				hp.add(l);
 			}
-			Widget w = createWidgetForType(dataType, ld.attributes);
+			boolean required = getBoolean("required", ld.attributes);
+			Widget w = createWidgetForType(dataType, required, ld.attributes);
 			hp.add(w);
-			interactor.addLink(subName, new InteractorLink(subName, w, dataType, getBoolean("mandatory", ld.attributes)));
+			interactor.addLink(subName, new InteractorLink(interactor, new FormItemValidationStatus(status), subName, w, dataType, getBoolean("mandatory", ld.attributes)));
 		}
-		addLabeledWidget(label, hp);
+		addLabeledWidget(label, false, hp);
 	}
 	
 
-	private Widget createWidgetForType(DataType dataType, HashMap<String, String> attributes) {
+	private Widget createWidgetForType(DataType dataType, boolean required, HashMap<String, String> attributes) {
 		Widget w = null;
 
 		switch (dataType) {
@@ -322,7 +375,6 @@ public class Form extends FlexTable implements IForm {
 			break;
 		case FT_SEPARATOR:
 			String title = attributes.get("title");
-			HTML separator;
 			String html = "<hr noshade=\"noshade\" size=\"1\"/>";
 			if (title != null) {
 				html = "</br></br><div class=\"formSectionTitle\"><b>" + title + "</b></div>" + html;
@@ -341,16 +393,20 @@ public class Form extends FlexTable implements IForm {
 
 		}
 		
-		if (w != null && attributes != null) {
-			String sWidth = attributes.get("width");
-			String sHeight = attributes.get("height");
-			if (sWidth != null) {
-				w.setWidth(sWidth);
+		if (w != null) {
+			if (attributes != null) {
+				String sWidth = attributes.get("width");
+				String sHeight = attributes.get("height");
+				if (sWidth != null) {
+					w.setWidth(sWidth);
+				}
+				if (sHeight != null) {
+					w.setHeight(sHeight);
+				}
 			}
-			if (sHeight != null) {
-				w.setHeight(sHeight);
+			if (required) {
+				w.addStyleName("required");
 			}
-			
 		}
 		
 		return w;
@@ -620,6 +676,11 @@ public class Form extends FlexTable implements IForm {
 	@Override
 	public void clearModification() {
 		interactor.clearModification();
+	}
+
+	@Override
+	public boolean isValid() {
+		return interactor.isValid();
 	}
 
 }
