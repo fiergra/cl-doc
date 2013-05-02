@@ -1,6 +1,5 @@
 package com.ceres.cldoc.client.views;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,9 +22,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 
@@ -34,32 +34,22 @@ public class Interactor implements IView {
 	private final IAct act;
 	private final HashMap<String, InteractorLink> links = new HashMap<String, InteractorLink>();
 	private final Runnable setModified;
+	private final ValidationCallback setValid;
 
 	public Interactor(Session session, IAct act) {
-		this(session, act, null);
+		this(session, act, null, null);
 	}
 	
-	public Interactor(Session session, IAct act, Runnable setModified) {
+	public Interactor(Session session, IAct act, Runnable setModified, ValidationCallback setValid) {
 		this.session = session;
 		this.act = act;
 		this.setModified = setModified;
+		this.setValid = setValid;
 	}
 
-	private boolean validate(TextBoxBase textBox) {
-		boolean isValid = false;
-		String sValue = textBox.getText();
-		if (sValue == null || sValue.length() == 0) {
-			textBox.addStyleName("invalidContent");
-		} else {
-			textBox.removeStyleName("invalidContent");
-			isValid = true;
-		}
-
-		return isValid;
-	}
-	
 
 	
+	@Override
 	public void toDialog() {
 		Iterator<Entry<String, InteractorLink>> iter = links.entrySet().iterator();
 
@@ -71,9 +61,7 @@ public class Interactor implements IView {
 			case FT_STRING:
 				String sValue = act.getString(link.name);
 				((TextBoxBase) link.widget).setText(sValue);
-				if (link.isMandatory) {
-					validate((TextBoxBase) link.widget);
-				}
+				link.validate();
 				break;
 			case FT_BOOLEAN:
 				((CheckBox) link.widget).setValue(act.getBoolean(link.name));
@@ -138,9 +126,14 @@ public class Interactor implements IView {
 			default:
 				break;
 			}
+			
+			if (setValid != null) {
+				setValid.setValid(link, link.validate());
+			}
 		}
 	}
 
+	@Override
 	public void fromDialog() {
 		Iterator<Entry<String, InteractorLink>> iter = links.entrySet().iterator();
 
@@ -209,36 +202,88 @@ public class Interactor implements IView {
 	}
 
 	private boolean isModified = false;
+	private boolean isValid = false;
 
-	private class WidgetKeyUpHandler implements KeyUpHandler {
+	private class ButtonClickHandler extends InteractorHandler implements ClickHandler {
+		
+		public ButtonClickHandler(InteractorLink link) {
+			super(link);
+		}
 
-		private final IsWidget widget;
+		@Override
+		public void onClick(ClickEvent event) {
+			link.interactor.setModification();
+			link.interactor.setValid(link, link.validate());
+		}
+	}
+	
+	private class TextBoxKeyUpHandler extends InteractorHandler implements KeyUpHandler {
 
-		public WidgetKeyUpHandler(IsWidget widget) {
-			this.widget = widget;
+		public TextBoxKeyUpHandler(InteractorLink link) {
+			super(link);
 		}
 		
 		@Override
 		public void onKeyUp(KeyUpEvent event) {
-			onModification();
-			if (widget instanceof TextBoxBase) {
-				validate((TextBoxBase) widget);
-//				System.out.print(((TextBoxBase) widget).getText());
-			}
-			
-			
-			if (!isModified) {
-				isModified = true;
-				if (setModified != null) {
-					setModified.run();
-				}
-			}
+			link.interactor.setModification();
+			link.interactor.setValid(link, link.validate());
+		}
+		
+	}
+	
+	private class EntitySelectorChangeHandler extends InteractorHandler implements ChangeHandler {
+
+		public EntitySelectorChangeHandler(InteractorLink interactorLink) {
+			super(interactorLink);
+		}
+
+		@Override
+		public void onChange(ChangeEvent event) {
+			link.interactor.setModification();
+			link.interactor.setValid(link, link.validate());
 		}
 		
 	}
 	
 	protected void onModification() {}
 	
+	public void setValid(InteractorLink link, boolean validated) {
+		if (isValid) {
+			isValid = isValid && validated;
+		} else {
+			Iterator<InteractorLink> i = links.values().iterator();
+			isValid = true;
+			while (isValid && i.hasNext()) {
+				isValid = isValid && i.next().validate();
+			}
+		}
+		
+		if (setValid != null) {
+			setValid.setValid(link, validated);
+		}
+	}
+//
+//	private void validateAll() {
+//		Iterator<InteractorLink> i = links.values().iterator();
+//		isValid = true;
+//		while (i.hasNext()) {
+//			InteractorLink link = i.next();
+//			boolean validated = link.validate();
+//			isValid = isValid && validated;
+//			setValid.setValid(link, validated);
+//		}
+//	}
+
+	public void setModification() {
+		onModification();
+		if (!isModified) {
+			isModified = true;
+			if (setModified != null) {
+				setModified.run();
+			}
+		}
+	}
+
 	@Override
 	public boolean isModified() {
 		return isModified;
@@ -249,22 +294,23 @@ public class Interactor implements IView {
 		isModified = false;
 	}
 
-	public void addLink(String fieldName, InteractorLink interactorLink) {
+	public void addLink(String fieldName, final InteractorLink interactorLink) {
 		links.put(fieldName, interactorLink);
-		if (interactorLink.widget instanceof TextBoxBase) {
-			((TextBoxBase)interactorLink.widget).addKeyUpHandler(new WidgetKeyUpHandler(interactorLink.widget));
-		} else if (interactorLink.widget instanceof ButtonBase) {
-			((ButtonBase)interactorLink.widget).addClickHandler(new ClickHandler() {
-				
+		if (interactorLink.widget instanceof DateTextBox) {
+			((DateTextBox)interactorLink.widget).addDateChangeHandler(new ValueChangeHandler<Date>() {
+
 				@Override
-				public void onClick(ClickEvent event) {
-					if (!isModified) {
-						isModified = true;
-						setModified.run();
-					}
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					interactorLink.interactor.setModification();
+					interactorLink.interactor.setValid(interactorLink, interactorLink.validate());
 				}
 			});
-			
+		} else if (interactorLink.widget instanceof TextBoxBase) {
+			((TextBoxBase)interactorLink.widget).addKeyUpHandler(new TextBoxKeyUpHandler(interactorLink));
+		} else if (interactorLink.widget instanceof IEntitySelector) {
+			((IEntitySelector)interactorLink.widget).addSelectionChangedHandler(new EntitySelectorChangeHandler(interactorLink));
+		} else if (interactorLink.widget instanceof ButtonBase) {
+			((ButtonBase)interactorLink.widget).addClickHandler(new ButtonClickHandler(interactorLink));
 		} else if (interactorLink.widget instanceof ListBox) {
 			((ListBox)interactorLink.widget).addChangeHandler(new ChangeHandler() {
 				
@@ -277,21 +323,13 @@ public class Interactor implements IView {
 				}
 			});
 			
-		} else if (interactorLink.widget instanceof IEntitySelector) {
-			((IEntitySelector)interactorLink.widget).addSelectionChangedHandler(new ChangeHandler() {
-				
-				@Override
-				public void onChange(ChangeEvent event) {
-					if (!isModified) {
-						isModified = true;
-						setModified.run();
-					}
-				}
-			});
-			
 		}
 		
 		
 		
+	}
+
+	public boolean isValid() {
+		return isValid;
 	}
 }

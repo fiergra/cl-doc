@@ -78,10 +78,10 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 
 	public boolean setSelected(Long id) {
 		boolean found = false;
+		int index = 0;
 		
-		if (catalogs != null) {
+		if (id != null && catalogs != null) {
 			Iterator<Catalog> i = catalogs.iterator();
-			int index = 0;
 			
 			while (!found && i.hasNext()) {
 				if (i.next().id.equals(id)) {
@@ -91,10 +91,14 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 				}
 			}
 			
-			if (found) {
-				setSelectedIndex(index);
-			}
 		}
+
+		if (found) {
+			setSelectedIndex(index);
+		} else {
+			setSelectedIndex(0);
+		}
+
 		return found;
 	}
 

@@ -34,6 +34,11 @@ public class ScrollView extends ScrollPanel implements IForm {
 	}
 
 	@Override
+	public boolean isValid() {
+		return content.isValid();
+	}
+
+	@Override
 	public void clearModification() {
 		content.clearModification();
 	}

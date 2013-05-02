@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
-import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -36,7 +35,7 @@ public class ReportTab extends SplitLayoutPanel {
 
 	private final FlexTable table = new FlexTable();
 	private final ReportDefinition reportDefinition;
-	private Act filters = new Act();
+	private final Act filters = new Act();
 	private final ClDoc clDoc; 
 
 	public ReportTab(ClDoc clDoc, ReportDefinition rd) {
@@ -94,7 +93,14 @@ public class ReportTab extends SplitLayoutPanel {
 			@Override
 			public void run() {
 				
-			}});
+			}},
+			new Runnable() {
+				
+				@Override
+				public void run() {
+					
+				}
+			});
 
 		reportControls.addNorth(setupButtons(rc), 3);
 		reportControls.add(rc);

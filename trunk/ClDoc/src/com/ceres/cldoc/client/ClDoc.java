@@ -85,12 +85,12 @@ public class ClDoc implements EntryPoint {
 	protected void setPassword(final Session session) {
 		final PasswordTextBox pwdField1 = new PasswordTextBox();
 		final PasswordTextBox pwdField2 = new PasswordTextBox();
-		Form createPwd = new Form(this, null, null){
+		Form createPwd = new Form(this, null, null, null){
 
 			@Override
 			protected void setup() {
-				addLabeledWidget("Passwort", pwdField1);
-				addLabeledWidget("Passwort Wiederholung", pwdField2);
+				addLabeledWidget("Passwort", true, pwdField1);
+				addLabeledWidget("Passwort Wiederholung", true, pwdField2);
 			}
 		};
 		

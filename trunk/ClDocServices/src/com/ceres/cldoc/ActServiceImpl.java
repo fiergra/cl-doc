@@ -74,7 +74,7 @@ public class ActServiceImpl implements IActService {
 			String comment = act.getString("comment");
 			String fileName = act.getString("fileName");
 			summary = comment != null ? comment + " - <i>" + fileName + "</i>": fileName;
-		} else if (act.actClass.summaryDef != null) {
+		} else if (act.actClass.summaryDef != null && act.actClass.summaryDef.length() > 0) {
 			summary = ActFieldVisitor.replaceVars(session, act, act.actClass.summaryDef);
 		} else {
 			summary = act.actClass.name;

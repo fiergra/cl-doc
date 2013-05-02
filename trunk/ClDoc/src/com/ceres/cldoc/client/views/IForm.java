@@ -4,10 +4,16 @@ import com.ceres.cldoc.model.IAct;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public interface IForm extends IView, IsWidget {
+	@Override
 	IAct getModel();
+	@Override
 	void fromDialog();
+	@Override
 	void toDialog();
 	
+	@Override
 	boolean isModified();
+	@Override
 	void clearModification();
+	boolean isValid();
 }

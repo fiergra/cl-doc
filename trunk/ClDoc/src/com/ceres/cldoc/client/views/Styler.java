@@ -54,7 +54,7 @@ public class Styler extends DockLayoutPanel {
 		final DockLayoutPanel printLayoutPanel = new DockLayoutPanel(Unit.EM);
 //		final CheckBox cbMasterData = new CheckBox("Stammdaten");
 
-		formLayoutDescTextArea.addStyleName("sourceCode");
+		formLayoutDescTextArea.setStylePrimaryName("sourceCode");
 		printLayoutPanel.addStyleName("sourceCode");
 		
 		final TextBox txtName = new TextBox();
@@ -96,7 +96,7 @@ public class Styler extends DockLayoutPanel {
 					int index = formContainer.getWidgetIndex(form);
 					formContainer.remove(form);
 				}
-				form = ActRenderer.getActRenderer(clDoc, formLayoutDescTextArea.getText(), null, null);
+				form = ActRenderer.getActRenderer(clDoc, formLayoutDescTextArea.getText(), null, null, null);
 				formContainer.add(form);
 			}
 		};

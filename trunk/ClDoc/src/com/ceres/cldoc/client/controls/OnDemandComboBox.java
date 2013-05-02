@@ -83,7 +83,7 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 					listBox.setFocus(true);
 					listBox.setSelectedIndex(0);
 				} else if (event.getNativeKeyCode() != KeyCodes.KEY_TAB) {
-					selectedItem = null;
+					setSelectedItem(null);
 					retrieve(txtFilter.getValue());
 				}
 			}
@@ -138,12 +138,12 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 		}
 	}
 	
-	protected String labelFunction(T act) {
-		return labelFunction.getLabel(act);
+	protected String labelFunction(T entity) {
+		return entity != null ? labelFunction.getLabel(entity) : "";
 	}
 	
-	protected String valueFunction(T act) {
-		return labelFunction.getValue(act);
+	protected String valueFunction(T entity) {
+		return entity != null ? labelFunction.getValue(entity) : null;
 	}
 
 	private PopupPanel dropDownPopup = null;

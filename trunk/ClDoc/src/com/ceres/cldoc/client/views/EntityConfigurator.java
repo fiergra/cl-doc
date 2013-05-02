@@ -262,7 +262,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 						public void run() {
 							// something was modified...
 						}
-					});
+					}, null);
 					tlp.addPage(ar, ld.actClass.name);
 				}
 				

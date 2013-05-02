@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
@@ -35,6 +36,7 @@ public class ActRenderer extends DockLayoutPanel {
 	private HTML title;
 	private final OnOkHandler<Act> onInsertUpdateDelete;
 	private LinkButton pbSave;
+	private Label imgValid;
 	private final ClDoc clDoc;
 	
 	public ActRenderer(
@@ -79,6 +81,8 @@ public class ActRenderer extends DockLayoutPanel {
 //			}
 //		});
 		
+		imgValid = new Label("v");
+		buttons.add(imgValid);
 		LinkButton pbPrint = addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Adobe-PDF-Document-icon.png", "icons/32/Adobe-PDF-Document-icon.disabled.png", new ClickHandler() {
 			
 			@Override
@@ -277,6 +281,12 @@ public class ActRenderer extends DockLayoutPanel {
 					title.setHTML("*<i>" + title.getText() + "</i>");
 					pbSave.enable(true);
 				}
+			}, new Runnable() {
+				
+				@Override
+				public void run() {
+					imgValid.setText(formContent.isValid() ? "valid" : "NOT valid");
+				}
 			});
 			add(formContent);
 			formContent.toDialog();
@@ -297,7 +307,7 @@ public class ActRenderer extends DockLayoutPanel {
 	}
 
 
-	public static IForm getActRenderer(ClDoc clDoc, String xml, final Act act, Runnable onChange) {
+	public static IForm getActRenderer(ClDoc clDoc, String xml, final Act act, Runnable onChange, Runnable onValidate) {
 		IForm result = null;
 		
 		if (xml != null) {
@@ -316,7 +326,7 @@ public class ActRenderer extends DockLayoutPanel {
 							Element subItem = (Element) subItems.item(j);
 							
 							if (subItem.getNodeName().equals("form")) {
-								Form form = new Form(clDoc, act, onChange);
+								Form form = new Form(clDoc, act, onChange, onValidate);
 								form.createAndLayout(subItem);
 								form.setWidth("100%");
 								pages.addPage(form, subItem.getAttribute("label"));
@@ -327,7 +337,7 @@ public class ActRenderer extends DockLayoutPanel {
 					result = pages;
 					pages.setSize("100%", "100%");
 				} else if (item.getNodeName().equals("form")) {
-					Form form = new Form(clDoc, act, onChange);
+					Form form = new Form(clDoc, act, onChange, onValidate);
 					form.createAndLayout(item);
 					form.setWidth("100%");
 					result = new ScrollView(form);

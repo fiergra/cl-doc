@@ -66,14 +66,15 @@ public class SettingsPanel extends DockLayoutPanel {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		Form form = new Form(clDoc, null, new Runnable() {
 			
+			@Override
 			public void run() {
 				pbSave.enable(true);
-			}}) {
+			}}, null) {
 
 			@Override
 			protected void setup() {
-				addLabeledWidget("Lucene index path", lucenePathBox);
-				addLabeledWidget("DocArchive path", docArchivePathBox);
+				addLabeledWidget("Lucene index path", true, lucenePathBox);
+				addLabeledWidget("DocArchive path", true, docArchivePathBox);
 			}
 
 			@Override

@@ -20,7 +20,7 @@ public class PersonEditor extends Form {
 	private final OnClick<Person> onSave;
 	
 	public PersonEditor(ClDoc clDoc, final Person person, Runnable setModified, OnClick<Person> onSave) {
-		super(clDoc, wrap(person), setModified);
+		super(clDoc, wrap(person), setModified, null);
 		this.onSave = onSave;
 	}
 
