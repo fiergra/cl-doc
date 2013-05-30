@@ -79,6 +79,7 @@ public class UploadDialog extends DialogBox {
 				System.out.println(event);
 			}
 		});
+
 		form.addSubmitCompleteHandler(new SubmitCompleteHandler() {
 	
 			@Override
@@ -113,14 +114,14 @@ public class UploadDialog extends DialogBox {
 		buttons.setSpacing(5);
 		widget.setPixelSize(500, 250);
 		
-		Button pbOk = new Button(SRV.c.ok());
-		
+		final Button pbOk = new Button(SRV.c.ok());
 		final FormPanel form = createUploadPanel(clDoc, type, humanBeing, act);
 		
 		pbOk.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				pbOk.setEnabled(false);
 				form.submit();
 			}
 		});

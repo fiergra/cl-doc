@@ -1,5 +1,6 @@
 package com.ceres.cldoc.server.service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -17,6 +18,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 
+import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
@@ -98,7 +100,12 @@ public class UploadService extends HttpServlet {
 								fileName = FilenameUtils.getName(fileName);
 								attachment.filename = fileName;
 //								act.set("fileName", fileName);
-								attachment.docId = Locator.getDocArchive().store(fileName, fItem.getInputStream(), null);
+								IDocArchive docarc = Locator.getDocArchive();
+								String path = Locator.getSettingsService().get(session, IDocArchive.DOC_ARCHIVE_PATH, null);
+								if (path != null) {
+									docarc.setArchivePath(new File(path));
+								}
+								attachment.docId = docarc.store(fileName, fItem.getInputStream(), null);
 //								act.set("docId", docId);
 							}
 						}

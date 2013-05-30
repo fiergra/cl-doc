@@ -1,5 +1,6 @@
 package com.ceres.cldoc.client.views;
 
+import com.ceres.cldoc.client.controls.Util;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -110,7 +111,7 @@ public class MessageBox extends DialogBox {
 		pushButton.setWidth("80px");
 		buttonsPanel.add(pushButton);
 		if (buttonsPanel.getWidgetCount() == 1) {
-			pushButton.setFocus(true);
+			Util.setFocus(pushButton);
 		}
 	}
 

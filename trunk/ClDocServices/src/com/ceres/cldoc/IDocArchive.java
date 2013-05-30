@@ -7,6 +7,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 public interface IDocArchive {
+	public static final String DOC_ARCHIVE_PATH = "DOC_ARCHIVE_PATH";
+	
+	
 	byte[] retrieve(long docId) throws IOException;
 	HashMap<String, Serializable> retrieveMetaData(long docId);
 	String getFileName(long docId);

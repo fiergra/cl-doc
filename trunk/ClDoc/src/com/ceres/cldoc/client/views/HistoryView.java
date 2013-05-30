@@ -35,7 +35,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class HistoryView extends DockLayoutPanel {
 
 	private final ActRenderer viewer;
-	private final ClickableTable<Act>historyPanel;
+	private final ClickableTable<Act>historyTable;
 	
 	private Entity e;
 	private final ClDoc clDoc;
@@ -50,7 +50,7 @@ public class HistoryView extends DockLayoutPanel {
 		final ListBox cmbFilter = new ListBox();
 //		cmbFilter.setVisibleItemCount(1);
 		
-		historyPanel = new ClickableTable<Act>(clDoc, new ListRetrievalService<Act>() {
+		historyTable = new ClickableTable<Act>(clDoc, new ListRetrievalService<Act>() {
 
 			@Override
 			public void retrieve(String filter, AsyncCallback<List<Act>> callback) {
@@ -105,8 +105,11 @@ public class HistoryView extends DockLayoutPanel {
 					
 					if (filter == null || filter.equals(act.actClass.name)) {
 						int column = 0;
-						String imgSource = ActClass.EXTERNAL_DOC.name.equals(act.actClass.name) ? 
-								"icons/16/Adobe-PDF-Document-icon.png" : "icons/16/Document-icon.png";
+						String imgSource = 
+								ActClass.EXTERNAL_DOC.name.equals(act.actClass.name) ? 
+										
+								(act.getString("fileName").toLowerCase().endsWith("pdf") ? "icons/16/Adobe-PDF-Document-icon.png" : 
+								"icons/16/Document-icon.png") : "icons/16/Edit-Document-icon.png";
 						table.setWidget(row, column++, new Image(imgSource));
 						String sDate = act.date != null ? DateTimeFormat.getFormat("dd.MM.yyyy").format(act.date) : "--.--.----";
 						table.setWidget(row, column++, new Label(sDate));
@@ -121,8 +124,8 @@ public class HistoryView extends DockLayoutPanel {
 
 			};
 
-		historyPanel.getColumnFormatter().addStyleName(2, "hundertPercentWidth");
-		Image pbUpload = historyPanel.addButton("upload file", "icons/32/Button-Upload-icon.png", new ClickHandler() {
+		historyTable.getColumnFormatter().addStyleName(2, "hundertPercentWidth");
+		Image pbUpload = historyTable.addButton("upload file", "icons/32/Button-Upload-icon.png", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -131,21 +134,21 @@ public class HistoryView extends DockLayoutPanel {
 
 							@Override
 							public void onOk(Void result) {
-								historyPanel.refresh();
+								historyTable.refresh();
 							}
 						});
 			}
 		});
-		Image pbAdd = historyPanel.addButton("add act", "icons/32/File-New-icon.png", new ClickHandler() {
+		Image pbAdd = historyTable.addButton("add act", "icons/32/File-New-icon.png", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				AddAct.addAct(clDoc, e, historyPanel.getList(), new OnOkHandler<Act>() {
+				AddAct.addAct(clDoc, e, historyTable.getList(), new OnOkHandler<Act>() {
 
 					@Override
 					public void onOk(Act act) {
 						act.setParticipant(e, Participation.PROTAGONIST, new Date(), null);
-						act.setParticipant(e, Participation.ADMINISTRATOR, new Date(), null);
+						act.setParticipant(clDoc.getSession().getUser().person, Participation.ADMINISTRATOR, new Date(), null);
 						act.setParticipant(clDoc.getSession().getUser().organisation, Participation.ORGANISATION, new Date(), null);
 						
 						SRV.actService.save(clDoc.getSession(), act,
@@ -168,13 +171,13 @@ public class HistoryView extends DockLayoutPanel {
 			
 			@Override
 			public void onChange(ChangeEvent event) {
-				historyPanel.refresh();
+				historyTable.refresh();
 			}
 		});
-		historyPanel.addWidget(cmbFilter);
+		historyTable.addWidget(cmbFilter);
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
-		historyPanel.addStyleName("roundCorners");
-		splitPanel.addWest(historyPanel, 400);
+		historyTable.addStyleName("roundCorners");
+		splitPanel.addWest(historyTable, 400);
 
 		viewer = new ActRenderer(clDoc, new OnOkHandler<Act>() {
 
@@ -255,8 +258,8 @@ public class HistoryView extends DockLayoutPanel {
 	}
 
 	protected void refresh(Act act) {
-		historyPanel.refresh();
-		historyPanel.setSelected(act);
+		historyTable.refresh();
+		historyTable.setSelected(act);
 		setSelectedAct(act);
 	}
 

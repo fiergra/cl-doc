@@ -10,6 +10,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.FileSystemNode;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
@@ -57,4 +58,8 @@ public interface ConfigurationService extends RemoteService {
 	String getDocArchivePath();
 	void setDocArchivePath(Session session, String path);
 	
+	List<FileSystemNode> listFiles(String directory);
+	void set(Session session, String name, String value, Entity entity);
+	String get(Session session, String name, Entity entity);
+
 }

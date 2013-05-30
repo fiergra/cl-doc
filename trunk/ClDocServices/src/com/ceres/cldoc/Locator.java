@@ -13,12 +13,20 @@ public class Locator {
 	private static DocArchive docArchive;
 	private static ILuceneService luceneService;	
 	private static IReportService reportService;
+	private static ISettingsService settingsService;
 	
 	public static IDocArchive getDocArchive() {
 		if (docArchive == null) {
 			docArchive = new DocArchive();
 		}
 		return docArchive;
+	}
+
+	public static ISettingsService getSettingsService() {
+		if (settingsService == null) {
+			settingsService = new SettingsServiceImpl();
+		}
+		return settingsService;
 	}
 
 	public static IEntityService getEntityService() {

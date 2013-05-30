@@ -27,19 +27,22 @@ public class DocArchive implements IDocArchive {
 		path = new File(pathName);
 		path.mkdirs();
 		String[] names = path.list();
-		for (String name:names) {
-			try {
-				if (name.endsWith(".data")) {
-					int index = name.indexOf('.');
-					if (index != -1) {
-						long nameId = Long.parseLong(name.substring(0, index));
-						if (nameId >= docId) {
-							docId = nameId + 1;
+		
+		if (names != null) {
+			for (String name:names) {
+				try {
+					if (name.endsWith(".data")) {
+						int index = name.indexOf('.');
+						if (index != -1) {
+							long nameId = Long.parseLong(name.substring(0, index));
+							if (nameId >= docId) {
+								docId = nameId + 1;
+							}
 						}
 					}
+				} catch (RuntimeException rx) {
+					log.warning(rx.toString());
 				}
-			} catch (RuntimeException rx) {
-				log.warning(rx.toString());
 			}
 		}
 		log.info("init doc archive at " + path + " starting with id " + docId);
@@ -165,14 +168,12 @@ public class DocArchive implements IDocArchive {
 
 	@Override
 	public File getArchivePath() {
-		// TODO Auto-generated method stub
-		return null;
+		return path;
 	}
 
 	@Override
 	public void setArchivePath(File archivePath) {
-		// TODO Auto-generated method stub
-		
+		init(archivePath.getAbsolutePath());
 	}
 
 }

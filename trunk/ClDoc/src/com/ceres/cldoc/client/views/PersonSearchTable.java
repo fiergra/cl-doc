@@ -100,11 +100,11 @@ public class PersonSearchTable extends ClickableTable<Person> {
 
 			}
 		});
-		pbNew.setPixelSize(32, 32);
+		pbNew.setPixelSize(18,18);
 		hp.add(pbNew);
 		
 		
-//		addWidget(hp);
+		addWidget(hp);
 		getColumnFormatter().addStyleName(4, "hundertPercentWidth");
 
 	}

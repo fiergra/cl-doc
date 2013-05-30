@@ -6,7 +6,6 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.OnClick;
-import com.ceres.cldoc.model.Act;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,6 +26,9 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 	private final FlexTable table;
 	private List<T> list;
 	private List<T> displayList;
+	private T selected;
+	private int selectedRow = -1;
+	
 	private HorizontalPanel buttonsPanel;
 	private ListRetrievalService<T> listRetrieval;
 	
@@ -35,6 +37,26 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 		
 		this.clDoc = clDoc;
 		table = new FlexTable();
+		table.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Cell cell = table.getCellForEvent(event);
+				if (selectedRow > -1) {
+					table.getRowFormatter().removeStyleName(selectedRow, "selectedRow");
+				} 
+				if (cell != null) {
+					selectedRow = cell.getRowIndex();
+					table.getRowFormatter().addStyleName(selectedRow, "selectedRow");
+					
+					T entry = displayList.get(cell.getRowIndex());
+					selected = entry;
+				} else {
+					selected = null;
+					selectedRow = -1;
+				}
+			}
+		});
 		ScrollPanel sp = new ScrollPanel(table);
 		
 		HorizontalPanel titlePanel = new HorizontalPanel();
@@ -88,7 +110,6 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 			}
 		});
 
-		
 	}
 	
 	public void refresh() {
@@ -162,7 +183,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 
 	
 	
-	public void setSelected(Act result) {
+	public void setSelected(T result) {
 	}
 
 	public ColumnFormatter getColumnFormatter() {

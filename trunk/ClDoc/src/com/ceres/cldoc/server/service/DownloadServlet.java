@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
@@ -74,17 +75,39 @@ public class DownloadServlet extends HttpServlet {
 				} else {
 					final String id = req.getParameter("id");
 					long docId = Long.parseLong(id);
-					fileName = Locator.getDocArchive().getFileName(docId);
-					out = Locator.getDocArchive().retrieve(docId);
+					
+					IDocArchive archive = Locator.getDocArchive();
+					String path = Locator.getSettingsService().get(session, IDocArchive.DOC_ARCHIVE_PATH, null);
+					if (path != null) {
+						archive.setArchivePath(new File(path));
+					}
+					
+					fileName = archive.getFileName(docId);
+					out = archive.retrieve(docId);
 				}
 				String mimeType;
 				
 				if (fileName.toLowerCase().endsWith(".pdf")) {
 					mimeType = "application/pdf";
+				} else if (fileName.toLowerCase().endsWith(".jpg")){
+					mimeType = "image/jpeg";
+				} else if (fileName.toLowerCase().endsWith(".png")){
+					mimeType = "image/png";
+				} else if (fileName.toLowerCase().endsWith(".tiff")){
+					mimeType = "image/tiff";
+				} else if (fileName.toLowerCase().endsWith(".gif")){
+					mimeType = "image/gif";
+				} else if (fileName.toLowerCase().endsWith(".odt")){
+					mimeType = "application/vnd.oasis.opendocument.text";
+				} else if (fileName.toLowerCase().endsWith(".odp")){
+					mimeType = "application/vnd.oasis.opendocument.presentation";
+				} else if (fileName.toLowerCase().endsWith(".ods")){
+					mimeType = "application/vnd.oasis.opendocument.spreadsheet";
 				} else {
 					mimeType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(fileName);
+					resp.setHeader("Content-Disposition", "attachment; filename=" + fileName);
 				}
-				resp.setContentType(mimeType + "; name=" + fileName + "\nContent-Disposition: attachment; filename=" + fileName + "\n\n");
+				resp.setContentType(mimeType);
 			}
 		}
 		if (out != null) {

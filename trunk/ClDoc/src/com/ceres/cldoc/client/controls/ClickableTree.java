@@ -87,8 +87,12 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 	}
 	
 	public void refresh() {
+		refresh(null);
+	}
+	
+	public void refresh(String filter) {
 		tree.clear();
-		listRetrieval.retrieve(null, new DefaultCallback<List<T>>(clDoc, this.getTitle()) {
+		listRetrieval.retrieve(filter, new DefaultCallback<List<T>>(clDoc, this.getTitle()) {
 
 			@Override
 			public void onSuccess(List<T> result) {
@@ -102,16 +106,18 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 			}
 			
 			private void addTreeItems(TreeItem parent, List<T> relations) {
-				for (T er : relations) {
-					TreeItem ti = object2TreeItem(er);
-					ti.setUserObject(er);
-					if (parent != null) {
-						parent.addItem(ti);
-					} else {
-						tree.addItem(ti);
-					}
-					if (er.hasChildren()) {
-						addTreeItems(ti, er.getChildren());
+				if (relations != null && !relations.isEmpty()) {
+					for (T er : relations) {
+						TreeItem ti = object2TreeItem(er);
+						ti.setUserObject(er);
+						if (parent != null) {
+							parent.addItem(ti);
+						} else {
+							tree.addItem(ti);
+						}
+						if (er.hasChildren()) {
+							addTreeItems(ti, er.getChildren());
+						}
 					}
 				}
 			}

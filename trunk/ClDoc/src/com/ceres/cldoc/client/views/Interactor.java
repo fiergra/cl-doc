@@ -55,7 +55,8 @@ public class Interactor implements IView {
 
 		while (iter.hasNext()) {
 			final InteractorLink link = iter.next().getValue();
-
+			boolean validateSynchronously = true;
+			
 			switch (link.dataType) {
 			case FT_TEXT:
 			case FT_STRING:
@@ -82,6 +83,7 @@ public class Interactor implements IView {
 				selector.setSelected(participation != null ? participation.entity : null);
 				break;
 			case FT_HUMANBEING:
+				validateSynchronously = false;
 				Long id = act.getLong(link.name);
 				if (id != null) {
 					SRV.humanBeingService.findById(session, id, new DefaultCallback<Person>() {
@@ -89,6 +91,9 @@ public class Interactor implements IView {
 						@Override
 						public void onSuccess(Person result) {
 							((IEntitySelector<Person>)link.widget).setSelected(result);
+							if (setValid != null) {
+								setValid.setValid(link, link.validate());
+							}
 						}
 					});
 					
@@ -127,7 +132,7 @@ public class Interactor implements IView {
 				break;
 			}
 			
-			if (setValid != null) {
+			if (validateSynchronously && setValid != null) {
 				setValid.setValid(link, link.validate());
 			}
 		}
@@ -202,7 +207,7 @@ public class Interactor implements IView {
 	}
 
 	private boolean isModified = false;
-	private boolean isValid = false;
+	private boolean isValid = true;
 
 	private class ButtonClickHandler extends InteractorHandler implements ClickHandler {
 		

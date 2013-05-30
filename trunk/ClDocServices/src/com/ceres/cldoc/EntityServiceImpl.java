@@ -393,7 +393,7 @@ public class EntityServiceImpl implements IEntityService {
 		Collection<String> names = new ArrayList<String>();
 		Collection<Long> ids = new ArrayList<Long>();
 
-		String sql = "select * from Person p left outer join Patient pat on pat.id = p.id ";
+		String sql = "select pat.id patId, p.id entId, p.*, pat.* from Person p left outer join Patient pat on pat.id = p.id ";
 		String where = " where 1=2 ";
 		
 		if (role != null) {
@@ -418,7 +418,7 @@ public class EntityServiceImpl implements IEntityService {
 			}
 			
 			for (Long id : ids) {
-				where += " OR (id = ? OR per_id = ?)";
+				where += " OR (per_id = ?)";
 			}
 		}
 		
@@ -437,14 +437,13 @@ public class EntityServiceImpl implements IEntityService {
 		}
 		for (Long id : ids) {
 			s.setLong(i++, id);
-			s.setLong(i++, id);
 		}
 		
 		
 		ResultSet rs = s.executeQuery();
 		while (rs.next()) {
 			Long perId = Jdbc.getLong(rs, "per_Id");
-			long entityId = rs.getLong("id");
+			long entityId = rs.getLong("entId");
 			Person p; 
 			if (perId == null) {
 				p = fetchPerson(session, null, rs, "", entityId);

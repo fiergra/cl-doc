@@ -10,6 +10,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.FileSystemNode;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
@@ -68,5 +69,8 @@ public interface ConfigurationServiceAsync {
 	void getDocArchivePath(AsyncCallback<String> callback);
 	void setDocArchivePath(Session session, String path, AsyncCallback<Void> callback);
 
-	
+	void listFiles(String directory, AsyncCallback<List<FileSystemNode>> callback);
+	void set(Session session, String name, String value, Entity entity, AsyncCallback<Void> callback);
+	void get(Session session, String name, Entity entity, AsyncCallback<String> callback);
+
 }

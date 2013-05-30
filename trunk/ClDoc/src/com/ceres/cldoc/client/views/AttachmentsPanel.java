@@ -65,6 +65,7 @@ public class AttachmentsPanel extends DockLayoutPanel {
 							
 							@Override
 							public void onClick(ClickEvent event) {
+								event.stopPropagation();
 								new MessageBox("Loeschen", "Wollen Sie den Anhang entgueltig loeschen?", MessageBox.MB_YES | MessageBox.MB_NO, MessageBox.MESSAGE_ICONS.MB_ICON_QUESTION){
 
 									@Override

@@ -10,6 +10,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.FileSystemNode;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
@@ -233,6 +234,23 @@ public class CachedCatalogService implements ConfigurationServiceAsync {
 	public void setDocArchivePath(Session session, String path,
 			AsyncCallback<Void> callback) {
 		SRV.configurationService.setDocArchivePath(session, path, callback);
+	}
+
+	@Override
+	public void listFiles(String directory,
+			AsyncCallback<List<FileSystemNode>> callback) {
+		SRV.configurationService.listFiles(directory, callback);
+	}
+
+	@Override
+	public void set(Session session, String name, String value, Entity entity,
+			AsyncCallback<Void> callback) {
+		SRV.configurationService.set(session, name, value, entity, callback);
+	}
+
+	@Override
+	public void get(Session session, String name, Entity entity, AsyncCallback<String> callback) {
+		SRV.configurationService.get(session, name, entity, callback);
 	}
 
 }

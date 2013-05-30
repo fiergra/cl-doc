@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
@@ -36,7 +35,7 @@ public class ActRenderer extends DockLayoutPanel {
 	private HTML title;
 	private final OnOkHandler<Act> onInsertUpdateDelete;
 	private LinkButton pbSave;
-	private Label imgValid;
+//	private Label imgValid;
 	private final ClDoc clDoc;
 	
 	public ActRenderer(
@@ -81,9 +80,9 @@ public class ActRenderer extends DockLayoutPanel {
 //			}
 //		});
 		
-		imgValid = new Label("v");
-		buttons.add(imgValid);
-		LinkButton pbPrint = addLinkButton(buttons, index++, SRV.c.save(), "icons/32/Adobe-PDF-Document-icon.png", "icons/32/Adobe-PDF-Document-icon.disabled.png", new ClickHandler() {
+//		imgValid = new Label("v");
+//		buttons.add(imgValid);
+		LinkButton pbPrint = addLinkButton(buttons, index++, SRV.c.print(), "icons/32/Adobe-PDF-Document-icon.png", "icons/32/Adobe-PDF-Document-icon.disabled.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
@@ -279,13 +278,13 @@ public class ActRenderer extends DockLayoutPanel {
 				@Override
 				public void run() {
 					title.setHTML("*<i>" + title.getText() + "</i>");
-					pbSave.enable(true);
+					pbSave.enable(formContent.isModified() && formContent.isValid());
 				}
 			}, new Runnable() {
 				
 				@Override
 				public void run() {
-					imgValid.setText(formContent.isValid() ? "valid" : "NOT valid");
+					pbSave.enable(formContent.isModified() && formContent.isValid());
 				}
 			});
 			add(formContent);

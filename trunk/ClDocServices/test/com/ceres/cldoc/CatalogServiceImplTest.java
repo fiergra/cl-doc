@@ -10,6 +10,13 @@ import com.ceres.cldoc.model.Catalog;
 
 public class CatalogServiceImplTest extends TransactionalTest {
 
+	public void testOrder() {
+		ICatalogService catalogService = Locator.getCatalogService();
+		Catalog c = catalogService.load(getSession(), "MASTERDATA.GESPRAECHSPARTNER");
+		Assert.assertNotNull(c);
+		
+	}
+
 	public void testLoad() {
 		ICatalogService catalogService = Locator.getCatalogService();
 		Catalog c = catalogService.load(getSession(), "CLDOC.MAIN");

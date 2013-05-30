@@ -28,6 +28,16 @@ body, table td, select, button {
 .resultTable {
 }
 
+.selectedRow {
+  font-weight: bold;
+  background: #63D36A;
+  font-size: larger;
+}
+
+.resultCell {
+	font-size: large;
+}
+
 .sourceCode {
 	font-family: monospace;
 	font-size: small;
@@ -76,7 +86,7 @@ body, table td, select, button {
 }
 
 .resultRow:hover {
-	background-color: #31A639
+	background-color: #63D36A
 }
 
 .viewer {
@@ -165,14 +175,6 @@ body, table td, select, button {
 	padding-bottom: 0px;
 }
 
-.requiredLabel {
-	font-weight: bold;
-	text-decoration: underline;
-}
-
-.required {
-}
-
 .formSectionTitle {
 	text-align: left;
 	vertical-align: top;
@@ -182,12 +184,26 @@ body, table td, select, button {
 	padding-top: 0px;
 }
 
+.requiredLabel {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.required {
+}
+
+
 .formItem {
 	vertical-align: bottom;
-	padding-left: 30px;
+	padding-left: 0px;
 	padding-top: 0px;
 	padding-bottom: 0px;
 }
+
+.itemStatusIcon {
+	text-align: right;
+}
+
 
 .formSubLabel {
 	font-style: italic;
@@ -224,7 +240,7 @@ body, table td, select, button {
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: #31A639;
+  border-color: #63D36A;
   border-style: solid;
   border-width: 1px;
 }
@@ -236,7 +252,7 @@ body, table td, select, button {
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   font-weight: bold;
   cursor: default;
-  background: #31A639;
+  background: #63D36A;
   color: white;
 }
 
@@ -289,5 +305,5 @@ cursor: col-resize;
 }
 
 .gwt-Tree .gwt-TreeItem-selected {
-background: #31A639;
+background: #63D36A;
 }
