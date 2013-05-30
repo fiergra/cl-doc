@@ -15,7 +15,6 @@ import javax.xml.stream.XMLStreamReader;
 import com.ceres.cldoc.IActService;
 import com.ceres.cldoc.ICatalogService;
 import com.ceres.cldoc.IDocArchive;
-import com.ceres.cldoc.IDocService;
 import com.ceres.cldoc.ILayoutDefinitionService;
 import com.ceres.cldoc.ILuceneService;
 import com.ceres.cldoc.IReportService;
@@ -26,6 +25,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.FileSystemNode;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
@@ -247,6 +247,21 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 		File archivePath = new File(path);
 		archivePath.mkdirs();
 		getDocArchive().setArchivePath(archivePath);
+	}
+
+	@Override
+	public List<FileSystemNode> listFiles(String directory) {
+		return Locator.getSettingsService().listFiles(directory);
+	}
+
+	@Override
+	public void set(Session session, String name, String value, Entity entity) {
+		Locator.getSettingsService().set(session, name, value, entity);
+	}
+
+	@Override
+	public String get(Session session, String name, Entity entity) {
+		return Locator.getSettingsService().get(session, name, entity);
 	}
 
 }

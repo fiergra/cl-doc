@@ -28,6 +28,12 @@ body, table td, select, button {
 .resultTable {
 }
 
+.selectedRow {
+  font-weight: bold;
+  background: $COLOR_2;
+  font-size: larger;
+}
+
 .resultCell {
 	font-size: large;
 }
@@ -189,9 +195,13 @@ body, table td, select, button {
 
 .formItem {
 	vertical-align: bottom;
-	padding-left: 30px;
+	padding-left: 0px;
 	padding-top: 0px;
 	padding-bottom: 0px;
+}
+
+.itemStatusIcon {
+	text-align: right;
 }
 
 

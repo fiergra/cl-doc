@@ -59,6 +59,19 @@ CREATE TABLE IF NOT EXISTS Entity(
 
 ALTER TABLE Entity AUTO_INCREMENT = 100000;
 
+
+CREATE TABLE IF NOT EXISTS Setting (
+    Id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    EntityID INTEGER,
+    CONSTRAINT FK_Setting_ENTITY FOREIGN KEY (EntityID)
+        REFERENCES ENTITY (Id),
+    NAME VARCHAR(250) NOT NULL,
+    VALUE VARCHAR(400)
+);
+
+
+
+
 CREATE TABLE IF NOT EXISTS EntityRelation (
     Id INTEGER PRIMARY KEY AUTO_INCREMENT,
     type INTEGER NOT NULL,
@@ -327,6 +340,7 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (22, 5, 'Kataloge', 'Kataloge', 'Kataloge', 2);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (23, 5, 'Entitaeten', 'Entitaeten', 'Entitaeten', 3);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (24, 5, 'Berechtigungen', 'Berechtigungen', 'Berechtigungen', 4);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
@@ -419,6 +433,7 @@ insert into Policy (role, objectType, action, startDate) values (56,21,71, CURRE
 insert into Policy (role, objectType, action, startDate) values (56,22,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,23,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,24,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (56,25,71, CURRENT_DATE);
 
 
 insert into ActClass (Id,Name) values (1, 'Beispiel1');

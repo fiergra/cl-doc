@@ -68,8 +68,9 @@ public class Form extends FlexTable implements IForm {
 		public void set(States state) {
 			switch (state) {
 			case none: 
-				status.setUrl(""); 
-				status.setVisible(false);
+				status.setUrl("icons/16/valid.png"); 
+				status.setHeight("0px");
+				status.setVisible(true);
 				break;
 			case required: 
 				status.setVisible(true);
@@ -224,6 +225,7 @@ public class Form extends FlexTable implements IForm {
 			img.setPixelSize(16,  16);
 			img.setVisible(false);
 			setWidget(row, 0, img);
+			getCellFormatter().addStyleName(row, 0, "itemStatusIcon");		
 			
 			if (widgets.length > 1) {
 				HorizontalPanel hp = new HorizontalPanel();

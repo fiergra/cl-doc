@@ -30,4 +30,11 @@ public class LayoutDefinition implements Serializable {
 		this.actClass = actClass;
 		this.xmlLayout = xmlLayout;
 	}
+
+	@Override
+	public String toString() {
+		return id + "|" + (actClass != null ? actClass.name : "---");
+	}
+	
+	
 }

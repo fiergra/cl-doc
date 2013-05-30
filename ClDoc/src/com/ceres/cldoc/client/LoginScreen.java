@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client;
 
 import com.ceres.cldoc.Session;
+import com.ceres.cldoc.client.controls.Util;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.OnClick;
@@ -157,6 +158,6 @@ public class LoginScreen extends LayoutPanel {
 		add(g);
 		setWidgetLeftRight(g, 40, Unit.PCT, 10, Unit.PX);
 		setWidgetTopBottom(g, 40, Unit.PCT, 0, Unit.PCT);
-		txtUserName.setFocus(true);
+		Util.setFocus(txtUserName);
 	}
 }

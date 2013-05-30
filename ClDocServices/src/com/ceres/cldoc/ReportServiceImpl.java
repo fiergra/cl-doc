@@ -130,17 +130,20 @@ public class ReportServiceImpl implements IReportService {
 	}
 
 	protected String getQuery(ReportDefinition reportDefinition, IAct filters) throws ParserConfigurationException, SAXException, IOException {
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db;
-
-		db = dbf.newDocumentBuilder();
-		Document document = db.parse(new InputSource(new StringReader(reportDefinition.xml)));
-		document.getDocumentElement().normalize();
-		NodeList params = document.getElementsByTagName("param");
-		NodeList queries = document.getElementsByTagName("query");
-
-		String query = queries.item(0).getTextContent();
+		String query = null;
 		
+		if (reportDefinition.xml != null) {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db;
+	
+			db = dbf.newDocumentBuilder();
+			Document document = db.parse(new InputSource(new StringReader(reportDefinition.xml)));
+			document.getDocumentElement().normalize();
+			NodeList params = document.getElementsByTagName("param");
+			NodeList queries = document.getElementsByTagName("query");
+	
+			query = queries.item(0).getTextContent();
+		}			
 		return query;
 	}
 

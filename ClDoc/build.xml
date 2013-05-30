@@ -50,8 +50,8 @@
 
 	<target name="color_green">
 		<copy overwrite="true" tofile="war/ClDoc.css" file="war/no-color.css"/>
-		<replace token="$COLOR_1" value="#31A639" file="war/ClDoc.css"/>
-		<replace token="$COLOR_2" value="#DEE7D6" file="war/ClDoc.css"/>
+		<replace token="$COLOR_1" value="#DEE7D6" file="war/ClDoc.css"/>
+		<replace token="$COLOR_2" value="#63D36A" file="war/ClDoc.css"/>
 		<replace token="$COLOR_WHITE" value="#FAFAFA" file="war/ClDoc.css"/>
 	</target>
 

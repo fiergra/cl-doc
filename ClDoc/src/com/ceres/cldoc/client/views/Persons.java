@@ -8,10 +8,9 @@ public class Persons extends SplitLayoutPanel {
 
 	public Persons(final ClDoc clDoc) {
 		PersonSearchTable homeScreen = new PersonSearchTable(clDoc);
-		ShortCutsPanel shortCuts = new ShortCutsPanel(clDoc);
-		
-		shortCuts.addStyleName("searchResults");
-		addEast(shortCuts, 350);
+//		ShortCutsPanel shortCuts = new ShortCutsPanel(clDoc);
+//		shortCuts.addStyleName("searchResults");
+//		addEast(shortCuts, 350);
 		add(homeScreen);
 	}
 

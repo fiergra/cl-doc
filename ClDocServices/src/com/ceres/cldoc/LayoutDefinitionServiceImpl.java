@@ -12,11 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -38,7 +36,6 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import com.ceres.cldoc.model.ActClass;
-import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.util.Jdbc;
 
@@ -115,6 +112,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 		if (isSingleton != null) {
 			sql += " AND icl.singleton = ?";
 		}
+		sql += " order by classname";
 		PreparedStatement s = con.prepareStatement(sql);
 		int i = 1;
 		s.setString(i++, filter != null ? filter.toUpperCase() + "%" : "%");
