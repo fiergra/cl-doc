@@ -108,21 +108,27 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 			private void addTreeItems(TreeItem parent, List<T> relations) {
 				if (relations != null && !relations.isEmpty()) {
 					for (T er : relations) {
-						TreeItem ti = object2TreeItem(er);
-						ti.setUserObject(er);
-						if (parent != null) {
-							parent.addItem(ti);
-						} else {
-							tree.addItem(ti);
-						}
-						if (er.hasChildren()) {
-							addTreeItems(ti, er.getChildren());
+						if (addItem(er)) {
+							TreeItem ti = object2TreeItem(er);
+							ti.setUserObject(er);
+							if (parent != null) {
+								parent.addItem(ti);
+							} else {
+								tree.addItem(ti);
+							}
+							if (er.hasChildren()) {
+								addTreeItems(ti, er.getChildren());
+							}
 						}
 					}
 				}
 			}
 		
 		});
+	}
+
+	protected boolean addItem(T er) {
+		return true;
 	}
 
 	protected TreeItem getRoot() {

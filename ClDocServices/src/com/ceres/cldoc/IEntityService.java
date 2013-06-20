@@ -2,6 +2,7 @@ package com.ceres.cldoc;
 
 import java.util.List;
 
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Person;
@@ -14,7 +15,7 @@ public interface IEntityService {
 	List<Entity> list(Session session, Integer typeId,	Long id);
 	<T extends Entity> List<T> load(Session session, String filter, String roleCode);
 
-	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject);
+	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject, Catalog relationType);
 	List<Entity> list(Session session, String criteria, int type);
 	EntityRelation save(Session session, EntityRelation er);
 	void delete(Session session, EntityRelation er);

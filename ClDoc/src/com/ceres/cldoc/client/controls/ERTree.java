@@ -40,7 +40,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 			
 			@Override
 			public void retrieve(String filter,	AsyncCallback<List<EntityRelation>> callback) {
-				SRV.entityService.listRelations(clDoc.getSession(), entity, asSubject, callback);
+				SRV.entityService.listRelations(clDoc.getSession(), entity, asSubject, null, callback);
 			}
 		});
 		setOnClick(onClick);

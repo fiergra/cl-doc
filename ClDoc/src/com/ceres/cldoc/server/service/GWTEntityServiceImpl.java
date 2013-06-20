@@ -10,6 +10,7 @@ import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.GWTEntityService;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Person;
@@ -116,8 +117,8 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<EntityRelation> listRelations(Session session, Entity entity, boolean asSubject) {
-		return getEntityService().listRelations(session, entity, asSubject);
+	public List<EntityRelation> listRelations(Session session, Entity entity, boolean asSubject, Catalog relationType) {
+		return getEntityService().listRelations(session, entity, asSubject, relationType);
 	}
 
 }

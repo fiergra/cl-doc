@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 public class PagesView extends TabLayoutPanel implements IForm {
 
-	private final IAct model;
+	private IAct model;
 	private final List<IForm> pages = new ArrayList<IForm>();
 
 	public PagesView(IAct model) {
@@ -73,6 +73,11 @@ public class PagesView extends TabLayoutPanel implements IForm {
 			page.clearModification();
 		}
 		
+	}
+
+	@Override
+	public void setModel(IAct act) {
+		this.model = act;
 	}
 
 }

@@ -46,7 +46,12 @@ public class DateTextBox extends TextBox {
 		DateTimeFormat.getFormat("dd.MM.yyyy"),
 		DateTimeFormat.getFormat("dd/MM/yyyy"),
 		DateTimeFormat.getFormat("ddMMyyyy"),
-		DateTimeFormat.getFormat("ddMMyy")
+		DateTimeFormat.getFormat("dd.MM.yy"),
+		DateTimeFormat.getFormat("ddMMyy"),
+		DateTimeFormat.getFormat("dd.MM."),
+		DateTimeFormat.getFormat("dd.MM"),
+		DateTimeFormat.getFormat("dd/MM"),
+		DateTimeFormat.getFormat("ddMM")
 	};
 
 	@SuppressWarnings("deprecation")

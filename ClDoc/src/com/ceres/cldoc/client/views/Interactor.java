@@ -67,6 +67,9 @@ public class Interactor implements IView {
 			case FT_BOOLEAN:
 				((CheckBox) link.widget).setValue(act.getBoolean(link.name));
 				break;
+			case FT_YESNO:
+				((YesNoRadioGroup) link.widget).setValue(act.getBoolean(link.name), false);
+				break;
 			case FT_MULTI_SELECTION:
 				((CatalogMultiSelect)link.widget).setSelected(act.getCatalogList(link.name));
 				break;
@@ -151,6 +154,9 @@ public class Interactor implements IView {
 			case FT_STRING:
 				act.set(qualifiedFieldName,
 						((TextBoxBase) field.widget).getText());
+				break;
+			case FT_YESNO:
+				act.set(qualifiedFieldName, ((YesNoRadioGroup) field.widget).getValue());
 				break;
 			case FT_BOOLEAN:
 				act.set(qualifiedFieldName, ((CheckBox) field.widget).getValue());
@@ -312,6 +318,8 @@ public class Interactor implements IView {
 			});
 		} else if (interactorLink.widget instanceof TextBoxBase) {
 			((TextBoxBase)interactorLink.widget).addKeyUpHandler(new TextBoxKeyUpHandler(interactorLink));
+		} else if (interactorLink.widget instanceof YesNoRadioGroup) {
+			((YesNoRadioGroup)interactorLink.widget).addChangeHandler(new EntitySelectorChangeHandler(interactorLink));
 		} else if (interactorLink.widget instanceof IEntitySelector) {
 			((IEntitySelector)interactorLink.widget).addSelectionChangedHandler(new EntitySelectorChangeHandler(interactorLink));
 		} else if (interactorLink.widget instanceof ButtonBase) {

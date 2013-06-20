@@ -19,6 +19,11 @@ public class ScrollView extends ScrollPanel implements IForm {
 	}
 
 	@Override
+	public void setModel(IAct act) {
+		content.setModel(act);
+	}
+
+	@Override
 	public void fromDialog() {
 		content.fromDialog();
 	}

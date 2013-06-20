@@ -1,10 +1,13 @@
 package com.ceres.cldoc.client;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.ceres.cldoc.IUserService;
 import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.ActRenderer;
 import com.ceres.cldoc.client.views.ClosableTab;
 import com.ceres.cldoc.client.views.ConfiguredTabPanel;
 import com.ceres.cldoc.client.views.DefaultCallback;
@@ -13,10 +16,14 @@ import com.ceres.cldoc.client.views.Form;
 import com.ceres.cldoc.client.views.LogOutput;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
+import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.Participation;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.layout.client.Layout.Alignment;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -134,7 +141,10 @@ public class ClDoc implements EntryPoint {
 	
 	public void openEntityFile(Entity entity, Widget header, String config) {
 		EntityFile entityFile = getPersonalFile(entity, header, config);
-		mainTab.add(entityFile, new ClosableTab(mainTab, entityFile, entity.getName()));
+		Widget w = new ClosableTab(mainTab, entityFile, entity.getName());
+//		w = new Label(entity.getName());
+		w.setHeight("12px");
+		mainTab.add(entityFile, w);
 		mainTab.selectTab(mainTab.getWidgetIndex(entityFile));
 	}
 	
@@ -151,46 +161,87 @@ public class ClDoc implements EntryPoint {
 	
 	private void setupMain(Session result) {
 		LayoutPanel mainPanel = new LayoutPanel();
+		final String open = Window.Location.getParameter("open");
+		if (open != null) {
+			final ActRenderer hp = new ActRenderer(this, new OnOkHandler<Act>() {
 
-		Image logo = getSessionLogo(session);
-		Label welcome = new Label(getDisplayName(result));
-		VerticalPanel hp = new VerticalPanel();
-		hp.setSpacing(5);
-		hp.add(welcome);
-		hp.add(logo);
-		
-		
-		mainPanel.add(hp);
-		mainPanel.setWidgetHorizontalPosition(hp, Alignment.END);
-		mainPanel.setWidgetVerticalPosition(hp, Alignment.END);
-		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
-		mainPanel.add(mainTab);
+				@Override
+				public void onOk(Act result) {
+				}
+			}, new Runnable() {
 
+				@Override
+	 			public void run() {
+
+				}
+			});
+			hp.addStyleName("viewer");
+			mainPanel.add(hp);
+			
+			SRV.configurationService.getLayoutDefinition(getSession(), open, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(this, "getLayoutDef") {
+
+				@Override
+				public void onSuccess(final LayoutDefinition ld) {
+					if (ld != null) {
+						SRV.actService.findByEntity(ClDoc.this.getSession(), ClDoc.this.getSession().getUser().organisation, Participation.PROTAGONIST.id, 
+								new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
+
+									@Override
+									public void onSuccess(List<Act> result) {
+										Act act = null;
+										Iterator<Act> iter = result.iterator();
+										
+										while (iter.hasNext() && act == null) {
+											Act next = iter.next();
+											if (next.actClass.name.equals(open)) {
+												act = next;
+											}
+										}
+										if (act == null) {
+											act = new Act(ld.actClass);
+											act.setParticipant(ClDoc.this.getSession().getUser().organisation, Participation.PROTAGONIST, new Date(), null);
+											act.setParticipant(ClDoc.this.getSession().getUser().person, Participation.ADMINISTRATOR, new Date(), null);
+											act.setParticipant(ClDoc.this.getSession().getUser().organisation, Participation.ORGANISATION, new Date(), null);
+										}
+										hp.setAct(ld, act);
+									}
+						});
+					}
+				}
+			});
+
+			
+		} else {
+	
+			Image logo = getSessionLogo(session);
+			Label welcome = new Label(getDisplayName(result));
+			VerticalPanel hp = new VerticalPanel();
+			hp.setSpacing(5);
+			hp.add(welcome);
+			hp.add(logo);
+			
+			
+			mainPanel.add(hp);
+			mainPanel.setWidgetHorizontalPosition(hp, Alignment.END);
+			mainPanel.setWidgetVerticalPosition(hp, Alignment.END);
+			mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
+			mainPanel.add(mainTab);
+	
+		}			
 		RootLayoutPanel.get().clear();
 		mainPanel.addStyleName("background");
 		RootLayoutPanel.get().add(mainPanel);
-		
-//		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
-//		DockLayoutPanel hp = new DockLayoutPanel(Unit.PX);
-//		Image logo = getSessionLogo(session);
-//		hp.addWest(logo, 290);
-//		
-//		Label welcome = new Label(getDisplayName(result));
-//		hp.addEast(welcome, 200);
-//		
-//		mainPanel.addNorth(hp, 45);
-//		mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
-//		mainPanel.add(mainTab);
-//		RootLayoutPanel.get().clear();
-//		mainPanel.addStyleName("background");
-//		RootLayoutPanel.get().add(mainPanel);
-		
+
 	}
 
+	public Image getSessionLogo() {
+		return getSessionLogo(getSession());
+	}
+	
 	private Image getSessionLogo(Session session) {
 		Entity organisation = session.getUser().organisation;
 		Image logo = new Image("icons/" + organisation.getName() + ".png");
-		
+		logo.setHeight("50px");
 		return logo;
 	}
 

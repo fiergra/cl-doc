@@ -195,6 +195,8 @@ public class ActRenderer extends DockLayoutPanel {
 
 			@Override
 			public void onSuccess(Act act) {
+				formContent.setModel(act);
+				formContent.toDialog();
 				formContent.clearModification();
 				pbSave.enable(false);
 				setTitle(act);

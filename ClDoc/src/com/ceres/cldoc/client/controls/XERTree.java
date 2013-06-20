@@ -30,7 +30,7 @@ public class XERTree extends Tree {
 
 	public void refresh() {
 		clear();
-		SRV.entityService.listRelations(clDoc.getSession(), entity, asSubject, new DefaultCallback<List<EntityRelation>>(clDoc, "listRelations") {
+		SRV.entityService.listRelations(clDoc.getSession(), entity, asSubject, null, new DefaultCallback<List<EntityRelation>>(clDoc, "listRelations") {
 
 			@Override
 			public void onSuccess(List<EntityRelation> result) {
