@@ -50,7 +50,7 @@ public class EntityServiceImplTest extends TransactionalTest {
 		List<Organisation> organisations = entityService.list(getSession(), Entity.ENTITY_TYPE_ORGANISATION);
 		List<Person> persons = entityService.list(getSession(), Entity.ENTITY_TYPE_PERSON);
 		
-		List<EntityRelation> relations = entityService.listRelations(getSession(), organisations.get(0), true);
+		List<EntityRelation> relations = entityService.listRelations(getSession(), organisations.get(0), true, new Catalog(157l));
 	}
 	
 	public void testSelectByType() {

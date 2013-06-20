@@ -6,14 +6,17 @@ import com.ceres.cldoc.client.views.Configurator;
 import com.ceres.cldoc.client.views.DebugPanel;
 import com.ceres.cldoc.client.views.EntityConfigurator;
 import com.ceres.cldoc.client.views.EntitySearch;
+import com.ceres.cldoc.client.views.OrganisationsPanel;
 import com.ceres.cldoc.client.views.Persons;
 import com.ceres.cldoc.client.views.Reporting;
 import com.ceres.cldoc.client.views.SettingsPanel;
 import com.ceres.cldoc.client.views.Styler;
+import com.ceres.cldoc.client.views.agenda.CalendarView;
 import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+//import com.ceres.cldoc.client.views.agenda.CalendarView;
 
 public class DynamicLoader {
 	public static <T> Widget create(ClDoc clDoc, Catalog catalog, T model) {
@@ -23,7 +26,7 @@ public class DynamicLoader {
 		if (name.equals("Personen")) {
 			result = new Persons((ClDoc) model);
 		} else if (catalog.code.equals("SucheDKG") || catalog.code.equals("SucheEART")) {
-			result = new EntitySearch((ClDoc) model, catalog.number1);
+			result = new EntitySearch((ClDoc) model, clDoc.getSession().getUser().organisation.id);
 		} else if (name.equals("Configuration")) {
 			result = new Configurator((ClDoc) model);
 //		} else if (name.equals("Formulare")) {
@@ -38,6 +41,8 @@ public class DynamicLoader {
 //			}
 		} else if (name.equals("Reporting")) {
 			result = new Reporting(clDoc);
+		} else if (name.equals("Calendar")) {
+			result = new CalendarView(clDoc);
 		} else if (name.equals("Debug")) {
 			result = new DebugPanel(clDoc);
 		} else if (name.equals("Einstellungen")) {
@@ -50,6 +55,8 @@ public class DynamicLoader {
 			result = new EntityConfigurator(clDoc);
 		} else if (name.equals("Berechtigungen")) {
 			result = new AssignmentsPanel(clDoc);
+		} else if (name.equals("Organisation")) {
+			result = new OrganisationsPanel(clDoc, clDoc.getSession().getUser().organisation);
 		} else {
 			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(name);

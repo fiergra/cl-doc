@@ -6,6 +6,7 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTree;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -45,7 +46,6 @@ public class EntitySearch extends SplitLayoutPanel {
 				return w;
 			}
 	
-			
 			@Override
 			protected Widget itemRenderer(EntityRelation er) {
 				Image img = getTypeImage(er.subject);
@@ -61,7 +61,11 @@ public class EntitySearch extends SplitLayoutPanel {
 
 			@Override
 			protected TreeItem getRoot() {
-				return new TreeItem(entity.getName());
+				TreeItem root = new TreeItem(entity.getName());
+				EntityRelation er = new EntityRelation();
+				er.subject = entity;
+				root.setUserObject(er);
+				return root;
 			}
 			
 			
@@ -76,7 +80,7 @@ public class EntitySearch extends SplitLayoutPanel {
 					
 					@Override
 					public void retrieve(String filter, AsyncCallback<List<EntityRelation>> callback) {
-						SRV.entityService.listRelations(clDoc.getSession(), entity, false, callback);
+						SRV.entityService.listRelations(clDoc.getSession(), entity, false, new Catalog(158l), callback);
 					}
 				});
 				

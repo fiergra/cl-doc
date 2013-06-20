@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.Frame;
 
 public class FrameView extends Frame implements IForm {
 
-	private final IAct model;
+	private IAct model;
 
 	public FrameView(IAct model, String url) {
 		super(url);
@@ -37,6 +37,11 @@ public class FrameView extends Frame implements IForm {
 
 	@Override
 	public void clearModification() {
+	}
+
+	@Override
+	public void setModel(IAct act) {
+		model = act;
 	}
 
 }

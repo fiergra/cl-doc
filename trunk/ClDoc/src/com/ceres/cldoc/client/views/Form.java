@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -39,7 +38,7 @@ import com.google.gwt.xml.client.NodeList;
 public class Form extends FlexTable implements IForm {
 
 	public enum DataType {
-		FT_STRING, FT_TEXT, FT_DATE, FT_ACTDATE, FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE, FT_SEPARATOR
+		FT_STRING, FT_TEXT, FT_DATE, FT_ACTDATE, FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE, FT_SEPARATOR, FT_YESNO
 	};
 
 	protected IAct model;
@@ -86,6 +85,8 @@ public class Form extends FlexTable implements IForm {
 		this.clDoc = clDoc;
 		addStyleName("docform");
 		setRowFormatter(new RowFormatter() {});
+		getColumnFormatter().setWidth(1, "16px");
+		getColumnFormatter().setWidth(2, "100%");
 		this.model = model;
 		ValidationCallback validationCallback = new ValidationCallback() {
 			
@@ -107,6 +108,7 @@ public class Form extends FlexTable implements IForm {
 		return clDoc;
 	}
 	
+	@Override
 	public void setModel(IAct model) {
 		this.model = model;
 	}
@@ -205,9 +207,50 @@ public class Form extends FlexTable implements IForm {
 		}
 	}
 
-	
 	protected Image addLabeledWidget(String label, boolean required, IsWidget... widgets) {
 		Image img = null;
+		
+		if (label == null && widgets.length == 1) {
+			setWidget(row, 0, widgets[0]);
+			getFlexCellFormatter().setColSpan(row, 0, 3);
+		} else {
+			Label l = new Label(label);
+			setWidget(row, 0, l);
+			l.addStyleName("formLabel");
+			if (required) {
+				l.addStyleName("requiredLabel");
+			}
+
+			IsWidget w;
+			img = new Image();
+			img.setPixelSize(16,  16);
+			img.setVisible(false);
+			setWidget(row, 1, img);
+			
+			if (widgets.length > 1) {
+				HorizontalPanel hp = new HorizontalPanel();
+				hp.setSpacing(SPACING);
+				for (IsWidget widget : widgets) {
+					hp.add(widget);
+				}
+				w = hp;
+			} else {
+				w = widgets[0];
+			}
+			setWidget(row, 2, w);
+			
+			getCellFormatter().addStyleName(row, 0, "formItem");		
+			getCellFormatter().addStyleName(row, 1, "formItem");		
+		}
+		row++;
+		return img;
+	}
+	
+	
+/*	
+	protected Image addLabeledWidget(String label, boolean required, IsWidget... widgets) {
+		Image img = null;
+		
 		if (label == null && widgets.length == 1) {
 			setWidget(row, 0, widgets[0]);
 			getFlexCellFormatter().setColSpan(row, 0, 2);
@@ -245,7 +288,7 @@ public class Form extends FlexTable implements IForm {
 		row++;
 		return img;
 	}
-
+*/
 	protected Widget addLine(String labelText, String fieldName, DataType dataType, int width, boolean focused) {
 		Widget w = addLine(labelText, fieldName, dataType, width);
 		if (w instanceof Focusable) {
@@ -321,6 +364,10 @@ public class Form extends FlexTable implements IForm {
 			TextBox t = new TextBox();
 			w = t;
 			w.setWidth("10em");
+			break;
+		case FT_YESNO:
+			YesNoRadioGroup yng = new YesNoRadioGroup();
+			w = yng;
 			break;
 		case FT_BOOLEAN:
 			CheckBox c = new CheckBox();
@@ -637,6 +684,8 @@ public class Form extends FlexTable implements IForm {
 				result = DataType.FT_FLOAT;
 //				} else if (type.equals("time")) {
 //				result = DataTypes.FT_TIME;
+			} else if (type.equals("yesno")) {
+				result = DataType.FT_YESNO;
 			} else if (type.equals("boolean")) {
 				result = DataType.FT_BOOLEAN;
 			} else if (type.equals("list")) {

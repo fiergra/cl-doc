@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Address;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Organisation;
@@ -471,7 +472,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public List<EntityRelation> listRelations(final Session session, final Entity entity, final boolean asSubject) {
+	public List<EntityRelation> listRelations(final Session session, final Entity entity, final boolean asSubject, final Catalog relationType) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -491,10 +492,16 @@ public class EntityServiceImpl implements IEntityService {
 						" inner join Catalog type on er.type = type.id" +
 						" where 1=1 ";
 				
-				sql += asSubject ? "AND subject.id = ?" : "AND object.id = ?";
+				sql += asSubject ? " AND subject.id = ?" : "AND object.id = ? ";
+				if (relationType != null) {
+					sql += " AND er.type = ? ";
+				}
 				sql += " order by type.id, " + (!asSubject ? "subject.name" : "object.name") ;
 				PreparedStatement s = con.prepareStatement(sql);
 				s.setLong(1, entity.id);
+				if (relationType != null) {
+					s.setLong(2, relationType.id);
+				}
 				
 				ResultSet rs = s.executeQuery(); 
 				while (rs.next()) {
@@ -512,7 +519,7 @@ public class EntityServiceImpl implements IEntityService {
 //					er.object = fetchEntity(session, null, rs, "object_");
 					er.type = CatalogServiceImpl.fetchCatalog(rs, "type_");
 					
-					er.children = listRelations(session, asSubject ? er.object : er.subject, asSubject);
+					er.children = listRelations(session, asSubject ? er.object : er.subject, asSubject, relationType);
 					result.add(er);
 				}
 				rs.close();

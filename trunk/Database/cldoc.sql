@@ -342,6 +342,7 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (24, 5, 'Berechtigungen', 'Berechtigungen', 'Berechtigungen', 4);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (10, 2, 'Calendar', 'Calendar', 'Calendar', 5);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (8, 7, 'Formulare', 'Formulare', 'Formulare', 1);
@@ -382,6 +383,7 @@ insert into Catalog (id, parent, code, text, shorttext) values (154, 150, 'ER', 
 insert into Catalog (id, parent, code, text, shorttext) values (155, 154, 'IsMemberOf', 'IsMemberOf', 'IsMemberOf');
 insert into Catalog (id, parent, code, text, shorttext) values (156, 154, 'IsLocatedIn', 'IsLocatedIn', 'IsLocatedIn');
 insert into Catalog (id, parent, code, text, shorttext) values (157, 154, 'IsPartOf', 'IsPartOf', 'IsPartOf');
+insert into Catalog (id, parent, code, text, shorttext) values (158, 154, 'ReportsTo', 'ReportsTo', 'ReportsTo');
 
 insert into Catalog (id, parent, code, text, shorttext) values (160, 150, 'REPORTTYPE', 'REPORTTYPE', 'REPORTTYPE');
 insert into Catalog (id, parent, code, text, shorttext) values (161, 160, 'SYSTEM', 'SYSTEM', 'SYSTEM');
@@ -423,6 +425,7 @@ insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (6, 'kypriky', 25);
 insert into Assignment(userid, role, startdate) values ((select id from User where name='fiergra'), 51, CURRENT_DATE);
 
 /*insert into Policy (role, objectType, action, startDate) values (52,4,71, CURRENT_DATE);*/
+insert into Policy (role, objectType, action, startDate) values (52,10,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,5,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,6,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,7,71, CURRENT_DATE);

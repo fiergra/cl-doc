@@ -7,7 +7,9 @@ import com.ceres.cldoc.client.DynamicLoader;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 
@@ -38,7 +40,8 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 	}
 
 	protected void addTab(ClDoc clDoc, Catalog catalog, T model) {
-		add(DynamicLoader.create(clDoc, catalog, model), catalog.text, false);
+		Widget w = DynamicLoader.create(clDoc, catalog, model);
+		add(w, new Label(catalog.text));
 	}
 	
 }

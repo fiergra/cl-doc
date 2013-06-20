@@ -3,6 +3,7 @@ package com.ceres.cldoc.client.service;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Person;
@@ -29,5 +30,5 @@ public interface GWTEntityServiceAsync {
 
 	void save(Session session, EntityRelation er, AsyncCallback<EntityRelation> callback);
 	void delete(Session session, EntityRelation er, AsyncCallback<Void> callback);
-	void listRelations(Session session,	Entity entity, boolean asSubject, AsyncCallback<List<EntityRelation> > callback);
+	void listRelations(Session session,	Entity entity, boolean asSubject, Catalog relationType, AsyncCallback<List<EntityRelation> > callback);
 }

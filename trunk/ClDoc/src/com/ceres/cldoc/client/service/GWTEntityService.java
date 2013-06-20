@@ -3,6 +3,7 @@ package com.ceres.cldoc.client.service;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
+import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Person;
@@ -29,7 +30,7 @@ public interface GWTEntityService extends RemoteService {
 	<T extends Entity> List<T> list(Session session, Integer typeId);
 	
 	EntityRelation save(Session session, EntityRelation er);
-	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject);
+	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject, Catalog relationType);
 	void delete(Session session, EntityRelation er);
 
 }
