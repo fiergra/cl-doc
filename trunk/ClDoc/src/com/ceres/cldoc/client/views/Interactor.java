@@ -20,8 +20,6 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.ButtonBase;
@@ -228,19 +226,35 @@ public class Interactor implements IView {
 		}
 	}
 	
-	private class TextBoxKeyUpHandler extends InteractorHandler implements KeyUpHandler {
+//	private class TextBoxKeyUpHandler extends InteractorHandler implements KeyUpHandler {
+//
+//		public TextBoxKeyUpHandler(InteractorLink link) {
+//			super(link);
+//		}
+//		
+//		@Override
+//		public void onKeyUp(KeyUpEvent event) {
+//			link.interactor.setModification();
+//			link.interactor.setValid(link, link.validate());
+//		}
+//		
+//	}
 
-		public TextBoxKeyUpHandler(InteractorLink link) {
+	
+	private class TextBoxChangeHandler extends InteractorHandler implements ChangeHandler {
+
+		public TextBoxChangeHandler(InteractorLink link) {
 			super(link);
 		}
 		
 		@Override
-		public void onKeyUp(KeyUpEvent event) {
+		public void onChange(ChangeEvent event) {
 			link.interactor.setModification();
 			link.interactor.setValid(link, link.validate());
 		}
 		
 	}
+	
 	
 	private class EntitySelectorChangeHandler extends InteractorHandler implements ChangeHandler {
 
@@ -317,7 +331,7 @@ public class Interactor implements IView {
 				}
 			});
 		} else if (interactorLink.widget instanceof TextBoxBase) {
-			((TextBoxBase)interactorLink.widget).addKeyUpHandler(new TextBoxKeyUpHandler(interactorLink));
+			((TextBoxBase)interactorLink.widget).addChangeHandler(new TextBoxChangeHandler(interactorLink));
 		} else if (interactorLink.widget instanceof YesNoRadioGroup) {
 			((YesNoRadioGroup)interactorLink.widget).addChangeHandler(new EntitySelectorChangeHandler(interactorLink));
 		} else if (interactorLink.widget instanceof IEntitySelector) {

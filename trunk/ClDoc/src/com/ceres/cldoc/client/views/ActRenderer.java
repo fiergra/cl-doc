@@ -12,24 +12,27 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.Participation;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
+import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
-public class ActRenderer extends DockLayoutPanel {
+public class ActRenderer extends LayoutPanel {
 
 	private static final int BORDER_WIDTH = 3;
 	private HTML title;
@@ -42,12 +45,15 @@ public class ActRenderer extends DockLayoutPanel {
 			ClDoc clDoc,
 			OnOkHandler<Act> onInsertUpdateDelete, 
 			Runnable onSetModified) {
-		super(Unit.EM);
+		super();
 		this.clDoc = clDoc;
 		this.onInsertUpdateDelete = onInsertUpdateDelete;
 		setup();
 	}
 
+	private ParticipationEditor participationEditor;
+	final CheckBox cbParticipationEditor = new CheckBox("");
+	
 	private IForm formContent;
 	private Act act;
 	private LayoutDefinition layoutDefinition;
@@ -71,36 +77,24 @@ public class ActRenderer extends DockLayoutPanel {
 		HorizontalPanel buttons = new HorizontalPanel();
 		buttons.setSpacing(3);
 		titlePanel.setStylePrimaryName("buttonsPanel");
-		int index = 0;
-//		addLinkButton(buttons, index++, SRV.c.print(), "icons/32/Adobe-PDF-Document-icon.png", new ClickHandler() {
-//			
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				print(formContent.getModel());
-//			}
-//		});
 		
-//		imgValid = new Label("v");
-//		buttons.add(imgValid);
+		buttons.add(cbParticipationEditor);
+		cbParticipationEditor.setValue(true);
+		cbParticipationEditor.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				participationEditor.setVisible(cbParticipationEditor.getValue());
+			}
+		});
+		
+		int index = 1;
 		LinkButton pbPrint = addLinkButton(buttons, index++, SRV.c.print(), "icons/32/Adobe-PDF-Document-icon.png", "icons/32/Adobe-PDF-Document-icon.disabled.png", new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				String baseUrl = GWT.getModuleBaseURL();
 				Window.open(baseUrl + "download?type=pdf&id=" + act.id , "_blank", "");
-//				a.setHref("/cldoc/download?type=pdf&id=" + act.id);
-				
-//				DialogBox dlg = new DialogBox(true, true);
-//				dlg.setTitle("asdf");
-//
-//				Frame content = new Frame("cldoc/download?type=pdf&id=" + act.id);
-//				content.setSize("800px", "600px");
-//				dlg.setWidget(content);
-//				dlg.setText(SRV.c.print());
-//				dlg.setGlassEnabled(true);
-//				dlg.setAnimationEnabled(true);
-//				dlg.center();
-				
 			}
 		});
 		pbPrint.enable(false);
@@ -163,30 +157,19 @@ public class ActRenderer extends DockLayoutPanel {
 		titlePanel.setStylePrimaryName("actTitle");
 		titlePanel.add(buttons);
 
-		addNorth(titlePanel, 3);
-		
+		add(titlePanel);
+		setWidgetHorizontalPosition(titlePanel, Alignment.BEGIN);
+		setWidgetTopHeight(titlePanel, 0, Unit.PCT, 3, Unit.EM);
 		addStyleName("formContainer");
+		
+		participationEditor = new ParticipationEditor(clDoc, Participation.ADMINISTRATOR);
+		participationEditor.setStyleName("participationEditor");
+		participationEditor.setVisible(false);
+		add(participationEditor);
+		setWidgetRightWidth(participationEditor, 0, Unit.PX, 160, Unit.PX);
+		setWidgetTopHeight(participationEditor, 2, Unit.EM, 160, Unit.PX);
+
 	}
-//
-//	protected void print(Act act) {
-//		SRV.actService.print(clDoc.getSession(), act, new DefaultCallback<String>(clDoc, "print") {
-//
-//			@Override
-//			public void onSuccess(String result) {
-//				DialogBox dlg = new DialogBox(true, true);
-//				
-//				Frame content = new Frame(result);
-//				content.setSize("800px", "600px");
-//				dlg.setWidget(content);
-//				dlg.setText(SRV.c.print());
-//				dlg.setGlassEnabled(true);
-//				dlg.setAnimationEnabled(true);
-//				dlg.center();
-//			}
-//		});
-//		
-//		
-//	}
 
 
 	private void saveForm(final boolean doSelect, final Runnable callback) {
@@ -214,7 +197,6 @@ public class ActRenderer extends DockLayoutPanel {
 	public boolean setAct(final LayoutDefinition layoutDef, final Act act) {
 		this.layoutDefinition = layoutDef;
 		if (act != null) {
-			
 			if (formContent != null && formContent.isModified()) {
 				new MessageBox("Speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YES | MessageBox.MB_NO | MessageBox.MB_CANCEL, MESSAGE_ICONS.MB_ICON_QUESTION){
 
@@ -242,10 +224,10 @@ public class ActRenderer extends DockLayoutPanel {
 			} else {
 				doSetAct(layoutDef, act);
 			}
-		}
-		
+		} 
 		enableActButtons(act != null);
-		
+		participationEditor.setVisible(cbParticipationEditor.getValue() && act != null);
+
 		return true;
 	}
 
@@ -273,7 +255,6 @@ public class ActRenderer extends DockLayoutPanel {
 			frame.setWidth("100%");
 			formContent = frame;
 			frame.setSize("100%", "100%");
-			add(formContent);
 		} else {
 			formContent = getActRenderer(clDoc, layoutDef.xmlLayout, act, new Runnable() {
 				
@@ -289,12 +270,16 @@ public class ActRenderer extends DockLayoutPanel {
 					pbSave.enable(formContent.isModified() && formContent.isValid());
 				}
 			});
-			add(formContent);
-			formContent.toDialog();
 		}
-		
+		add(formContent);
+		participationEditor.setAct(formContent.getInteractor());
+		participationEditor.setVisible(true);
+
+		formContent.toDialog();
+		setWidgetTopHeight(formContent, 3, Unit.EM, 100, Unit.PCT);
 		this.act = act;
 		setTitle(act);
+		
 		return true;
 	}
 

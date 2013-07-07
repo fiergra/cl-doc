@@ -184,7 +184,7 @@ public class ClDoc implements EntryPoint {
 				public void onSuccess(final LayoutDefinition ld) {
 					if (ld != null) {
 						SRV.actService.findByEntity(ClDoc.this.getSession(), ClDoc.this.getSession().getUser().organisation, Participation.PROTAGONIST.id, 
-								new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
+								 null, new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
 
 									@Override
 									public void onSuccess(List<Act> result) {
@@ -215,15 +215,15 @@ public class ClDoc implements EntryPoint {
 	
 			Image logo = getSessionLogo(session);
 			Label welcome = new Label(getDisplayName(result));
-			VerticalPanel hp = new VerticalPanel();
-			hp.setSpacing(5);
-			hp.add(welcome);
-			hp.add(logo);
+			VerticalPanel vp = new VerticalPanel();
+			vp.setSpacing(5);
+			vp.add(welcome);
+			vp.add(logo);
+			vp.setStyleName("topOfTheRocks");
 			
-			
-			mainPanel.add(hp);
-			mainPanel.setWidgetHorizontalPosition(hp, Alignment.END);
-			mainPanel.setWidgetVerticalPosition(hp, Alignment.END);
+			mainPanel.add(vp);
+			mainPanel.setWidgetHorizontalPosition(vp, Alignment.END);
+			mainPanel.setWidgetVerticalPosition(vp, Alignment.END);
 			mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 			mainPanel.add(mainTab);
 	

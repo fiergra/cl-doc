@@ -16,6 +16,11 @@ import com.ceres.cldoc.model.Person;
 
 public class ActServiceImplTest extends TransactionalTest {
 
+
+	public void testDates() throws Exception {
+		IActService as = Locator.getActService();
+		List<Act> acts = as.load(getSession(), null, null, new Date());
+	}
 	
 	public void testAttachments() throws Exception {
 		ActClass ac = new ActClass(null, "ClassWithSummaryDef", "kurzgesagt <b>{feld1}</b> und <i>{feld2}</i>", null, false);

@@ -11,6 +11,7 @@ import com.ceres.cldoc.client.views.Persons;
 import com.ceres.cldoc.client.views.Reporting;
 import com.ceres.cldoc.client.views.SettingsPanel;
 import com.ceres.cldoc.client.views.Styler;
+import com.ceres.cldoc.client.views.TimeRegistration;
 import com.ceres.cldoc.client.views.agenda.CalendarView;
 import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -22,6 +23,7 @@ public class DynamicLoader {
 	public static <T> Widget create(ClDoc clDoc, Catalog catalog, T model) {
 		Widget result = null;
 		String name = catalog.text;
+		String code = catalog.code;
 		
 		if (name.equals("Personen")) {
 			result = new Persons((ClDoc) model);
@@ -29,6 +31,8 @@ public class DynamicLoader {
 			result = new EntitySearch((ClDoc) model, clDoc.getSession().getUser().organisation.id);
 		} else if (name.equals("Configuration")) {
 			result = new Configurator((ClDoc) model);
+		} else if (code.equals("TimeRegistration")) {
+			result = new TimeRegistration((ClDoc) model);
 //		} else if (name.equals("Formulare")) {
 //			result = new HistoryView(clDoc, (Entity) model);
 //		} else if (name.equals("Stammdaten")) {

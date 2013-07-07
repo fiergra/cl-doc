@@ -17,4 +17,5 @@ public interface IForm extends IView, IsWidget {
 	@Override
 	void clearModification();
 	boolean isValid();
+	Interactor getInteractor();
 }

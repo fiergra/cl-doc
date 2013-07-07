@@ -3,6 +3,7 @@ package com.ceres.cldoc;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.ceres.cldoc.model.Act;
@@ -19,7 +20,7 @@ public interface IActService {
 			throws SQLException;
 	
 	List<ActClass> listClasses(Session session, String filter);
-	List<Act> load(Session session, Entity entity, Long roleId);
+	List<Act> load(Session session, Entity entity, Long roleId, Date date);
 	void delete(Session session, Act act);
 	
 	CatalogList loadCatalogList(Session session, long listId);

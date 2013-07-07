@@ -346,19 +346,19 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<Act> load(final Session session, final Entity entity, final Long roleId) {
+	public List<Act> load(final Session session, final Entity entity, final Long roleId, final Date date) {
 		List<Act> acts = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public List<Act> execute(Connection con) throws SQLException {
-				return executeSelect(session, con, null, entity, roleId, null);
+				return executeSelect(session, con, null, entity, roleId, date, null);
 			}
 		});
 		
 		return acts;
 	}
 
-	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity, Long roleId, Boolean singleton) throws SQLException {
+	private List<Act> executeSelect(Session session, Connection con, Long id, Entity entity, Long roleId, Date date, Boolean singleton) throws SQLException {
 		String sql = "select " +
 				"i.id actid, i.date, i.summary, actclass.id classid, actclass.name classname, actclass.summarydef, actclass.entitytype entitytype, actclass.singleton singleton, actclassfield.name fieldname, actclassfield.type, field.*," +
 				"uc.id createdByUserId, uc.name createdByUserName, um.id modifiedByUserId, um.name modifiedByUserName " +
@@ -383,6 +383,9 @@ public class ActServiceImpl implements IActService {
 				sql += "and i.id in (select actid from Participation where entityid = ?) ";
 			}
 		}
+		if (date != null) {
+			sql += "and date(i.date) = date(?) ";
+		}
 		
 		sql += " order by i.id, i.date desc";
 		int i = 1;
@@ -398,6 +401,9 @@ public class ActServiceImpl implements IActService {
 			if (roleId != null) {
 				s.setLong(i++, roleId);
 			}
+		}
+		if (date != null) {
+			s.setDate(i++, new java.sql.Date(date.getTime()));
 		}
 		ResultSet rs = s.executeQuery();
 		List<Act>acts = fetchActs(session, rs);
@@ -425,7 +431,7 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public Act execute(Connection con) throws SQLException {
-				Collection<Act>acts = executeSelect(session, con, id, null, null, null);
+				Collection<Act>acts = executeSelect(session, con, id, null, null, null, null);
 				return acts.isEmpty() ? null : acts.iterator().next();
 			}
 		});
@@ -590,7 +596,7 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public Void execute(Connection con) throws Exception {
-				List<Act> masterData = executeSelect(session, con, null, null, null, true);
+				List<Act> masterData = executeSelect(session, con, null, null, null, null, true);
 				ILuceneService ls = Locator.getLuceneService();
 				IParticipationService participationService = Locator.getParticipationService();
 				ls.deleteIndex();

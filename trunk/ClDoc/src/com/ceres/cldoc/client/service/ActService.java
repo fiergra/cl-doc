@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.ceres.cldoc.Session;
@@ -16,7 +17,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("act")
 public interface ActService extends RemoteService {
-	List<Act> findByEntity(Session session, Entity entity, Long roleId);
+	List<Act> findByEntity(Session session, Entity entity, Long roleId, Date date);
 	List<LogEntry> listRecent(Session session);
 	Act findById(Session session, long id);
 	Act save(Session session, Act act);

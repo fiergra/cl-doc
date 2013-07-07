@@ -153,6 +153,7 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 	private void createOrUpdatePopup(List<T> list) {
 		if (dropDownPopup == null) {
 			dropDownPopup = new PopupPanel(false);
+			dropDownPopup.addStyleName("higherThanHigh");
 			listBox = new ListBox();
 			listBox.setSize((txtFilter.getOffsetWidth() * 2) + "px", "150px");
 			listBox.setVisibleItemCount(Integer.MAX_VALUE);
@@ -239,5 +240,14 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 	public void addSelectionChangedHandler(ChangeHandler changeHandler) {
 		changeHandlers.add(changeHandler);
 	}
+
+	public void setInnerWidth(String string) {
+		txtFilter.setWidth(string);
+	}
+
+	public void setInnerStyleName(String style) {
+		txtFilter.setStyleName(style);
+	}
+
 
 }

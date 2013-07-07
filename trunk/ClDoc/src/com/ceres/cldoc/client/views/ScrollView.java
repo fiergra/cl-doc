@@ -48,4 +48,9 @@ public class ScrollView extends ScrollPanel implements IForm {
 		content.clearModification();
 	}
 
+	@Override
+	public Interactor getInteractor() {
+		return content.getInteractor();
+	}
+
 }

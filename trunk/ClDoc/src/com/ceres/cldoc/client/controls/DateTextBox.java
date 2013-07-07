@@ -42,17 +42,7 @@ public class DateTextBox extends TextBox {
 		}
 	}
 
-	DateTimeFormat[] dateFormats = new DateTimeFormat[] {
-		DateTimeFormat.getFormat("dd.MM.yyyy"),
-		DateTimeFormat.getFormat("dd/MM/yyyy"),
-		DateTimeFormat.getFormat("ddMMyyyy"),
-		DateTimeFormat.getFormat("dd.MM.yy"),
-		DateTimeFormat.getFormat("ddMMyy"),
-		DateTimeFormat.getFormat("dd.MM."),
-		DateTimeFormat.getFormat("dd.MM"),
-		DateTimeFormat.getFormat("dd/MM"),
-		DateTimeFormat.getFormat("ddMM")
-	};
+	private final DateTimeFormat[] dateFormats = getDateTimeFormats();
 
 	@SuppressWarnings("deprecation")
 	public Date parseValue() {
@@ -73,6 +63,20 @@ public class DateTextBox extends TextBox {
 		return date;
 	}
 	
+	protected DateTimeFormat[] getDateTimeFormats() {
+		return new DateTimeFormat[] {
+				DateTimeFormat.getFormat("dd.MM.yyyy"),
+				DateTimeFormat.getFormat("dd/MM/yyyy"),
+				DateTimeFormat.getFormat("ddMMyyyy"),
+				DateTimeFormat.getFormat("dd.MM.yy"),
+				DateTimeFormat.getFormat("ddMMyy"),
+				DateTimeFormat.getFormat("dd.MM."),
+				DateTimeFormat.getFormat("dd.MM"),
+				DateTimeFormat.getFormat("dd/MM"),
+				DateTimeFormat.getFormat("ddMM")
+			};	
+	}
+
 	public Date getDate() {
 		return dateValue;
 	}
@@ -80,10 +84,14 @@ public class DateTextBox extends TextBox {
 	public void setDate(Date value) {
 		dateValue = value;
 		if (value != null) {
-			setValue(DateTimeFormat.getFormat("dd.MM.yyyy").format(value));
+			setValue(formatValue(value));
 		} else {
 			setValue(null);
 		}
+	}
+
+	protected String formatValue(Date value) {
+		return DateTimeFormat.getFormat("dd.MM.yyyy").format(value);
 	}
 
 	private final Collection<ValueChangeHandler<Date>> dateChangeHandlers = new ArrayList<ValueChangeHandler<Date>>();

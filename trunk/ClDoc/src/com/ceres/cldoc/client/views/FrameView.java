@@ -44,4 +44,10 @@ public class FrameView extends Frame implements IForm {
 		model = act;
 	}
 
+	@Override
+	public Interactor getInteractor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
