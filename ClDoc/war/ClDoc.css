@@ -25,6 +25,49 @@ body, table td, select, button {
 	height:100%; /* Mindesth�he f�r den IE */ 
 }
 
+
+.participationEditor {
+	z-index: 99;
+	padding-top: 15px;
+	padding-left: 25px;
+	padding-bottom: 25px;
+	width: 160px;
+	height: 160px;
+	background: url(images/post-it-note.png);
+	background-size: contain; 
+	background-repeat: no-repeat;
+}
+
+.participationDateLabel {
+	font-style: italic;
+	font-weight: bold;
+	font-stretch: ultra-condensed;	
+}
+
+.participationEntityLabel {
+	font-style: italic;
+}
+
+.participationDateButton {
+	font-style: italic;
+	cursor: pointer;
+}
+
+
+.participationTimeCell {
+	background-color: transparent;
+	border: none;
+}
+
+.topOfTheRocks {
+	z-index: 99;
+}
+
+.higherThanHigh {
+	z-index: 999;
+}
+
+
 .resultTable {
 }
 

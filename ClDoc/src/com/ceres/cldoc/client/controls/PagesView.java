@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ceres.cldoc.client.views.IForm;
+import com.ceres.cldoc.client.views.Interactor;
 import com.ceres.cldoc.model.IAct;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -78,6 +79,11 @@ public class PagesView extends TabLayoutPanel implements IForm {
 	@Override
 	public void setModel(IAct act) {
 		this.model = act;
+	}
+
+	@Override
+	public Interactor getInteractor() {
+		return pages.isEmpty() ? null : pages.get(0).getInteractor();
 	}
 
 }

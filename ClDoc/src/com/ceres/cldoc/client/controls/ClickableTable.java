@@ -104,9 +104,10 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				Cell cell = table.getCellForEvent(event);
-				T entry = displayList.get(cell.getRowIndex());
-
-				onClick.onClick(entry);
+				if (cell != null) {
+					T entry = displayList.get(cell.getRowIndex());
+					onClick.onClick(entry);
+				}
 			}
 		});
 

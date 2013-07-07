@@ -343,6 +343,7 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (10, 2, 'Calendar', 'Calendar', 'Calendar', 5);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (30, 2, 'TimeRegistration', 'Zeiterfassung', 'Zeiterfassung', 6);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (8, 7, 'Formulare', 'Formulare', 'Formulare', 1);
@@ -425,6 +426,7 @@ insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (6, 'kypriky', 25);
 insert into Assignment(userid, role, startdate) values ((select id from User where name='fiergra'), 51, CURRENT_DATE);
 
 /*insert into Policy (role, objectType, action, startDate) values (52,4,71, CURRENT_DATE);*/
+insert into Policy (role, objectType, action, startDate) values (52,30,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,10,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,5,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,6,71, CURRENT_DATE);
@@ -437,6 +439,8 @@ insert into Policy (role, objectType, action, startDate) values (56,22,71, CURRE
 insert into Policy (role, objectType, action, startDate) values (56,23,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,24,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,25,71, CURRENT_DATE);
+
+insert into ActClass (Id,Name) values (301, 'WorkingTime');
 
 
 insert into ActClass (Id,Name) values (1, 'Beispiel1');

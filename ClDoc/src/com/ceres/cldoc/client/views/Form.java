@@ -734,4 +734,9 @@ public class Form extends FlexTable implements IForm {
 		return interactor.isValid();
 	}
 
+	@Override
+	public Interactor getInteractor() {
+		return interactor;
+	}
+
 }

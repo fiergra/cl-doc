@@ -1,6 +1,7 @@
 package com.ceres.cldoc.server.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.ceres.cldoc.IActService;
@@ -30,8 +31,8 @@ public class ActServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<Act> findByEntity(Session session, Entity entity, Long roleId) {
-		return getActService().load(session, entity, roleId);
+	public List<Act> findByEntity(Session session, Entity entity, Long roleId, Date date) {
+		return getActService().load(session, entity, roleId, date);
 	}
 
 	@Override
