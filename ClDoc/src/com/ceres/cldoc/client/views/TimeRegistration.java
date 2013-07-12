@@ -33,7 +33,6 @@ public class TimeRegistration extends DockLayoutPanel {
 	private static final String WORKINGTIME_ACT = "WorkingTime";
 	private final ClDoc clDoc;
 	private VerticalPanel itemListPanel;
-	private final LinkButton lbSave = new LinkButton("Speichern", "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", null);
 	private DateBox dpDate;
 	private boolean isModified = false;
 	
@@ -96,7 +95,7 @@ public class TimeRegistration extends DockLayoutPanel {
 		add(sp);
 	}
 
-	private IsWidget getWorkingtimeActRenderer(final Act entry, ArrayList<IForm> forms) {
+	private IsWidget getWorkingtimeActRenderer(final Act entry, final ArrayList<IForm> forms, final LinkButton lbSave) {
 		final HorizontalPanel hp = new HorizontalPanel();
 		hp.setWidth("100%");
 		hp.addStyleName("docform");
@@ -116,6 +115,7 @@ public class TimeRegistration extends DockLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
+				forms.remove(ar);
 				if (entry.id != null) {
 					deleteItem(entry);
 				} else {
@@ -159,13 +159,13 @@ public class TimeRegistration extends DockLayoutPanel {
 		}.show();
 	}
 
-	protected void addItem(ArrayList<IForm> forms) {
+	protected void addItem(ArrayList<IForm> forms, LinkButton lbSave) {
 		Act entry = new Act(new ActClass(WORKINGTIME_ACT));
 		entry.date = dpDate.getValue(); 
 		entry.setParticipant(clDoc.getSession().getUser().person, Participation.ADMINISTRATOR, entry.date, entry.date);
-		IsWidget ar = getWorkingtimeActRenderer(entry, forms);
+		IsWidget ar = getWorkingtimeActRenderer(entry, forms, lbSave);
 //		ar.setModel(entry);
-		itemListPanel.insert(ar, 0);
+		itemListPanel.insert(ar, forms.size() - 1);
 		
 	}
 
@@ -209,10 +209,11 @@ public class TimeRegistration extends DockLayoutPanel {
 			public void onSuccess(List<Act> result) {
 				itemListPanel.clear();
 				final ArrayList<IForm> forms = new ArrayList<IForm>();
+				final LinkButton lbSave = new LinkButton("Speichern", "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", null);
 				
 				for (Act act:result) {
 //					if (act.actClass.name.equals(WORKINGTIME_ACT)) {
-						itemListPanel.add(getWorkingtimeActRenderer(act, forms));
+						itemListPanel.add(getWorkingtimeActRenderer(act, forms, lbSave));
 //					}
 				}
 				lbSave.enable(false);
@@ -236,7 +237,7 @@ public class TimeRegistration extends DockLayoutPanel {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						addItem(forms);
+						addItem(forms, lbSave);
 					}
 				});
 				buttons.add(lbAdd);
