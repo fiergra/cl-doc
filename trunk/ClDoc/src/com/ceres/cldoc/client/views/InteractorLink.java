@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import com.ceres.cldoc.client.controls.DateTextBox;
 import com.ceres.cldoc.client.views.Form.DataType;
@@ -9,20 +10,22 @@ import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 public class InteractorLink {
-	public final ValidationStatus status;
-	public final Interactor interactor;
-	public final String name;
-	public final Widget widget;
-	public final DataType dataType;
-	public final boolean isRequired;
+	protected final ValidationStatus status;
+	protected final Interactor interactor;
+	protected final String name;
+	protected final Widget widget;
+	protected final DataType dataType;
+	protected final boolean isRequired;
+	protected HashMap<String, String> attributes;
 
-	public InteractorLink(Interactor interactor, ValidationStatus status, String name, Widget widget, DataType dataType, boolean isRequired) {
+	public InteractorLink(Interactor interactor, ValidationStatus status, String name, Widget widget, DataType dataType, boolean isRequired, HashMap<String, String> attributes) {
 		this.interactor = interactor;
 		this.status = status;
 		this.name = name;
 		this.widget = widget;
 		this.dataType = dataType;
 		this.isRequired = isRequired;
+		this.attributes = attributes;
 	}
 	
 	private boolean validateTextBox() {

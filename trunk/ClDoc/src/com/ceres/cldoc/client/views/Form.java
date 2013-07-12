@@ -8,6 +8,7 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.DateTextBox;
 import com.ceres.cldoc.client.controls.FloatTextBox;
 import com.ceres.cldoc.client.controls.LongTextBox;
+import com.ceres.cldoc.client.controls.TimeTextBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.IAct;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,7 +39,7 @@ import com.google.gwt.xml.client.NodeList;
 public class Form extends FlexTable implements IForm {
 
 	public enum DataType {
-		FT_STRING, FT_TEXT, FT_DATE, FT_ACTDATE, FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE, FT_SEPARATOR, FT_YESNO
+		FT_STRING, FT_TEXT, FT_DATE, FT_TIME, FT_PARTICIPATION_TIME, FT_ACTDATE, FT_INTEGER, FT_FLOAT, FT_LIST_SELECTION, FT_OPTION_SELECTION, FT_MULTI_SELECTION, FT_BOOLEAN, FT_PARTICIPATION, FT_HUMANBEING, FT_UNDEF, FT_IMAGE, FT_SEPARATOR, FT_YESNO
 	};
 
 	protected IAct model;
@@ -318,7 +319,7 @@ public class Form extends FlexTable implements IForm {
 		Widget widget = createWidgetForType(dataType, required, attributes);
 		final Image status = addLabeledWidget(labelText, required, widget);
 		if (fieldName != null) {
-			interactor.addLink(fieldName, new InteractorLink(interactor, new FormItemValidationStatus(status), fieldName, widget, dataType, required));
+			interactor.addLink(fieldName, new InteractorLink(interactor, new FormItemValidationStatus(status), fieldName, widget, dataType, required, attributes));
 		}
 		return widget;
 	}
@@ -350,77 +351,87 @@ public class Form extends FlexTable implements IForm {
 			boolean required = getBoolean("required", ld.attributes);
 			Widget w = createWidgetForType(dataType, required, ld.attributes);
 			hp.add(w);
-			interactor.addLink(subName, new InteractorLink(interactor, new FormItemValidationStatus(status), subName, w, dataType, getBoolean("mandatory", ld.attributes)));
+			interactor.addLink(subName, new InteractorLink(interactor, new FormItemValidationStatus(status), subName, w, dataType, getBoolean("mandatory", ld.attributes), ld.attributes));
 		}
 		addLabeledWidget(label, false, hp);
 	}
 	
 
 	private Widget createWidgetForType(DataType dataType, boolean required, HashMap<String, String> attributes) {
-		Widget w = null;
+		Widget widget = null;
 
 		switch (dataType) {
 		case FT_STRING:
 			TextBox t = new TextBox();
-			w = t;
-			w.setWidth("10em");
+			widget = t;
+			widget.setWidth("10em");
 			break;
 		case FT_YESNO:
 			YesNoRadioGroup yng = new YesNoRadioGroup();
-			w = yng;
+			widget = yng;
 			break;
 		case FT_BOOLEAN:
 			CheckBox c = new CheckBox();
-			w = c;
+			widget = c;
 			break;
 		case FT_LIST_SELECTION:
 			CatalogListBox clb = new CatalogListBox(clDoc, attributes.get("parent"));
-			w = clb;
-			w.setWidth("60%");
+			widget = clb;
+			widget.setWidth("60%");
 			break;
 		case FT_OPTION_SELECTION:
 			CatalogRadioGroup crg = new CatalogRadioGroup(clDoc, attributes.get("parent"), attributes.get("orientation"));
-			w = crg;
+			widget = crg;
 			break;
 		case FT_MULTI_SELECTION:
 			CatalogMultiSelect cms = new CatalogMultiSelect(clDoc, attributes.get("parent"), getMaxCol(attributes), attributes.get("orientation"));
-			w = cms;
+			widget = cms;
 			break;
 		case FT_PARTICIPATION:
 			HumanBeingListBox hlb = new HumanBeingListBox(clDoc, attributes.get("role"));
-			w = hlb;
-			w.setWidth("60%");
+			widget = hlb;
+			widget.setWidth("60%");
 			break;
 		case FT_HUMANBEING:
 			hlb = new HumanBeingListBox(clDoc, attributes.get("role"));
-			w = hlb;
-			w.setWidth("60%");
+			widget = hlb;
+			widget.setWidth("60%");
 			break;
 		case FT_TEXT:
 			TextArea a = new TextArea();
 			a.setWidth("99%");
-			w = a;
+			widget = a;
 			break;
 		case FT_ACTDATE:
 		case FT_DATE:
 			DateTextBox d = new DateTextBox();
 			d.setWidth("10em");
-			w = d;
+			widget = d;
+			break;
+		case FT_PARTICIPATION_TIME:	
+			TimeTextBox ptimeBox = new TimeTextBox();
+			ptimeBox.setWidth("10em");
+			widget = ptimeBox;
+			break;
+		case FT_TIME:
+			TimeTextBox timeBox = new TimeTextBox();
+			timeBox.setWidth("10em");
+			widget = timeBox;
 			break;
 		case FT_FLOAT:
 			FloatTextBox f = new FloatTextBox();
 			f.setWidth("5em");
-			w = f;
+			widget = f;
 			break;
 		case FT_INTEGER:
 			LongTextBox itb = new LongTextBox();
 			itb.setWidth("5em");
-			w = itb;
+			widget = itb;
 			break;
 		case FT_IMAGE:
 			String source = attributes.get("source");
 			Image img = new Image("icons/" + source);
-			w = img;
+			widget = img;
 			break;
 		case FT_SEPARATOR:
 			String title = attributes.get("title");
@@ -428,7 +439,7 @@ public class Form extends FlexTable implements IForm {
 			if (title != null) {
 				html = "</br></br><div class=\"formSectionTitle\"><b>" + title + "</b></div>" + html;
 			}
-			w = new HTML(html);
+			widget = new HTML(html);
 			break;
 //		case FT_TIME:
 //			TimeTextBox tbx = new TimeTextBox();
@@ -437,28 +448,28 @@ public class Form extends FlexTable implements IForm {
 //			w = tbx;
 //			break;
 		default:
-			w = new TextBox();
+			widget = new TextBox();
 			break;
 
 		}
 		
-		if (w != null) {
+		if (widget != null) {
 			if (attributes != null) {
 				String sWidth = attributes.get("width");
 				String sHeight = attributes.get("height");
 				if (sWidth != null) {
-					w.setWidth(sWidth);
+					widget.setWidth(sWidth);
 				}
 				if (sHeight != null) {
-					w.setHeight(sHeight);
+					widget.setHeight(sHeight);
 				}
 			}
 			if (required) {
-				w.addStyleName("required");
+				widget.addStyleName("required");
 			}
 		}
 		
-		return w;
+		return widget;
 	}
 
 //	public void parseAndCreate(String xml) {
@@ -682,8 +693,10 @@ public class Form extends FlexTable implements IForm {
 				result = DataType.FT_INTEGER;
 			} else if (type.equals("float")) {
 				result = DataType.FT_FLOAT;
-//				} else if (type.equals("time")) {
-//				result = DataTypes.FT_TIME;
+			} else if (type.equals("participationtime")) {
+				result = DataType.FT_PARTICIPATION_TIME;
+			} else if (type.equals("time")) {
+				result = DataType.FT_TIME;
 			} else if (type.equals("yesno")) {
 				result = DataType.FT_YESNO;
 			} else if (type.equals("boolean")) {

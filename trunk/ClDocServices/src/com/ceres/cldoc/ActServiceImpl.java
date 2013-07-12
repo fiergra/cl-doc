@@ -459,6 +459,10 @@ public class ActServiceImpl implements IActService {
 				act.modifiedBy = new User();
 				act.modifiedBy.id = rs.getLong("modifiedByUserId");
 				act.modifiedBy.userName = rs.getString("modifiedByUserName");
+				
+				IParticipationService participationService = Locator.getParticipationService();
+				act.participations = participationService.load(session, act);
+
 				acts.add(act);
 			}
 			long fieldId = rs.getLong("id");
