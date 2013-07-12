@@ -1,5 +1,6 @@
 package com.ceres.cldoc.client.views;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
+import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.Participation;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,7 +33,9 @@ public class TimeRegistration extends DockLayoutPanel {
 	private static final String WORKINGTIME_ACT = "WorkingTime";
 	private final ClDoc clDoc;
 	private VerticalPanel itemListPanel;
+	private final LinkButton lbSave = new LinkButton("Speichern", "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", null);
 	private DateBox dpDate;
+	private boolean isModified = false;
 	
 	public TimeRegistration(ClDoc clDoc) {
 		super(Unit.EM);
@@ -87,34 +91,27 @@ public class TimeRegistration extends DockLayoutPanel {
 		});
 		
 		itemListPanel = new VerticalPanel();
+		itemListPanel.setWidth("100%");
 		ScrollPanel sp = new ScrollPanel(itemListPanel);
 		add(sp);
 	}
 
-	private IsWidget getWorkingtimeActRenderer(final Act entry) {
+	private IsWidget getWorkingtimeActRenderer(final Act entry, ArrayList<IForm> forms) {
 		final HorizontalPanel hp = new HorizontalPanel();
+		hp.setWidth("100%");
+		hp.addStyleName("docform");
 		HorizontalPanel buttons = new HorizontalPanel();
 		buttons.setSpacing(5);
-		final LinkButton lbSave = new LinkButton("Speichern", "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", null);
-		lbSave.enable(false);
-		buttons.add(lbSave);
-		final IForm ar = ActRenderer.getActRenderer(clDoc, "<form><line name=\"asdf\" type=\"string\"/></form>", entry, new Runnable() {
+		final IForm ar = ActRenderer.getActRenderer(clDoc, "<form><line label=\"von\"><line name=\"von\" label=\"\" type=\"participationtime\" role=\"Administrator\" which=\"start\"/><line name=\"bis\" type=\"participationtime\" role=\"Administrator\" which=\"end\"/></line><line name=\"Bemerkung\" type=\"text\"/></form>", entry, new Runnable() {
 			
 			@Override
 			public void run() {
+				isModified = true;
 				lbSave.enable(true);
 			}
 		}, null);
-
-		ClickHandler chSave = new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				ar.fromDialog();
-				saveItem(entry);
-			}
-		};
-		lbSave.addClickHandler(chSave);
+		forms.add(ar);
+		
 		LinkButton lbDelete = new LinkButton("Eintrag entfernen", "icons/32/File-Delete-icon.png", "icons/32/File-Delete-icon.png", new ClickHandler() {
 			
 			@Override
@@ -134,8 +131,8 @@ public class TimeRegistration extends DockLayoutPanel {
 		return hp;
 	}
 	
-	protected void saveItem(Act entry) {
-		SRV.actService.save(clDoc.getSession(), entry, new DefaultCallback<Act>(clDoc, "save work sheet entry") {
+	protected void saveItem(IAct iAct) {
+		SRV.actService.save(clDoc.getSession(), (Act) iAct, new DefaultCallback<Act>(clDoc, "save work sheet entry") {
 
 			@Override
 			public void onSuccess(Act act) {
@@ -162,11 +159,11 @@ public class TimeRegistration extends DockLayoutPanel {
 		}.show();
 	}
 
-	protected void addItem() {
+	protected void addItem(ArrayList<IForm> forms) {
 		Act entry = new Act(new ActClass(WORKINGTIME_ACT));
 		entry.date = dpDate.getValue(); 
 		entry.setParticipant(clDoc.getSession().getUser().person, Participation.ADMINISTRATOR, entry.date, entry.date);
-		IsWidget ar = getWorkingtimeActRenderer(entry);
+		IsWidget ar = getWorkingtimeActRenderer(entry, forms);
 //		ar.setModel(entry);
 		itemListPanel.insert(ar, 0);
 		
@@ -175,10 +172,30 @@ public class TimeRegistration extends DockLayoutPanel {
 	public static final long ONE_DAY = 1000l * 60l * 60l * 24l;
 	public static final long ONE_WEEK = ONE_DAY * 7L;
 	
-	private void incrementDate(long offset) {
-		Date date  = incrementDate(dpDate.getValue(), offset);
-		dpDate.setValue(date);
-		selectActs(date);
+	private void incrementDate(final long offset) {
+		if (isModified) {
+			new MessageBox("", "", MessageBox.MB_YESNOCANCEL, MESSAGE_ICONS.MB_ICON_QUESTION){
+
+				@Override
+				protected void onClick(int result) {
+					switch (result) {
+					case MessageBox.MB_CANCEL: break;
+					case MessageBox.MB_YES: saveAll(); break;
+					case MessageBox.MB_NO: isModified = false; incrementDate(offset); break;
+					}
+					super.onClick(result);
+				}
+				
+			}.show();
+		} else {
+			Date date  = incrementDate(dpDate.getValue(), offset);
+			dpDate.setValue(date);
+			selectActs(date);
+		}		
+	}
+
+	protected void saveAll() {
+		
 	}
 
 	private void selectActs() {
@@ -191,20 +208,39 @@ public class TimeRegistration extends DockLayoutPanel {
 			@Override
 			public void onSuccess(List<Act> result) {
 				itemListPanel.clear();
+				final ArrayList<IForm> forms = new ArrayList<IForm>();
+				
 				for (Act act:result) {
 //					if (act.actClass.name.equals(WORKINGTIME_ACT)) {
-						itemListPanel.add(getWorkingtimeActRenderer(act));
+						itemListPanel.add(getWorkingtimeActRenderer(act, forms));
 //					}
 				}
-				
+				lbSave.enable(false);
+				isModified = false;
+
+				HorizontalPanel buttons = new HorizontalPanel();
+				buttons.add(lbSave);
+				ClickHandler chSave = new ClickHandler() {
+					
+					@Override
+					public void onClick(ClickEvent event) {
+						for (IForm ar:forms) {
+							ar.fromDialog();
+							saveItem(ar.getModel());
+						}
+					}
+				};
+				lbSave.addClickHandler(chSave);
+
 				LinkButton lbAdd = new LinkButton("neuen Eintrag hinzufuegen", "icons/32/File-New-icon.png", "icons/32/File-New-icon.png", new ClickHandler() {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						addItem();
+						addItem(forms);
 					}
 				});
-				itemListPanel.add(lbAdd);
+				buttons.add(lbAdd);
+				itemListPanel.add(buttons);
 
 				
 			}

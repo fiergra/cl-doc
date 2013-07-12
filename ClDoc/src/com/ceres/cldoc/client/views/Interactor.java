@@ -34,6 +34,7 @@ public class Interactor implements IView {
 	private final Runnable setModified;
 	private final ValidationCallback setValid;
 
+	
 	public Interactor(Session session, IAct act) {
 		this(session, act, null, null);
 	}
@@ -101,9 +102,17 @@ public class Interactor implements IView {
 				}
 				break;
 			case FT_DATE:
+			case FT_TIME:
 				Date value = act.getDate(link.name);
 				if (value != null) {
 					((DateTextBox) link.widget).setDate(value);
+				}
+				break;
+			case FT_PARTICIPATION_TIME:
+				Catalog role = getRole(link.attributes.get("role"));
+				Participation part = act.getParticipation(role);
+				if (part != null) {
+					((DateTextBox) link.widget).setDate("start".equals(link.attributes.get("which")) ? part.start : part.end);
 				}
 				break;
 			case FT_ACTDATE:
@@ -137,6 +146,18 @@ public class Interactor implements IView {
 				setValid.setValid(link, link.validate());
 			}
 		}
+	}
+
+	private Catalog getRole(String role) {
+		if (Participation.ADMINISTRATOR.code.equalsIgnoreCase(role)) {
+			return Participation.ADMINISTRATOR;
+		} else if (Participation.PROTAGONIST.code.equalsIgnoreCase(role)) {
+			return Participation.PROTAGONIST;
+		} else if (Participation.ORGANISATION.code.equalsIgnoreCase(role)) {
+			return Participation.ORGANISATION;
+		}
+		
+		return null;
 	}
 
 	@Override
@@ -181,9 +202,22 @@ public class Interactor implements IView {
 				humanBeing = ((IEntitySelector<Person>) field.widget).getSelected(); 
 				act.set(qualifiedFieldName, humanBeing != null ? humanBeing.id : null);
 				break;
+			case FT_TIME:
 			case FT_DATE:
 				act.set(qualifiedFieldName,
 						((DateTextBox) field.widget).getDate());
+				break;
+			case FT_PARTICIPATION_TIME:
+				Catalog role = getRole(field.attributes.get("role"));
+				Participation part = act.getParticipation(role);
+				if (part != null) {
+					Date pDate = ((DateTextBox) field.widget).getDate();
+					if ("start".equals(field.attributes.get("which"))) {
+						part.start = pDate;
+					} else {
+						 part.end = pDate;
+					}
+				}
 				break;
 			case FT_ACTDATE:
 				act.setDate(((DateTextBox) field.widget).getDate());
