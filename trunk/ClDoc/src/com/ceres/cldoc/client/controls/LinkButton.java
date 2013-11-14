@@ -3,9 +3,9 @@ package com.ceres.cldoc.client.controls;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PushButton;
 
-public class LinkButton extends Image {
+public class LinkButton extends PushButton {
 	
 	private final String disabledImageUrl;
 	private final String enabledImageUrl;
@@ -44,8 +44,10 @@ public class LinkButton extends Image {
 	}
 	
 	public void enable(boolean enabled) {
+		super.setEnabled(enabled);
 		this.enabled = enabled;
-		setUrl(enabled ? enabledImageUrl : disabledImageUrl);
+		setHTML("<img src=\"" + (enabled ? enabledImageUrl : disabledImageUrl) + "\"/>");
+//		setUrl(enabled ? enabledImageUrl : disabledImageUrl);
 	}
 
 }

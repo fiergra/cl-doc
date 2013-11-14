@@ -2,11 +2,11 @@ package com.ceres.cldoc.client.service;
 
 import java.util.List;
 
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Person;
+import com.ceres.core.ISession;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -15,22 +15,22 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("entity")
 public interface GWTEntityService extends RemoteService {
-	Entity save(Session session, Entity entity);
-	Person save(Session session, Person humanBeing);
+	Entity save(ISession session, Entity entity);
+	Person save(ISession session, Person humanBeing);
 	
-	void delete(Session session, Person person);
-	void delete(Session session, Entity entity);
+	void delete(ISession session, Person person);
+	void delete(ISession session, Entity entity);
 	
-	<T extends Entity> T findById(Session session, long id);
+	<T extends Entity> T findById(ISession session, long id);
 
-	List<Entity> search(Session session, String criteria, int type);
-	List<Person> search(Session session, String criteria);
-	List<Person> findByAssignment(Session session, String criteria, String roleCode);
+	List<Entity> search(ISession session, String criteria, int type);
+	List<Person> search(ISession session, String criteria);
+	List<Person> findByAssignment(ISession session, String criteria, String roleCode);
 	
-	<T extends Entity> List<T> list(Session session, Integer typeId);
+	<T extends Entity> List<T> list(ISession session, Integer typeId);
 	
-	EntityRelation save(Session session, EntityRelation er);
-	List<EntityRelation> listRelations(Session session,	Entity entity, boolean asSubject, Catalog relationType);
-	void delete(Session session, EntityRelation er);
+	EntityRelation save(ISession session, EntityRelation er);
+	List<EntityRelation> listRelations(ISession session,	Entity entity, boolean asSubject, Catalog relationType);
+	void delete(ISession session, EntityRelation er);
 
 }

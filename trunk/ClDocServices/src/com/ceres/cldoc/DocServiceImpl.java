@@ -25,6 +25,7 @@ import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
+import com.ceres.core.ISession;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -39,7 +40,7 @@ public class DocServiceImpl implements IDocService {
 	private static Logger log = Logger.getLogger("DocService");
 
 	@Override
-	public byte[] print(final Session session, final Act act) {
+	public byte[] print(final ISession session, final Act act) {
 		LayoutDefinition ld = Locator.getLayoutDefinitionService().load(
 				session, act.actClass.name, LayoutDefinition.PRINT_LAYOUT);
 		Document document = new Document();
@@ -63,12 +64,12 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
-	private void defaultLayout(Session session, Act act, Document document,
+	private void defaultLayout(ISession session, Act act, Document document,
 			PdfWriter writer) throws DocumentException {
 		document.setMargins(72, 72, 108, 180);
 		document.add(new Paragraph(act.actClass.name, new Font(
 				FontFamily.HELVETICA, 18, Font.BOLD)));
-		document.add(new Paragraph("created by " + session.getUser().userName + " at " + new Date()));
+		document.add(new Paragraph("created by " + session.getUser().getUserName() + " at " + new Date()));
 		Font boldFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 		Font italicFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.ITALIC);
 
@@ -87,7 +88,7 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
-	private void render(Session session, Act act, Document document,
+	private void render(ISession session, Act act, Document document,
 			PdfWriter writer, String template)
 			throws ParserConfigurationException, SAXException, IOException,
 			DocumentException {
@@ -133,7 +134,7 @@ public class DocServiceImpl implements IDocService {
 
 	HashMap<String, Object> defaults;
 
-	private void traverse(Session session, Act act, Node domNode,
+	private void traverse(ISession session, Act act, Node domNode,
 			Element pdfNode, Document document, PdfWriter writer)
 			throws DocumentException {
 		int type = domNode.getNodeType();
@@ -199,7 +200,7 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
-	private void addAddress(Session session, Act act, Element pdfNode,
+	private void addAddress(ISession session, Act act, Element pdfNode,
 			Node domNode, Document document, PdfWriter writer) throws DocumentException {
 		
 		String type = getString(domNode.getAttributes(), "type", "patient");
@@ -211,7 +212,7 @@ public class DocServiceImpl implements IDocService {
 		} else if ("organisation".equals(type)){
 			p = act.getParticipation(Participation.ORGANISATION);
 		}
-		entity = p != null ? p.entity : null;
+		entity = (Entity) (p != null ? p.entity : null);
 		
 		if (entity != null) {
 			if (entity.addresses != null && !entity.addresses.isEmpty()) {
@@ -285,7 +286,7 @@ public class DocServiceImpl implements IDocService {
 		return Paragraph.ALIGN_UNDEFINED;
 	}
 
-	private void traverseChildren(Session session, Act act, Element pdfNode,
+	private void traverseChildren(ISession session, Act act, Element pdfNode,
 			Document document, PdfWriter writer, NodeList childNodes)
 			throws DocumentException {
 		if (childNodes != null) {

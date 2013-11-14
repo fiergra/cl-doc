@@ -1,0 +1,24 @@
+<catalogs>
+  <catalog code="MASTERDATA" id="150">
+    <text>MASTERDATA</text>
+    <shorttext>MASTERDATA</shorttext>
+    <children>
+      <catalog code="Verfahren" id="10008">
+        <text>Verfahren</text>
+        <shorttext>Verfahren</shorttext>
+        <children>
+          <catalog code="ausfuehrlich" id="10009">
+            <text>ausfuehrlich</text>
+            <shorttext>ausfuehrlich</shorttext>
+            <children />
+          </catalog>
+          <catalog code="kurz" id="10010">
+            <text>kurz</text>
+            <shorttext>kurz</shorttext>
+            <children />
+          </catalog>
+        </children>
+      </catalog>
+    </children>
+  </catalog>
+</catalogs>

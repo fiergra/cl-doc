@@ -20,21 +20,21 @@ import org.apache.commons.io.output.ByteArrayOutputStream;
 
 import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.Locator;
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.core.ISession;
 
 //The FormPanel must submit to a servlet that extends HttpServlet  
 //RemoteServiceServlet cannot be used
 @SuppressWarnings("serial")
 public class UploadService extends HttpServlet {
 	
-	private Session getSession(HttpServletRequest req) {
-		Session session = (Session) req.getSession().getAttribute(UserService.CLDOC_SESSION);
+	private ISession getSession(HttpServletRequest req) {
+		ISession session = (ISession) req.getSession().getAttribute(UserService.CLDOC_SESSION);
 		return session;
 	}
 	
@@ -48,7 +48,7 @@ public class UploadService extends HttpServlet {
 
 			// Create a new file upload handler
 			ServletFileUpload upload = new ServletFileUpload(factory);
-			Session session = getSession(req);
+			ISession session = getSession(req);
 			String type = req.getParameter("type");
 			try {
 				List<FileItem> items = upload.parseRequest(req);

@@ -16,10 +16,8 @@ import com.ceres.cldoc.IActService;
 import com.ceres.cldoc.ICatalogService;
 import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.ILayoutDefinitionService;
-import com.ceres.cldoc.ILuceneService;
 import com.ceres.cldoc.IReportService;
 import com.ceres.cldoc.Locator;
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.ConfigurationService;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Assignment;
@@ -30,6 +28,7 @@ import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
+import com.ceres.core.ISession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -51,7 +50,7 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 //	}
 
 	@Override
-	public LayoutElement parse(Session session, String xml) {
+	public LayoutElement parse(ISession session, String xml) {
 		XMLInputFactory factory = XMLInputFactory.newInstance();
 		LayoutElement result = null;
 		try {
@@ -92,49 +91,49 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<ActClass> listClasses(Session session, String filter) {
+	public List<ActClass> listClasses(ISession session, String filter) {
 		IActService actService = Locator.getActService();
 		return actService.listClasses(session, filter);
 	}
 
 //	@Override
-//	public List<LayoutDefinition> listLayoutDefinitions(Session session, String filter) {
+//	public List<LayoutDefinition> listLayoutDefinitions(ISession session, String filter) {
 //		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 //		return lds.listLayoutDefinitions(session, filter);
 //	}
 
 	@Override
-	public LayoutDefinition saveLayoutDefinition(Session session, LayoutDefinition ld) {
+	public LayoutDefinition saveLayoutDefinition(ISession session, LayoutDefinition ld) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		lds.save(session, ld);
 		return ld;
 	}
 
 	@Override
-	public LayoutDefinition getLayoutDefinition(Session session, String className, int typeId) {
+	public LayoutDefinition getLayoutDefinition(ISession session, String className, int typeId) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		return lds.load(session, className, typeId);
 	}
 
 	@Override
-	public List<LayoutDefinition> listLayoutDefinitions(Session session, int typeId, Long entityType, Boolean isSingleton) {
+	public List<LayoutDefinition> listLayoutDefinitions(ISession session, int typeId, Long entityType, Boolean isSingleton) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		return lds.listLayoutDefinitions(session, null, typeId, entityType, isSingleton);
 	}
 	
 	@Override
-	public void deleteLayoutDefinition(Session session, String className) {
+	public void deleteLayoutDefinition(ISession session, String className) {
 		ILayoutDefinitionService lds = Locator.getLayoutDefinitionService();
 		lds.delete(session, className);
 	}
 
 	@Override
-	public void delete(Session session, Catalog catalog) {
+	public void delete(ISession session, Catalog catalog) {
 		getCatalogService().delete(session, catalog);
 	}
 	
 	@Override
-	public Catalog save(Session session, Catalog catalog) {
+	public Catalog save(ISession session, Catalog catalog) {
 		return catalog;
 	}
 	
@@ -151,91 +150,91 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	
-	private ILuceneService getLuceneService() {
-		return Locator.getLuceneService();
-	}
+//	private ILuceneService getLuceneService() {
+//		return Locator.getLuceneService();
+//	}
 	
 	private IDocArchive getDocArchive() {
 		return Locator.getDocArchive();
 	}
 	
 	@Override
-	public Catalog getCatalog(Session session, long id) {
+	public Catalog getCatalog(ISession session, long id) {
 		return getCatalogService().load(session, id);
 	}
 
 	@Override
-	public Catalog getCatalog(Session session, String code) {
+	public Catalog getCatalog(ISession session, String code) {
 		return getCatalogService().load(session, code);
 	}
 
 	@Override
-	public List<Catalog> listCatalogs(Session session, String parentCode) {
+	public List<Catalog> listCatalogs(ISession session, String parentCode) {
 		return getCatalogService().loadList(session, parentCode);
 	}
 	
 
 	@Override
-	public List<Catalog> listCatalogs(Session session, Long parentId) {
+	public List<Catalog> listCatalogs(ISession session, Long parentId) {
 		return listCatalogs(session, parentId != null ? new Catalog(parentId) : null);
 	}
 	
 	@Override
-	public List<Catalog> listCatalogs(Session session, Catalog parent) {
+	public List<Catalog> listCatalogs(ISession session, Catalog parent) {
 		return getCatalogService().loadList(session, parent);
 	}
 
 	@Override
-	public void saveAll(Session session, Collection<Catalog> catalogs) {
+	public void saveAll(ISession session, Collection<Catalog> catalogs) {
 		for (Catalog c:catalogs) {
 			getCatalogService().save(session, c);
 		}
 	}
 
 	@Override
-	public Assignment addAssignment(Session session, Catalog catalog, Entity entity) {
+	public Assignment addAssignment(ISession session, Catalog catalog, Entity entity) {
 		Assignment assignment = new Assignment();
 		return assignment;
 	}
 
 	@Override
-	public List<Assignment> listAssignments(Session session, Catalog catalog) {
+	public List<Assignment> listAssignments(ISession session, Catalog catalog) {
 		return null;
 	}
 
 	@Override
-	public List<Assignment> listAssignments(Session session, Entity entity) {
+	public List<Assignment> listAssignments(ISession session, Entity entity) {
 		return null;
 	}
 
 	@Override
-	public List<ReportDefinition> listReportDefinitions(Session session) {
+	public List<ReportDefinition> listReportDefinitions(ISession session) {
 		return getReportService().list(session, null);
 	}
 
 	@Override
-	public ReportDefinition loadReportDefinition(Session session, Catalog catalog) {
+	public ReportDefinition loadReportDefinition(ISession session, Catalog catalog) {
 		return getReportService().load(session, catalog);
 	}
 
 	@Override
-	public List<HashMap<String, Serializable>> executeReport(Session session,
+	public List<HashMap<String, Serializable>> executeReport(ISession session,
 			ReportDefinition rd, IAct filters) {
 		return getReportService().execute(session, rd, filters);
 	}
 
-	@Override
-	public String getLuceneIndexPath() {
-		return getLuceneService().getIndexPath().getAbsolutePath();
-	}
-
-	@Override
-	public void setLuceneIndexPath(Session session, String path) {
-		File indexPath = new File(path);
-		indexPath.mkdirs();
-		getLuceneService().setIndexPath(indexPath);
-		getActService().rebuildIndex(session);
-	}
+//	@Override
+//	public String getLuceneIndexPath() {
+//		return getLuceneService().getIndexPath().getAbsolutePath();
+//	}
+//
+//	@Override
+//	public void setLuceneIndexPath(ISession session, String path) {
+//		File indexPath = new File(path);
+//		indexPath.mkdirs();
+//		getLuceneService().setIndexPath(indexPath);
+//		getActService().rebuildIndex(session);
+//	}
 
 	@Override
 	public String getDocArchivePath() {
@@ -243,7 +242,7 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void setDocArchivePath(Session session, String path) {
+	public void setDocArchivePath(ISession session, String path) {
 		File archivePath = new File(path);
 		archivePath.mkdirs();
 		getDocArchive().setArchivePath(archivePath);
@@ -255,12 +254,12 @@ public class ConfigurationServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public void set(Session session, String name, String value, Entity entity) {
+	public void set(ISession session, String name, String value, Entity entity) {
 		Locator.getSettingsService().set(session, name, value, entity);
 	}
 
 	@Override
-	public String get(Session session, String name, Entity entity) {
+	public String get(ISession session, String name, Entity entity) {
 		return Locator.getSettingsService().get(session, name, entity);
 	}
 

@@ -28,7 +28,7 @@ public class EntitySearch extends SplitLayoutPanel {
 
 			private Image getTypeImage(Entity entity) {
 				Image w = null;
-				int et = new Long(entity.type).intValue();
+				int et = new Long(entity.getType()).intValue();
 				switch (et) {
 				case Entity.ENTITY_TYPE_PERSON:
 					w = new Image("icons/16/man-icon.png");

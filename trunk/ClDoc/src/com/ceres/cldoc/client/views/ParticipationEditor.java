@@ -3,11 +3,11 @@ package com.ceres.cldoc.client.views;
 import java.util.Date;
 
 import com.ceres.cldoc.client.ClDoc;
-import com.ceres.cldoc.client.controls.TimeTextBox;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
+import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,7 +26,7 @@ public class ParticipationEditor extends VerticalPanel {
 	private final TimeTextBox txtFrom = new TimeTextBox();
 	private final TimeTextBox txtUntil = new TimeTextBox();
 	private final Catalog participationType;
-	private Interactor interactor;
+	private ClInteractor interactor;
 
 	public ParticipationEditor(ClDoc clDoc, Catalog participationType) {
 		setup(clDoc);
@@ -186,7 +186,7 @@ public class ParticipationEditor extends VerticalPanel {
 		} 
 	}
 
-	public void setAct(Interactor interactor) {
+	public void setAct(ClInteractor interactor) {
 		this.interactor = interactor;
 		if (getAct() != null) {
 			Participation p = getAct().getParticipation(participationType);

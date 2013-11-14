@@ -1,0 +1,8 @@
+<actclasses>
+<actclass isSingleton="false" name="Beratungsgespraech"/>
+<actclass isSingleton="false" name="Kostentraeger"/>
+<actclass isSingleton="false" name="Kursangebot"/>
+<actclass isSingleton="false" name="Medizinische Anamnese"/>
+<actclass isSingleton="false" name="Sozio-Demographische Daten"/>
+<actclass isSingleton="false" name="Veranstaltungsbericht"/>
+</actclasses>

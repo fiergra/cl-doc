@@ -95,4 +95,14 @@ public class PersonWrapper extends AbstractNamedValueAccessor {
 
 	}
 
+	@Override
+	public Serializable getValue(String name) {
+		return get(name);
+	}
+
+	@Override
+	public Serializable setValue(String name, Serializable value) {
+		return set(name, value);
+	}
+
 }

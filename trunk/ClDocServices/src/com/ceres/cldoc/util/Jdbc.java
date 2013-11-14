@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.ITransactional;
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.TxManager;
+import com.ceres.core.ISession;
 
 public class Jdbc {
 
@@ -26,7 +26,7 @@ public class Jdbc {
 		return id;
 	}
 
-	public static <T> T doTransactional(Session session, ITransactional itransactional) {
+	public static <T> T doTransactional(ISession session, ITransactional itransactional) {
 		Connection con = TxManager.start(session);
 		try {
 			T result = itransactional.execute(con);

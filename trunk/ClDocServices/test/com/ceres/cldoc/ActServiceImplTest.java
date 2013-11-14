@@ -181,6 +181,11 @@ public class ActServiceImplTest extends TransactionalTest {
 		
 		List<LogEntry> logEntries = Locator.getLogService().listRecent(getSession());
 		assertFalse(logEntries.isEmpty());
+
+		act.isDeleted = true;
+		actService.save(getSession(), act);
+		act = actService.load(getSession(), act.id);
+		assertNull(act);
 	}
 
 	public void testDataTypes() {

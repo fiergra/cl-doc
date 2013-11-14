@@ -33,6 +33,7 @@ insert into Organisation (Id) values (24);
 /* Stefan is member of mevik */
 insert into EntityRelation (type, subjectid, objectid) values (155, 5, 24);
 
+
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'eart', 23);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'eart_admin', 23);
 

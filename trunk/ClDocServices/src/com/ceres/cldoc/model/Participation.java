@@ -3,6 +3,8 @@ package com.ceres.cldoc.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.ceres.core.IEntity;
+
 public class Participation implements Serializable {
 
 	private static final long serialVersionUID = 8017405646839706167L;
@@ -12,7 +14,7 @@ public class Participation implements Serializable {
 	public static final Catalog ADMINISTRATOR = new Catalog(103l, "ADMINISTRATOR");
 
 	public Long id;
-	public Entity entity;
+	public IEntity entity;
 	public Catalog role;
 	public Act act;
 	public Date start;
@@ -21,7 +23,7 @@ public class Participation implements Serializable {
 	public Participation() {
 	}
 
-	public Participation(Act act, Entity entity, Catalog role, Date start, Date end) {
+	public Participation(Act act, IEntity entity, Catalog role, Date start, Date end) {
 		this.entity = entity;
 		this.role = role;
 		this.act = act;
@@ -29,4 +31,10 @@ public class Participation implements Serializable {
 		this.end = end;
 	}
 
+	@Override
+	public String toString() {
+		return role + "|" + entity + "|" + start + "-" + end;
+	}
+
+	
 }

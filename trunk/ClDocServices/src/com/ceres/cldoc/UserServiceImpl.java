@@ -15,17 +15,18 @@ import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.AccessControl;
 import com.ceres.cldoc.util.Jdbc;
 import com.ceres.cldoc.util.Strings;
+import com.ceres.core.ISession;
 
 public class UserServiceImpl implements IUserService {
 
 	private static Logger log = Logger.getLogger("UserService");
 
 	@Override
-	public Session login(final Session session, final String userName, final String password) {
+	public ISession login(final ISession session, final String userName, final String password) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public Session execute(Connection con) throws SQLException {
+			public ISession execute(Connection con) throws SQLException {
 				IEntityService entityService = Locator.getEntityService();
 				User user = null;
 				String hash = Strings.hash(password);
@@ -60,7 +61,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public User register(final Session session, final Person person, final Organisation organisation, final String userName, final String password) {
+	public User register(final ISession session, final Person person, final Organisation organisation, final String userName, final String password) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -83,8 +84,8 @@ public class UserServiceImpl implements IUserService {
 				} else {
 					entityService.save(session, person);
 					PreparedStatement i = con.prepareStatement("insert into User (person_id, organisation_id, name, hash) values (?,?,?,?)", new String[]{"ID"});
-					i.setLong(1, person.id);
-					i.setLong(2, organisation.id);
+					i.setLong(1, person.getId());
+					i.setLong(2, organisation.getId());
 					i.setString(3, userName);
 					i.setString(4, hash);
 					user = new User();
@@ -104,7 +105,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public long setPassword(Session session, final User user, final String password1, String password2) {
+	public long setPassword(ISession session, final User user, final String password1, String password2) {
 		long returnCode; 
 		
 		if (password1 != null && password2 != null) {
@@ -134,7 +135,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public List<User> listUsers(final Session session, final String filter) {
+	public List<User> listUsers(final ISession session, final String filter) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -148,14 +149,14 @@ public class UserServiceImpl implements IUserService {
 					u.id = rs.getLong("userId");
 					u.userName = rs.getString("userName");
 					Person p = new Person();
-					p.id = rs.getLong("entityId");
+					p.setId(rs.getLong("entityId"));
 					p.firstName = rs.getString("firstName");
 					p.lastName = rs.getString("lastName");
 					u.person = p;
 					Organisation o = new Organisation();
-					o.id = rs.getLong("organisationId");
+					o.setId(rs.getLong("organisationId"));
 					o.setName(rs.getString("name"));
-					o.type = rs.getInt("type");
+					o.setType(rs.getInt("type"));
 					u.organisation = o;
 					
 					AccessControl.get(session, u, null);
@@ -169,7 +170,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public void addRole(Session session, final User user, final Catalog role) {
+	public void addRole(ISession session, final User user, final Catalog role) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -184,7 +185,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public void removeRole(Session session, final User user, final Catalog role) {
+	public void removeRole(ISession session, final User user, final Catalog role) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

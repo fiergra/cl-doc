@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.ceres.cldoc.client.ClDoc;
-import com.ceres.cldoc.client.controls.DateTextBox;
-import com.ceres.cldoc.client.controls.FloatTextBox;
-import com.ceres.cldoc.client.controls.LongTextBox;
-import com.ceres.cldoc.client.controls.TimeTextBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.IAct;
+import com.ceres.core.IApplication;
+import com.ceres.dynamicforms.client.components.DateTextBox;
+import com.ceres.dynamicforms.client.components.FloatTextBox;
+import com.ceres.dynamicforms.client.components.LongTextBox;
+import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -45,8 +45,8 @@ public class Form extends FlexTable implements IForm {
 	protected IAct model;
 	protected DateTimeFormat df = DateTimeFormat
 			.getFormat(PredefinedFormat.DATE_SHORT);
-	private final ClDoc clDoc;
-	private final Interactor interactor;
+	private final IApplication clDoc;
+	private final ClInteractor interactor;
 
 	final static int OK = 1;
 	final static int CLOSE = 2;
@@ -82,7 +82,7 @@ public class Form extends FlexTable implements IForm {
 		}	
 	}
 	
-	public Form(ClDoc clDoc, IAct model, Runnable setModified, final Runnable setValid) {
+	public Form(IApplication clDoc, IAct model, Runnable setModified, final Runnable setValid) {
 		this.clDoc = clDoc;
 		addStyleName("docform");
 		setRowFormatter(new RowFormatter() {});
@@ -92,7 +92,7 @@ public class Form extends FlexTable implements IForm {
 		ValidationCallback validationCallback = new ValidationCallback() {
 			
 			@Override
-			public void setValid(InteractorLink link, boolean isValid) {
+			public void setValid(ClInteractorLink link, boolean isValid) {
 				if (setValid != null) {
 					setValid.run();
 				}
@@ -100,12 +100,12 @@ public class Form extends FlexTable implements IForm {
 			}
 		};
 
-		interactor = new Interactor(clDoc.getSession(), model, setModified, validationCallback );
+		interactor = new ClInteractor(clDoc.getSession(), model, setModified, validationCallback );
 		setup();
 		interactor.toDialog();
 	}
 
-	protected ClDoc getClDoc() {
+	protected IApplication getClDoc() {
 		return clDoc;
 	}
 	
@@ -319,7 +319,7 @@ public class Form extends FlexTable implements IForm {
 		Widget widget = createWidgetForType(dataType, required, attributes);
 		final Image status = addLabeledWidget(labelText, required, widget);
 		if (fieldName != null) {
-			interactor.addLink(fieldName, new InteractorLink(interactor, new FormItemValidationStatus(status), fieldName, widget, dataType, required, attributes));
+			interactor.addLink(fieldName, new ClInteractorLink(interactor, new FormItemValidationStatus(status), fieldName, widget, dataType, required, attributes));
 		}
 		return widget;
 	}
@@ -351,7 +351,7 @@ public class Form extends FlexTable implements IForm {
 			boolean required = getBoolean("required", ld.attributes);
 			Widget w = createWidgetForType(dataType, required, ld.attributes);
 			hp.add(w);
-			interactor.addLink(subName, new InteractorLink(interactor, new FormItemValidationStatus(status), subName, w, dataType, getBoolean("mandatory", ld.attributes), ld.attributes));
+			interactor.addLink(subName, new ClInteractorLink(interactor, new FormItemValidationStatus(status), subName, w, dataType, getBoolean("mandatory", ld.attributes), ld.attributes));
 		}
 		addLabeledWidget(label, false, hp);
 	}
@@ -748,7 +748,7 @@ public class Form extends FlexTable implements IForm {
 	}
 
 	@Override
-	public Interactor getInteractor() {
+	public ClInteractor getInteractor() {
 		return interactor;
 	}
 

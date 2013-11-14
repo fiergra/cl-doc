@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.ceres.cldoc.IUserService;
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.ActRenderer;
 import com.ceres.cldoc.client.views.ClosableTab;
@@ -21,6 +20,10 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.cldoc.model.User;
+import com.ceres.core.IApplication;
+import com.ceres.core.IOrganisation;
+import com.ceres.core.ISession;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.Window;
@@ -36,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class ClDoc implements EntryPoint {
+public class ClDoc implements EntryPoint, IApplication {
 
 	/**
 	 * This is the entry point method.
@@ -44,22 +47,23 @@ public class ClDoc implements EntryPoint {
 
 	private ConfiguredTabPanel<ClDoc> mainTab;
 //	private final Label statusMessage = new Label();
-	private Session session;
+	private ISession session;
 	private LogOutput logOutput;
 	
-	public Session getSession() {
+	@Override
+	public ISession getSession() {
 		return session;
 	}
 	
 	@Override
 	public void onModuleLoad() {
-		LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<Session>() {
+		LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<ISession>() {
 			
 			@Override
-			public void onOk(Session result) {
+			public void onOk(ISession result) {
 				session = result;
 				if (result != null) {
-					if (session.getUser().hash == null) {
+					if (((User)session.getUser()).hash == null) {
 						setPassword(session);
 					} else {
 						setupMain(result);
@@ -74,7 +78,7 @@ public class ClDoc implements EntryPoint {
 		
 	}
 	
-	protected void preload(Session result) {
+	protected void preload(ISession result) {
 		SRV.catalogService.listCatalogs(result, "ROLES", new AsyncCallback<List<Catalog>>() {
 			
 			@Override
@@ -89,7 +93,7 @@ public class ClDoc implements EntryPoint {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void setPassword(final Session session) {
+	protected void setPassword(final ISession session) {
 		final PasswordTextBox pwdField1 = new PasswordTextBox();
 		final PasswordTextBox pwdField2 = new PasswordTextBox();
 		Form createPwd = new Form(this, null, null, null){
@@ -105,7 +109,7 @@ public class ClDoc implements EntryPoint {
 
 			@Override
 			public void onClick(Void pp) {
-				SRV.userService.setPassword(session, session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>(ClDoc.this, "setPassword") {
+				SRV.userService.setPassword(session, (User) session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>(ClDoc.this, "setPassword") {
 
 					@Override
 					public void onSuccess(Long result) {
@@ -125,7 +129,7 @@ public class ClDoc implements EntryPoint {
 		
 		while (index < count && personalFile == null) {
 			Widget tab = mainTab.getWidget(index);
-			if (tab instanceof EntityFile && ((EntityFile)tab).getEntity().id.equals(hb.id) ) {
+			if (tab instanceof EntityFile && ((EntityFile)tab).getEntity().getId().equals(hb.getId()) ) {
 				personalFile = (EntityFile) tab;
 			} else {
 				index++;
@@ -148,6 +152,7 @@ public class ClDoc implements EntryPoint {
 		mainTab.selectTab(mainTab.getWidgetIndex(entityFile));
 	}
 	
+	@Override
 	public void status(String text) {
 //		statusMessage.setText(text);
 		if (logOutput != null) {
@@ -159,7 +164,7 @@ public class ClDoc implements EntryPoint {
 //		statusMessage.setText("");
 	}
 	
-	private void setupMain(Session result) {
+	private void setupMain(ISession result) {
 		LayoutPanel mainPanel = new LayoutPanel();
 		final String open = Window.Location.getParameter("open");
 		if (open != null) {
@@ -183,7 +188,7 @@ public class ClDoc implements EntryPoint {
 				@Override
 				public void onSuccess(final LayoutDefinition ld) {
 					if (ld != null) {
-						SRV.actService.findByEntity(ClDoc.this.getSession(), ClDoc.this.getSession().getUser().organisation, Participation.PROTAGONIST.id, 
+						SRV.actService.findByEntity(ClDoc.this.session, ClDoc.this.session.getUser().getOrganisation(), Participation.PROTAGONIST.id, 
 								 null, new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
 
 									@Override
@@ -199,9 +204,9 @@ public class ClDoc implements EntryPoint {
 										}
 										if (act == null) {
 											act = new Act(ld.actClass);
-											act.setParticipant(ClDoc.this.getSession().getUser().organisation, Participation.PROTAGONIST, new Date(), null);
-											act.setParticipant(ClDoc.this.getSession().getUser().person, Participation.ADMINISTRATOR, new Date(), null);
-											act.setParticipant(ClDoc.this.getSession().getUser().organisation, Participation.ORGANISATION, new Date(), null);
+											act.setParticipant(session.getUser().getOrganisation(), Participation.PROTAGONIST, new Date(), null);
+											act.setParticipant(session.getUser().getPerson(), Participation.ADMINISTRATOR, new Date(), null);
+											act.setParticipant(session.getUser().getOrganisation(), Participation.ORGANISATION, new Date(), null);
 										}
 										hp.setAct(ld, act);
 									}
@@ -213,7 +218,7 @@ public class ClDoc implements EntryPoint {
 			
 		} else {
 	
-			Image logo = getSessionLogo(session);
+			Image logo = getSessionLogo();
 			Label welcome = new Label(getDisplayName(result));
 			VerticalPanel vp = new VerticalPanel();
 			vp.setSpacing(5);
@@ -235,22 +240,23 @@ public class ClDoc implements EntryPoint {
 	}
 
 	public Image getSessionLogo() {
-		return getSessionLogo(getSession());
-	}
-	
-	private Image getSessionLogo(Session session) {
-		Entity organisation = session.getUser().organisation;
+		IOrganisation organisation = session.getUser().getOrganisation();
 		Image logo = new Image("icons/" + organisation.getName() + ".png");
 		logo.setHeight("50px");
 		return logo;
 	}
 
-	private String getDisplayName(Session s) {
-		return s.getUser().userName + "[" + s.getUser().person.firstName  + " " + s.getUser().person.lastName +"]";
+	private String getDisplayName(ISession s) {
+		return s.getUser().getUserName() + "[" + s.getUser().getPerson().getFirstName()  + " " + s.getUser().getPerson().getFirstName() +"]";
 	}
 
 	public void setLogOutput(LogOutput logOutput) {
 		this.logOutput = logOutput;
+	}
+
+	@Override
+	public String getLabel(String label) {
+		return label;
 	}
 
 	

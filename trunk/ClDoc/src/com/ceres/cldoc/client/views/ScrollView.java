@@ -49,7 +49,7 @@ public class ScrollView extends ScrollPanel implements IForm {
 	}
 
 	@Override
-	public Interactor getInteractor() {
+	public ClInteractor getInteractor() {
 		return content.getInteractor();
 	}
 

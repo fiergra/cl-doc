@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.Locator;
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
+import com.ceres.core.ISession;
 
 @SuppressWarnings("serial")
 public class DownloadServlet extends HttpServlet {
@@ -31,7 +31,7 @@ public class DownloadServlet extends HttpServlet {
 
 		final String type = req.getParameter("type");
 		byte[] out = null;
-		Session session = (Session) req.getSession().getAttribute(UserService.CLDOC_SESSION);
+		ISession session = (ISession) req.getSession().getAttribute(UserService.CLDOC_SESSION);
 		
 		if (session != null) {
 			if ("form_layouts".equals(type)) {
@@ -59,6 +59,10 @@ public class DownloadServlet extends HttpServlet {
 				final long id = Long.valueOf(sid);
 				Act act = Locator.getActService().load(session, id);
 				out = Locator.getDocService().print(session, act);
+			} else if ("timesheet".equals(type)) {
+				final String sUserId = req.getParameter("userid");
+				final String sMonth = req.getParameter("month");
+				out = (sUserId + " " + sMonth).getBytes();
 			} else {
 				String fileName = req.getParameter("file");
 				if (fileName != null) {

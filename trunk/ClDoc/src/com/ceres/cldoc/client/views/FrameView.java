@@ -45,7 +45,7 @@ public class FrameView extends Frame implements IForm {
 	}
 
 	@Override
-	public Interactor getInteractor() {
+	public ClInteractor getInteractor() {
 		// TODO Auto-generated method stub
 		return null;
 	}

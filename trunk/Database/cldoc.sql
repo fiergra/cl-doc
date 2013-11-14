@@ -342,7 +342,7 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (24, 5, 'Berechtigungen', 'Berechtigungen', 'Berechtigungen', 4);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (10, 2, 'Calendar', 'Calendar', 'Calendar', 5);
+/*insert into Catalog (id, parent, code, text, shorttext, logical_order) values (10, 2, 'Calendar', 'Calendar', 'Calendar', 5);*/
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (30, 2, 'TimeRegistration', 'Zeiterfassung', 'Zeiterfassung', 6);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
@@ -353,6 +353,7 @@ insert into Catalog (id, parent, code, text, shorttext) values (50, null, 'ROLES
 insert into Catalog (id, parent, code, text, shorttext) values (51, 50, 'ADMIN', 'ADMIN', 'ADMIN');
 insert into Catalog (id, parent, code, text, shorttext) values (52, 51, 'USER', 'USER', 'USER');
 insert into Catalog (id, parent, code, text, shorttext) values (53, 52, 'GUEST', 'GUEST', 'GUEST');
+insert into Catalog (id, parent, code, text, shorttext) values (54, 51, 'DEV', 'DEV', 'DEV');
 insert into Catalog (id, parent, code, text, shorttext) values (56, 51, 'CONFIGURATOR', 'CONFIGURATOR', 'CONFIGURATOR');
 
 insert into Catalog (id, parent, code, text, shorttext) values (70, null, 'ACTIONS', 'ACTIONS', 'ACTIONS');
@@ -420,10 +421,12 @@ insert into EntityRelation (type, subjectid, objectid) values (155, 6, 25);
 
 insert into Assignment(entityid, role, startdate) values (1, 51, CURRENT_DATE);
 
+insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'u', 20);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'fiergra', 20);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (6, 'kypriky', 25);
 
 insert into Assignment(userid, role, startdate) values ((select id from User where name='fiergra'), 51, CURRENT_DATE);
+insert into Assignment(userid, role, startdate) values ((select id from User where name='u'), 54, CURRENT_DATE);
 
 /*insert into Policy (role, objectType, action, startDate) values (52,4,71, CURRENT_DATE);*/
 insert into Policy (role, objectType, action, startDate) values (52,30,71, CURRENT_DATE);

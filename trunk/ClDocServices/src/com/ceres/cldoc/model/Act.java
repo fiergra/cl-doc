@@ -6,12 +6,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.ceres.core.IEntity;
+
 public class Act extends AbstractNamedValueAccessor {
 
 	private static final long serialVersionUID = 5273635419946319483L;
 
 	public Long id;
-//	public String className;
 	public ActClass actClass;
 	public String summary;
 	public Date date;
@@ -22,15 +23,10 @@ public class Act extends AbstractNamedValueAccessor {
 	public User createdBy;
 	public User modifiedBy;
 
+	public boolean isDeleted;
 
 	public Act() {
 	}
-
-//	public Act(String className) {
-//		this.className = className;
-//	}
-//	
-	
 
 	public Act(ActClass actClass) {
 		this.actClass = actClass;
@@ -69,7 +65,7 @@ public class Act extends AbstractNamedValueAccessor {
 		setParticipant(e, role, null, null);
 	}
 	
-	public void setParticipant(Entity e, Catalog role, Date start, Date end) {
+	public void setParticipant(IEntity e, Catalog role, Date start, Date end) {
 		if (participations == null) {
 			participations = new HashMap<Long, Participation>();
 		}
@@ -151,6 +147,7 @@ public class Act extends AbstractNamedValueAccessor {
 		return "<snapshot/>";
 	}
 
+	@Override
 	public Serializable getValue(String fieldName) {
 		IActField field = get(fieldName);
 		return field != null ? field.getValue() : null;
@@ -159,6 +156,16 @@ public class Act extends AbstractNamedValueAccessor {
 	@Override
 	public CatalogList getCatalogList(String fieldName) {
 		return (CatalogList) getValue(fieldName);
+	}
+
+	@Override
+	public String toString() {
+		return "#" + id + ":" + actClass;
+	}
+
+	@Override
+	public Serializable setValue(String name, Serializable value) {
+		return set(name, value);
 	}
 
 }

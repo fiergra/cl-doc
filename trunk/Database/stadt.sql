@@ -130,6 +130,8 @@ insert into Catalog (parent, code, text, shorttext, logical_order, number1) valu
 insert into Policy (role, objectType, action, startDate) values (66,(select id from Catalog where code ='SucheDKG'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='Personen'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='JugendOrga'),71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='TimeRegistration'),71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (54,(select id from Catalog where code ='TimeRegistration'),71, CURRENT_DATE);
 
 insert into Catalog (id, parent, code, text, shorttext) values (550, 150, 'Altersgruppe', 'Altersgruppe', 'Altersgruppe');
 insert into Catalog (parent, code, text, shorttext) values (550, '6-12', '6-12 Jahre', '6-12');

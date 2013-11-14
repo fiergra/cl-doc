@@ -12,27 +12,28 @@ import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LogEntry;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
+import com.ceres.core.IEntity;
+import com.ceres.core.ISession;
 
 public class LogServiceImpl implements ILogService {
 
 	private static Logger log = Logger.getLogger("LogService");
 
 	@Override
-	public void log(final Session session, final int type, final Act act, final String logEntry) {
+	public void log(final ISession session, final int type, final Act act, final String logEntry) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public Void execute(Connection con) throws SQLException {
 				PreparedStatement s = con.prepareStatement("insert into LogEntry (UserId, ActId, EntityId, type, logEntry) values (?, ?, ?, ?, ?)");
 				int i = 1;
-				s.setLong(i++, session.getUser().id);
+				s.setLong(i++, session.getUser().getId());
 				
 				if (act.id != null) {
 					s.setLong(i++, act.id);
@@ -40,10 +41,10 @@ public class LogServiceImpl implements ILogService {
 					s.setNull(i++, Types.INTEGER);
 				}
 				Participation participation = act.getParticipation(Participation.PROTAGONIST);
-				Entity entity = participation != null ? participation.entity : null;
+				IEntity entity = participation != null ? participation.entity : null;
 				
-				if (entity != null && entity.id != null) {
-					s.setLong(i++, entity.id);
+				if (entity != null && entity.getId() != null) {
+					s.setLong(i++, entity.getId());
 				} else {
 					s.setNull(i++, Types.INTEGER);
 				}
@@ -56,7 +57,7 @@ public class LogServiceImpl implements ILogService {
 	}
 
 	@Override
-	public List<LogEntry> listRecent(final Session session) {
+	public List<LogEntry> listRecent(final ISession session) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -74,7 +75,7 @@ public class LogServiceImpl implements ILogService {
 						"left outer join ActClassField acf on acf.id = af.ClassFieldId " +
 						"where userId = ? " +
 						"order by logDate desc ");
-				s.setLong(1, session.getUser().id);
+				s.setLong(1, session.getUser().getId());
 				ResultSet rs = s.executeQuery();
 				LogEntry le = null;
 				Act act = null;
@@ -92,20 +93,15 @@ public class LogServiceImpl implements ILogService {
 						Long perId  = rs.getLong("per_id");
 
 						if (rs.wasNull()) {
-							Person person = new Person();
-							person.id = rs.getLong("entId");
+							Long id = rs.getLong("entId");
 							if (!rs.wasNull()) {
-								person.firstName = rs.getString("firstName");
-								person.lastName = rs.getString("lastName");
+								Person person = new Person(id, rs.getString("firstName"), rs.getString("lastName"));
 								le.entity = person;
 							}
 						} else {
-							Patient patient = new Patient();
-							patient.id = rs.getLong("entId");
+							Long id = rs.getLong("entId");
 							if (!rs.wasNull()) {
-								patient.firstName = rs.getString("firstName");
-								patient.lastName = rs.getString("lastName");
-								patient.perId = perId;
+								Patient patient = new Patient(id, perId, rs.getString("firstName"), rs.getString("lastName"));
 								le.entity = patient;
 							}
 						}

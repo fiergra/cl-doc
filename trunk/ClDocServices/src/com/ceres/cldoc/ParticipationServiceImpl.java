@@ -13,13 +13,14 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.util.Jdbc;
+import com.ceres.core.ISession;
 
 public class ParticipationServiceImpl implements IParticipationService {
 
 	private static Logger log = Logger.getLogger("ParticipationService");
 
 	@Override
-	public void save(Session session, final Participation participation) {
+	public void save(ISession session, final Participation participation) {
 		Participation p = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -40,7 +41,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 		PreparedStatement s = con.prepareStatement(
 				"update Participation set entityid = ?, role = ?, startdate = ?, enddate = ? where id = ?");
 		int i = 1;
-		s.setLong(i++, participation.entity.id);
+		s.setLong(i++, participation.entity.getId());
 		s.setLong(i++, participation.role.id);
 		s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
 		if (participation.end != null) {
@@ -59,7 +60,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 				"insert into Participation (actid, entityid, role, startdate, enddate) values (?, ?, ?, ?, ?) ", new String[]{"ID"});
 		int i = 1;
 		s.setLong(i++, participation.act.id);
-		s.setLong(i++, participation.entity.id);
+		s.setLong(i++, participation.entity.getId());
 		s.setLong(i++, participation.role.id);
 		s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
 
@@ -73,7 +74,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 	}
 
 	@Override
-	public HashMap<Long, Participation> load(final Session session, final Act act) {
+	public HashMap<Long, Participation> load(final ISession session, final Act act) {
 		HashMap<Long, Participation> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -106,12 +107,12 @@ public class ParticipationServiceImpl implements IParticipationService {
 		return result;
 	}
 
-	protected Catalog getRole(Session session, long roleId) {
+	protected Catalog getRole(ISession session, long roleId) {
 		return roleId == 101l ? Participation.PROTAGONIST : Locator.getCatalogService().load(session, roleId);
 	}
 
 	@Override
-	public void delete(Session session, final long actId, final long roleId) {
+	public void delete(ISession session, final long actId, final long roleId) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

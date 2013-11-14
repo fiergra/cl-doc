@@ -19,7 +19,12 @@ public class Patient extends Person {
 		this.id = person.id;
 		this.lastName = person.lastName;
 		this.maidenName = person.maidenName;
-		this.type = person.type;
+		this.setType(person.getType());
+	}
+
+	public Patient(Long id, Long perId, String firstName, String lastName) {
+		super(id, firstName, lastName);
+		this.perId = perId;
 	}
 
 	@Override

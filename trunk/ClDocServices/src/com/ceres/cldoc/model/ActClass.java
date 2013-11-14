@@ -43,5 +43,13 @@ public class ActClass implements Serializable {
 		this.entityType = actClass.entityType;
 		this.isSingleton = actClass.isSingleton;
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "#" + id + ":" + name;
+	}
+	
 	
 }

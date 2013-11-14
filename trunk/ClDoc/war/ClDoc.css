@@ -14,8 +14,8 @@ body, table td, select, button {
 	height:100%;  
 	overflow: hidden !important;  
 /*
-	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#DEE7D6));
-	background: -moz-linear-gradient(top,  #FAFAFA,  #DEE7D6); */
+	background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(white));
+	background: -moz-linear-gradient(top,  #FAFAFA,  white); */
 }
 
 
@@ -23,6 +23,22 @@ body, table td, select, button {
 	min-height: 100%; /* Mindesth�he f�r moderne Browser */
 	height:auto !important; /* Important Regel f�r moderne Browser */ 
 	height:100%; /* Mindesth�he f�r den IE */ 
+}
+
+
+.linkButton {
+	cursor: pointer; 
+}
+
+.timeRegistrationDate {
+	font-size: large;
+	border: none;
+	font-style: italic;
+	width: 5em; 
+}
+
+.linkButton:hover {
+	background-color:silver;
 }
 
 
@@ -115,7 +131,7 @@ body, table td, select, button {
 }
 
 .evenRow {
-	background: #DEE7D6;
+	background: white;
 }
 
 .resultRow {
@@ -158,7 +174,7 @@ body, table td, select, button {
 }
 
 .actTitle {
-	background-color: #DEE7D6;
+	background-color: white;
 	font-size: larger;
 	height: 100%;
 }
@@ -168,7 +184,7 @@ body, table td, select, button {
 }
 
 .historyEntry {
-	border: solid 1px #DEE7D6;
+	border: solid 1px white;
 	padding: .5em;
 	width: 100%;
 }
@@ -183,7 +199,7 @@ body, table td, select, button {
 	padding-right: 5px;
 	padding-top: 1px;
 	padding-bottom: 1px;
-	background-color: #DEE7D6;
+	background-color: white;
 }
 
 .valueBagTitle {
@@ -264,87 +280,6 @@ body, table td, select, button {
 .docform {
 	text-align: left;
 	vertical-align: top;
-	background-color: #d5D5D5;
+	background-color: #CCC;
 }
 
-
-.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
-  background: transparent;
-  padding-top: 6px;
-  padding-left: 5px;
-}
-
-.gwt-TabLayoutPanel {
-}
-
-.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
-}
-
-.gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
-  border-color: #63D36A;
-  border-style: solid;
-  border-width: 1px;
-}
-
-.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
-  background: #DEE7D6;
-  color: black;
-}
-.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
-  font-weight: bold;
-  cursor: default;
-  background: #63D36A;
-  color: white;
-}
-
-.gwt-SuggestBox {
-	font-family: Calibri;
-	font-weight: bold;
-	 font-size: medium; 
-}
-
-.gwt-TextArea {
-	font-family: Calibri;
-	font-weight: bold;
-	 font-size: medium; 
-}
-
-.gwt-TextBox {
-	font-family: Calibri;
-	font-weight: bold;
-	 font-size: medium; 
-}
-
-.gwt-PasswordTextBox {
-	font-family: Calibri;
-	font-weight: bold;
-	 font-size: medium; 
-}
-
-
-.gwt-ListBox {
-	font-family: Calibri;
-	font-weight: bold;
-	 font-size: medium; 
-}
-
-.gwt-RadioButton {
-	font-family: Calibri;
-	font-weight: bold;
-	 font-size: medium; 
-}
-
-.gwt-CheckBox {
-	font-family: Calibri;
-	font-weight: bold;
-	 font-size: medium; 
-}
-
-.gwt-SplitLayoutPanel-HDragger {
-background: #DEE7D6 url(images/thumb_vertical.png) center center no-repeat;
-cursor: col-resize;
-}
-
-.gwt-Tree .gwt-TreeItem-selected {
-background: #63D36A;
-}

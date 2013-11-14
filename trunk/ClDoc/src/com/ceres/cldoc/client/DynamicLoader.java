@@ -12,7 +12,6 @@ import com.ceres.cldoc.client.views.Reporting;
 import com.ceres.cldoc.client.views.SettingsPanel;
 import com.ceres.cldoc.client.views.Styler;
 import com.ceres.cldoc.client.views.TimeRegistration;
-import com.ceres.cldoc.client.views.agenda.CalendarView;
 import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -28,7 +27,7 @@ public class DynamicLoader {
 		if (name.equals("Personen")) {
 			result = new Persons((ClDoc) model);
 		} else if (catalog.code.equals("SucheDKG") || catalog.code.equals("SucheEART")) {
-			result = new EntitySearch((ClDoc) model, clDoc.getSession().getUser().organisation.id);
+			result = new EntitySearch((ClDoc) model, clDoc.getSession().getUser().getOrganisation().getId());
 		} else if (name.equals("Configuration")) {
 			result = new Configurator((ClDoc) model);
 		} else if (code.equals("TimeRegistration")) {
@@ -45,8 +44,6 @@ public class DynamicLoader {
 //			}
 		} else if (name.equals("Reporting")) {
 			result = new Reporting(clDoc);
-		} else if (name.equals("Calendar")) {
-			result = new CalendarView(clDoc);
 		} else if (name.equals("Debug")) {
 			result = new DebugPanel(clDoc);
 		} else if (name.equals("Einstellungen")) {
@@ -60,7 +57,7 @@ public class DynamicLoader {
 		} else if (name.equals("Berechtigungen")) {
 			result = new AssignmentsPanel(clDoc);
 		} else if (name.equals("Organisation")) {
-			result = new OrganisationsPanel(clDoc, clDoc.getSession().getUser().organisation);
+			result = new OrganisationsPanel(clDoc, clDoc.getSession().getUser().getOrganisation());
 		} else {
 			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(name);

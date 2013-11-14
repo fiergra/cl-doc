@@ -40,17 +40,18 @@ import org.xml.sax.SAXException;
 
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.util.Jdbc;
+import com.ceres.core.ISession;
 
 public class CatalogServiceImpl implements ICatalogService {
 
 	private static Logger log = Logger.getLogger("CatalogService");
 
 	@Override
-	public void save(Session session, final Catalog catalog) {
+	public void save(ISession session, final Catalog catalog) {
 		save(session, catalog, true);
 	}	
 	
-	private void save(Session session, final Catalog catalog, final boolean insertIfUpdateFails) {
+	private void save(ISession session, final Catalog catalog, final boolean insertIfUpdateFails) {
 		Catalog c = Jdbc.doTransactional(session, new ITransactional() {
 
 			@Override
@@ -155,7 +156,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}
 
 	@Override
-	public Catalog load(Session session, final String code) {
+	public Catalog load(ISession session, final String code) {
 		int lastDot = code.lastIndexOf('.');
 		Catalog result = null;
 		
@@ -177,7 +178,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}	
 	
 	@Override
-	public Catalog load(Session session, final long id) {
+	public Catalog load(ISession session, final long id) {
 		Catalog result = Jdbc.doTransactional(session, new ITransactional() {
 
 			@Override
@@ -221,7 +222,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}
 
 	@Override
-	public List<Catalog> loadList(final Session session,
+	public List<Catalog> loadList(final ISession session,
 			final Catalog parent) {
 		List<Catalog> result = Jdbc.doTransactional(session,
 				new ITransactional() {
@@ -258,7 +259,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}
 
 	@Override
-	public void delete(Session session, final Catalog catalog) {
+	public void delete(ISession session, final Catalog catalog) {
 		if (catalog.children != null) {
 			for (Catalog c: catalog.children) {
 				delete(session, c);
@@ -278,7 +279,7 @@ public class CatalogServiceImpl implements ICatalogService {
 		});
 	}
 
-	private Catalog load(Session session, Connection con, String code)
+	private Catalog load(ISession session, Connection con, String code)
 			throws SQLException {
 		Catalog c = null;
 		StringTokenizer st = new StringTokenizer(code, ".");
@@ -342,7 +343,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}
 
 	@Override
-	public List<Catalog> loadList(final Session session,
+	public List<Catalog> loadList(final ISession session,
 			final String parentCode) {
 		List<Catalog> list = Jdbc.doTransactional(session,
 				new ITransactional() {
@@ -363,7 +364,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}
 
 	@Override
-	public String exportXML(Session session, Catalog parent) {
+	public String exportXML(ISession session, Catalog parent) {
 		String xml = null;
 		Collection<Catalog> catalogs = loadList(session, parent);
 		if (catalogs != null) {
@@ -468,7 +469,7 @@ public class CatalogServiceImpl implements ICatalogService {
 	}
 
 	@Override
-	public void importXML(Session session, InputStream xml) {
+	public void importXML(ISession session, InputStream xml) {
 		DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory
 				.newInstance();
 		DocumentBuilder db;
@@ -521,7 +522,7 @@ public class CatalogServiceImpl implements ICatalogService {
 		return child != null ? child.getTextContent() : null;
 	}
 	
-	private void importCatalog(Session session, Element catalogNode, Catalog parent) {
+	private void importCatalog(ISession session, Element catalogNode, Catalog parent) {
 		Catalog catalog = new Catalog();
 		catalog.parent = parent;
 		catalog.id = getLong(catalogNode.getAttributes(), "id");
