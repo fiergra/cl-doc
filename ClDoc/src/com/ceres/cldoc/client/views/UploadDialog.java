@@ -4,8 +4,8 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.core.IEntity;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,12 +30,12 @@ public class UploadDialog extends DialogBox {
 
 	private final OnOkHandler<Void> onOk;
 
-	public UploadDialog(ClDoc clDoc, String type, Entity humanBeing, Act act, OnOkHandler<Void> onOk) {
+	public UploadDialog(ClDoc clDoc, String type, IEntity humanBeing, Act act, OnOkHandler<Void> onOk) {
 		this.onOk = onOk;
 		setup(clDoc, type, humanBeing, act);
 	}
 
-	private FormPanel createUploadPanel(ClDoc clDoc, String type, Entity humanBeing, Act act) {
+	private FormPanel createUploadPanel(ClDoc clDoc, String type, IEntity humanBeing, Act act) {
 		final FormPanel form = new FormPanel();
 		final FileUpload fup = new FileUpload();
 		fup.setName("fup");
@@ -53,10 +53,10 @@ public class UploadDialog extends DialogBox {
 		form.setWidget(formWidget);
 
 		String baseUrl = GWT.getModuleBaseURL();
-		form.setAction(baseUrl + "uploadService?type="+type+"&sid=" + clDoc.getSession().getId() + "&uid=" + clDoc.getSession().getUser().id);
+		form.setAction(baseUrl + "uploadService?type="+type+"&sid=" + clDoc.getSession().getId() + "&uid=" + clDoc.getSession().getUser().getId());
 
 		if (humanBeing != null) {
-			formWidget.add(createIdField("entityId", humanBeing.id));
+			formWidget.add(createIdField("entityId", humanBeing.getId()));
 		}
 		if (act != null) {
 			formWidget.add(createIdField("actId", act.id));
@@ -107,7 +107,7 @@ public class UploadDialog extends DialogBox {
 		return rweKey;
 	}
 
-	private void setup(ClDoc clDoc, String type, Entity humanBeing, Act act) {
+	private void setup(ClDoc clDoc, String type, IEntity humanBeing, Act act) {
 		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		HorizontalPanel buttons = new HorizontalPanel();
@@ -150,7 +150,7 @@ public class UploadDialog extends DialogBox {
 		hide();
 	}
 
-	public static void uploadExternalDoc(ClDoc clDoc, Entity humanBeing, OnOkHandler<Void> onOk) {
+	public static void uploadExternalDoc(ClDoc clDoc, IEntity humanBeing, OnOkHandler<Void> onOk) {
 		uploadFile(clDoc, ActClass.EXTERNAL_DOC.name, humanBeing, null, onOk);
 	}
 
@@ -166,7 +166,7 @@ public class UploadDialog extends DialogBox {
 		uploadFile(clDoc, "catalogs", null, null, onOk);
 	}
 
-	private static void uploadFile(ClDoc clDoc, String type, Entity humanBeing, Act act, OnOkHandler<Void> onOk) {
+	private static void uploadFile(ClDoc clDoc, String type, IEntity humanBeing, Act act, OnOkHandler<Void> onOk) {
 		UploadDialog avb = new UploadDialog(clDoc, type, humanBeing, act, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);

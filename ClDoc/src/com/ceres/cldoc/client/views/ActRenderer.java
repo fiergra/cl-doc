@@ -119,10 +119,11 @@ public class ActRenderer extends LayoutPanel {
 					@Override
 					protected void onClick(int result) {
 						if (result == MessageBox.MB_YES) {
-							SRV.actService.delete(clDoc.getSession(), (Act) formContent.getModel(), new DefaultCallback<Void>(clDoc, "delete") {
+							((Act) formContent.getModel()).isDeleted = true;
+							SRV.actService.save(clDoc.getSession(), (Act) formContent.getModel(), new DefaultCallback<Act>(clDoc, "delete") {
 	
 								@Override
-								public void onSuccess(Void result) {
+								public void onSuccess(Act result) {
 									setAct(null, null);
 									if (onInsertUpdateDelete != null) {
 										onInsertUpdateDelete.onOk(null);
@@ -239,7 +240,7 @@ public class ActRenderer extends LayoutPanel {
 	}
 
 
-	private boolean doSetAct(LayoutDefinition layoutDef, Act act) {
+	private boolean doSetAct(LayoutDefinition layoutDef, final Act act) {
 
 		if (formContent != null) {
 			remove(formContent);
@@ -260,7 +261,7 @@ public class ActRenderer extends LayoutPanel {
 				
 				@Override
 				public void run() {
-					title.setHTML("*<i>" + title.getText() + "</i>");
+					title.setHTML("*<i>" + getTitleText(act) + "</i>");
 					pbSave.enable(formContent.isModified() && formContent.isValid());
 				}
 			}, new Runnable() {
@@ -283,13 +284,22 @@ public class ActRenderer extends LayoutPanel {
 		return true;
 	}
 
-	
+	private String getTitleText(Act act) {
+		String titleText;
+		
+		if (act != null) {
+			DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
+			String sDate = act.date != null ? formatter.format(act.date) : "--.--.----";
+			titleText = "<b>" + act.actClass.name + "</b> - " + sDate;
+		} else {
+			titleText = "---";
+		}
+		return titleText;
+	}
 	
 	private void setTitle(Act act) {
-		DateTimeFormat formatter = DateTimeFormat.getFormat("dd.MM.yyyy");
 		title.setTitle("#" + act.id + " - <b>" + act.actClass.name + "</b>");
-		String sDate = act.date != null ? formatter.format(act.date) : "--.--.----";
-		title.setHTML("<b>" + act.actClass.name + "</b> - " + sDate );
+		title.setHTML(getTitleText(act));
 	}
 
 

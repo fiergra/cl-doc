@@ -5,8 +5,11 @@ import java.io.Serializable;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.Policies;
+import com.ceres.core.IAction;
+import com.ceres.core.ISession;
+import com.ceres.core.IUser;
 
-public class Session implements Serializable {
+public class Session implements ISession, Serializable {
 
 	private static final long serialVersionUID = -5371736346089900693L;
 
@@ -19,30 +22,38 @@ public class Session implements Serializable {
 	public Session() {
 	}
 
-	public boolean isAllowed(Catalog type, Catalog action) {
+	@Override
+	public boolean isAllowed(IAction action) {
+		Action a = (Action)action;
+		return policies != null ? policies.isAllowed(a.type, a.action) : false;
+	}
+
+	private boolean isAllowed(Catalog type, Catalog action) {
 		return policies != null ? policies.isAllowed(type, action) : false;
 	}
-//	public Session(User user, long id) {
+//	public ISession(User user, long id) {
 //		this.user = user;
 //		this.id = id;
 //	}
 //
 	public Session(User user, Policies policies) {
-//		this(user, createSessionId());
+//		this(user, createISessionId());
 		this.user = user;
 		this.policies = policies;
-		this.id = createSessionId();
+		this.id = createISessionId();
 	}
 
-	private synchronized static long createSessionId() {
+	private synchronized static long createISessionId() {
 		return sessionIds++;
 	}
 
+	@Override
 	public long getId() {
 		return id;
 	}
 
-	public User getUser() {
+	@Override
+	public IUser getUser() {
 		return user;
 	}
 	

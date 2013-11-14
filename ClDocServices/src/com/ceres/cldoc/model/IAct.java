@@ -3,7 +3,9 @@ package com.ceres.cldoc.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public interface IAct extends Serializable {
+import com.ceres.dynamicforms.client.INamedValues;
+
+public interface IAct extends INamedValues {
 
 	public abstract IActField get(String fieldName);
 
@@ -30,4 +32,5 @@ public interface IAct extends Serializable {
 	public abstract Participation getParticipation(Catalog role);
 	
 	public abstract void setParticipant(Entity e, Catalog role);
+
 }

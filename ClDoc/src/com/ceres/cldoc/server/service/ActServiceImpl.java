@@ -1,18 +1,17 @@
 package com.ceres.cldoc.server.service;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 import com.ceres.cldoc.IActService;
 import com.ceres.cldoc.IDocService;
 import com.ceres.cldoc.Locator;
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.ActService;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Attachment;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LogEntry;
+import com.ceres.core.IEntity;
+import com.ceres.core.ISession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -31,28 +30,28 @@ public class ActServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<Act> findByEntity(Session session, Entity entity, Long roleId, Date date) {
+	public List<Act> findByEntity(ISession session, IEntity entity, Long roleId, Date date) {
 		return getActService().load(session, entity, roleId, date);
 	}
 
 	@Override
-	public Act findById(Session session, long id) {
+	public Act findById(ISession session, long id) {
 		return getActService().load(session, id);
 	}
 
 	@Override
-	public Act save(Session session, Act act) {
+	public Act save(ISession session, Act act) {
 		getActService().save(session, act);
 		return act;
 	}
 
-	@Override
-	public void delete(Session session, Act act) {
-		getActService().delete(session, act);
-	}
+//	@Override
+//	public void delete(ISession session, Act act) {
+//		getActService().delete(session, act);
+//	}
 
 	@Override
-	public String print(Session session, Act act) {
+	public String print(ISession session, Act act) {
 //		try {
 //			InputStream in = getDocService().print(session, act);
 //			File tempFile = File.createTempFile("tmp", ".pdf");
@@ -69,29 +68,29 @@ public class ActServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<LogEntry> listRecent(Session session) {
+	public List<LogEntry> listRecent(ISession session) {
 		return Locator.getLogService().listRecent(session);
 	}
 
 	@Override
-	public Collection<Act> save(Session session, Collection<Act> acts) {
+	public List<Act> save(ISession session, List<Act> acts) {
 		getActService().save(session, acts);
 		return acts;
 	}
 
 	@Override
-	public List<Attachment> listAttachments(Session session, Act act) {
+	public List<Attachment> listAttachments(ISession session, Act act) {
 		return getActService().listAttachments(session, act);
 	}
 
 	@Override
-	public Attachment saveAttachment(Session session, Attachment attachment) {
+	public Attachment saveAttachment(ISession session, Attachment attachment) {
 		getActService().saveAttachment(session, attachment);
 		return attachment;
 	}
 
 	@Override
-	public void deleteAttachment(Session session, Attachment attachment) {
+	public void deleteAttachment(ISession session, Attachment attachment) {
 		getActService().deleteAttachment(session, attachment);
 	}
 

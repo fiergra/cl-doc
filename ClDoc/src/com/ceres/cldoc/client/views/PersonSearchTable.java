@@ -134,7 +134,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 */	
 
 	protected void findAndOpen(Patient person) {
-		SRV.humanBeingService.findById(clDoc.getSession(), person.id, new DefaultCallback<Person>(clDoc, "findById") {
+		SRV.humanBeingService.findById(clDoc.getSession(), person.getId(), new DefaultCallback<Person>(clDoc, "findById") {
 
 			@Override
 			public void onSuccess(Person result) {

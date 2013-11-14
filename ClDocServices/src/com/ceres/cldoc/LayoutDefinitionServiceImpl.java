@@ -38,13 +38,14 @@ import org.xml.sax.SAXException;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.util.Jdbc;
+import com.ceres.core.ISession;
 
 public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 
 	private static Logger log = Logger.getLogger("LayoutDefinitionService");
 
 	@Override
-	public void save(Session session, final LayoutDefinition ld) {
+	public void save(ISession session, final LayoutDefinition ld) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -79,13 +80,13 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public LayoutDefinition load(Session session, String className, int typeId) {
+	public LayoutDefinition load(ISession session, String className, int typeId) {
 		List<LayoutDefinition> list = listLayoutDefinitions(session, className, typeId, null, null);
 		return list != null && !list.isEmpty() ? list.get(0) : null;
 	}
 
 	@Override
-	public List<LayoutDefinition> listLayoutDefinitions(Session session,
+	public List<LayoutDefinition> listLayoutDefinitions(ISession session,
 			final String filter, final Integer typeId, final Long entityType, final Boolean isSingleton) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
@@ -143,7 +144,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public void delete(Session session, final String className) {
+	public void delete(ISession session, final String className) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -162,7 +163,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public String exportLayouts(final Session session) {
+	public String exportLayouts(final ISession session) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@SuppressWarnings("unchecked")
@@ -325,7 +326,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 		});
 	}
 
-	protected void exportClasses(Session session, Connection con, ZipOutputStream zout) throws IOException, ParserConfigurationException, TransformerException {
+	protected void exportClasses(ISession session, Connection con, ZipOutputStream zout) throws IOException, ParserConfigurationException, TransformerException {
 		List<ActClass> classes = Locator.getActService().listClasses(session, null);
 
 		DocumentBuilderFactory dbfac = DocumentBuilderFactory
@@ -378,7 +379,7 @@ public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 	}
 
 	@Override
-	public void importLayouts(final Session session, final InputStream in) {
+	public void importLayouts(final ISession session, final InputStream in) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@SuppressWarnings("unchecked")

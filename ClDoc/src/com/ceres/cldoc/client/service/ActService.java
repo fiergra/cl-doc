@@ -1,14 +1,13 @@
 package com.ceres.cldoc.client.service;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Attachment;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LogEntry;
+import com.ceres.core.IEntity;
+import com.ceres.core.ISession;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -17,16 +16,16 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("act")
 public interface ActService extends RemoteService {
-	List<Act> findByEntity(Session session, Entity entity, Long roleId, Date date);
-	List<LogEntry> listRecent(Session session);
-	Act findById(Session session, long id);
-	Act save(Session session, Act act);
-	Collection<Act> save(Session session, Collection<Act> acts);
-	String print(Session session, Act act);
-	void delete(Session session, Act act);
+	List<Act> findByEntity(ISession session, IEntity entity, Long roleId, Date date);
+	List<LogEntry> listRecent(ISession session);
+	Act findById(ISession session, long id);
+	Act save(ISession session, Act act);
+	List<Act> save(ISession session, List<Act> acts);
+	String print(ISession session, Act act);
+//	void delete(ISession session, Act act);
 	
-	List<Attachment> listAttachments(Session session, Act act);
-	Attachment saveAttachment(Session session, Attachment attachment);
-	void deleteAttachment(Session session, Attachment attachment);
+	List<Attachment> listAttachments(ISession session, Act act);
+	Attachment saveAttachment(ISession session, Attachment attachment);
+	void deleteAttachment(ISession session, Attachment attachment);
 
 }

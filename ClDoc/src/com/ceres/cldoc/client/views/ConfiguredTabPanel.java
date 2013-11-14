@@ -2,6 +2,7 @@ package com.ceres.cldoc.client.views;
 
 import java.util.List;
 
+import com.ceres.cldoc.Action;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.DynamicLoader;
 import com.ceres.cldoc.client.service.SRV;
@@ -25,7 +26,7 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 			public void onSuccess(List<Catalog> result) {
 				if (!result.isEmpty()) {
 					for (Catalog catalog : result) {
-						if (clDoc.getSession().isAllowed(catalog, Catalog.VIEW)) {
+						if (clDoc.getSession().isAllowed(new Action(catalog, Catalog.VIEW))) {
 							addTab(clDoc, catalog, model);
 						}
 					}
@@ -41,7 +42,7 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 
 	protected void addTab(ClDoc clDoc, Catalog catalog, T model) {
 		Widget w = DynamicLoader.create(clDoc, catalog, model);
-		add(w, new Label(catalog.text));
+		add(w, new Label("> " + catalog.text));
 	}
 	
 }

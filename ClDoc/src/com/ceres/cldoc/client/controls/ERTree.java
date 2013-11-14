@@ -115,7 +115,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		hp.setSpacing(2);
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		Image w = null;
-		int et = new Long(entity.type).intValue();
+		int et = new Long(entity.getType()).intValue();
 		switch (et) {
 		case Entity.ENTITY_TYPE_PERSON:
 			w = new Image("icons/16/man-icon.png");
@@ -134,7 +134,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 			break;
 		}
 
-		w.setTitle(String.valueOf(entity.type));
+		w.setTitle(String.valueOf(entity.getType()));
 		hp.add(w);
 		hp.add(new Label(entity.getName()));
 
@@ -182,7 +182,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 
 					@Override
 					public String getValue(Entity entity) {
-						return String.valueOf(entity.id);
+						return String.valueOf(entity.getId());
 					}
 				} , null , null);
 		

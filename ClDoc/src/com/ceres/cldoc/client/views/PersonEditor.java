@@ -10,6 +10,7 @@ import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PatientWrapper;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
+import com.ceres.core.IApplication;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -19,7 +20,7 @@ public class PersonEditor extends Form {
 
 	private final OnClick<Person> onSave;
 	
-	public PersonEditor(ClDoc clDoc, final Person person, Runnable setModified, OnClick<Person> onSave) {
+	public PersonEditor(IApplication clDoc, final Person person, Runnable setModified, OnClick<Person> onSave) {
 		super(clDoc, wrap(person), setModified, null);
 		this.onSave = onSave;
 	}
@@ -76,7 +77,7 @@ public class PersonEditor extends Form {
 		addWidgetsAndFields(SRV.c.postCode(), lineDefs);
 	}
 
-	public static void editPerson(final ClDoc clDoc, final Person person, final OnClick<Person> onSave) {
+	public static void editPerson(final IApplication clDoc, final Person person, final OnClick<Person> onSave) {
 		final PersonEditor pe = new PersonEditor(clDoc, person, new Runnable() {
 			
 			@Override
@@ -109,7 +110,7 @@ public class PersonEditor extends Form {
 		return person instanceof Patient ? new PatientWrapper((Patient) person) : new PersonWrapper(person);
 	}
 
-	private void savePerson(ClDoc clDoc, Person result) {
+	private void savePerson(IApplication clDoc, Person result) {
 		fromDialog();
 		SRV.humanBeingService.save(clDoc.getSession(), result, new DefaultCallback<Person>(clDoc, "save") {
 
@@ -125,7 +126,7 @@ public class PersonEditor extends Form {
 		
 	}
 	
-	private void deletePerson(ClDoc clDoc, Person person) {
+	private void deletePerson(IApplication clDoc, Person person) {
 		SRV.humanBeingService.delete(clDoc.getSession(), person, new DefaultCallback<Void>(clDoc, "deletePerson"){
 
 			@Override

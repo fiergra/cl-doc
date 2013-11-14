@@ -1,0 +1,34 @@
+<form classid="5" classname="Beratungsgespraech" entitytype="181"
+singleton="false">
+  <line name="Kontakt" parent="MASTERDATA.KONTAKTART"
+  type="option" />
+  <line label="Datum">
+    <line type="actdate" />
+    <line name="Erstkontakt" type="Boolean" />
+  </line>
+  <line label="Ort">
+    <line label="" name="Ort" type="string" />
+    <line label="" name="Ortauswahl" parent="MASTERDATA.ORT"
+    type="option" />
+  </line>
+  <line name="Gespraechspartner"
+  parent="MASTERDATA.GESPRAECHSPARTNER" type="option" />
+  <line label="Bemerkung" name="bemerkungPartner" type="string" />
+  <line type="separator" title="Inhalt" />
+  <line name="Sozialrechtliche Fragen"
+  parent="MASTERDATA.FRAGESTELLUNG.SOZIALRECHTLICH"
+  type="multiselect" />
+  <line label="sonstiges" name="sonstigerInhalt" type="text" />
+  <line name="Behandlung"
+  parent="MASTERDATA.FRAGESTELLUNG.BEHANDLUNG"
+  type="multiselect" />
+  <line name="Befindlichkeit"
+  parent="MASTERDATA.FRAGESTELLUNG.BEFINDLICHKEIT"
+  type="multiselect" />
+  <line name="Sonstiges" parent="MASTERDATA.FRAGESTELLUNG.SONSTIGE"
+  type="multiselect" />
+  <line type="separator" title="In Angelegenheit" />
+  <line name="Sozialrechtliche Fragen"
+  parent="MASTERDATA.BERATUNG.ANGELEGENHEIT"
+  type="multiselect" />
+</form>

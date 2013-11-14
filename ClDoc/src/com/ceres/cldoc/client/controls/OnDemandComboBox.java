@@ -1,12 +1,13 @@
 package com.ceres.cldoc.client.controls;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.IEntitySelector;
 import com.ceres.cldoc.client.views.OnClick;
+import com.ceres.core.IApplication;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -20,7 +21,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySelector<T> {
+public class OnDemandComboBox <T extends Serializable> extends HorizontalPanel implements IEntitySelector<T> {
 
 	private final ListRetrievalService<T> listRetrievalService;
 	private final LabelFunction<T> labelFunction;
@@ -30,10 +31,10 @@ public class OnDemandComboBox <T> extends HorizontalPanel implements IEntitySele
 //	private final Image pbNew = new Image("icons/16/Button-Add-01.png");
 	
 	private List<T> itemList;
-	private final ClDoc clDoc;
+	private final IApplication clDoc;
 //	private final OnDemandChangeListener<T> changeListener;
 	
-	public OnDemandComboBox(final ClDoc clDoc, 
+	public OnDemandComboBox(final IApplication clDoc, 
 			ListRetrievalService<T> listRetrievalService, 
 			LabelFunction <T> labelFunxtion, 
 			final OnClick<TextBox> notFound,

@@ -2,15 +2,15 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.PersonDetails;
-import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
+import com.ceres.core.IEntity;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class EntityFile <T extends Entity> extends LayoutPanel {
+public class EntityFile <T extends IEntity> extends LayoutPanel {
 
 	private final T entity;
 	private boolean isModified;

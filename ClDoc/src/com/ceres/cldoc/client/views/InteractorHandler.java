@@ -1,9 +1,9 @@
 package com.ceres.cldoc.client.views;
 
 public class InteractorHandler {
-	protected InteractorLink link;
+	protected ClInteractorLink link;
 	
-	public InteractorHandler(InteractorLink link) {
+	public InteractorHandler(ClInteractorLink link) {
 		this.link = link;
 	}
 }

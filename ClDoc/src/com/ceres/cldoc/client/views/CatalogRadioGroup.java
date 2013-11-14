@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.core.IApplication;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -19,7 +19,7 @@ public class CatalogRadioGroup extends HorizontalPanel implements IEntitySelecto
 	protected HashMap<Long, RadioButton> buttons;
 	private Catalog selected;
 
-	public CatalogRadioGroup(ClDoc clDoc, final String parentCode, String orientation) {
+	public CatalogRadioGroup(IApplication clDoc, final String parentCode, String orientation) {
 		super();
 		setSpacing(5);
 		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
@@ -65,6 +65,7 @@ public class CatalogRadioGroup extends HorizontalPanel implements IEntitySelecto
 	
 	private final List<ChangeHandler> changeHandlers = new ArrayList<ChangeHandler>();
 	
+	@Override
 	public void addSelectionChangedHandler(ChangeHandler changeHandler) {
 		changeHandlers.add(changeHandler);
 	}

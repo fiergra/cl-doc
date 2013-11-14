@@ -68,13 +68,6 @@ public class SettingsPanel extends DockLayoutPanel {
 
 								@Override
 								public void onSuccess(Void result) {
-									SRV.configurationService.setLuceneIndexPath(clDoc.getSession(),fsn.absolutePath, new DefaultCallback<Void>(clDoc, "") {
-
-										@Override
-										public void onSuccess(Void result) {
-											new MessageBox("Lucene", "Lucene index path set to '" + fsn.absolutePath + "'", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
-										}
-									});
 									pp.hide();
 								}
 							});
@@ -160,7 +153,7 @@ public class SettingsPanel extends DockLayoutPanel {
 
 				pathName = lucenePathBox.getText();
 				if (pathName.length() > 0) {
-					SRV.configurationService.setLuceneIndexPath(clDoc.getSession(), pathName, NOP);
+//					SRV.configurationService.setLuceneIndexPath(clDoc.getSession(), pathName, NOP);
 				}
 			}});
 
@@ -183,13 +176,6 @@ public class SettingsPanel extends DockLayoutPanel {
 
 			@Override
 			public void toDialog() {
-				SRV.configurationService.getLuceneIndexPath(new DefaultCallback<String>(clDoc, "getLucenePath") {
-
-					@Override
-					public void onSuccess(String text) {
-						lucenePathBox.setText(text);
-					}
-				});
 				SRV.configurationService.getDocArchivePath(new DefaultCallback<String>(clDoc, "getDocArchivePath") {
 
 					@Override

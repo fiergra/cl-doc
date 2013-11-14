@@ -1,6 +1,5 @@
 package com.ceres.cldoc.client;
 
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.controls.Util;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
@@ -9,6 +8,7 @@ import com.ceres.cldoc.client.views.OnOkHandler;
 import com.ceres.cldoc.client.views.PersonEditor;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
+import com.ceres.core.ISession;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -53,7 +53,7 @@ public class LoginScreen extends LayoutPanel {
 
 	private final ClDoc clDoc;;
 	
-	public LoginScreen(final ClDoc clDoc, final OnOkHandler<Session> onOk) {
+	public LoginScreen(final ClDoc clDoc, final OnOkHandler<ISession> onOk) {
 		super();
 		addStyleName("background");
 //		setSize("100%", "100%");
@@ -75,10 +75,10 @@ public class LoginScreen extends LayoutPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				SRV.userService.login(txtUserName.getText(), txtPassWord.getText(), 
-						new DefaultCallback<Session>(clDoc, "") {
+						new DefaultCallback<ISession>(clDoc, "") {
 
 					@Override
-					public void onSuccess(Session result) {
+					public void onSuccess(ISession result) {
 						if (result != null) {
 							onOk.onOk(result);
 						} else {

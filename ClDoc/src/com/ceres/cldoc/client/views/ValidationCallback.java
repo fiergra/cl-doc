@@ -1,5 +1,5 @@
 package com.ceres.cldoc.client.views;
 
 public interface ValidationCallback {
-	void setValid(InteractorLink link, boolean isValid);
+	void setValid(ClInteractorLink link, boolean isValid);
 }

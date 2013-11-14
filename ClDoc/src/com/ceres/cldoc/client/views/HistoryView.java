@@ -10,11 +10,13 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.dynamicforms.IActRenderer;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.core.IEntity;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -34,15 +36,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class HistoryView extends DockLayoutPanel {
 
-	private final ActRenderer viewer;
+	private final IActRenderer viewer;
 	private final ClickableTable<Act>historyTable;
 	
-	private Entity e;
+	private IEntity e;
 	private final ClDoc clDoc;
 	private final TabLayoutPanel tab;
 	private final HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
 
-	public HistoryView(final ClDoc clDoc, Entity entity, final TabLayoutPanel tab) {
+	public HistoryView(final ClDoc clDoc, IEntity entity, final TabLayoutPanel tab) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.e = entity;
@@ -148,8 +150,8 @@ public class HistoryView extends DockLayoutPanel {
 					@Override
 					public void onOk(Act act) {
 						act.setParticipant(e, Participation.PROTAGONIST, new Date(), null);
-						act.setParticipant(clDoc.getSession().getUser().person, Participation.ADMINISTRATOR, new Date(), null);
-						act.setParticipant(clDoc.getSession().getUser().organisation, Participation.ORGANISATION, new Date(), null);
+						act.setParticipant(clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR, new Date(), null);
+						act.setParticipant(clDoc.getSession().getUser().getOrganisation(), Participation.ORGANISATION, new Date(), null);
 						
 						SRV.actService.save(clDoc.getSession(), act,
 								new DefaultCallback<Act>(clDoc, "save") {
@@ -179,11 +181,13 @@ public class HistoryView extends DockLayoutPanel {
 		historyTable.addStyleName("roundCorners");
 		splitPanel.addWest(historyTable, 400);
 
-		viewer = new ActRenderer(clDoc, new OnOkHandler<Act>() {
+		viewer = new ActRenderer2(clDoc, new OnOkHandler<Integer>() {
 
 			@Override
-			public void onOk(Act result) {
-				refresh(result);
+			public void onOk(Integer result) {
+				if (result == ActRenderer2.SAVE_DELETE || result == ActRenderer2.SAVE_INSERT) {
+					refresh(null);
+				}
 			}
 		}, new Runnable() {
 
@@ -192,7 +196,7 @@ public class HistoryView extends DockLayoutPanel {
 
 			}
 		});
-		viewer.addStyleName("viewer");
+//		viewer.addStyleName("viewer");
 		splitPanel.add(viewer);
 		add(splitPanel);
 

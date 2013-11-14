@@ -1,9 +1,12 @@
 package com.ceres.cldoc.model;
 
-import java.io.Serializable;
 import java.util.Set;
 
-public class User implements Serializable {
+import com.ceres.core.IOrganisation;
+import com.ceres.core.IPerson;
+import com.ceres.core.IUser;
+
+public class User implements IUser {
 	private static final long serialVersionUID = 4918516919583093321L;
 
 	public Long id;
@@ -15,6 +18,27 @@ public class User implements Serializable {
 	
 	public User() {
 		super();
+	}
+
+	@Override
+	public long getId() {
+		return id;
+	}
+
+	@Override
+	public IOrganisation getOrganisation() {
+		return organisation;
+	}
+
+	@Override
+	public IPerson getPerson() {
+		return person;
+	}
+
+	@Override
+	public String getUserName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

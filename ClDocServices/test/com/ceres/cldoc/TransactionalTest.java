@@ -3,17 +3,18 @@ package com.ceres.cldoc;
 import junit.framework.TestCase;
 
 import com.ceres.cldoc.model.User;
+import com.ceres.core.ISession;
 
 public class TransactionalTest extends TestCase {
 
 	private User user;
-	private Session session;
+	private ISession session;
 	
 	public User getUser() {
 		return user;
 	}
 
-	public Session getSession() {
+	public ISession getSession() {
 		return session;
 	}
 

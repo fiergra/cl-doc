@@ -1,0 +1,367 @@
+@CHARSET "ISO-8859-1";
+
+
+body, table td, select, button {
+	font-family: Calibri;
+	font-smooth: always;
+	font-size: medium;
+} 
+
+.gradientBackground {
+	background: #A7D4FF;
+	background: -webkit-gradient(linear, left top, left bottom, from(#A7D4FF), to(#4290B6));
+	background: -moz-linear-gradient(top,  #A7D4FF,  #4290B6);
+}
+
+.headerSeparator {
+	height: 32px;
+	color: #ccc;
+	background-color: #ccc;
+}
+
+.titleBar {
+	border-bottom-color: #518EAB;
+	border-bottom-width: 3px;
+	border-bottom-style: solid;
+	width: 100%;
+	height: 40px;
+}
+
+.titleBarLeft {
+	padding: 5px;
+	background-color: #6DA8C8;
+	color: white;
+	font-size: larger;
+	width: 100%;
+	height: 100%;
+}
+
+.titleBarRight {
+	padding: 5px;
+	background-color: #4290B6;
+	color: white;
+	font-size: larger;
+	width: 100%;
+	height: 100%;
+}
+
+.titleBarLabel {
+	color: white;
+	font-size: larger;
+	width: 100%;
+}
+
+
+.personSearchResult {
+	background-color: white;
+}
+
+.evenRow {
+	background-color: #CCC;
+}
+
+.resultRow {
+	cursor: pointer;
+}
+
+.resultRow:hover {
+	background-color:#4290B6;
+}
+
+.appointmentsHeaderRow {
+	background-color: #6DA8C8;
+	color: white;
+	font-size: larger;
+	font-weight: normal;
+	height: 2em;
+}
+
+.appointmentsHeaderCell {
+}
+
+.appointmentRenderer {
+	background-color:white;
+	border: 3px solid #4290B6;
+	padding: 1px;
+	font-size: x-small;
+	-webkit-border-radius: 8px; 
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+
+.appointmentsTable {
+	width: 100%;
+	height: 100%;
+	padding: 0px;
+	border-color: white;
+	background-color: white;
+	border-width: 1px; 
+}
+
+.imagePanel {
+    width: 48px; 
+	height: 48px;
+}
+
+
+@font-face {
+	src: local("Verdana.ttf");
+	fontFamily: Verdana;
+}
+
+@font-face {
+	src: local("Verdana");
+	fontFamily: Verdana;
+	fontWeight: normal;
+}
+
+
+.linkButton {
+	cursor: pointer; 
+}
+
+.linkButton:hover {
+	background-color:silver;
+}
+
+.monthBox {
+	background-color:#4290B6;
+	color: white;
+    -moz-box-shadow: 3px 3px 5px #888;
+    -webkit-box-shadow: 3px 3px 5px #888;
+    box-shadow: 3px 3px 5px #888;
+	padding: 8px 0px 0px 0px;
+}
+
+.monthBoxTitle {
+	color: white;
+	font-size: larger;
+	padding-left: 0.5em;
+	padding-bottom: 0.5em;
+}
+
+
+.monthGrid {
+/*	background: #A7D4FF; */
+	background: white;
+}
+
+.appointmentsBox {
+	height: 2.5em;
+	vertical-align: middle;
+}
+
+.appointmentBox {
+	background-color:#e0e0e0;
+	border: 1px solid #4290B6;
+	padding: .5em .5em .5em .5em;
+    -moz-box-shadow: 3px 3px 5px #888;
+    -webkit-box-shadow: 3px 3px 5px #888;
+    box-shadow: 3px 3px 5px #888;
+	-webkit-border-radius: .5em; 
+	-moz-border-radius: .5em;
+	border-radius: .5em;
+}
+
+.slotBox {
+	background-color:#e0e0e0;
+	border: 3px solid #4290B6;
+    -moz-box-shadow: 3px 3px 5px #888;
+    -webkit-box-shadow: 3px 3px 5px #888;
+    box-shadow: 3px 3px 5px #888;
+	-webkit-border-radius: .5em; 
+	-moz-border-radius: .5em;
+	border-radius: .5em;
+}
+
+.waitBox {
+	background-color:#e0e0e0;
+	border: 3px solid #4290B6;
+	-webkit-border-radius: .5em; 
+	-moz-border-radius: .5em;
+	border-radius: .5em;
+}
+
+
+.slot {
+	border: 1px solid #d0d0d0;
+	font-family: Verdana, Geneva, sans-serif;
+	cursor: default;
+}
+
+.slot-available {
+	background-color:#71E2A2;
+	cursor: pointer;
+}
+
+.slot-available:hover {
+	background-color:#dcfde8;
+}
+
+.slot-disabled {
+	background-color:#FF7854;
+	cursor: no-drop;
+}
+
+
+.dayInMonth {
+	text-align: center;
+	vertical-align: middle;
+	font-family:Verdana, Geneva, sans-serif;
+	font-size: small;
+	padding-top: 0.2em;
+	cursor: default;
+}
+
+.dayInMonth-available:hover {
+	background-color:#dcfde8;
+	color: black;
+	cursor: pointer;
+    -moz-box-shadow: 3px 3px 5px #888;
+    -webkit-box-shadow: 3px 3px 5px #888;
+    box-shadow: 3px 3px 5px #888;
+}
+
+.dayInMonth-available {
+	background-color:#71E2A2;
+	font-weight: normal;
+	cursor: pointer;
+}
+
+.dayOfWeekHeader {
+	font-weight: normal;
+	text-align: center;
+	font-size: smaller;
+	color: #4290B6;
+}
+
+.dayInMonth-complete {
+	background-color:#FF7854;
+	font-family: Verdana, Geneva, sans-serif;
+	text-align: center;
+	cursor: no-drop;
+}
+
+.personHeader {
+	font-size: x-large;
+	text-shadow: black;
+	width: 100%;
+	height: 2.5em;
+	background-color: white;
+}
+
+#status { position:absolute; left:1px; bottom:1px; right:1px; height:2em; }
+
+.dayInMonth-disabled {
+	color:#666;
+	background-color:#b7babc;
+	cursor: no-drop;
+}
+.gwt-SuggestBox {
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+}
+
+.gwt-TextArea {
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+	border: none;
+	border-top: none;
+}
+
+.gwt-TextBox {
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+	border: 1px solid #CCC;
+}
+
+.gwt-DateBox {
+	padding: 5px 4px;
+	border: 1px solid #CCC;
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+}
+
+.gwt-PasswordTextBox {
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+}
+
+
+.gwt-ListBox {
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+}
+
+.gwt-RadioButton {
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+}
+
+.gwt-CheckBox {
+	font-family: Calibri;
+	font-weight: normal;
+	font-size: medium;
+}
+
+.gwt-SplitLayoutPanel {
+  background-color: white;
+}
+
+.gwt-SplitLayoutPanel-HDragger {
+background: whiteurl(images/thumb_vertical.png) center center no-repeat;
+cursor: col-resize;
+}
+
+.gwt-Tree .gwt-TreeItem-selected {
+background: #6DA8C8;
+}
+
+.gwt-TabLayoutPanel {
+}
+
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+  background: #6DA8C8;
+  padding-top: 0px;
+  padding-left: 0px;
+  border-bottom-style: solid;
+  border-bottom-color: #4290B6;
+}
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 0px 1px 1px;
+}
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
+  overflow: hidden;
+  padding: 6px;
+  background-color: #CCC
+}
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+  margin-left: 4px;
+  padding: 4px 8px 0px 8px;
+  cursor: pointer;
+  cursor: hand;
+  color: lightgray;
+  font-weight: normal;
+  font-size: larger;
+  text-align: center;
+  background: #6DA8C8;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  height: 34px;
+}
+.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+  cursor: default;
+  background: #4290B6;
+  color: white;
+  font-weight: normal;
+}

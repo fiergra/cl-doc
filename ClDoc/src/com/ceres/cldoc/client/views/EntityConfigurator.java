@@ -107,7 +107,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 			
 			@Override
 			public boolean addRow(FlexTable table, int row, final Entity entry) {
-				table.setWidget(row, 0, new Label(entry.id.toString()));
+				table.setWidget(row, 0, new Label(entry.getId().toString()));
 				Label label = new Label(entry.getName());
 //				clDoc.getDragController().makeDraggable(label, new Label(entry.name));
 				table.setWidget(row, 1, label);
@@ -252,7 +252,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 //			} else {
 				
 				final PagesView tlp = new PagesView(null);
-				final Collection<Act> acts = new ArrayList<Act>();
+				final List<Act> acts = new ArrayList<Act>();
 				for (LayoutDefinition ld:result) {
 					Act act = getMasterDataAct(masterData, ld.actClass);
 					acts.add(act);
@@ -282,10 +282,10 @@ public class EntityConfigurator extends DockLayoutPanel {
 								for (Act act:acts) {
 									act.setParticipant(e, Participation.PROTAGONIST);
 								}
-								SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<Collection<Act>>(clDoc, "save masterdata" ) {
+								SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<List<Act>>(clDoc, "save masterdata" ) {
 
 									@Override
-									public void onSuccess(Collection<Act> result) {
+									public void onSuccess(List<Act> result) {
 										pp.hide();
 										onSave.run();
 									}
@@ -383,8 +383,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 //			entity = new Organisation();
 //			break;
 		default:
-			entity = new Entity();
-			entity.type = t;
+			entity = new Entity(t);
 		}
 		
 		return entity;

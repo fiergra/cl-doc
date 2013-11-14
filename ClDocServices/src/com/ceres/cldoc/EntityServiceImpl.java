@@ -20,18 +20,19 @@ import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
+import com.ceres.core.ISession;
 
 public class EntityServiceImpl implements IEntityService {
 
 	private static Logger log = Logger.getLogger("EntityService");
 
 	@Override
-	public void save(Session session, final Entity entity) {
+	public void save(ISession session, final Entity entity) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public Void execute(Connection con) throws SQLException {
-				if (entity.id == null) {
+				if (entity.getId() == null) {
 					insertEntity(con, entity);
 					if (entity instanceof Person) {
 						insertPerson(con, (Person) entity);
@@ -97,7 +98,7 @@ public class EntityServiceImpl implements IEntityService {
 						"insert into Address (Entity_id, phone, note, street, number, co, postcode, city) values (?,?,?,?,?,?,?,?)",
 						new String[] { "ID" });
 		int i = 1;
-		s.setLong(i++, a.entity.id);
+		s.setLong(i++, a.entity.getId());
 		s.setString(i++, a.phone);
 		s.setString(i++, a.note);
 		s.setString(i++, a.street);
@@ -114,8 +115,8 @@ public class EntityServiceImpl implements IEntityService {
 		PreparedStatement s = con
 				.prepareStatement("update Entity set name = ?, type = ? where id = ?");
 		s.setString(1, entity.getName());
-		s.setLong(2, entity.type);
-		s.setLong(3, entity.id);
+		s.setLong(2, entity.getType());
+		s.setLong(3, entity.getId());
 		s.executeUpdate();
 		s.close();
 	}
@@ -126,15 +127,15 @@ public class EntityServiceImpl implements IEntityService {
 				"insert into Entity (name,type) values (?,?)",
 				new String[] { "ID" });
 		s.setString(1, entity.getName());
-		s.setLong(2, entity.type);
-		entity.id = Jdbc.exec(s);
+		s.setLong(2, entity.getType());
+		entity.setId(Jdbc.exec(s));
 		s.close();
 	}
 
 	private void insertOrganisation(Connection con, Organisation entity) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
 				"insert into Organisation (id) values (?)");
-		s.setLong(1, entity.id);
+		s.setLong(1, entity.getId());
 		s.execute();
 		s.close();
 	}
@@ -149,7 +150,7 @@ public class EntityServiceImpl implements IEntityService {
 		} else {
 			s.setNull(i++, Types.INTEGER);
 		}
-		s.setLong(i++, person.id);
+		s.setLong(i++, person.getId());
 		s.setString(i++, person.firstName);
 		s.setString(i++, person.lastName);
 		s.setString(i++, person.firstName);
@@ -168,7 +169,7 @@ public class EntityServiceImpl implements IEntityService {
 		PreparedStatement s = con
 				.prepareStatement("insert into Patient(id,per_id) values (?,?)");
 		int i = 1;
-		s.setLong(i++, person.id);
+		s.setLong(i++, person.getId());
 		s.setLong(i++, person.perId);
 		s.executeUpdate();
 		s.close();
@@ -194,7 +195,7 @@ public class EntityServiceImpl implements IEntityService {
 		} else {
 			s.setNull(i++, Types.DATE);
 		}
-		s.setLong(i++, person.id);
+		s.setLong(i++, person.getId());
 		s.executeUpdate();
 		s.close();
 	}
@@ -206,7 +207,7 @@ public class EntityServiceImpl implements IEntityService {
 		int i = 1;
 
 		s.setLong(i++, person.perId);
-		s.setLong(i++, person.id);
+		s.setLong(i++, person.getId());
 		int rows = s.executeUpdate();
 		s.close();
 		
@@ -216,7 +217,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public <T extends Entity> List<T> load(final Session session, final String filter, final String roleCode) {
+	public <T extends Entity> List<T> load(final ISession session, final String filter, final String roleCode) {
 		List<T> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -229,14 +230,14 @@ public class EntityServiceImpl implements IEntityService {
 
 	
 	@SuppressWarnings("unchecked")
-	private <T extends Entity> T load(Session session, Connection con, long id) throws SQLException {
+	private <T extends Entity> T load(ISession session, Connection con, long id) throws SQLException {
 		List<Entity> entities = list(session, con, null, null, id);
 		return (T) (entities.isEmpty() ? null : entities.get(0));
 	}	
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Entity> list(final Session session, final Integer typeId, final Long id) {
+	public List<Entity> list(final ISession session, final Integer typeId, final Long id) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -246,12 +247,12 @@ public class EntityServiceImpl implements IEntityService {
 		});
 	}	
 	
-	private Entity fetchEntity(Session session, Entity e, ResultSet rs, String prefix) throws SQLException {
+	private Entity fetchEntity(ISession session, Entity e, ResultSet rs, String prefix) throws SQLException {
 		long entityId = rs.getLong(prefix + "entityId");
 		Long perId = Jdbc.getLong(rs, prefix + "per_Id");
 		
 		
-		if (e == null || !e.id.equals(entityId)) {
+		if (e == null || !e.getId().equals(entityId)) {
 			int typeId = rs.getInt(prefix + "type");
 			switch (typeId) {
 			case Entity.ENTITY_TYPE_PERSON: 
@@ -270,9 +271,9 @@ public class EntityServiceImpl implements IEntityService {
 			default:
 				e = new Entity();
 			}
-			e.id = entityId;
+			e.setId(entityId);
 			e.setName(rs.getString(prefix + "name"));
-			e.type = rs.getInt(prefix + "type");
+			e.setType(rs.getInt(prefix + "type"));
 		}
 		Long addressId = rs.getLong(prefix + "addressId");
 		if (!rs.wasNull()) {
@@ -292,7 +293,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Entity> list(Session session, Connection con, String name, Integer typeId, Long id) throws SQLException {
+	private List<Entity> list(ISession session, Connection con, String name, Integer typeId, Long id) throws SQLException {
 		List<Entity> result = new ArrayList<Entity>();
 		String sql = "select e.id entityId, e.name, e.type, pers.gender, pat.per_id, pers.firstname, pers.lastname, pers.dateofbirth, e.type, adr.id addressId, phone, note, street, number, city, postcode, co from Entity e "
 				+ "left outer join Person pers on pers.id = e.id "
@@ -338,11 +339,11 @@ public class EntityServiceImpl implements IEntityService {
 
 	private Organisation fetchOrganisation(ResultSet rs, String prefix, long entityId) {
 		Organisation o = new Organisation();
-		o.id = entityId;
+		o.setId(entityId);
 		return o;
 	}
 
-	private Person fetchPerson(Session session, Person p, ResultSet rs, String prefix, long entityId) throws SQLException {
+	private Person fetchPerson(ISession session, Person p, ResultSet rs, String prefix, long entityId) throws SQLException {
 		if (p == null) {
 			p = new Person();
 		}
@@ -352,12 +353,12 @@ public class EntityServiceImpl implements IEntityService {
 		}
 		p.firstName = rs.getString(prefix + "firstname");
 		p.lastName = rs.getString(prefix + "lastname");
-		p.id = entityId;
+		p.setId(entityId);
 		p.dateOfBirth = rs.getDate(prefix + "dateofbirth");
 		return p;
 	}
 
-	private Patient fetchPatient(Session session, ResultSet rs, String prefix, long entityId) throws SQLException {
+	private Patient fetchPatient(ISession session, ResultSet rs, String prefix, long entityId) throws SQLException {
 		Patient p = new Patient();
 		fetchPerson(session, p, rs, prefix, entityId);
 		p.perId = rs.getLong(prefix + "per_id");
@@ -365,7 +366,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public <T extends Entity> T load(final Session session, final long id) {
+	public <T extends Entity> T load(final ISession session, final long id) {
 		T e = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -377,7 +378,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public List<Person> search(final Session session, final String filter) {
+	public List<Person> search(final ISession session, final String filter) {
 		List<Person> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -390,7 +391,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 	
 	
-	private List<Person> selectPersons(Session session, Connection con, String filter, String role) throws SQLException {
+	private List<Person> selectPersons(ISession session, Connection con, String filter, String role) throws SQLException {
 		Collection<String> names = new ArrayList<String>();
 		Collection<Long> ids = new ArrayList<Long>();
 
@@ -460,7 +461,7 @@ public class EntityServiceImpl implements IEntityService {
 	
 
 	@Override
-	public <T extends Entity> List<T> list(final Session session, final int typeId) {
+	public <T extends Entity> List<T> list(final ISession session, final int typeId) {
 		List<T> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -472,7 +473,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public List<EntityRelation> listRelations(final Session session, final Entity entity, final boolean asSubject, final Catalog relationType) {
+	public List<EntityRelation> listRelations(final ISession session, final Entity entity, final boolean asSubject, final Catalog relationType) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -498,7 +499,7 @@ public class EntityServiceImpl implements IEntityService {
 				}
 				sql += " order by type.id, " + (!asSubject ? "subject.name" : "object.name") ;
 				PreparedStatement s = con.prepareStatement(sql);
-				s.setLong(1, entity.id);
+				s.setLong(1, entity.getId());
 				if (relationType != null) {
 					s.setLong(2, relationType.id);
 				}
@@ -507,14 +508,8 @@ public class EntityServiceImpl implements IEntityService {
 				while (rs.next()) {
 					EntityRelation er = new EntityRelation();
 					er.id = rs.getLong("relationId");
-					er.subject = new Entity();
-					er.subject.id = rs.getLong("subject_entityId");
-					er.subject.type = rs.getInt("subject_type");
-					er.subject.setName(rs.getString("subject_name"));
-					er.object = new Entity();
-					er.object.id = rs.getLong("object_entityId");
-					er.object.type = rs.getInt("object_type");
-					er.object.setName(rs.getString("object_name"));
+					er.subject = new Entity(rs.getLong("subject_entityId"), rs.getInt("subject_type"), rs.getString("subject_name"));
+					er.object = new Entity(rs.getLong("object_entityId"), rs.getInt("object_type"), rs.getString("object_name"));
 //					er.subject = fetchEntity(session, null, rs, "subject_");
 //					er.object = fetchEntity(session, null, rs, "object_");
 					er.type = CatalogServiceImpl.fetchCatalog(rs, "type_");
@@ -531,7 +526,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public List<Entity> list(final Session session, final String criteria, final int typeId) {
+	public List<Entity> list(final ISession session, final String criteria, final int typeId) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -542,7 +537,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public EntityRelation save(Session session, final EntityRelation er) {
+	public EntityRelation save(ISession session, final EntityRelation er) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -550,8 +545,8 @@ public class EntityServiceImpl implements IEntityService {
 				PreparedStatement s = con.prepareStatement(
 						"insert into EntityRelation (type, subjectid, objectid) values (?,?,?);", new String[]{"ID"});
 				s.setLong(1, er.type.id);
-				s.setLong(2, er.subject.id);
-				s.setLong(3, er.object.id);
+				s.setLong(2, er.subject.getId());
+				s.setLong(3, er.object.getId());
 				er.id = Jdbc.exec(s);
 				s.close();
 				return er;
@@ -560,7 +555,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public void delete(Session session, final EntityRelation er) {
+	public void delete(ISession session, final EntityRelation er) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -576,7 +571,7 @@ public class EntityServiceImpl implements IEntityService {
 	}
 
 	@Override
-	public long getUniqueId(Session session) {
+	public long getUniqueId(ISession session) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

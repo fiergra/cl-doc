@@ -10,24 +10,25 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.CatalogList;
-import com.ceres.cldoc.model.Entity;
+import com.ceres.core.IEntity;
+import com.ceres.core.ISession;
 
 public interface IActService {
-	void save(Session session, Act act);
-	Act load(Session session, long id);
+	void save(ISession session, Act act);
+	Act load(ISession session, long id);
 	
 	void registerActClass(Connection con, ActClass actClass)
 			throws SQLException;
 	
-	List<ActClass> listClasses(Session session, String filter);
-	List<Act> load(Session session, Entity entity, Long roleId, Date date);
-	void delete(Session session, Act act);
+	List<ActClass> listClasses(ISession session, String filter);
+	List<Act> load(ISession session, IEntity entity, Long roleId, Date date);
+//	void delete(ISession session, Act act);
 	
-	CatalogList loadCatalogList(Session session, long listId);
-	void rebuildIndex(Session session);
-	void save(Session session, Collection<Act> acts);
+	CatalogList loadCatalogList(ISession session, long listId);
+//	void rebuildIndex(ISession session);
+	void save(ISession session, Collection<Act> acts);
 	
-	List<Attachment> listAttachments(Session session, Act act);
-	void saveAttachment(Session session, Attachment attachment);
-	void deleteAttachment(Session session, Attachment attachment);
+	List<Attachment> listAttachments(ISession session, Act act);
+	void saveAttachment(ISession session, Attachment attachment);
+	void deleteAttachment(ISession session, Attachment attachment);
 }
