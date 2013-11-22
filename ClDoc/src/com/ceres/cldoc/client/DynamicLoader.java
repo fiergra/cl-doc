@@ -1,7 +1,7 @@
 package com.ceres.cldoc.client;
 
 import com.ceres.cldoc.client.views.AssignmentsPanel;
-import com.ceres.cldoc.client.views.CatalogConfigurator;
+import com.ceres.cldoc.client.views.CatalogConfigurator2;
 import com.ceres.cldoc.client.views.Configurator;
 import com.ceres.cldoc.client.views.DebugPanel;
 import com.ceres.cldoc.client.views.EntityConfigurator;
@@ -49,7 +49,7 @@ public class DynamicLoader {
 		} else if (name.equals("Einstellungen")) {
 			result = new SettingsPanel(clDoc);
 		} else if (name.equals("Kataloge")) {
-			result = new CatalogConfigurator(clDoc);
+			result = new CatalogConfigurator2(clDoc);
 		} else if (name.equals("Layouts")) {
 			result = new Styler(clDoc);
 		} else if (name.equals("Entitaeten")) {

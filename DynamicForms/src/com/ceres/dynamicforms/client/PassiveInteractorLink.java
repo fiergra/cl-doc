@@ -13,5 +13,10 @@ public class PassiveInteractorLink extends InteractorLink {
 	@Override
 	public void toDialog(INamedValues item){};
 	@Override
-	public void fromDialog(INamedValues item){};
+	public void fromDialog(INamedValues item){}
+
+	@Override
+	public boolean isEmpty() {
+		return true;
+	};
 }

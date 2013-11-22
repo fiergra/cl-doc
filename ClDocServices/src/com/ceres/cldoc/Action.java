@@ -1,13 +1,12 @@
 package com.ceres.cldoc;
 
-import com.ceres.cldoc.model.Catalog;
 import com.ceres.core.IAction;
 
 public class Action implements IAction {
-	public final Catalog type;
-	public final Catalog action;
+	public final String type;
+	public final String action;
 	
-	public Action(Catalog type, Catalog action) {
+	public Action(String type, String action) {
 		super();
 		this.type = type;
 		this.action = action;

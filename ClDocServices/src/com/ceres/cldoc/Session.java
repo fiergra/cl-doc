@@ -2,7 +2,6 @@ package com.ceres.cldoc;
 
 import java.io.Serializable;
 
-import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.Policies;
 import com.ceres.core.IAction;
@@ -28,7 +27,7 @@ public class Session implements ISession, Serializable {
 		return policies != null ? policies.isAllowed(a.type, a.action) : false;
 	}
 
-	private boolean isAllowed(Catalog type, Catalog action) {
+	private boolean isAllowed(String type, String action) {
 		return policies != null ? policies.isAllowed(type, action) : false;
 	}
 //	public ISession(User user, long id) {

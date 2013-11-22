@@ -24,4 +24,6 @@ public abstract class InteractorLink {
 		return widget;
 	}
 
+	public abstract boolean isEmpty();
+
 }

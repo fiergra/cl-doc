@@ -74,13 +74,13 @@ public class ParticipationServiceImpl implements IParticipationService {
 	}
 
 	@Override
-	public HashMap<Long, Participation> load(final ISession session, final Act act) {
-		HashMap<Long, Participation> result = Jdbc.doTransactional(session, new ITransactional() {
+	public HashMap<String, Participation> load(final ISession session, final Act act) {
+		HashMap<String, Participation> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public HashMap<Long, Participation> execute(Connection con) throws SQLException {
+			public HashMap<String, Participation> execute(Connection con) throws SQLException {
 				IEntityService entityService = Locator.getEntityService();
-				HashMap<Long, Participation> result = new HashMap<Long, Participation>();		
+				HashMap<String, Participation> result = new HashMap<String, Participation>();		
 				PreparedStatement s = con.prepareStatement("select * from Participation where actid = ?");
 				s.setLong(1, act.id);
 				ResultSet rs = s.executeQuery();
@@ -95,7 +95,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 					if (rs.wasNull()) {
 						p.end = null;
 					}
-					result.put(p.role.id, p);
+					result.put(p.role.code, p);
 				}
 				rs.close();
 				s.close();
@@ -112,14 +112,14 @@ public class ParticipationServiceImpl implements IParticipationService {
 	}
 
 	@Override
-	public void delete(ISession session, final long actId, final long roleId) {
+	public void delete(ISession session, final long actId, final String roleId) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public Void execute(Connection con) throws SQLException {
-				PreparedStatement s = con.prepareStatement("delete from Participation where actid = ? and role = ?");
+				PreparedStatement s = con.prepareStatement("delete from Participation where actid = ? and role = (select id from Catalog where code = ?)");
 				s.setLong(1, actId);
-				s.setLong(2, roleId);
+				s.setString(2, roleId);
 				int rows = s.executeUpdate();
 				return null;
 			}

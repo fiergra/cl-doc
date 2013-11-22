@@ -93,15 +93,15 @@ public class ActServiceImpl implements IActService {
 
 	protected void saveParticipations(ISession session, Act act) {
 		if (act.participations != null) {
-			Iterator<Entry<Long, Participation>> iter = act.participations.entrySet().iterator();
+			Iterator<Entry<String, Participation>> iter = act.participations.entrySet().iterator();
 			while (iter.hasNext()) {
-				Entry<Long, Participation> nextEntry = iter.next();
+				Entry<String, Participation> nextEntry = iter.next();
 				saveParticipation(session, act, nextEntry.getKey(), nextEntry.getValue());
 			}
 		}
 	}
 
-	private void saveParticipation(ISession session,	Act act, long roleId, Participation participation) {
+	private void saveParticipation(ISession session, Act act, String roleId, Participation participation) {
 		IParticipationService participationService = Locator.getParticipationService();
 		if (participation != null) {
 			participationService.save(session, participation);

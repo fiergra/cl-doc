@@ -35,5 +35,10 @@ public class BooleanLink extends InteractorLink {
 		return (CheckBox) super.getWidget();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return !getWidget().getValue();
+	}
+
 	
 }

@@ -44,7 +44,7 @@ public class WidgetCreator {
 			}
 		}
 		
-		if (true) {//application.getSession().isActionAllowed("WORKFLOW_TAB", "DON'T CARE", "VIEW")) {
+		if (false) {//application.getSession().isActionAllowed("WORKFLOW_TAB", "DON'T CARE", "VIEW")) {
 			TabLayoutPanel theTab = new TabLayoutPanel(3, Unit.EM);
 			theTab.add(mainPanel, ">Form");
 			theTab.add(createEditor(document), ">Layout");
@@ -157,19 +157,22 @@ public class WidgetCreator {
 	public static void addLinkFactory(String localName, ILinkFactory factory) {
 		linkFactories.put(localName, factory);
 	}
-	
 	private static Widget createWidgetFromElement(IApplication application, Element element, Interactor interactor) {
 		String tagName = element.getTagName();
+		return createWidgetFromElementName(application, tagName, asHashMap(element.getAttributes()), interactor);
+	}
+	
+	public static Widget createWidgetFromElementName(IApplication application, String tagName, HashMap<String, String> attributes, Interactor interactor) {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
 		InteractorLink link = null;
 		String fieldName = null; 
 		
-		if (element.hasAttribute("fieldName")) {
-			fieldName = element.getAttribute("fieldName");
-		} else if (element.hasAttribute("name")) {
-			fieldName = element.getAttribute("name");
+		if (attributes.containsKey("fieldName")) {
+			fieldName = attributes.get("fieldName");
+		} else if (attributes.containsKey("name")) {
+			fieldName = attributes.get("name");
 		}
 		
 		if ("VBox".equals(localName)) {
@@ -180,19 +183,19 @@ public class WidgetCreator {
 			widget.setStyleName("HBox");
 		} else if ("Form".equals(localName)){
 			widget = new SimpleForm(application);
-			if (element.hasAttribute("label")) {
-				widget.setTitle(element.getAttribute("label"));
+			if (attributes.containsKey("label")) {
+				widget.setTitle(attributes.get("label"));
 			}
 		} else if ("form".equals(localName)){
 			widget = new SimpleForm(application);
-			element.setAttribute("width", "100%");
-			if (element.hasAttribute("label")) {
-				widget.setTitle(element.getAttribute("label"));
+			attributes.put("width", "100%");
+			if (attributes.containsKey("label")) {
+				widget.setTitle(attributes.get("label"));
 			}
 		} else if ("ResourceFormItem".equals(localName) || "FormItem".equals(localName)){
-			widget = new SimpleFormItem(element.getAttribute("label"));
+			widget = new SimpleFormItem(attributes.get("label"));
 		} else if ("line".equals(localName)){
-			String label = element.hasAttribute("label") ? element.getAttribute("label") : fieldName;
+			String label = attributes.containsKey("label") ? attributes.get("label") : fieldName;
 			widget = new SimpleFormItem(label);
 		} else if ("StatusComboBox".equals(localName)){
 			ListBox listBox = new ListBox();
@@ -200,42 +203,42 @@ public class WidgetCreator {
 			widget = listBox;
 		} else if ("ItemFieldDateField".equals(localName) || "date".equals(localName)){
 			DateTextBox db =  new DateTextBox();
-			link = new DateLink(interactor, fieldName, db, asHashMap(element.getAttributes()));
+			link = new DateLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("time".equals(localName)){
 			TimeTextBox db = new TimeTextBox();
-			link = new DateLink(interactor, fieldName, db, asHashMap(element.getAttributes()));
+			link = new DateLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("long".equals(localName)){
 			LongTextBox db = new LongTextBox();
-			link = new LongLink(interactor, fieldName, db, asHashMap(element.getAttributes()));
+			link = new LongLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("float".equals(localName)){
 			FloatTextBox db = new FloatTextBox();
-			link = new FloatLink(interactor, fieldName, db, asHashMap(element.getAttributes()));
+			link = new FloatLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFromDateField".equals(localName)){
 			DateTextBox db =  new DateTextBox();
-			link = new DateFromLink(interactor, fieldName, db, asHashMap(element.getAttributes()));
+			link = new DateFromLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFieldCheckBox".equals(localName)){
 			widget = new CheckBox();
-			link = new BooleanLink(interactor, fieldName, (CheckBox) widget, asHashMap(element.getAttributes()));
+			link = new BooleanLink(interactor, fieldName, (CheckBox) widget, attributes);
 		} else if ("yesno".equals(localName)){
 			widget = new YesNoRadioGroup();
-			link = new YesNoLink(interactor, fieldName, (YesNoRadioGroup)widget, asHashMap(element.getAttributes()));
+			link = new YesNoLink(interactor, fieldName, (YesNoRadioGroup)widget, attributes);
 		} else if ("ItemFieldTextInput".equals(localName)){
 			widget = new TextBox();
-			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, asHashMap(element.getAttributes()));
+			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
 		} else if ("ItemFieldTextArea".equals(localName)){
 			widget = new TextArea();
-			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, asHashMap(element.getAttributes()));
+			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
 		} else if ("HRule".equals(localName)){
 			widget = new HTML("<hr/>");
 		} else {
 			ILinkFactory linkFactory = linkFactories.get(localName);
 			if (linkFactory != null) {
-				link = linkFactory.createLink(application, interactor, fieldName, asHashMap(element.getAttributes()));
+				link = linkFactory.createLink(application, interactor, fieldName, attributes);
 				widget = link.widget;
 			} else {
 				widget = new Label(localName + " not yet supported!");
@@ -243,11 +246,11 @@ public class WidgetCreator {
 		}
 
 		if (widget != null) {
-			if (element.hasAttribute("width")) {
-				widget.setWidth(element.getAttribute("width"));
+			if (attributes.containsKey("width")) {
+				widget.setWidth(attributes.get("width"));
 			}
-			if (element.hasAttribute("height")) {
-				widget.setWidth(element.getAttribute("height"));
+			if (attributes.containsKey("height")) {
+				widget.setWidth(attributes.get("height"));
 			}
 			
 			if (fieldName != null && link != null) {
