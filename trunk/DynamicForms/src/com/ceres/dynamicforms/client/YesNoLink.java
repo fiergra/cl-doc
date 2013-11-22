@@ -35,5 +35,10 @@ public class YesNoLink extends InteractorLink {
 		return (YesNoRadioGroup) super.getWidget();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return !getWidget().getValue();
+	}
+
 	
 }

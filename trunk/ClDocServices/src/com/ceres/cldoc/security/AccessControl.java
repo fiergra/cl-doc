@@ -23,7 +23,7 @@ public class AccessControl {
 			
 			@Override
 			public Policies execute(Connection con) throws SQLException {
-				HashMap<Catalog, Collection<Catalog>> actions = new HashMap<Catalog, Collection<Catalog>>();
+				HashMap<String, Collection<String>> actions = new HashMap<String, Collection<String>>();
 				getRoles(session, con, user, entity);
 				
 				if (!user.roles.isEmpty()) {
@@ -38,13 +38,16 @@ public class AccessControl {
 					PreparedStatement s = con.prepareStatement(sql);
 					ResultSet rs = s.executeQuery();
 					while (rs.next()) {
-						Catalog role = new Catalog(rs.getLong("role_id"), rs.getString("role_code"));
-						Catalog objectType = new Catalog(rs.getLong("objectType_id"), rs.getString("objectType_code"));
-						Catalog action = new Catalog(rs.getLong("action_id"), rs.getString("action_code"));
+//						Catalog role = new Catalog(rs.getLong("role_id"), rs.getString("role_code"));
+//						Catalog objectType = new Catalog(rs.getLong("objectType_id"), rs.getString("objectType_code"));
+//						Catalog action = new Catalog(rs.getLong("action_id"), rs.getString("action_code"));
+						String role = rs.getString("role_code");
+						String objectType = rs.getString("objectType_code");
+						String action = rs.getString("action_code");
 						
-						Collection<Catalog> typeActions = actions.get(objectType);
+						Collection<String> typeActions = actions.get(objectType);
 						if (typeActions == null) {
-							typeActions = new HashSet<Catalog>();
+							typeActions = new HashSet<String>();
 							actions.put(objectType, typeActions);
 						}
 						

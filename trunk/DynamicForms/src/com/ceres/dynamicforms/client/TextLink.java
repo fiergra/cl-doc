@@ -34,6 +34,11 @@ public class TextLink extends InteractorLink {
 		return (TextBoxBase) super.getWidget();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return getWidget().getText() == null || getWidget().getText().length() == 0;
+	}
+
 	
 	
 }

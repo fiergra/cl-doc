@@ -40,5 +40,9 @@ public class CatalogList implements Serializable {
 		}
 		
 	}
+
+	public boolean isEmpty() {
+		return list == null || list.isEmpty();
+	}
 	
 }

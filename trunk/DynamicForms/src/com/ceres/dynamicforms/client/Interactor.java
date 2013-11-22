@@ -2,6 +2,7 @@ package com.ceres.dynamicforms.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class Interactor {
 	
@@ -41,6 +42,15 @@ public class Interactor {
 	public void onChange(InteractorLink textLink) {
 		isModified = true;
 		changeHandler.run();
+	}
+
+	public boolean isEmpty() {
+		boolean isEmpty = true;
+		Iterator<InteractorLink> iter = links.iterator();
+		while (isEmpty && iter.hasNext()) {
+			isEmpty = isEmpty && iter.next().isEmpty();
+		}
+		return isEmpty;
 	}
 
 }

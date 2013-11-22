@@ -23,7 +23,6 @@ public abstract class ActListRenderer extends DockLayoutPanel implements IView {
 	private final ClDoc clDoc;
 	
 	private final List<ClInteractor> interactors = new ArrayList<ClInteractor>();
-	private Date date;
 	private final Runnable setModified;
 
 	public static class FieldDef {
@@ -45,7 +44,6 @@ public abstract class ActListRenderer extends DockLayoutPanel implements IView {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.fieldDefs = fieldDefs;
-		this.date = date;
 		this.setModified = setModified;
 		
 		actsPanel.setWidth("100%");
@@ -136,7 +134,6 @@ public abstract class ActListRenderer extends DockLayoutPanel implements IView {
 	}
 
 	public void setActs(List<Act> result, Date date) {
-		this.date = date;
 		interactors.clear();
 		actsPanel.clear();
 		actsPanel.removeAllRows();

@@ -3,6 +3,7 @@ package com.ceres.cldoc.client.views;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.ceres.cldoc.Action;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
@@ -30,6 +31,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ActRenderer2 extends LayoutPanel implements IActRenderer {
@@ -50,6 +52,7 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 		WidgetCreator.addLinkFactory("list", new CatalogSingleSelectorFactory(true));
 		WidgetCreator.addLinkFactory("option", new CatalogSingleSelectorFactory(false));
 		WidgetCreator.addLinkFactory("multiselect", new CatalogMultiSelectorFactory());
+		WidgetCreator.addLinkFactory("participationtime", new ParticipationTimeFactory());
 	}
 	
 	public ActRenderer2(
@@ -67,6 +70,7 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 	private Widget renderer = null;
 	
 	private final Collection<LinkButton> actButtons = new ArrayList<LinkButton>();
+	private LayoutDefinition layoutDefinition;
 	
 	private LinkButton addLinkButton(HorizontalPanel buttons, int index, String toolTip, String enabledImage, String disabledImage, 
 			ClickHandler clickHandler) {
@@ -89,6 +93,37 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 		
 
 		int index = 1;
+		if (clDoc.getSession().isAllowed(new Action("Layouts", "VIEW"))) {
+			LinkButton pbEdit = addLinkButton(buttons, index++, "Layout", "icons/32/Edit-Document-icon.png", "icons/32/Edit-Document-icon.disabled.png", new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					final LayoutEditor led = new LayoutEditor(clDoc, act, layoutDefinition, new OnClick<String>() {
+						
+						@Override
+						public void onClick(String pp) {
+							String orgXml = layoutDefinition.xmlLayout;
+							layoutDefinition.xmlLayout = pp;
+							setAct(layoutDefinition, act);
+							layoutDefinition.xmlLayout = orgXml;
+						}
+					});
+					PopupManager.showModal("Layout", led, new OnClick<PopupPanel>() {
+						
+						@Override
+						public void onClick(PopupPanel pp) {
+							led.fromDialog();
+							pp.hide();
+							setAct(layoutDefinition, act);
+						}
+					},null);
+				}
+			});
+			pbEdit.setEnabled(false);
+			actButtons.add(pbEdit);
+			buttons.add(pbEdit);
+		}
+		
 		LinkButton pbPrint = addLinkButton(buttons, index++, SRV.c.print(), "icons/32/Adobe-PDF-Document-icon.png", "icons/32/Adobe-PDF-Document-icon.disabled.png", new ClickHandler() {
 			
 			@Override
@@ -269,6 +304,7 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 			interactor.toDialog(act);
 			setWidgetTopHeight(renderer, 3, Unit.EM, 100, Unit.PCT);
 			this.act = act;
+			this.layoutDefinition = layoutDef;
 			setTitle(act);
 		}			
 		return true;

@@ -1,7 +1,5 @@
 package com.ceres.cldoc.client.views;
 
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
-
 import com.ceres.cldoc.client.service.SRV;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

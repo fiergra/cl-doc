@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleForm extends FlexTable {
 
-	private int row = 0;
+	protected int row = 0;
 	private final IApplication application;
 	
 	public SimpleForm(IApplication application) {

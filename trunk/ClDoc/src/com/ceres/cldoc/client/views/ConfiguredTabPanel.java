@@ -26,7 +26,7 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 			public void onSuccess(List<Catalog> result) {
 				if (!result.isEmpty()) {
 					for (Catalog catalog : result) {
-						if (clDoc.getSession().isAllowed(new Action(catalog, Catalog.VIEW))) {
+						if (clDoc.getSession().isAllowed(new Action(catalog.code, Catalog.VIEW.code))) {
 							addTab(clDoc, catalog, model);
 						}
 					}

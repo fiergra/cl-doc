@@ -40,6 +40,11 @@ public class CatalogMultiSelectorFactory implements ILinkFactory {
 			public void fromDialog(INamedValues item) {
 				item.setValue(fieldName, hbl.getSelected());
 			}
+
+			@Override
+			public boolean isEmpty() {
+				return hbl.getSelected().isEmpty();
+			}
 		};
 		
 		hbl.addSelectionChangedHandler(new ChangeHandler() {

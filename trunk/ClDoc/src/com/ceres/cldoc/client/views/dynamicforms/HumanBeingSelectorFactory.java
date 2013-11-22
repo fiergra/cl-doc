@@ -45,6 +45,11 @@ public class HumanBeingSelectorFactory implements ILinkFactory {
 				IEntity e = hbl.getSelected();
 				item.setValue(fieldName, e != null ? e.getId() : null);
 			}
+
+			@Override
+			public boolean isEmpty() {
+				return hbl.getSelected() == null;
+			}
 		};
 		
 		hbl.addSelectionChangedHandler(new ChangeHandler() {

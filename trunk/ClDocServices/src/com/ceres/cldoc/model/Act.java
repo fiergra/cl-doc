@@ -18,7 +18,7 @@ public class Act extends AbstractNamedValueAccessor {
 	public Date date;
 
 	public HashMap<String, IActField> fields;
-	public HashMap<Long, Participation> participations;
+	public HashMap<String, Participation> participations;
 
 	public User createdBy;
 	public User modifiedBy;
@@ -44,7 +44,7 @@ public class Act extends AbstractNamedValueAccessor {
 
 	@Override
 	public Participation getParticipation(Catalog role) {
-		return participations != null ? participations.get(role.id) : null;
+		return participations != null ? participations.get(role.code) : null;
 	}
 	
 	@Override
@@ -67,7 +67,7 @@ public class Act extends AbstractNamedValueAccessor {
 	
 	public void setParticipant(IEntity e, Catalog role, Date start, Date end) {
 		if (participations == null) {
-			participations = new HashMap<Long, Participation>();
+			participations = new HashMap<String, Participation>();
 		}
 		
 		Participation p = participations.get(role.id);
@@ -78,7 +78,7 @@ public class Act extends AbstractNamedValueAccessor {
 			p.start = start == null ? new Date() : start;
 			p.end = end;
 		}
-		participations.put(role.id, p);
+		participations.put(role.code, p);
 	}
 
 	private IAct getGenericAct(String fieldName) {
@@ -166,6 +166,10 @@ public class Act extends AbstractNamedValueAccessor {
 	@Override
 	public Serializable setValue(String name, Serializable value) {
 		return set(name, value);
+	}
+
+	public Participation getParticipation(String role) {
+		return participations.get(role);
 	}
 
 }

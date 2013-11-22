@@ -89,6 +89,24 @@ public class ActServiceImplTest extends TransactionalTest {
 	}
 
 	
+	public void testParticipations() throws Exception {
+		ActClass ac = new ActClass(null, "Masterdata", null, null, true);
+		Person p = new Person();
+		p.firstName = "Heinz";
+		p.lastName = "Achmed";
+		Locator.getEntityService().save(getSession(), p);
+		Act a = new Act(ac);
+		a.set("feld1", "xxx");
+		a.set("feld2", "yyy");
+		a.setParticipant(p, Participation.PROTAGONIST);
+		
+		Locator.getActService().save(getSession(), a);
+		
+		Act reloaded = Locator.getActService().load(getSession(), a.id);
+		assertNotNull(reloaded.getParticipation("PROTAGONIST"));
+	}
+
+	
 	public void testListClassNames() {
 		IActService actService = Locator.getActService();
 		List<ActClass> classNames = actService.listClasses(getSession(), "");

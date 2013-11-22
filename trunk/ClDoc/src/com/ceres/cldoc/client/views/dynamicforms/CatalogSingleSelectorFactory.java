@@ -45,6 +45,11 @@ public class CatalogSingleSelectorFactory implements ILinkFactory {
 			public void fromDialog(INamedValues item) {
 				item.setValue(fieldName, hbl.getSelected());
 			}
+
+			@Override
+			public boolean isEmpty() {
+				return hbl.getSelected() == null;
+			}
 		};
 		
 		hbl.addSelectionChangedHandler(new ChangeHandler() {
