@@ -2,7 +2,6 @@ package com.ceres.dynamicforms.client;
 
 import java.util.HashMap;
 
-import com.ceres.core.IApplication;
 import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.FloatTextBox;
 import com.ceres.dynamicforms.client.components.LongTextBox;
@@ -32,7 +31,7 @@ import com.google.gwt.xml.client.XMLParser;
 public class WidgetCreator {
 
 	@SuppressWarnings("unused")
-	public static Widget createWidget(IApplication application, String xml, Interactor interactor) {
+	public static Widget createWidget(String xml, Interactor interactor) {
 		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
 		Document document = XMLParser.parse(xml);
 		Element root = document.getDocumentElement();
@@ -40,7 +39,7 @@ public class WidgetCreator {
 		if (root != null) {
 			NodeList children = document.getChildNodes();//root.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
-				processChild(application, document, children.item(i), mainPanel, interactor, 0);
+				processChild(document, children.item(i), mainPanel, interactor, 0);
 			}
 		}
 		
@@ -64,7 +63,7 @@ public class WidgetCreator {
 		return document.toString();
 	}
 
-	private static void processChild(IApplication application, Document document, Node item, Widget panel, Interactor interactor, int level) {
+	private static void processChild(Document document, Node item, Widget panel, Interactor interactor, int level) {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
@@ -72,7 +71,7 @@ public class WidgetCreator {
 
 			preprocess(document, element);
 		
-			Widget widget = createWidgetFromElement(application, element, interactor);
+			Widget widget = createWidgetFromElement(element, interactor);
 			if (widget != null) {
 				if (panel instanceof Panel){
 					((Panel)panel).add(widget);
@@ -83,7 +82,7 @@ public class WidgetCreator {
 						(widget instanceof Panel || widget instanceof TabLayoutPanel)) {
 					NodeList children = element.getChildNodes();
 					for (int i = 0; i < children.getLength(); i++) {
-						processChild(application, document, children.item(i), widget, interactor, level + 1);
+						processChild(document, children.item(i), widget, interactor, level + 1);
 					}
 				}
 			}
@@ -157,12 +156,12 @@ public class WidgetCreator {
 	public static void addLinkFactory(String localName, ILinkFactory factory) {
 		linkFactories.put(localName, factory);
 	}
-	private static Widget createWidgetFromElement(IApplication application, Element element, Interactor interactor) {
+	private static Widget createWidgetFromElement(Element element, Interactor interactor) {
 		String tagName = element.getTagName();
-		return createWidgetFromElementName(application, tagName, asHashMap(element.getAttributes()), interactor);
+		return createWidgetFromElementName(tagName, asHashMap(element.getAttributes()), interactor);
 	}
 	
-	public static Widget createWidgetFromElementName(IApplication application, String tagName, HashMap<String, String> attributes, Interactor interactor) {
+	public static Widget createWidgetFromElementName(String tagName, HashMap<String, String> attributes, Interactor interactor) {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
@@ -182,21 +181,23 @@ public class WidgetCreator {
 			widget = new HorizontalPanel();
 			widget.setStyleName("HBox");
 		} else if ("Form".equals(localName)){
-			widget = new SimpleForm(application);
+			widget = new SimpleForm();
 			if (attributes.containsKey("label")) {
 				widget.setTitle(attributes.get("label"));
 			}
 		} else if ("form".equals(localName)){
-			widget = new SimpleForm(application);
+			widget = new SimpleForm();
 			attributes.put("width", "100%");
 			if (attributes.containsKey("label")) {
 				widget.setTitle(attributes.get("label"));
 			}
 		} else if ("ResourceFormItem".equals(localName) || "FormItem".equals(localName)){
-			widget = new SimpleFormItem(attributes.get("label"));
+			widget = new SimpleFormItem(attributes);
 		} else if ("line".equals(localName)){
-			String label = attributes.containsKey("label") ? attributes.get("label") : fieldName;
-			widget = new SimpleFormItem(label);
+			if (!attributes.containsKey("label")) {
+				attributes.put("label", fieldName);
+			}
+			widget = new SimpleFormItem(attributes);
 		} else if ("StatusComboBox".equals(localName)){
 			ListBox listBox = new ListBox();
 			listBox.setVisibleItemCount(1);
@@ -233,12 +234,15 @@ public class WidgetCreator {
 		} else if ("ItemFieldTextArea".equals(localName)){
 			widget = new TextArea();
 			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
+		} else if ("Label".equals(localName)){
+			widget = new Label(attributes.get("text"));
+			widget.addStyleName("formLabel");
 		} else if ("HRule".equals(localName)){
 			widget = new HTML("<hr/>");
 		} else {
 			ILinkFactory linkFactory = linkFactories.get(localName);
 			if (linkFactory != null) {
-				link = linkFactory.createLink(application, interactor, fieldName, attributes);
+				link = linkFactory.createLink(interactor, fieldName, attributes);
 				widget = link.widget;
 			} else {
 				widget = new Label(localName + " not yet supported!");

@@ -2,6 +2,7 @@ package com.ceres.dynamicforms.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.ui.Panel;
@@ -10,14 +11,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleFormItem extends Panel  {
 
-	public String label;
-
 	public Widget content;
 	private SimpleForm simpleForm;
 	private int row;
+
+	private final HashMap<String, String> attributes;
 	
-	public SimpleFormItem(String label) {
-		this.label = label;
+	public SimpleFormItem(HashMap<String, String> attributes) {
+		this.attributes = attributes;
 	}
 
 	public void setSimpleForm(SimpleForm simpleForm) {
@@ -60,6 +61,10 @@ public class SimpleFormItem extends Panel  {
 
 	@Override
 	public void setWidth(String width) {
+	}
+
+	public String getAttribute(String key) {
+		return attributes != null ? attributes.get(key) : null;
 	}
 	
 	

@@ -1,6 +1,8 @@
 package com.ceres.dynamicforms.client;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.ceres.dynamicforms.client.components.FloatTextBox;
 
@@ -12,13 +14,13 @@ public class FloatLink extends TextLink {
 	}
 
 	@Override
-	public void toDialog(INamedValues item) {
-		getWidget().setFloat((Float) item.getValue(fieldName));
+	public void toDialog(Map<String, Serializable> item) {
+		getWidget().setFloat((Float) get(item, fieldName));
 	}
 
 	@Override
-	public void fromDialog(INamedValues item) {
-		item.setValue(fieldName, getWidget().getFloat());
+	public void fromDialog(Map<String, Serializable> item) {
+		put(item, fieldName, getWidget().getFloat());
 	}
 
 	@Override

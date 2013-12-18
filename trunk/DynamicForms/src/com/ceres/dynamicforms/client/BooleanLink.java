@@ -1,6 +1,8 @@
 package com.ceres.dynamicforms.client;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,13 +23,13 @@ public class BooleanLink extends InteractorLink {
 	}
 
 	@Override
-	public void toDialog(INamedValues item) {
-		getWidget().setValue(Boolean.TRUE.equals(item.getValue(fieldName)));
+	public void toDialog(Map<String, Serializable> item) {
+		getWidget().setValue(Boolean.TRUE.equals( get(item, fieldName)));
 	}
 
 	@Override
-	public void fromDialog(INamedValues item) {
-		item.setValue(fieldName, getWidget().getValue());
+	public void fromDialog(Map<String, Serializable> item) {
+		put(item, fieldName, getWidget().getValue());
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class BooleanLink extends InteractorLink {
 
 	@Override
 	public boolean isEmpty() {
-		return !getWidget().getValue();
+		return false;
 	}
 
 	
