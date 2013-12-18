@@ -1,6 +1,5 @@
 package com.ceres.dynamicforms.client;
 
-import com.ceres.core.IApplication;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -8,10 +7,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class SimpleForm extends FlexTable {
 
 	protected int row = 0;
-	private final IApplication application;
 	
-	public SimpleForm(IApplication application) {
-		this.application = application;
+	public SimpleForm() {
 		this.setStyleName("simpleForm");
 		
 		getColumnFormatter().addStyleName(0, "formLabelColumn");
@@ -32,7 +29,7 @@ public class SimpleForm extends FlexTable {
 		if (child instanceof SimpleFormItem) {
 			SimpleFormItem sf = (SimpleFormItem)child;
 			sf.setSimpleForm(this);
-			addLine(application.getLabel(sf.label), sf.content);
+			addLine(sf.getAttribute("label")/*application.getLabel(sf.label)*/, sf.content);
 		} else {
 			setWidget(row, 0, child);
 			getFlexCellFormatter().setColSpan(row, 0, 2);

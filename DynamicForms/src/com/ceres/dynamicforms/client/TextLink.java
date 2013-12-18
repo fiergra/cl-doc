@@ -1,6 +1,8 @@
 package com.ceres.dynamicforms.client;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -20,13 +22,13 @@ public class TextLink extends InteractorLink {
 	}
 
 	@Override
-	public void toDialog(INamedValues item) {
-		getWidget().setText((String) item.getValue(fieldName));
+	public void toDialog(Map<String, Serializable> item) {
+		getWidget().setText((String) get(item, fieldName));
 	}
 
 	@Override
-	public void fromDialog(INamedValues item) {
-		item.setValue(fieldName, getWidget().getText());
+	public void fromDialog(Map<String, Serializable> item) {
+		put(item, fieldName, getWidget().getText());
 	}
 
 	@Override
