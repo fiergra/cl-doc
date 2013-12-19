@@ -15,6 +15,11 @@ import com.ceres.cldoc.client.views.Form;
 import com.ceres.cldoc.client.views.LogOutput;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
+import com.ceres.cldoc.client.views.ParticipationTimeFactory;
+import com.ceres.cldoc.client.views.dynamicforms.CatalogMultiSelectorFactory;
+import com.ceres.cldoc.client.views.dynamicforms.CatalogSingleSelectorFactory;
+import com.ceres.cldoc.client.views.dynamicforms.HumanBeingSelectorFactory;
+import com.ceres.cldoc.client.views.dynamicforms.PagesFactory;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
@@ -24,6 +29,7 @@ import com.ceres.cldoc.model.User;
 import com.ceres.core.IApplication;
 import com.ceres.core.IOrganisation;
 import com.ceres.core.ISession;
+import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.Window;
@@ -57,6 +63,13 @@ public class ClDoc implements EntryPoint, IApplication {
 	
 	@Override
 	public void onModuleLoad() {
+		WidgetCreator.addLinkFactory("pages", new PagesFactory());
+		WidgetCreator.addLinkFactory("humanbeing", new HumanBeingSelectorFactory(this));
+		WidgetCreator.addLinkFactory("list", new CatalogSingleSelectorFactory(this, true));
+		WidgetCreator.addLinkFactory("option", new CatalogSingleSelectorFactory(this, false));
+		WidgetCreator.addLinkFactory("multiselect", new CatalogMultiSelectorFactory(this));
+		WidgetCreator.addLinkFactory("participationtime", new ParticipationTimeFactory());
+		
 		LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<ISession>() {
 			
 			@Override

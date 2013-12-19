@@ -1,10 +1,5 @@
 package com.ceres.cldoc.shared.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import com.ceres.cldoc.model.ActField;
-import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.Patient;
 
 public class PatientWrapper extends PersonWrapper {
@@ -13,40 +8,14 @@ public class PatientWrapper extends PersonWrapper {
 
 	public PatientWrapper(Patient patient) {
 		super(patient);
+		put("perId", patient.perId);
 	}
 	
 	@Override
-	public Patient getPerson() {
-		return (Patient) super.getPerson();
-	}
-
-	@Override
-	public IActField set(String fieldName, Serializable value) {
-		if (fieldName.equals("id")) {
-			getPerson().perId = (Long) value;
-		} 
-		return super.set(fieldName, value);
-	}
-
-	@Override
-	public IActField get(String fieldName) {
-		if (fieldName.equals("id")) {
-			return new ActField(fieldName, getPerson().perId);
-		} else {
-			return super.get(fieldName);
-		} 
-	}
-
-	@Override
-	public Date getDate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setDate(Date date) {
-		// TODO Auto-generated method stub
-
+	public Patient unwrap() {
+		Patient p = (Patient) super.unwrap();
+		p.perId = (Long) get("perId");
+		return p;
 	}
 
 }

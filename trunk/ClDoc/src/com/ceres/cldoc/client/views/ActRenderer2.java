@@ -8,11 +8,7 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
-import com.ceres.cldoc.client.views.dynamicforms.CatalogMultiSelectorFactory;
-import com.ceres.cldoc.client.views.dynamicforms.CatalogSingleSelectorFactory;
-import com.ceres.cldoc.client.views.dynamicforms.HumanBeingSelectorFactory;
 import com.ceres.cldoc.client.views.dynamicforms.IActRenderer;
-import com.ceres.cldoc.client.views.dynamicforms.PagesFactory;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.IActField;
@@ -46,15 +42,6 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 	private LinkButton pbSave;
 	private final ClDoc clDoc;
 
-	static {
-		WidgetCreator.addLinkFactory("pages", new PagesFactory());
-		WidgetCreator.addLinkFactory("humanbeing", new HumanBeingSelectorFactory());
-		WidgetCreator.addLinkFactory("list", new CatalogSingleSelectorFactory(true));
-		WidgetCreator.addLinkFactory("option", new CatalogSingleSelectorFactory(false));
-		WidgetCreator.addLinkFactory("multiselect", new CatalogMultiSelectorFactory());
-		WidgetCreator.addLinkFactory("participationtime", new ParticipationTimeFactory());
-	}
-	
 	public ActRenderer2(
 			ClDoc clDoc,
 			OnOkHandler<Integer> onInsertUpdateDelete, 
@@ -298,7 +285,7 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 						pbSave.enable(interactor.isModified() && interactor.isValid());
 					}
 				});
-				renderer = WidgetCreator.createWidget(clDoc, layoutDef.xmlLayout, interactor);
+				renderer = WidgetCreator.createWidget(layoutDef.xmlLayout, interactor);
 			}
 			add(renderer);
 			interactor.toDialog(act);

@@ -3,11 +3,7 @@ package com.ceres.cldoc.client;
 import com.ceres.cldoc.client.controls.Util;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
-import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
-import com.ceres.cldoc.client.views.PersonEditor;
-import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.shared.domain.PersonWrapper;
 import com.ceres.core.ISession;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -106,51 +102,51 @@ public class LoginScreen extends LayoutPanel {
 		
 		g.setWidget(3, 2, buttons);
 		
-		pbRegister.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				final Person person = new Person();
-				final TextBox txtNewUserName = new TextBox();
-				final PasswordTextBox txtPwd1 = new PasswordTextBox();
-				final PasswordTextBox txtPwd2 = new PasswordTextBox();
-
-				final PersonEditor pe = new PersonEditor(clDoc, person) {
-					
-					@Override
-					protected void setup() {
-						addLabeledWidget("Username", true, txtNewUserName);
-						addLabeledWidget("Password", true, txtPwd1);
-						addLabeledWidget("confirm password", true, txtPwd2);
-						super.setup();
-					}
-
-				};
-				
-				OnClick<PersonWrapper> onClickSave = new OnClick<PersonWrapper>() {
-
-					@Override
-					public void onClick(PersonWrapper pp) {
-						SRV.userService.register(person, null, txtNewUserName.getText(), txtPwd1.getText(), new DefaultCallback<Void>(clDoc, "register") {
-
-							@Override
-							public void onSuccess(Void result) {
-								txtUserName.setText(txtNewUserName.getText());
-								txtUserName.setFocus(true);
-							}
-						});
-					}
-				};
-				
-				pe.showModal("Register", onClickSave, null, new OnClick<PersonWrapper>() {
-
-					@Override
-					public void onClick(PersonWrapper pp) {
-						pe.close();
-					}
-				});
-			}
-		});
+//		pbRegister.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				final Person person = new Person();
+//				final TextBox txtNewUserName = new TextBox();
+//				final PasswordTextBox txtPwd1 = new PasswordTextBox();
+//				final PasswordTextBox txtPwd2 = new PasswordTextBox();
+//
+//				final PersonEditor pe = new PersonEditor(clDoc, person) {
+//					
+//					@Override
+//					protected void setup() {
+//						addLabeledWidget("Username", true, txtNewUserName);
+//						addLabeledWidget("Password", true, txtPwd1);
+//						addLabeledWidget("confirm password", true, txtPwd2);
+//						super.setup();
+//					}
+//
+//				};
+//				
+//				OnClick<PersonWrapper> onClickSave = new OnClick<PersonWrapper>() {
+//
+//					@Override
+//					public void onClick(PersonWrapper pp) {
+//						SRV.userService.register(person, null, txtNewUserName.getText(), txtPwd1.getText(), new DefaultCallback<Void>(clDoc, "register") {
+//
+//							@Override
+//							public void onSuccess(Void result) {
+//								txtUserName.setText(txtNewUserName.getText());
+//								txtUserName.setFocus(true);
+//							}
+//						});
+//					}
+//				};
+//				
+//				pe.showModal("Register", onClickSave, null, new OnClick<PersonWrapper>() {
+//
+//					@Override
+//					public void onClick(PersonWrapper pp) {
+//						pe.close();
+//					}
+//				});
+//			}
+//		});
 		
 		Image logo = new Image("clDOC_bw.png"); 
 		add(logo);

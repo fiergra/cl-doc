@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import com.ceres.core.IEntity;
 
@@ -170,6 +172,74 @@ public class Act extends AbstractNamedValueAccessor {
 
 	public Participation getParticipation(String role) {
 		return participations.get(role);
+	}
+
+	@Override
+	public int size() {
+		return fields.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return fields.isEmpty();
+	}
+
+	@Override
+	public boolean containsKey(Object key) {
+		return fields.containsKey(key);
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+		return fields.containsValue(value);
+	}
+
+	@Override
+	public Serializable get(Object key) {
+		if ("dateFrom".equals(key)) {
+			return getDate();
+		} else {
+			return key instanceof String ? getValue((String) key) : null;
+		}
+	}
+
+	@Override
+	public Serializable put(String key, Serializable value) {
+		if ("dateFrom".equals(key)) {
+			setDate((Date) value);
+			return null;
+		} else {
+			return setValue(key, value);
+		}
+	}
+
+	@Override
+	public Serializable remove(Object key) {
+		return fields.remove(key);
+	}
+
+	@Override
+	public void putAll(Map<? extends String, ? extends Serializable> m) {
+	}
+
+	@Override
+	public void clear() {
+		fields.clear();
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return fields.keySet();
+	}
+
+	@Override
+	public Collection<Serializable> values() {
+		return null;
+	}
+
+	@Override
+	public Set<java.util.Map.Entry<String, Serializable>> entrySet() {
+		return null;
 	}
 
 }

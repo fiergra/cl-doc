@@ -57,6 +57,14 @@ public class Entity implements IEntity {
 		addresses.add(address);
 	}
 	
+	public void setPrimaryAddress(Address address) {
+		if (addresses == null) {
+			addAddress(address);
+		} else {
+			addresses.set(0, address);
+		}
+	}
+	
 	public Address getPrimaryAddress() {
 		Address primaryAddress = null;
 		

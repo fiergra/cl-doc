@@ -250,5 +250,16 @@ public class OnDemandComboBox <T extends Serializable> extends HorizontalPanel i
 		txtFilter.setStyleName(style);
 	}
 
+	@Override
+	public void addStyleName(String style) {
+		txtFilter.addStyleName(style);
+	}
+
+	@Override
+	public void removeStyleName(String style) {
+		txtFilter.removeStyleName(style);
+	}
+
+	
 
 }

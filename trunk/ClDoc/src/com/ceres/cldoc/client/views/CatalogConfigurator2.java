@@ -1,15 +1,19 @@
 package com.ceres.cldoc.client.views;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.dynamicforms.client.INamedValues;
 import com.ceres.dynamicforms.client.Interactor;
+import com.ceres.dynamicforms.client.LongLink;
 import com.ceres.dynamicforms.client.TextLink;
+import com.ceres.dynamicforms.client.components.LongTextBox;
+import com.ceres.dynamicforms.client.components.MapListRenderer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,17 +36,12 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 public class CatalogConfigurator2 extends DockLayoutPanel {
 
-	private static final String LINE_LAYOUT = "<form><line name=\"KurzText\" type=\"String\"/></form>";
-//	private final Catalog catalog = new Catalog();
-//	private final HashSet<Catalog> changedObjects = new HashSet<Catalog>();
-
 	private final Image pbSave = new Image("icons/32/Save-icon.png");
 	private final Image pbNew = new Image("icons/32/File-New-icon.png");
 	private final Image pbDelete = new Image("icons/32/File-Delete-icon.png");
 	private final Image pbUpload = new Image("icons/32/Button-Upload-icon.png");
 	private final Image pbDownload = new Image("icons/32/Button-Download-icon.png");
 
-//	private List<Catalog> catalogs;
 	private final ClDoc clDoc;
 	
 	
@@ -67,17 +66,12 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 		title.add(buttons);
 		buttons.setSpacing(5);
 
-		final String[] labels = new String[]{"Code", "Kurztext", "Text"};
-		final NamedValuesListRenderer nvl = new NamedValuesListRenderer(clDoc, 
-				labels, LINE_LAYOUT, new Runnable(){
-
-			@Override
-			public void run() {
-				
-			}}) {
+		final String[] fieldNames = new String[]{"code", "shortText", "text", "logicalOrder"};
+		final MapListRenderer nvl = new MapListRenderer(new String[]{"Code", "Kurztext", "Text"}, null) {
 			
 			@Override
-			INamedValues newAct() {
+			protected
+			Map<String,Serializable> newAct() {
 				Catalog parent = (Catalog) tree.getSelectedItem().getUserObject();
 				Catalog child = new Catalog();
 				if (parent != null) {
@@ -97,7 +91,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 			}
 			
 			@Override
-			boolean isValid(List<Interactor> interactors, Interactor interactor) {
+			protected boolean isValid(List<Interactor> interactors, Interactor interactor) {
 				return true;
 			}
 
@@ -106,21 +100,26 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 				int col = 0;
 				TextBox textBox = new TextBox();
 				setWidget(row, col, textBox);
-				interactor.addLink(new TextLink(interactor, labels[col], textBox, null));
+				interactor.addLink(new TextLink(interactor, fieldNames[col], textBox, null));
 				col++;
 				textBox = new TextBox();
 				setWidget(row, col, textBox);
-				interactor.addLink(new TextLink(interactor, labels[col], textBox, null));
+				interactor.addLink(new TextLink(interactor, fieldNames[col], textBox, null));
 				col++;
 				textBox = new TextBox();
-				textBox.setWidth("100%");
+//				textBox.setWidth("100%");
 				setWidget(row, col, textBox);
-				interactor.addLink(new TextLink(interactor, labels[col], textBox, null));
+				interactor.addLink(new TextLink(interactor, fieldNames[col], textBox, null));
+				col++;
+				
+				LongTextBox ltb = new LongTextBox();
+				setWidget(row, col, ltb);
+				interactor.addLink(new LongLink(interactor, fieldNames[col], ltb, null));
 				col++;
 			}
 
 			@Override
-			protected boolean canRemove(final INamedValues act) {
+			protected boolean canRemove(final Map<String,Serializable> act) {
 				Catalog catalog = ((CatalogWrapper)act).unwrap();
 				
 				if (catalog.id != null) {
@@ -246,9 +245,9 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 			}};
 	}
 
-	protected List<Catalog> unwrap(Collection<INamedValues> changedObjects) {
+	protected List<Catalog> unwrap(Collection<Map<String,Serializable>> changedObjects) {
 		List<Catalog> result = new ArrayList<Catalog>(changedObjects.size());
-		for (INamedValues inv:changedObjects) {
+		for (Map<String,Serializable> inv:changedObjects) {
 			result.add(((CatalogWrapper)inv).unwrap());
 		}
 		return result;
@@ -273,7 +272,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 //	}
 //
 //
-	protected void populateChildGrid(final NamedValuesListRenderer nvl,
+	protected void populateChildGrid(final MapListRenderer nvl,
 			TreeItem selectedItem) {
 		Catalog c = (Catalog) (selectedItem != null ? selectedItem
 				.getUserObject() : null);
@@ -292,8 +291,8 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 //		nvl.setActs(wrap(catalogs));
 //	}
 	
-	private List<INamedValues> wrap(List<Catalog> catalogs) {
-		List<INamedValues> result = new ArrayList<INamedValues>(catalogs.size());
+	private List<Map<String,Serializable>> wrap(List<Catalog> catalogs) {
+		List<Map<String,Serializable>> result = new ArrayList<Map<String,Serializable>>(catalogs.size());
 		for (Catalog c:catalogs) {
 			result.add(new CatalogWrapper(c));
 		}
@@ -338,6 +337,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 
 					@Override
 					public void onSuccess(List<Catalog> result) {
+						@SuppressWarnings("deprecation")
 						TreeItem root = new TreeItem("root");
 						addTreeItems(root, result);
 						tree.addItem(root);
@@ -361,6 +361,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 	}
 
 	private TreeItem catalog2TreeItem(Catalog c) {
+		@SuppressWarnings("deprecation")
 		TreeItem ti = new TreeItem(c.id + "|<b>" + c.code + "</b> - <i>" + c.shortText + "</i>");
 		ti.setUserObject(c);
 		return ti;
