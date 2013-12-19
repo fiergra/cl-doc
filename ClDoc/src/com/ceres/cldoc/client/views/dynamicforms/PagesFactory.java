@@ -2,7 +2,6 @@ package com.ceres.cldoc.client.views.dynamicforms;
 
 import java.util.HashMap;
 
-import com.ceres.core.IApplication;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorLink;
@@ -14,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class PagesFactory implements ILinkFactory {
 
 	@Override
-	public InteractorLink createLink(IApplication application, Interactor interactor, String fieldName, final HashMap<String, String> attributes) {
+	public InteractorLink createLink(Interactor interactor, String fieldName, final HashMap<String, String> attributes) {
 		return new PassiveInteractorLink(interactor, fieldName, 
 				new TabLayoutPanel(3,  Unit.EM){
 

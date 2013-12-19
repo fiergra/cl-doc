@@ -58,6 +58,10 @@ public abstract class AbstractNamedValueAccessor implements IAct, Serializable {
 	public void setParticipant(Entity e, Catalog role) {
 		
 	}
+
+	public abstract Serializable getValue(String fieldName);
+
+	public abstract Serializable setValue(String name, Serializable value);
 	
 	
 

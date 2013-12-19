@@ -268,20 +268,16 @@ body, table td, select, button {
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;
-	border: none;
-	border-top: none;
 }
 
 .gwt-TextBox {
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;
-	border: 1px solid #CCC;
 }
 
 .gwt-DateBox {
 	padding: 5px 4px;
-	border: 1px solid #CCC;
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;

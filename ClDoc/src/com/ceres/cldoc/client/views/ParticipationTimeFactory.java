@@ -1,15 +1,15 @@
 package com.ceres.cldoc.client.views;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Participation;
-import com.ceres.core.IApplication;
 import com.ceres.dynamicforms.client.DateLink;
 import com.ceres.dynamicforms.client.ILinkFactory;
-import com.ceres.dynamicforms.client.INamedValues;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorLink;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
@@ -17,7 +17,7 @@ import com.ceres.dynamicforms.client.components.TimeTextBox;
 public class ParticipationTimeFactory implements ILinkFactory {
 
 	@Override
-	public InteractorLink createLink(IApplication application,
+	public InteractorLink createLink(
 			Interactor interactor, String fieldName,
 			HashMap<String, String> attributes) {
 		final TimeTextBox db = new TimeTextBox();
@@ -26,7 +26,7 @@ public class ParticipationTimeFactory implements ILinkFactory {
 		DateLink link = new DateLink(interactor, fieldName, db, attributes) {
 
 			@Override
-			public void toDialog(INamedValues item) {
+			public void toDialog(Map<String, Serializable> item) {
 				db.setDate(getTime((Act)item));
 			}
 
@@ -46,7 +46,7 @@ public class ParticipationTimeFactory implements ILinkFactory {
 			}
 
 			@Override
-			public void fromDialog(INamedValues item) {
+			public void fromDialog(Map<String, Serializable> item) {
 				Participation p = ((Act)item).getParticipation(role);
 				if (p != null) {
 					if ("start".equals(which)) {

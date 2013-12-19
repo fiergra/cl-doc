@@ -2,10 +2,9 @@ package com.ceres.cldoc.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
-import com.ceres.dynamicforms.client.INamedValues;
-
-public interface IAct extends INamedValues {
+public interface IAct extends Map<String, Serializable>, Serializable {
 
 	public abstract IActField get(String fieldName);
 

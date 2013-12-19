@@ -91,7 +91,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				PersonEditor.editPerson(clDoc, new Patient(), new OnClick<Person>(){
+				PersonEditor.editPerson(clDoc, new Person(), new OnClick<Person>(){
 
 					@Override
 					public void onClick(Person person) {

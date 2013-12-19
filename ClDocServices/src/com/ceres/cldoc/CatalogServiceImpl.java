@@ -57,7 +57,7 @@ public class CatalogServiceImpl implements ICatalogService {
 			@Override
 			public Catalog execute(Connection con) throws SQLException {
 				if (catalog.id != null || insertIfUpdateFails) {
-					String sql = "update Catalog set parent = ?, text = ?, shorttext = ?, date = ?, number1=?, number2=?, logical_order=? where ";
+					String sql = "update Catalog set code = ?, parent = ?, text = ?, shorttext = ?, date = ?, number1=?, number2=?, logical_order=? where ";
 					if (catalog.id != null) {
 						sql += "id = ?";
 					} else {
@@ -106,10 +106,9 @@ public class CatalogServiceImpl implements ICatalogService {
 					throws SQLException {
 				PreparedStatement s = con
 						.prepareStatement(
-								"insert into Catalog (parent, text, shorttext, date, number1, number2, logical_Order, code) values (?,?,?,?,?,?,?,?)",
+								"insert into Catalog (code, parent, text, shorttext, date, number1, number2, logical_Order) values (?,?,?,?,?,?,?,?)",
 								new String[] { "ID" });
 				int i = bindVariables(s, catalog);
-				s.setString(i++, catalog.code);
 				catalog.id = Jdbc.exec(s);
 				s.close();
 			}
@@ -117,6 +116,7 @@ public class CatalogServiceImpl implements ICatalogService {
 			private int bindVariables(PreparedStatement u, final Catalog catalog)
 					throws SQLException {
 				int i = 1;
+				u.setString(i++, catalog.code);
 				if (catalog.parent != null) {
 					u.setLong(i++, catalog.parent.id);
 				} else {
