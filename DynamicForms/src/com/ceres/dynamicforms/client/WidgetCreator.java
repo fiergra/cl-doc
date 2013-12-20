@@ -238,6 +238,7 @@ public class WidgetCreator {
 			link = new FloatLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFromDateField".equals(localName)){
+			fieldName = "dateFrom";
 			DateTextBox db =  new DateTextBox();
 			link = new DateFromLink(interactor, fieldName, db, attributes);
 			widget = db;
