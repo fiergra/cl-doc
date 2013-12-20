@@ -23,12 +23,12 @@ public class TextLink extends InteractorLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setText((String) get(item, fieldName));
+		getWidget().setText((String) get(item, name));
 	}
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, fieldName, getWidget().getText());
+		put(item, name, getWidget().getText());
 	}
 
 	@Override

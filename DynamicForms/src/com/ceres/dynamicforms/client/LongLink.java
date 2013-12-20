@@ -15,12 +15,12 @@ public class LongLink extends TextLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setLong((Long) get(item, fieldName));
+		getWidget().setLong((Long) get(item, name));
 	}
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, fieldName, getWidget().getLong());
+		put(item, name, getWidget().getLong());
 	}
 
 	@Override

@@ -16,12 +16,12 @@ public class DateLink extends TextLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setDate((Date) get(item, fieldName));
+		getWidget().setDate((Date) get(item, name));
 	}
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, fieldName, getWidget().getDate());
+		put(item, name, getWidget().getDate());
 	}
 
 	@Override

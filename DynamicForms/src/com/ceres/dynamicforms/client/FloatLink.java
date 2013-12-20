@@ -15,12 +15,12 @@ public class FloatLink extends TextLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setFloat((Float) get(item, fieldName));
+		getWidget().setFloat((Float) get(item, name));
 	}
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, fieldName, getWidget().getFloat());
+		put(item, name, getWidget().getFloat());
 	}
 
 	@Override
