@@ -217,10 +217,6 @@ public class WidgetCreator {
 				attributes.put("label", fieldName);
 			}
 			widget = new SimpleFormItem(attributes);
-		} else if ("StatusComboBox".equals(localName)){
-			ListBox listBox = new ListBox();
-			listBox.setVisibleItemCount(1);
-			widget = listBox;
 		} else if ("ItemFieldDateField".equals(localName) || "date".equals(localName)){
 			DateTextBox db =  new DateTextBox();
 			link = new DateLink(interactor, fieldName, db, attributes);
@@ -277,7 +273,7 @@ public class WidgetCreator {
 				widget.setWidth(attributes.get("height"));
 			}
 			
-			if (fieldName != null && link != null) {
+			if (link != null && link.getName() != null) {
 				interactor.addLink(link);
 			}
 		}

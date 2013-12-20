@@ -24,12 +24,12 @@ public class BooleanLink extends InteractorLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setValue(Boolean.TRUE.equals( get(item, fieldName)));
+		getWidget().setValue(Boolean.TRUE.equals( get(item, name)));
 	}
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, fieldName, getWidget().getValue());
+		put(item, name, getWidget().getValue());
 	}
 
 	@Override

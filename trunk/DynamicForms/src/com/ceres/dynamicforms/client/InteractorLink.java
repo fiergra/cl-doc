@@ -7,16 +7,16 @@ import java.util.Map;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class InteractorLink {
-	protected final String fieldName;
+	protected final String name;
 	protected final Widget widget;
 	protected final HashMap<String, String> attributes;
 	protected final Interactor interactor;
 	
 	protected final boolean isRequired;
 
-	public InteractorLink(Interactor interactor, String fieldName, Widget widget, HashMap<String, String> attributes) {
+	public InteractorLink(Interactor interactor, String name, Widget widget, HashMap<String, String> attributes) {
 		this.interactor = interactor;
-		this.fieldName = fieldName;
+		this.name = name;
 		this.widget = widget;
 		this.attributes = attributes;
 		
@@ -58,6 +58,10 @@ public abstract class InteractorLink {
 
 	public boolean isValid() {
 		return isRequired ? !isEmpty() : true;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 }

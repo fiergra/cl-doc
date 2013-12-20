@@ -24,12 +24,12 @@ public class YesNoLink extends InteractorLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setValue(Boolean.TRUE.equals( get(item, fieldName)), false);
+		getWidget().setValue(Boolean.TRUE.equals( get(item, name)), false);
 	}
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, fieldName, getWidget().getValue());
+		put(item, name, getWidget().getValue());
 	}
 
 	@Override
