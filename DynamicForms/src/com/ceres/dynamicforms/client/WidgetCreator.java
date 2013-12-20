@@ -69,7 +69,7 @@ public class WidgetCreator {
 			
 			System.out.println(levelPrefix(level) + element.getNodeName());
 
-			preprocess(document, element);
+			element = preprocess(document, element);
 		
 			Widget widget = createWidgetFromElement(element, interactor);
 			if (widget != null) {
@@ -96,39 +96,51 @@ public class WidgetCreator {
 		}
 		return prefix;
 	}
+	
+	
 
-	private static void preprocess(Document document, Element element) {
-		if ("line".equals(element.getNodeName())) {
-			if (element.hasAttribute("type")) {
-				if (element.getAttribute("type") != null) {
-					Element newElement = getElementForType(document,
-							element.getAttribute("type"));
-	
-					NamedNodeMap attributes = element.getAttributes();
-					for (int i = 0; i < attributes.getLength(); i++) {
-						Node a = attributes.item(i);
-						newElement.setAttribute(a.getNodeName(), a.getNodeValue());
+	private static Element preprocess(Document document, Element element) {
+		String nodeName = element.getNodeName();
+		int index = nodeName.indexOf(":");
+		String localName = nodeName.substring(index > 0 ? index + 1 : 0);
+
+		IPreProcessor processor = preprocessors.get(localName);
+		
+		if (processor != null) {
+			element = processor.process(document, element);
+		} else {
+			if ("line".equals(nodeName)) {
+				if (element.hasAttribute("type")) {
+					if (element.getAttribute("type") != null) {
+						Element newElement = getElementForType(document,
+								element.getAttribute("type"));
+		
+						NamedNodeMap attributes = element.getAttributes();
+						for (int i = 0; i < attributes.getLength(); i++) {
+							Node a = attributes.item(i);
+							newElement.setAttribute(a.getNodeName(), a.getNodeValue());
+						}
+		
+						element.appendChild(newElement);
+						element.setAttribute("type", null);
+						if (newElement.hasAttribute("width")) {
+							element.setAttribute("width", "100%");
+						}
 					}
-	
+				} else {
+					NodeList children = element.getChildNodes();
+					Element newElement = document.createElement("HBox");
+					for (int i = 0; i < children.getLength(); i++) {
+						Node child = children.item(i);
+	//					newElement.appendChild(child);
+						element.removeChild(child);
+					}
 					element.appendChild(newElement);
 					element.setAttribute("type", null);
-					if (newElement.hasAttribute("width")) {
-						element.setAttribute("width", "100%");
-					}
 				}
-			} else {
-				NodeList children = element.getChildNodes();
-				Element newElement = document.createElement("HBox");
-				for (int i = 0; i < children.getLength(); i++) {
-					Node child = children.item(i);
-//					newElement.appendChild(child);
-					element.removeChild(child);
-				}
-				element.appendChild(newElement);
-				element.setAttribute("type", null);
-				
 			}
 		}
+		return element;
 	}
 
 	private static Element getElementForType(Document document, String typeName) {
@@ -151,11 +163,18 @@ public class WidgetCreator {
 		return newElement;
 	}
 
+	private static HashMap<String, IPreProcessor> preprocessors = new HashMap<String, IPreProcessor>();
+
+	public static void addPreProcessor(String localName, IPreProcessor processor) {
+		preprocessors.put(localName, processor);
+	}
+	
 	private static HashMap<String, ILinkFactory> linkFactories = new HashMap<String, ILinkFactory>();
 
 	public static void addLinkFactory(String localName, ILinkFactory factory) {
 		linkFactories.put(localName, factory);
 	}
+	
 	private static Widget createWidgetFromElement(Element element, Interactor interactor) {
 		String tagName = element.getTagName();
 		return createWidgetFromElementName(tagName, asHashMap(element.getAttributes()), interactor);

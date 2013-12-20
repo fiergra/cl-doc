@@ -58,7 +58,9 @@ public class Interactor {
 				validateAll();
 			}
 		}
-		changeHandler.run();
+		if (changeHandler != null) {
+			changeHandler.run();
+		}
 	}
 
 	public boolean isEmpty() {
