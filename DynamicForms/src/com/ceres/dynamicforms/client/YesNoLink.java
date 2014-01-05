@@ -33,7 +33,7 @@ public class YesNoLink extends InteractorLink {
 	}
 
 	@Override
-	protected YesNoRadioGroup getWidget() {
+	public YesNoRadioGroup getWidget() {
 		return (YesNoRadioGroup) super.getWidget();
 	}
 

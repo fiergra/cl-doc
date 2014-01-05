@@ -9,7 +9,6 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.ClickableTable;
 import com.ceres.cldoc.client.controls.ERTree;
 import com.ceres.cldoc.client.controls.ListRetrievalService;
-import com.ceres.cldoc.client.controls.PagesView;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
@@ -33,7 +32,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
@@ -222,80 +220,6 @@ public class EntityConfigurator extends DockLayoutPanel {
 	
     private void createMasterDataEditor(final ClDoc clDoc, final Entity entity, final Collection<Act> masterData, List<LayoutDefinition> result, final Catalog entityType, final Runnable onSave) {
 		if (result != null && !result.isEmpty()) {
-
-//			if (result.size() == 1) {
-//				LayoutDefinition ld = result.get(0);
-//				final Act act = new Act(ld.actClass);
-//				final IView<Act> ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, null);
-//				OnClick<PopupPanel> onClickSave = new OnClick<PopupPanel>() {
-//
-//					@Override
-//					public void onClick(final PopupPanel popup) {
-//						SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
-//
-//							@Override
-//							public void onSuccess(Entity e) {
-//								act.setParticipant(e, Participation.PROTAGONIST);
-//								SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "saveAct") {
-//
-//									@Override
-//									public void onSuccess(Act result) {
-//										popup.hide();
-//										onSave.run();
-//									}
-//								});
-//							}
-//						});
-//					}
-//				};
-//				PopupManager.showModal("neu(e) " + entityType.shortText, ar, onClickSave, null); 
-//			} else {
-				
-				final PagesView tlp = new PagesView(null);
-				final List<Act> acts = new ArrayList<Act>();
-				for (LayoutDefinition ld:result) {
-					Act act = getMasterDataAct(masterData, ld.actClass);
-					acts.add(act);
-					IForm ar = ActRenderer.getActRenderer(clDoc, ld.xmlLayout, act, new Runnable() {
-						
-						@Override
-						public void run() {
-							// something was modified...
-						}
-					}, null);
-					tlp.addPage(ar, ld.actClass.name);
-				}
-				
-				PopupManager.showModal("neu(e) " + entityType.shortText, tlp, new OnClick<PopupPanel>(){
-
-					@Override
-					public void onClick(final PopupPanel pp) {
-						if (!setName(entity, masterData)) {
-							entity.setName("NO NAME");
-							GWT.log("missing field '" + Entity.DISPLAY_NAME + "' in masterdata forms.");
-						}
-						SRV.entityService.save(clDoc.getSession(), entity, new DefaultCallback<Entity>(clDoc, "save new entity") {
-
-							@Override
-							public void onSuccess(Entity e) {
-								tlp.fromDialog();
-								for (Act act:acts) {
-									act.setParticipant(e, Participation.PROTAGONIST);
-								}
-								SRV.actService.save(clDoc.getSession(), acts, new DefaultCallback<List<Act>>(clDoc, "save masterdata" ) {
-
-									@Override
-									public void onSuccess(List<Act> result) {
-										pp.hide();
-										onSave.run();
-									}
-								});
-							}
-						});
-						
-					}}, null); 
-				tlp.toDialog();
-//			}
 		} else {
 			new MessageBox("Fehlende Konfiguration", "Kein Layout fuer '" + entityType.shortText + "' definiert.", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
 		}

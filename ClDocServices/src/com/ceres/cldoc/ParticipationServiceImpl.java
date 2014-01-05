@@ -43,7 +43,11 @@ public class ParticipationServiceImpl implements IParticipationService {
 		int i = 1;
 		s.setLong(i++, participation.entity.getId());
 		s.setLong(i++, participation.role.id);
-		s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
+		if (participation.start != null) {
+			s.setTimestamp(i++, new java.sql.Timestamp(participation.start.getTime()));
+		} else {
+			s.setNull(i++, Types.TIMESTAMP);
+		}
 		if (participation.end != null) {
 			s.setTimestamp(i++, new java.sql.Timestamp(participation.end.getTime()));
 		} else {

@@ -1,9 +1,11 @@
 package com.ceres.cldoc.client.views;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,6 +18,10 @@ import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.dynamicforms.client.Interactor;
+import com.ceres.dynamicforms.client.InteractorLink;
+import com.ceres.dynamicforms.client.TextLink;
+import com.ceres.dynamicforms.client.components.MapListRenderer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,6 +38,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 public class TimeRegistration extends DockLayoutPanel {
@@ -39,7 +46,7 @@ public class TimeRegistration extends DockLayoutPanel {
 	private static final String WORKINGTIME_ACT = "WorkingTime";
 	private final ClDoc clDoc;
 	
-	private ActListRenderer actListRenderer;
+	private MapListRenderer actListRenderer;
 	private TimeSheetSummary summaryPanel;
 	private DateBox dpDate;
 	private LinkButton pbSave;
@@ -133,15 +140,16 @@ public class TimeRegistration extends DockLayoutPanel {
 		types.add(new FieldDef("Bemerkung", DataType.FT_STRING, false, null));
 
 		LayoutPanel vp = new LayoutPanel();
-		actListRenderer = new ActListRenderer(clDoc, types, null, new Runnable() {
+		actListRenderer = new MapListRenderer(new String[]{"von", "bis", "Bemerkung"}, 
+				new Runnable() {
+					@Override
+					public void run() {
+						setModified(true);
+					}
+				}) {
+			
 			@Override
-			public void run() {
-				setModified(true);
-			}
-		}){
-
-			@Override
-			Act newAct() {
+			protected Map<String, Serializable> newAct() {
 				Act newAct = new Act(actClass);
 				Date date = dpDate.getValue();
 				newAct.date = date; 
@@ -151,16 +159,52 @@ public class TimeRegistration extends DockLayoutPanel {
 			}
 			
 			@Override
-			boolean isValid(List<ClInteractor>interactors, ClInteractor interactor) {
-//				if (!overlaps(act) && normalWorkingHours(act)) {
-//					return true;
-//				} else {
-//					new MessageBox("Check", "Is it correct?", MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION).show();
-//					return false;
-//				}
-				return true;
-			}};
+			protected boolean isValid(List<Interactor> interactors, Interactor interactor) {
+				return interactor.isValid();
+			}
 			
+			@Override
+			protected void createNewRow(int row, Interactor interactor) {
+				int col = 0;
+				HashMap<String, String> attributes = new HashMap<String, String>();
+				attributes.put("role", Participation.ADMINISTRATOR.code);
+				attributes.put("which", "start");
+				InteractorLink link = new ParticipationTimeFactory().createLink(interactor, "von", attributes );
+				setWidget(row, col, link.getWidget());
+				interactor.addLink(link);
+				col++;
+				attributes.put("which", "end");
+				link = new ParticipationTimeFactory().createLink(interactor, "bis", attributes );
+				setWidget(row, col, link.getWidget());
+				interactor.addLink(link);
+				col++;
+				TextBox textBox = new TextBox();
+				setWidget(row, col, textBox);
+				interactor.addLink(new TextLink(interactor, "Bemerkung", textBox, null));
+				col++;
+				
+			}
+			
+			@Override
+			protected boolean canRemove(final Map<String, Serializable> row) {
+				Act act = (Act)row;
+				
+				if (act.id != null) {
+					act.isDeleted = true;
+					SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "delete act") {
+
+						@Override
+						public void onSuccess(Act result) {
+							actListRenderer.removeAct(row);
+						}
+					});
+					return false;
+				} else {
+					return true;
+				}
+			}
+		};
+				
 		vp.add(actListRenderer);
 		vp.setWidgetLeftWidth(actListRenderer, 0, Unit.PX, 100, Unit.PCT);
 		vp.setWidgetTopHeight(actListRenderer, 0, Unit.PX, 100, Unit.PCT);
@@ -248,13 +292,12 @@ public class TimeRegistration extends DockLayoutPanel {
 	public static final long ONE_WEEK = ONE_DAY * 7L;
 	
 	protected void saveAll(final Runnable afterSave) {
-		final List<Act>acts = actListRenderer.getModifiedActs();
+		final List<Map<String, Serializable>>acts = actListRenderer.getChangedObjects();
 			
 		AsyncCallback<List<Act>> callback = new DefaultCallback<List<Act>>(){
 			
 			@Override
 			public void onSuccess(List<Act> result) {
-				actListRenderer.clearModification();
 				if (afterSave != null) {
 					afterSave.run();
 				}
@@ -262,12 +305,25 @@ public class TimeRegistration extends DockLayoutPanel {
 		};
 
 		if (!acts.isEmpty()) {
-			SRV.actService.save(clDoc.getSession(), acts, callback );
+			pbSave.setEnabled(false);
+			SRV.actService.save(clDoc.getSession(), toActs(acts), callback );
 		}
 	}
 
 	
-	
+	protected List<Map<String, Serializable>> toMaps(List<Act> acts) {
+		List<Map<String, Serializable>> list = new ArrayList<Map<String,Serializable>>(acts);
+		return list;
+	}
+
+	protected List<Act> toActs(List<Map<String, Serializable>> maps) {
+		List<Act> list = new ArrayList<Act>(maps.size());
+		for (Map<String, Serializable> map:maps) {
+			list.add((Act) map);
+		}
+		return list;
+	}
+
 	private void incrementDate(final long offset) {
 		if (actListRenderer.isModified()) {
 			new MessageBox("Aenderungen speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YESNOCANCEL, MESSAGE_ICONS.MB_ICON_QUESTION){
@@ -285,7 +341,11 @@ public class TimeRegistration extends DockLayoutPanel {
 							selectActs();
 						}
 					}); break;
-					case MessageBox.MB_NO: actListRenderer.clearModification(); incrementDate(offset); break;
+					case MessageBox.MB_NO: 
+						Date date  = incrementDate(dpDate.getValue(), offset); 
+						dpDate.setValue(date);
+						selectActs();
+						break;
 					}
 					super.onClick(result);
 				}
@@ -309,7 +369,7 @@ public class TimeRegistration extends DockLayoutPanel {
 
 			@Override
 			public void onSuccess(List<Act> result) {
-				actListRenderer.setActs(result, dpDate.getValue());
+				actListRenderer.setActs(toMaps(result));
 			}
 		});
 

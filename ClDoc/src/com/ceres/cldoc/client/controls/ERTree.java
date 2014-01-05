@@ -142,7 +142,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 	}
 
 	protected void deleteRelation(EntityRelation er) {
-		SRV.entityService.delete(clDoc.getSession(), entity, new DefaultCallback<Void>(clDoc, "delete ER") {
+		SRV.entityService.delete(clDoc.getSession(), er, new DefaultCallback<Void>(clDoc, "delete ER") {
 
 			@Override
 			public void onSuccess(Void result) {

@@ -27,7 +27,7 @@ public class CatalogSingleSelectorFactory implements ILinkFactory {
 	}
 	
 	@Override
-	public InteractorLink createLink(final Interactor interactor, String fieldName,
+	public InteractorLink createLink(final Interactor interactor, final String fieldName,
 			HashMap<String, String> attributes) {
 		final IEntitySelector<Catalog> hbl = useList ? 
 				new CatalogListBox(application, attributes.get("parent")) :

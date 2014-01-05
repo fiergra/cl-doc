@@ -205,15 +205,15 @@ public class HistoryView extends DockLayoutPanel {
 		}
 	}
 	
-	private ActRenderer getActRenderer(TabLayoutPanel tab, ActClass actClass) {
+	private ActRenderer2 getActRenderer(TabLayoutPanel tab, ActClass actClass) {
 		int i = 0;
-		ActRenderer ar = null;
+		ActRenderer2 ar = null;
 		while (i < tab.getWidgetCount()) {
 			Widget w = tab.getWidget(i);
-			if (w instanceof ActRenderer) {
-				Act act = ((ActRenderer)w).getAct();
+			if (w instanceof ActRenderer2) {
+				Act act = ((ActRenderer2)w).getAct();
 				if (act.actClass.name.equals(actClass.name)) {
-					ar = (ActRenderer)w;
+					ar = (ActRenderer2)w;
 				}
 			}
 			i++;
@@ -222,7 +222,7 @@ public class HistoryView extends DockLayoutPanel {
 	}
 	
 	protected void addMasterDataTab(Act act) {
-		ActRenderer ar = getActRenderer(tab, act.actClass);
+		ActRenderer2 ar = getActRenderer(tab, act.actClass);
 		if (ar == null) {
 			SRV.actService.findById(clDoc.getSession(), act.id, new DefaultCallback<Act>(clDoc, "reload master data act") {
 
@@ -230,15 +230,15 @@ public class HistoryView extends DockLayoutPanel {
 				public void onSuccess(final Act reloaded) {
 					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), reloaded.actClass.name, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "load layout definition") {
 
-						private ActRenderer ar;
+						private ActRenderer2 ar;
 
 						@Override
 						public void onSuccess(LayoutDefinition result) {
-							ar = new ActRenderer(clDoc,
-									new OnOkHandler<Act>() {
+							ar = new ActRenderer2(clDoc,
+									new OnOkHandler<Integer>() {
 
 										@Override
-										public void onOk(Act result) {
+										public void onOk(Integer result) {
 											if (result == null) {
 												tab.remove(ar);
 											}
@@ -252,7 +252,7 @@ public class HistoryView extends DockLayoutPanel {
 				}
 			});
 		} else {
-		ar.resetAct(act);
+//			ar.setresetAct(act);
 		}
 	}
 

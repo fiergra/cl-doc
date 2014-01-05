@@ -25,7 +25,7 @@ public class DateLink extends TextLink {
 	}
 
 	@Override
-	protected DateTextBox getWidget() {
+	public DateTextBox getWidget() {
 		return (DateTextBox) super.getWidget();
 	}
 

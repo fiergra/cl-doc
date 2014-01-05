@@ -23,10 +23,12 @@ public abstract class MapListRenderer extends FlexTable {
 	
 	private final List<LineContext> lineContexts = new ArrayList<LineContext>();
 	private final String[] labels;
+	private final Runnable setModified;
 
 	public MapListRenderer(String[] labels, Runnable setModified) {
 		this.labels = labels;
 		setStyleName("namedValuesList");
+		this.setModified = setModified;
 	}
 
 	private void addEmptyLine() {
@@ -38,6 +40,15 @@ public abstract class MapListRenderer extends FlexTable {
 	
 	protected abstract boolean isValid(List<Interactor>interactors, Interactor interactor);
 	
+	public boolean isModified() {
+		boolean isModified = false;
+		Iterator<LineContext> iter = lineContexts.iterator();
+		while (!isModified && iter.hasNext()) {
+			isModified = isModified || iter.next().interactor.isModified();
+		}
+		return isModified;
+	}
+	
 	private void addRow(Map<String, Serializable> newAct) {
 		final LineContext lineContext = new LineContext(newAct);
 		final int row = getRowCount();
@@ -46,11 +57,15 @@ public abstract class MapListRenderer extends FlexTable {
 			
 			@Override
 			public void run() {
+				if (setModified != null) {
+					setModified.run();
+				}
 				if (lineContext.interactor.isValid() && isLastLine(lineContext) && lineContext.interactor.isValid()) {
 					addEmptyLine();
 				} else if (lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
 						removeRow(row);
+						lineContexts.remove(lineContext);
 					}
 				}
 			}

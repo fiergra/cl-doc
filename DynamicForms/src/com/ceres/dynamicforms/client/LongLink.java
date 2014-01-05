@@ -24,7 +24,7 @@ public class LongLink extends TextLink {
 	}
 
 	@Override
-	protected LongTextBox getWidget() {
+	public LongTextBox getWidget() {
 		return (LongTextBox) super.getWidget();
 	}
 

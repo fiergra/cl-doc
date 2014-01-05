@@ -32,7 +32,7 @@ public class TextLink extends InteractorLink {
 	}
 
 	@Override
-	protected TextBoxBase getWidget() {
+	public TextBoxBase getWidget() {
 		return (TextBoxBase) super.getWidget();
 	}
 
