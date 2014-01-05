@@ -33,7 +33,7 @@ public class BooleanLink extends InteractorLink {
 	}
 
 	@Override
-	protected CheckBox getWidget() {
+	public CheckBox getWidget() {
 		return (CheckBox) super.getWidget();
 	}
 

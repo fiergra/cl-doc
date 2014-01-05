@@ -1,6 +1,31 @@
 insert into Catalog (id, parent, code, text, shorttext) values (65, 51, 'Jugend_USER', 'Jugend_USER', 'Jugend_USER');
 insert into Catalog (id, parent, code, text, shorttext) values (66, 51, 'Jugend_MANAGER', 'Jugend_MANAGER', 'Jugend_MANAGER');
 
+DROP TABLE IF EXISTS WorkPattern;
+
+CREATE TABLE IF NOT EXISTS WorkPattern(
+    Id INTEGER PRIMARY KEY NOT NULL,
+    CONSTRAINT FK_WorkPattern_ENTITY FOREIGN KEY (Id)
+        REFERENCES ENTITY (Id),
+    WeeklyHours FLOAT NOT NULL,
+    StartDate DATETIME NOT NULL,
+    EndDate DATETIME
+);
+
+
+insert into Catalog (id, parent, code, text, shorttext) values (1001, 180, 'Arbeitszeitmuster', 'Arbeitszeitmuster', 'Arbeitszeitmuster');
+insert into Entity (id, TYPE, NAME) values (1101, 1001, 'Vollzeit');
+insert into Entity (id, TYPE, NAME) values (1102, 1001, 'Teilzeit50');
+insert into Entity (id, TYPE, NAME) values (1103, 1001, 'Teilzeit20');
+
+insert into WorkPattern (id, WeeklyHours, StartDate) values (1101, 38.5, CURRENT_DATE);
+insert into WorkPattern (id, WeeklyHours, StartDate) values (1102, 19.25, CURRENT_DATE);
+insert into WorkPattern (id, WeeklyHours, StartDate) values (1103, 7.7, CURRENT_DATE);
+
+insert into Catalog (parent, code, text, shorttext) values (154, 'arbeitet entsprechend', 'arbeitet entsprechend', 'arbeitet entsprechend');
+
+
+
 insert into Entity (ID,TYPE,NAME) values (50, 182, 'Jugendhilfeplanung');
 
 insert into Entity (ID,TYPE,NAME) values (501, 182, 'Bund der deutschen katholischen Jugend (BDKJ)');

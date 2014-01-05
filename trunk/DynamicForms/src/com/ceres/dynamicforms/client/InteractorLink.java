@@ -27,7 +27,7 @@ public abstract class InteractorLink {
 	public abstract void toDialog(Map<String, Serializable> item);
 	public abstract void fromDialog(Map<String, Serializable> item);
 	
-	protected Widget getWidget() {
+	public Widget getWidget() {
 		return widget;
 	}
 

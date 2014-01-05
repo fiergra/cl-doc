@@ -24,7 +24,7 @@ public class FloatLink extends TextLink {
 	}
 
 	@Override
-	protected FloatTextBox getWidget() {
+	public FloatTextBox getWidget() {
 		return (FloatTextBox) super.getWidget();
 	}
 

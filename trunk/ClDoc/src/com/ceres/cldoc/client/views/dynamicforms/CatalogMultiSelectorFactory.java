@@ -24,7 +24,7 @@ public class CatalogMultiSelectorFactory implements ILinkFactory {
 	}
 	
 	@Override
-	public InteractorLink createLink(final Interactor interactor, String fieldName,
+	public InteractorLink createLink(final Interactor interactor, final String fieldName,
 			HashMap<String, String> attributes) {
 		String sMax = attributes.get("columns");
 		int maxCol = sMax != null ? Integer.valueOf(sMax) : 6;

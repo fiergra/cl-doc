@@ -23,7 +23,7 @@ public class HumanBeingSelectorFactory implements ILinkFactory {
 		this.application = application;
 	}
 	@Override
-	public InteractorLink createLink(final Interactor interactor, String fieldName,
+	public InteractorLink createLink(final Interactor interactor, final String fieldName,
 			HashMap<String, String> attributes) {
 		final HumanBeingListBox hbl = new HumanBeingListBox(application, null);
 		final InteractorLink link = new InteractorLink(interactor, fieldName, hbl, attributes) {

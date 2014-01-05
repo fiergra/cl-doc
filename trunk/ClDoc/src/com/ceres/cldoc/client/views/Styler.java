@@ -10,6 +10,8 @@ import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.dynamicforms.client.Interactor;
+import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -33,7 +35,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Styler extends DockLayoutPanel {
-	private IForm form;
+	private Widget form;
 	private final ClDoc clDoc;
 	
 	public Styler(ClDoc clDoc) {
@@ -93,10 +95,9 @@ public class Styler extends DockLayoutPanel {
 			@Override
 			public void run() {
 				if (form != null) {
-					int index = formContainer.getWidgetIndex(form);
 					formContainer.remove(form);
 				}
-				form = ActRenderer.getActRenderer(clDoc, formLayoutDescTextArea.getText(), null, null, null);
+				form = WidgetCreator.createWidget(formLayoutDescTextArea.getText(), new Interactor());
 				formContainer.add(form);
 			}
 		};
