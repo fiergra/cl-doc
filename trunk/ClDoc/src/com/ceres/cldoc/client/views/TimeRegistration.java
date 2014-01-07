@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,7 @@ import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Participation;
+import com.ceres.dynamicforms.client.DateLink;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorLink;
 import com.ceres.dynamicforms.client.TextLink;
@@ -159,8 +161,19 @@ public class TimeRegistration extends DockLayoutPanel {
 			}
 			
 			@Override
-			protected boolean isValid(List<Interactor> interactors, Interactor interactor) {
-				return interactor.isValid();
+			protected boolean isValid(Interactor interactor) {
+				boolean overlapping = false;
+				
+				if (interactor.isValid()) {
+					Iterator<Interactor> iter = getInteractors().iterator();
+					while (iter.hasNext() && !overlapping) {
+						Interactor next = iter.next();
+						if (next != interactor) {
+							overlapping = overlaps(next, interactor);
+						}
+					}
+				}
+				return !overlapping;
 			}
 			
 			@Override
@@ -169,14 +182,18 @@ public class TimeRegistration extends DockLayoutPanel {
 				HashMap<String, String> attributes = new HashMap<String, String>();
 				attributes.put("role", Participation.ADMINISTRATOR.code);
 				attributes.put("which", "start");
-				InteractorLink link = new ParticipationTimeFactory().createLink(interactor, "von", attributes );
-				setWidget(row, col, link.getWidget());
-				interactor.addLink(link);
+				DateLink fromLink = new ParticipationTimeFactory().createLink(interactor, "von", attributes );
+				setWidget(row, col, fromLink.getWidget());
+				interactor.addLink(fromLink);
 				col++;
 				attributes.put("which", "end");
-				link = new ParticipationTimeFactory().createLink(interactor, "bis", attributes );
-				setWidget(row, col, link.getWidget());
-				interactor.addLink(link);
+				DateLink toLink = new ParticipationTimeFactory().createLink(interactor, "bis", attributes );
+				setWidget(row, col, toLink.getWidget());
+				interactor.addLink(toLink);
+				
+				fromLink.setLessThan(toLink.getWidget());
+				toLink.setGreaterThan(fromLink.getWidget());
+				
 				col++;
 				TextBox textBox = new TextBox();
 				setWidget(row, col, textBox);
@@ -228,6 +245,30 @@ public class TimeRegistration extends DockLayoutPanel {
 		add(vp);
 		vp.ensureDebugId("vp");
 		selectActs();
+	}
+
+	protected boolean overlaps(Interactor next, Interactor interactor) {
+		boolean overlap = false;
+		
+		if (interactor.isValid() && interactor.isValid() && !next.isEmpty() && !interactor.isEmpty()) {
+			Act act1 = new Act();
+			act1.setParticipant(null, Participation.ADMINISTRATOR);
+			Act act2 = new Act();
+			act2.setParticipant(null, Participation.ADMINISTRATOR);
+			
+			interactor.fromDialog(act2);
+			next.fromDialog(act1);
+			
+			Participation p1 = act1.getParticipation(Participation.ADMINISTRATOR);
+			Participation p2 = act2.getParticipation(Participation.ADMINISTRATOR);
+			
+			if (p1.start != null && p1.end != null && p2.start != null && p2.end != null) {
+				overlap = p2.start.getTime() >= p1.start.getTime() && p2.start.getTime() <= p1.end.getTime();
+				overlap |= p2.end.getTime() >= p1.start.getTime() && p2.end.getTime() <= p1.end.getTime();
+				overlap |= p2.start.getTime() <= p1.start.getTime() && p2.end.getTime() >= p1.end.getTime();
+			}
+		}
+		return overlap;
 	}
 
 	private void populatePrintOutBox(final ListBox cmbPrintOuts) {
@@ -298,6 +339,7 @@ public class TimeRegistration extends DockLayoutPanel {
 			
 			@Override
 			public void onSuccess(List<Act> result) {
+				setModified(false);
 				if (afterSave != null) {
 					afterSave.run();
 				}
@@ -305,8 +347,12 @@ public class TimeRegistration extends DockLayoutPanel {
 		};
 
 		if (!acts.isEmpty()) {
-			pbSave.setEnabled(false);
 			SRV.actService.save(clDoc.getSession(), toActs(acts), callback );
+		} else {
+			setModified(false);
+			if (afterSave != null) {
+				afterSave.run();
+			}
 		}
 	}
 
@@ -325,7 +371,7 @@ public class TimeRegistration extends DockLayoutPanel {
 	}
 
 	private void incrementDate(final long offset) {
-		if (actListRenderer.isModified()) {
+		if (isModified) {
 			new MessageBox("Aenderungen speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YESNOCANCEL, MESSAGE_ICONS.MB_ICON_QUESTION){
 
 				@Override

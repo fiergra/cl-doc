@@ -171,7 +171,7 @@ public class Act extends AbstractNamedValueAccessor {
 	}
 
 	public Participation getParticipation(String role) {
-		return participations.get(role);
+		return participations != null ? participations.get(role) : null;
 	}
 
 	@Override

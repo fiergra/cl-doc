@@ -91,7 +91,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 			}
 			
 			@Override
-			protected boolean isValid(List<Interactor> interactors, Interactor interactor) {
+			protected boolean isValid(Interactor interactor) {
 				return true;
 			}
 

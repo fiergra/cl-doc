@@ -17,12 +17,13 @@ import com.ceres.dynamicforms.client.components.TimeTextBox;
 public class ParticipationTimeFactory implements ILinkFactory {
 
 	@Override
-	public InteractorLink createLink(
+	public DateLink createLink(
 			Interactor interactor, String fieldName,
 			HashMap<String, String> attributes) {
 		final TimeTextBox db = new TimeTextBox();
 		final String role = attributes.get("role");
 		final String which = attributes.get("which");
+		
 		DateLink link = new DateLink(interactor, fieldName, db, attributes) {
 
 			@Override
