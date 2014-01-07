@@ -122,7 +122,7 @@ public class WidgetCreator {
 						}
 		
 						element.appendChild(newElement);
-						element.setAttribute("type", null);
+//						element.setAttribute("type", null);
 						if (newElement.hasAttribute("width")) {
 							element.setAttribute("width", "100%");
 						}

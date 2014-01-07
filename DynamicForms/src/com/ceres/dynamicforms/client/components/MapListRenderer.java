@@ -22,6 +22,8 @@ public abstract class MapListRenderer extends FlexTable {
 	}
 	
 	private final List<LineContext> lineContexts = new ArrayList<LineContext>();
+	private final List<Interactor> interactors = new ArrayList<Interactor>();
+	
 	private final String[] labels;
 	private final Runnable setModified;
 
@@ -38,7 +40,11 @@ public abstract class MapListRenderer extends FlexTable {
 
 	protected abstract Map<String, Serializable> newAct();
 	
-	protected abstract boolean isValid(List<Interactor>interactors, Interactor interactor);
+	protected abstract boolean isValid(Interactor interactor);
+	
+	protected List<Interactor> getInteractors() {
+		return interactors;
+	}
 	
 	public boolean isModified() {
 		boolean isModified = false;
@@ -60,18 +66,21 @@ public abstract class MapListRenderer extends FlexTable {
 				if (setModified != null) {
 					setModified.run();
 				}
-				if (lineContext.interactor.isValid() && isLastLine(lineContext) && lineContext.interactor.isValid()) {
+				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext) && lineContext.interactor.isValid()) {
 					addEmptyLine();
 				} else if (lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
 						removeRow(row);
 						lineContexts.remove(lineContext);
+						interactors.remove(lineContext.interactor);
 					}
 				}
 			}
 		});
 		
 		lineContexts.add(lineContext);
+		interactors.add(lineContext.interactor);
+		
 		createNewRow(row, lineContext.interactor);
 		lineContext.interactor.toDialog(newAct);
 	}
@@ -87,6 +96,8 @@ public abstract class MapListRenderer extends FlexTable {
 
 	public void setActs(List<Map<String,Serializable>> result) {
 		lineContexts.clear();
+		interactors.clear();
+		
 		clear();
 		removeAllRows();
 		addHeader();
