@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.ceres.cldoc.IUserService;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.client.views.ActRenderer2;
+import com.ceres.cldoc.client.views.ActRenderer;
 import com.ceres.cldoc.client.views.ClosableTab;
 import com.ceres.cldoc.client.views.ConfiguredTabPanel;
 import com.ceres.cldoc.client.views.DefaultCallback;
@@ -178,7 +178,7 @@ public class ClDoc implements EntryPoint, IApplication {
 		LayoutPanel mainPanel = new LayoutPanel();
 		final String open = Window.Location.getParameter("open");
 		if (open != null) {
-			final ActRenderer2 hp = new ActRenderer2(this, new OnOkHandler<Integer>() {
+			final ActRenderer hp = new ActRenderer(this, new OnOkHandler<Integer>() {
 
 				@Override
 				public void onOk(Integer result) {

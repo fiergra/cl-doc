@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ActRenderer2 extends LayoutPanel implements IActRenderer {
+public class ActRenderer extends LayoutPanel implements IActRenderer {
 
 	public static final int SAVE_INSERT = 0;
 	public static final int SAVE_UPDATE = 1;
@@ -43,7 +43,7 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 	private LinkButton pbSave;
 	private final ClDoc clDoc;
 
-	public ActRenderer2(
+	public ActRenderer(
 			ClDoc clDoc,
 			OnOkHandler<Integer> onInsertUpdateDelete, 
 			Runnable onSetModified) {

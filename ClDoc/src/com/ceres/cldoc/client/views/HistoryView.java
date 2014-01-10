@@ -181,11 +181,11 @@ public class HistoryView extends DockLayoutPanel {
 		historyTable.addStyleName("roundCorners");
 		splitPanel.addWest(historyTable, 400);
 
-		viewer = new ActRenderer2(clDoc, new OnOkHandler<Integer>() {
+		viewer = new ActRenderer(clDoc, new OnOkHandler<Integer>() {
 
 			@Override
 			public void onOk(Integer result) {
-				if (result == ActRenderer2.SAVE_DELETE || result == ActRenderer2.SAVE_INSERT) {
+				if (result == ActRenderer.SAVE_DELETE || result == ActRenderer.SAVE_INSERT) {
 					refresh(null);
 				}
 			}
@@ -205,15 +205,15 @@ public class HistoryView extends DockLayoutPanel {
 		}
 	}
 	
-	private ActRenderer2 getActRenderer(TabLayoutPanel tab, ActClass actClass) {
+	private ActRenderer getActRenderer(TabLayoutPanel tab, ActClass actClass) {
 		int i = 0;
-		ActRenderer2 ar = null;
+		ActRenderer ar = null;
 		while (i < tab.getWidgetCount()) {
 			Widget w = tab.getWidget(i);
-			if (w instanceof ActRenderer2) {
-				Act act = ((ActRenderer2)w).getAct();
+			if (w instanceof ActRenderer) {
+				Act act = ((ActRenderer)w).getAct();
 				if (act.actClass.name.equals(actClass.name)) {
-					ar = (ActRenderer2)w;
+					ar = (ActRenderer)w;
 				}
 			}
 			i++;
@@ -222,7 +222,7 @@ public class HistoryView extends DockLayoutPanel {
 	}
 	
 	protected void addMasterDataTab(Act act) {
-		ActRenderer2 ar = getActRenderer(tab, act.actClass);
+		ActRenderer ar = getActRenderer(tab, act.actClass);
 		if (ar == null) {
 			SRV.actService.findById(clDoc.getSession(), act.id, new DefaultCallback<Act>(clDoc, "reload master data act") {
 
@@ -230,11 +230,11 @@ public class HistoryView extends DockLayoutPanel {
 				public void onSuccess(final Act reloaded) {
 					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), reloaded.actClass.name, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "load layout definition") {
 
-						private ActRenderer2 ar;
+						private ActRenderer ar;
 
 						@Override
 						public void onSuccess(LayoutDefinition result) {
-							ar = new ActRenderer2(clDoc,
+							ar = new ActRenderer(clDoc,
 									new OnOkHandler<Integer>() {
 
 										@Override
