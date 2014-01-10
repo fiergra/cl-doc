@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
-
 import com.ceres.dynamicforms.client.Interactor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -83,7 +81,7 @@ public abstract class MapListRenderer extends FlexTable {
 				if (setModified != null) {
 					setModified.run();
 				}
-				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext) && lineContext.interactor.isValid()) {
+				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext)) {
 					addEmptyLine();
 				} else if (lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {

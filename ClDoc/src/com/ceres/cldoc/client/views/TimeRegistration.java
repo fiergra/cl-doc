@@ -223,7 +223,7 @@ public class TimeRegistration extends DockLayoutPanel {
 
 			@Override
 			protected boolean isValid(Interactor interactor) {
-				return interactor.isValid();
+				return true;//!isOverlapping(interactor);
 			}
 		};
 				
@@ -314,7 +314,7 @@ public class TimeRegistration extends DockLayoutPanel {
 	protected void setModified(boolean isModified) {
 		if (isModified) {
 			this.isModified = true;
-			checkOverlaps();
+			isOverlapping();
 		} else {
 			this.isModified = false;
 		}
@@ -322,24 +322,32 @@ public class TimeRegistration extends DockLayoutPanel {
 	}
 
 
-	private void checkOverlaps() {
+	private boolean isOverlapping(Interactor outer) {
+		boolean overlapping = false;
+		
+		if (outer.isValid()) {
+			Iterator<Interactor> iter = actListRenderer.getInteractors().iterator();
+			while (iter.hasNext() && !overlapping) {
+				Interactor inner = iter.next();
+				if (inner != outer) {
+					overlapping = overlaps(inner, outer);
+					inner.hilite(!overlapping);
+				}
+			}
+		}
+		
+		return overlapping;
+	}
+
+	private boolean isOverlapping() {
 		boolean overlapping = false;
 		
 		Iterator<Interactor> outerIter = actListRenderer.getInteractors().iterator();
 		while (outerIter.hasNext() && !overlapping) {
 			Interactor outer = outerIter.next();
-			
-			if (outer.isValid()) {
-				Iterator<Interactor> iter = actListRenderer.getInteractors().iterator();
-				while (iter.hasNext() && !overlapping) {
-					Interactor inner = iter.next();
-					if (inner != outer) {
-						overlapping = overlaps(inner, outer);
-						inner.hilite(!overlapping);
-					}
-				}
-			}
+			overlapping = isOverlapping(outer);
 		}
+		return overlapping;
 	}
 
 	public static final long ONE_DAY = 1000l * 60l * 60l * 24l;
