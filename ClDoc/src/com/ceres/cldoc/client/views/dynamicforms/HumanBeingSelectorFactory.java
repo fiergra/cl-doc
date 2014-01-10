@@ -13,6 +13,7 @@ import com.ceres.core.IEntity;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorLink;
+import com.ceres.dynamicforms.client.InteractorWidgetLink;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 
@@ -23,10 +24,10 @@ public class HumanBeingSelectorFactory implements ILinkFactory {
 		this.application = application;
 	}
 	@Override
-	public InteractorLink createLink(final Interactor interactor, final String fieldName,
+	public InteractorWidgetLink createLink(final Interactor interactor, final String fieldName,
 			HashMap<String, String> attributes) {
 		final HumanBeingListBox hbl = new HumanBeingListBox(application, null);
-		final InteractorLink link = new InteractorLink(interactor, fieldName, hbl, attributes) {
+		final InteractorWidgetLink link = new InteractorWidgetLink(interactor, fieldName, hbl, attributes) {
 			
 			private boolean isSelecting = false;
 			

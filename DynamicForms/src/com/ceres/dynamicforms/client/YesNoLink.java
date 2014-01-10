@@ -8,7 +8,7 @@ import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 
-public class YesNoLink extends InteractorLink {
+public class YesNoLink extends InteractorWidgetLink {
 
 	public YesNoLink(final Interactor interactor, String fieldName, YesNoRadioGroup widget,
 			HashMap<String, String> attributes) {

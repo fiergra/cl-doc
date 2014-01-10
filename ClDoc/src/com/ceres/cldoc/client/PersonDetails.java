@@ -47,7 +47,7 @@ public class PersonDetails extends DockLayoutPanel {
 		addNorth(createButtons(), 3);
 		content.setWidth("100%");
 		add(content);
-		ia.setChangeHandler(new Runnable() {
+		ia.addChangeHandler(new Runnable() {
 			
 			@Override
 			public void run() {

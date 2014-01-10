@@ -184,7 +184,7 @@ public class WidgetCreator {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
-		InteractorLink link = null;
+		InteractorWidgetLink link = null;
 		String fieldName = null; 
 		
 		if (attributes.containsKey("fieldName")) {

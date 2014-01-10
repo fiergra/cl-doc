@@ -11,6 +11,7 @@ import com.ceres.core.IApplication;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorLink;
+import com.ceres.dynamicforms.client.InteractorWidgetLink;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Widget;
@@ -24,14 +25,14 @@ public class CatalogMultiSelectorFactory implements ILinkFactory {
 	}
 	
 	@Override
-	public InteractorLink createLink(final Interactor interactor, final String fieldName,
+	public InteractorWidgetLink createLink(final Interactor interactor, final String fieldName,
 			HashMap<String, String> attributes) {
 		String sMax = attributes.get("columns");
 		int maxCol = sMax != null ? Integer.valueOf(sMax) : 6;
 
 		final IEntitySelector<CatalogList> hbl = 
 				new CatalogMultiSelect(application, attributes.get("parent"), maxCol, attributes.get("orientation"));
-		final InteractorLink link = new InteractorLink(interactor, fieldName, (Widget) hbl, attributes) {
+		final InteractorWidgetLink link = new InteractorWidgetLink(interactor, fieldName, (Widget) hbl, attributes) {
 			
 			@Override
 			public void toDialog(Map<String, Serializable> item) {

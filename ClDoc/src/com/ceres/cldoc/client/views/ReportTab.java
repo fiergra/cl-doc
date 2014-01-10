@@ -10,6 +10,8 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ReportDefinition;
+import com.ceres.dynamicforms.client.Interactor;
+import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,34 +26,28 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.xml.client.Document;
-import com.google.gwt.xml.client.Element;
-import com.google.gwt.xml.client.NamedNodeMap;
-import com.google.gwt.xml.client.Node;
-import com.google.gwt.xml.client.NodeList;
-import com.google.gwt.xml.client.XMLParser;
 
 public class ReportTab extends SplitLayoutPanel {
 
 	private final FlexTable table = new FlexTable();
 	private final ReportDefinition reportDefinition;
 	private final Act filters = new Act();
-	private final ClDoc clDoc; 
+	private final ClDoc clDoc;
 
 	public ReportTab(ClDoc clDoc, ReportDefinition rd) {
 		super();
 		this.clDoc = clDoc;
 		this.reportDefinition = rd;
-		setup();
+		setup(rd);
 	}
 
-	private void setup() {
-		addWest(createReportControls(), 200);
+	private void setup(ReportDefinition rd) {
+		addWest(createReportControls(rd), 200);
 		add(new ScrollPanel(table));
 	}
 
 
-	private HorizontalPanel setupButtons(final Form rc) {
+	private HorizontalPanel setupButtons(Interactor interactor) {
 		HorizontalPanel buttonsPanel = new HorizontalPanel();
 		buttonsPanel.addStyleName("buttonsPanel");
 		HorizontalPanel buttons = new HorizontalPanel();
@@ -63,7 +59,6 @@ public class ReportTab extends SplitLayoutPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				rc.fromDialog();
 				execute();
 			}
 		});
@@ -86,62 +81,15 @@ public class ReportTab extends SplitLayoutPanel {
 	}
 
 
-	private Widget createReportControls() {
+	private Widget createReportControls(ReportDefinition rd) {
 		DockLayoutPanel reportControls = new DockLayoutPanel(Unit.EM);
-		Form rc = new Form(clDoc, filters, new Runnable(){
+		Interactor interactor = new Interactor();
+		Widget rc = WidgetCreator.createWidget(rd.xml, interactor);
 
-			@Override
-			public void run() {
-				
-			}},
-			new Runnable() {
-				
-				@Override
-				public void run() {
-					
-				}
-			});
-
-		reportControls.addNorth(setupButtons(rc), 3);
+		reportControls.addNorth(setupButtons(interactor), 3);
 		reportControls.add(rc);
-		setupParams(rc);
-		
-		
 		
 		return reportControls;
-	}
-
-	private void setupParams(Form rc) {
-		if (reportDefinition.xml != null && reportDefinition.xml.length() > 0) {
-			Document document = XMLParser.parse(reportDefinition.xml);
-			NodeList params = document.getElementsByTagName("param");
-			
-			for (int i = 0; i < params.getLength(); i++) {
-				Node item = params.item(i);
-				Element child = item instanceof Element ? (Element)item : null;
-				if (child != null) {
-					addParam(rc, i, child);
-				}
-			}
-		}
-	}
-
-	private void addParam(Form rc, int i, Element child) {
-		String fieldName = child.getAttribute("name");
-		String labelText = child.getAttribute("label") == null ? fieldName : child.getAttribute("label");
-		String sType = child.getAttribute("type");
-		HashMap<String, String> attributes = asHashMap(child.getAttributes());
-		attributes.put("width", "100%");
-		rc.addLine(labelText, fieldName, rc.getDataType(sType), attributes);
-	}
-
-	private HashMap<String, String> asHashMap(NamedNodeMap nodeMap) {
-		HashMap<String, String> attributes = new HashMap<String, String>();
-		for (int i = 0; i < nodeMap.getLength(); i++) {
-			Node item = nodeMap.item(i);
-			attributes.put(item.getNodeName(), item.getNodeValue());
-		}
-		return attributes;
 	}
 
 	void execute() {

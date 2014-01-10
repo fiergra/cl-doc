@@ -11,11 +11,11 @@ import com.ceres.cldoc.client.views.ClosableTab;
 import com.ceres.cldoc.client.views.ConfiguredTabPanel;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.EntityFile;
-import com.ceres.cldoc.client.views.Form;
 import com.ceres.cldoc.client.views.LogOutput;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.OnOkHandler;
 import com.ceres.cldoc.client.views.ParticipationTimeFactory;
+import com.ceres.cldoc.client.views.PopupManager;
 import com.ceres.cldoc.client.views.dynamicforms.CatalogMultiSelectorFactory;
 import com.ceres.cldoc.client.views.dynamicforms.CatalogSingleSelectorFactory;
 import com.ceres.cldoc.client.views.dynamicforms.HumanBeingSelectorFactory;
@@ -29,6 +29,7 @@ import com.ceres.cldoc.model.User;
 import com.ceres.core.IApplication;
 import com.ceres.core.IOrganisation;
 import com.ceres.core.ISession;
+import com.ceres.dynamicforms.client.SimpleForm;
 import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.layout.client.Layout.Alignment;
@@ -38,6 +39,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -105,23 +107,17 @@ public class ClDoc implements EntryPoint, IApplication {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void setPassword(final ISession session) {
 		final PasswordTextBox pwdField1 = new PasswordTextBox();
 		final PasswordTextBox pwdField2 = new PasswordTextBox();
-		Form createPwd = new Form(this, null, null, null){
+		SimpleForm createPwd = new SimpleForm();
+		createPwd.addLine("Passwort", pwdField1);
+		createPwd.addLine("Passwort Wiederholung", pwdField2);
+		PopupManager.showModal("Passwort definieren", createPwd, new OnClick<PopupPanel>() {
 
 			@Override
-			protected void setup() {
-				addLabeledWidget("Passwort", true, pwdField1);
-				addLabeledWidget("Passwort Wiederholung", true, pwdField2);
-			}
-		};
-		
-		createPwd.showModal("Passwort definieren", new OnClick<Void>() {
-
-			@Override
-			public void onClick(Void pp) {
+			public void onClick(PopupPanel pp) {
+				pp.hide();
 				SRV.userService.setPassword(session, (User) session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>(ClDoc.this, "setPassword") {
 
 					@Override
@@ -132,7 +128,8 @@ public class ClDoc implements EntryPoint, IApplication {
 					}
 				});
 			}
-		}, null, null);
+		}, null);
+		
 	}
 
 	private EntityFile getPersonalFile(Entity hb, Widget header, String config) {

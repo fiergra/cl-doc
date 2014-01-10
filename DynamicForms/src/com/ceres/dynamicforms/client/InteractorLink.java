@@ -1,38 +1,22 @@
 package com.ceres.dynamicforms.client;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
-
-import com.google.gwt.user.client.ui.Widget;
 
 public abstract class InteractorLink {
 	protected final String name;
-	protected final Widget widget;
-	protected final HashMap<String, String> attributes;
 	protected final Interactor interactor;
-	
-	protected final boolean isRequired;
 
-	public InteractorLink(Interactor interactor, String name, Widget widget, HashMap<String, String> attributes) {
+	public InteractorLink(Interactor interactor, String name) {
 		this.interactor = interactor;
 		this.name = name;
-		this.widget = widget;
-		this.attributes = attributes;
-		
-		isRequired = attributes != null && "true".equals(attributes.get("required")); 
-		
 	}
 
 	public abstract void toDialog(Map<String, Serializable> item);
 	public abstract void fromDialog(Map<String, Serializable> item);
-	
-	public Widget getWidget() {
-		return widget;
-	}
-
+	protected abstract void hilite(boolean isValid);
 	public abstract boolean isEmpty();
-	
+
 	protected Serializable get(Map<String, Serializable> item, String fieldName) {
 		Serializable value;
 		int index = fieldName.indexOf('.');
@@ -46,7 +30,7 @@ public abstract class InteractorLink {
 		return value;
 	}
 
-	void put(Map<String, Serializable> item, String fieldName, Serializable value) {
+	protected void put(Map<String, Serializable> item, String fieldName, Serializable value) {
 		int index = fieldName.indexOf('.');
 		if (index == -1) {
 			item.put(fieldName, value);
@@ -57,7 +41,7 @@ public abstract class InteractorLink {
 	}
 
 	public boolean isValid() {
-		return isRequired ? !isEmpty() : true;
+		return true;
 	}
 
 	public String getName() {

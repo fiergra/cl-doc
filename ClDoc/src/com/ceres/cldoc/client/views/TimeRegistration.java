@@ -13,15 +13,13 @@ import java.util.TreeSet;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.client.views.ActListRenderer.FieldDef;
-import com.ceres.cldoc.client.views.Form.DataType;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.dynamicforms.client.DateLink;
+import com.ceres.dynamicforms.client.DurationLink;
 import com.ceres.dynamicforms.client.Interactor;
-import com.ceres.dynamicforms.client.InteractorLink;
 import com.ceres.dynamicforms.client.TextLink;
 import com.ceres.dynamicforms.client.components.MapListRenderer;
 import com.google.gwt.core.client.GWT;
@@ -38,6 +36,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -130,16 +129,6 @@ public class TimeRegistration extends DockLayoutPanel {
 		});
 
 		final ActClass actClass = new ActClass(WORKINGTIME_ACT);
-		List<FieldDef> types = new ArrayList<FieldDef>();
-		HashMap<String, String> attribs = new HashMap<String, String>();
-		attribs.put("role", Participation.ADMINISTRATOR.code);
-		attribs.put("which", "start");
-		types.add(new FieldDef("Von", DataType.FT_PARTICIPATION_TIME, true, attribs ));
-		HashMap<String, String> attribsEnd = new HashMap<String, String>();
-		attribsEnd.put("role", Participation.ADMINISTRATOR.code);
-		attribsEnd.put("which", "end");
-		types.add(new FieldDef("bis", DataType.FT_PARTICIPATION_TIME, true, attribsEnd));
-		types.add(new FieldDef("Bemerkung", DataType.FT_STRING, false, null));
 
 		LayoutPanel vp = new LayoutPanel();
 		actListRenderer = new MapListRenderer(new String[]{"von", "bis", "Bemerkung"}, 
@@ -160,28 +149,14 @@ public class TimeRegistration extends DockLayoutPanel {
 				return newAct;
 			}
 			
-			@Override
-			protected boolean isValid(Interactor interactor) {
-				boolean overlapping = false;
-				
-				if (interactor.isValid()) {
-					Iterator<Interactor> iter = getInteractors().iterator();
-					while (iter.hasNext() && !overlapping) {
-						Interactor next = iter.next();
-						if (next != interactor) {
-							overlapping = overlaps(next, interactor);
-						}
-					}
-				}
-				return !overlapping;
-			}
 			
 			@Override
-			protected void createNewRow(int row, Interactor interactor) {
+			protected void createNewRow(final int row, final Interactor interactor) {
 				int col = 0;
 				HashMap<String, String> attributes = new HashMap<String, String>();
 				attributes.put("role", Participation.ADMINISTRATOR.code);
 				attributes.put("which", "start");
+				attributes.put("required", "true");
 				DateLink fromLink = new ParticipationTimeFactory().createLink(interactor, "von", attributes );
 				setWidget(row, col, fromLink.getWidget());
 				interactor.addLink(fromLink);
@@ -191,14 +166,39 @@ public class TimeRegistration extends DockLayoutPanel {
 				setWidget(row, col, toLink.getWidget());
 				interactor.addLink(toLink);
 				
-				fromLink.setLessThan(toLink.getWidget());
-				toLink.setGreaterThan(fromLink.getWidget());
+				interactor.addLink(new DurationLink(interactor, fromLink, toLink) {
+
+					@Override
+					protected void hilite(boolean isValid) {
+						if (isValid) {
+							getRowFormatter().removeStyleName(row, "invalidContent");
+						} else {
+							getRowFormatter().addStyleName(row, "invalidContent");
+						}
+					}
+					
+				});
 				
 				col++;
 				TextBox textBox = new TextBox();
 				setWidget(row, col, textBox);
 				interactor.addLink(new TextLink(interactor, "Bemerkung", textBox, null));
 				col++;
+
+				final Label overlap = new Label();
+				setWidget(row, col, overlap);
+
+//				interactor.addChangeHandler(new Runnable() {
+//					
+//					@Override
+//					public void run() {
+//						if (isOverlapping(interactor)) {
+//							overlap.setText("overlap!");
+//						} else {
+//							overlap.setText("ok");
+//						}
+//					}
+//				});
 				
 			}
 			
@@ -219,6 +219,11 @@ public class TimeRegistration extends DockLayoutPanel {
 				} else {
 					return true;
 				}
+			}
+
+			@Override
+			protected boolean isValid(Interactor interactor) {
+				return interactor.isValid();
 			}
 		};
 				
@@ -306,28 +311,36 @@ public class TimeRegistration extends DockLayoutPanel {
 		return true;
 	}
 
-//	protected boolean overlaps(Act act) {
-//	}
-
-	private boolean overlap(Act a, Act act) {
-		Participation p1 = a.getParticipation(Participation.ADMINISTRATOR);
-		Participation p2 = act.getParticipation(Participation.ADMINISTRATOR);
-		
-		boolean overlap = p2.start.getTime() >= p1.start.getTime() && p2.start.getTime() <= p1.end.getTime();
-		overlap |= p2.end.getTime() >= p1.start.getTime() && p2.end.getTime() <= p1.end.getTime();
-		overlap |= p2.start.getTime() <= p1.start.getTime() && p2.end.getTime() >= p1.end.getTime();
-		return overlap;
-	}
-
 	protected void setModified(boolean isModified) {
 		if (isModified) {
 			this.isModified = true;
+			checkOverlaps();
 		} else {
 			this.isModified = false;
 		}
 		pbSave.enable(this.isModified);
 	}
 
+
+	private void checkOverlaps() {
+		boolean overlapping = false;
+		
+		Iterator<Interactor> outerIter = actListRenderer.getInteractors().iterator();
+		while (outerIter.hasNext() && !overlapping) {
+			Interactor outer = outerIter.next();
+			
+			if (outer.isValid()) {
+				Iterator<Interactor> iter = actListRenderer.getInteractors().iterator();
+				while (iter.hasNext() && !overlapping) {
+					Interactor inner = iter.next();
+					if (inner != outer) {
+						overlapping = overlaps(inner, outer);
+						inner.hilite(!overlapping);
+					}
+				}
+			}
+		}
+	}
 
 	public static final long ONE_DAY = 1000l * 60l * 60l * 24l;
 	public static final long ONE_WEEK = ONE_DAY * 7L;
