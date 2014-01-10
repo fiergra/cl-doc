@@ -1,11 +1,17 @@
 package com.ceres.cldoc.client.views;
 
+import java.io.Serializable;
+import java.util.HashMap;
+
 import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.FileSystemNode;
+import com.ceres.dynamicforms.client.Interactor;
+import com.ceres.dynamicforms.client.SimpleForm;
+import com.ceres.dynamicforms.client.TextLink;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -160,38 +166,27 @@ public class SettingsPanel extends DockLayoutPanel {
 		pbSave.enable(true);
 		buttons.add(pbSave);
 		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		Form form = new Form(clDoc, null, new Runnable() {
-			
-			@Override
-			public void run() {
-				pbSave.enable(true);
-			}}, null) {
+		SimpleForm form = new SimpleForm();
+		form.addLine("Lucene index path", hpLucene);
+		form.addLine("DocArchive path", hpDocArchive);
+		final Interactor ia = new Interactor();
+		HashMap<String, String> attributes = new HashMap<String, String>(0);
+		ia.addLink(new TextLink(ia, "lucenePath", lucenePathBox, attributes));
+		ia.addLink(new TextLink(ia, "docArchivePath", docArchivePathBox, attributes));
+
+		SRV.configurationService.getDocArchivePath(new DefaultCallback<String>(clDoc, "getDocArchivePath") {
 
 			@Override
-			protected void setup() {
-				addLabeledWidget("Lucene index path", true, hpLucene);
-				addLabeledWidget("DocArchive path", true, hpDocArchive);
+			public void onSuccess(String text) {
+				HashMap<String, Serializable> act = new HashMap<String, Serializable>();
+				act.put("docArchivePath", text);
+				ia.toDialog(act);
 			}
-
-			@Override
-			public void toDialog() {
-				SRV.configurationService.getDocArchivePath(new DefaultCallback<String>(clDoc, "getDocArchivePath") {
-
-					@Override
-					public void onSuccess(String text) {
-						docArchivePathBox.setText(text);
-					}
-				});
-				super.toDialog();
-			}
-			
-		};
+		});
 		
 		addNorth(buttonsPanel, 3);
 		form.setWidth("100%");
 		add(form);
-		form.toDialog();
 	}
 
 }

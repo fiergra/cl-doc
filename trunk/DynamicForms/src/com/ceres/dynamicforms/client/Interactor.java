@@ -4,12 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Interactor {
 	
 	private final Collection<InteractorLink> links = new ArrayList<InteractorLink>();
-	private Runnable changeHandler;
+	private List<Runnable> changeHandlers;
 	private boolean isModified;
 	private boolean isValid;
 	
@@ -17,14 +18,14 @@ public class Interactor {
 		links.add(link);
 	}
 
+	public void resetLinks() {
+		links.clear();
+	}
+	
 	public void toDialog(Map<String,Serializable> item) {
 		for (InteractorLink il:links) {
 			il.toDialog(item);
-			if (il.isValid()) {
-				il.getWidget().removeStyleName("invalidContent");
-			} else {
-				il.getWidget().addStyleName("invalidContent");
-			}
+			il.hilite(il.isValid());
 		}
 		isModified = false;
 	}
@@ -39,27 +40,34 @@ public class Interactor {
 		return isModified;
 	}
 
-	public void setChangeHandler(Runnable changeHandler) {
-		this.changeHandler = changeHandler;
+	public void addChangeHandler(Runnable changeHandler) {
+		if (changeHandlers == null) {
+			changeHandlers = new ArrayList<Runnable>();
+		}
+		changeHandlers.add(changeHandler);
 	}
 
 	public boolean isValid() {
 		return isValid;
 	}
 
+	
 	public void onChange(InteractorLink link) {
 		isModified = true;
+		link.hilite(link.isValid());
 		if (!link.isValid()) {
 			isValid = false;
-			link.getWidget().addStyleName("invalidContent");
 		} else {
-			link.getWidget().removeStyleName("invalidContent");
 			if (!isValid){
 				validateAll();
 			}
 		}
-		if (changeHandler != null) {
-			changeHandler.run();
+
+		
+		if (changeHandlers != null) {
+			for (Runnable changeHandler:changeHandlers) {
+				changeHandler.run();
+			}
 		}
 	}
 
@@ -78,6 +86,10 @@ public class Interactor {
 		while (isValid && iter.hasNext()) {
 			isValid = isValid && iter.next().isValid();
 		}
+	}
+
+	public void hilite(boolean valid) {
+		
 	}
 
 }

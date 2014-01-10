@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
+
 import com.ceres.dynamicforms.client.Interactor;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -13,11 +15,26 @@ import com.google.gwt.user.client.ui.Label;
 public abstract class MapListRenderer extends FlexTable {
 	
 	static class LineContext {
-		public LineContext(Map<String, Serializable> act) {
+		private int row;
+		private MapListRenderer mlr;
+		public LineContext(MapListRenderer mlr, int row, Map<String, Serializable> act) {
+			this.mlr = mlr;
+			this.row = row;
 			this.act = act;
 		}
 
-		final Interactor interactor = new Interactor();
+		final Interactor interactor = new Interactor() {
+
+			@Override
+			public void hilite(boolean isValid) {
+				if (!isValid) {
+					mlr.getRowFormatter().addStyleName(row, "invalidContent");
+				} else {
+					mlr.getRowFormatter().removeStyleName(row, "invalidContent");
+				}
+			}
+			
+		};
 		final Map<String, Serializable> act;
 	}
 	
@@ -42,7 +59,7 @@ public abstract class MapListRenderer extends FlexTable {
 	
 	protected abstract boolean isValid(Interactor interactor);
 	
-	protected List<Interactor> getInteractors() {
+	public List<Interactor> getInteractors() {
 		return interactors;
 	}
 	
@@ -56,10 +73,10 @@ public abstract class MapListRenderer extends FlexTable {
 	}
 	
 	private void addRow(Map<String, Serializable> newAct) {
-		final LineContext lineContext = new LineContext(newAct);
 		final int row = getRowCount();
+		final LineContext lineContext = new LineContext(this, row, newAct);
 
-		lineContext.interactor.setChangeHandler(new Runnable() {
+		lineContext.interactor.addChangeHandler(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -83,6 +100,7 @@ public abstract class MapListRenderer extends FlexTable {
 		
 		createNewRow(row, lineContext.interactor);
 		lineContext.interactor.toDialog(newAct);
+		
 	}
 
 
@@ -116,7 +134,6 @@ public abstract class MapListRenderer extends FlexTable {
 		for (String labelText:labels) {
 			Label label = new Label(labelText);
 			setWidget(0, col, label);
-//			getFlexCellFormatter().setColSpan(0, col, 1);
 			col+= 1;
 		}
 	}

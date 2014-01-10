@@ -22,6 +22,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.shared.DateTimeFormat;
 import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -263,7 +264,7 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 			if (act.actClass.name.equals(ActClass.EXTERNAL_DOC.name)) {
 				IActField field = act.get("docId");
 				String baseUrl = GWT.getModuleBaseURL();
-				FrameView frame = new FrameView(act, baseUrl + "download?id=" + field.getLongValue());
+				Frame frame = new Frame(baseUrl + "download?id=" + field.getLongValue());
 				int h = getOffsetHeight() - 2 * BORDER_WIDTH;
 				int w = getOffsetWidth() - 2 * BORDER_WIDTH; 
 				frame.setPixelSize(w, h);
@@ -272,7 +273,7 @@ public class ActRenderer2 extends LayoutPanel implements IActRenderer {
 				frame.setSize("100%", "100%");
 			} else {
 				interactor = new Interactor();
-				interactor.setChangeHandler(new Runnable() {
+				interactor.addChangeHandler(new Runnable() {
 					
 					@Override
 					public void run() {

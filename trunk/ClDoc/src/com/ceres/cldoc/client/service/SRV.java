@@ -11,7 +11,8 @@ public abstract class SRV {
 	public static final ConfigurationServiceAsync configurationService = GWT
 	.create(ConfigurationService.class);
 
-	public static final ConfigurationServiceAsync catalogService = new CachedCatalogService();
+	public static final ConfigurationServiceAsync catalogService = GWT
+			.create(ConfigurationService.class);
 
 	public static final UserServiceAsync userService = GWT
 	.create(UserService.class);

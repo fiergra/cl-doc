@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.Widget;
 
-public class PassiveInteractorLink extends InteractorLink {
+public class PassiveInteractorLink extends InteractorWidgetLink {
 
 	public PassiveInteractorLink(Interactor interactor, String fieldName, Widget widget, HashMap<String, String> attributes) {
 		super(interactor, fieldName, widget, attributes);
