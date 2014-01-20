@@ -19,7 +19,8 @@ public class ActServiceImplTest extends TransactionalTest {
 
 	public void testDates() throws Exception {
 		IActService as = Locator.getActService();
-		List<Act> acts = as.load(getSession(), null, null, new Date());
+		List<Act> acts = as.load(getSession(), null, null, new Date(), null);
+		acts = as.load(getSession(), null, null, new Date(), new Date());
 	}
 	
 	public void testAttachments() throws Exception {
