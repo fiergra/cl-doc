@@ -86,14 +86,6 @@ public class TimeRegistration extends DockLayoutPanel {
 		buttons.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		header.add(buttons);
 		addNorth(header, 3);
-		
-		summaryPanel = new TimeSheetSummary(clDoc);
-		addEast(summaryPanel, 15);
-
-		Image lbPrev = new Image("/icons/16/arrow-mini-left-icon.png");
-		Image lbNext = new Image("/icons/16/arrow-mini-right-icon.png");
-		lbPrev.setStyleName("linkButton");
-		lbNext.setStyleName("linkButton");
 
 		dpDate = new DateBox();
 		dpDate.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("dd.MM.yyyy")));
@@ -106,6 +98,24 @@ public class TimeRegistration extends DockLayoutPanel {
 			}
 		});
 		dpDate.setStyleName("timeRegistrationDate");
+
+		summaryPanel = new TimeSheetSummary(clDoc);
+		summaryPanel.setOnClickDate(new Runnable() {
+			
+			@Override
+			public void run() {
+				dpDate.setValue(summaryPanel.getDate());
+				selectActs();
+			}
+		});
+		
+		addEast(summaryPanel, 15);
+
+		Image lbPrev = new Image("/icons/16/arrow-mini-left-icon.png");
+		Image lbNext = new Image("/icons/16/arrow-mini-right-icon.png");
+		lbPrev.setStyleName("linkButton");
+		lbNext.setStyleName("linkButton");
+
 		buttons.add(lbPrev);
 		buttons.add(dpDate);
 		buttons.add(lbNext);
@@ -395,8 +405,37 @@ public class TimeRegistration extends DockLayoutPanel {
 
 
 	private void selectActs() {
-		selectActs(dpDate.getValue());
-		summaryPanel.setDate(dpDate.getValue());
+		if (isModified) {
+			new MessageBox("Aenderungen speichern", "Wollen Sie die Aenderungen speichern?", MessageBox.MB_YESNOCANCEL, MESSAGE_ICONS.MB_ICON_QUESTION){
+
+				@Override
+				protected void onClick(int result) {
+					switch (result) {
+					case MessageBox.MB_CANCEL: break;
+					case MessageBox.MB_YES: saveAll(new Runnable() {
+						
+						@Override
+						public void run() {
+							selectActs(dpDate.getValue());
+							summaryPanel.setDate(dpDate.getValue());
+						}
+					}); break;
+					case MessageBox.MB_NO: 
+						dpDate.setValue(dpDate.getValue());
+						selectActs();
+						break;
+					}
+					super.onClick(result);
+				}
+				
+			}.show();
+		} else {
+			selectActs(dpDate.getValue());
+			summaryPanel.setDate(dpDate.getValue());
+		}		
+
+		
+		
 	}
 	
 	private void selectActs(final Date date) {

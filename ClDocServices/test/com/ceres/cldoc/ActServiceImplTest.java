@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.ServiceLoader;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
@@ -17,6 +18,11 @@ import com.ceres.cldoc.model.Person;
 public class ActServiceImplTest extends TransactionalTest {
 
 
+	public void testLoader() throws Exception {
+		ServiceLoader<IActService> actServiceLoader = ServiceLoader.load(IActService.class);		
+		IActService as = actServiceLoader.iterator().next();
+	}
+	
 	public void testDates() throws Exception {
 		IActService as = Locator.getActService();
 		List<Act> acts = as.load(getSession(), null, null, new Date(), null);

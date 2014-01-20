@@ -413,19 +413,27 @@ public class ActServiceImpl implements IActService {
 		}
 		if (entity != null) {
 			if (roleId != null) {
-				sql += "and i.id in (select actid from Participation where entityid = ? and role = ?) ";
+				if (dateFrom != null) {
+					if (dateTo != null) {
+						sql += "and i.id in (select actid from Participation where entityid = ? and role = ? and date(StartDate) between date(?) and date(?))";
+					} else {
+						sql += "and i.id in (select actid from Participation where entityid = ? and role = ? and date(StartDate) = date(?)) ";
+					}
+				} else {
+					sql += "and i.id in (select actid from Participation where entityid = ? and role = ?) ";
+				}
 			} else {
 				sql += "and i.id in (select actid from Participation where entityid = ?) ";
 			}
-		}
-		if (dateFrom != null) {
-			if (dateTo != null) {
-				sql += "and date(i.date) between date(?) and date(?)";
-			} else {
-				sql += "and date(i.date) = date(?) ";
+		} else {
+			if (dateFrom != null) {
+				if (dateTo != null) {
+					sql += "and date(i.date) between date(?) and date(?)";
+				} else {
+					sql += "and date(i.date) = date(?) ";
+				}
 			}
-		}
-		
+		}		
 		sql += " order by i.id, i.date desc";
 		int i = 1;
 		PreparedStatement s = con.prepareStatement(sql);
