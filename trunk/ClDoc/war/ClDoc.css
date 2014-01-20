@@ -52,6 +52,7 @@ body, table td, select, button {
 
 .timeSheetRow:HOVER {
 	background-color: silver;
+	cursor: pointer;
 }
 
 .workingDate {

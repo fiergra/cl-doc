@@ -20,6 +20,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,12 +40,18 @@ public class TimeSheetSummary extends DockLayoutPanel {
 
 	DateTimeFormat dtf = DateTimeFormat.getFormat("LLL yy");
 	private String currentMonth = "";
-	private final ClDoc clDoc; 
+	private final ClDoc clDoc;
+	private Date date;
+	private Runnable onClickDate; 
 	
 	public TimeSheetSummary (ClDoc clDoc) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		setup();
+	}
+	
+	public Date getDate() {
+		return date;
 	}
 	
 	private void populatePrintOutBox(final ListBox cmbPrintOuts) {
@@ -110,6 +117,17 @@ public class TimeSheetSummary extends DockLayoutPanel {
 			}
 		});
 		
+		daysTable.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Cell cell = daysTable.getCellForEvent(event);
+				date = new Date(date.getTime());
+				date.setDate(cell.getRowIndex() + 1);
+				onClickDate.run();
+			}
+		});
+		
 		populatePrintOutBox(cmbPrintOuts); 
 		buttons.add(cmbPrintOuts);
 		buttons.add(lbPdf);
@@ -140,7 +158,8 @@ public class TimeSheetSummary extends DockLayoutPanel {
 	}
 
 	public void setDate(final Date date) {
-		if (!dtf.format(date).equals(currentMonth)) {
+		this.date = date;
+//		if (!dtf.format(date).equals(currentMonth)) {
 			SRV.actService.findByEntity(clDoc.getSession(), clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
 
 				@Override
@@ -152,7 +171,7 @@ public class TimeSheetSummary extends DockLayoutPanel {
 				}
 			});
 
-		}
+//		}
 	}
 
 	private List<List<Participation>> groupByDay(Date date, List<Act> result) {
@@ -177,7 +196,7 @@ public class TimeSheetSummary extends DockLayoutPanel {
 		List<Participation> participations = grouped.get(dayOfMonth - 1);
 		if (participations == null) {
 			participations = new ArrayList<Participation>();
-			grouped.add(dayOfMonth - 1, participations);
+			grouped.set(dayOfMonth - 1, participations);
 		}
 		return participations;
 	}
@@ -238,6 +257,10 @@ public class TimeSheetSummary extends DockLayoutPanel {
 		int hours = duration / 60;
 		int minutes = duration % 60;
 		return hours + ":" + minutes;
+	}
+
+	public void setOnClickDate(Runnable onClickDate) {
+		this.onClickDate = onClickDate;
 	}
 
 }
