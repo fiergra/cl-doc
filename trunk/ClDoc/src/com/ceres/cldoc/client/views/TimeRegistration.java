@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
@@ -22,14 +20,12 @@ import com.ceres.dynamicforms.client.DurationLink;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.TextLink;
 import com.ceres.dynamicforms.client.components.MapListRenderer;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -37,14 +33,13 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 public class TimeRegistration extends DockLayoutPanel {
 
-	private static final String WORKINGTIME_ACT = "WorkingTime";
+	public static final String WORKINGTIME_ACT = "WorkingTime";
 	private final ClDoc clDoc;
 	
 	private MapListRenderer actListRenderer;
@@ -60,6 +55,26 @@ public class TimeRegistration extends DockLayoutPanel {
 		setup(clDoc);
 	}
 	
+	public static String getDurationAsString(Participation par) {
+		return par.start != null && par.end != null ? getDurationAsString(par.start, par.end) : "---";
+	}
+
+	public static String getDurationAsString(Date start, Date end) {
+		int duration = getDuration(start, end);
+		int hours = duration / 60;
+		int minutes = duration % 60;
+		return hours + ":" + minutes;
+	}
+
+	public static int getDuration(Participation p) {
+		return getDuration(p.start, p.end);
+	}
+
+	public static int getDuration(Date start, Date end) {
+		int duration = (int)(end.getTime() - start.getTime())/ (1000 * 60);
+		return duration;
+	}
+
 	private void setup(final ClDoc clDoc) {
 		HorizontalPanel header = new HorizontalPanel();
 		header.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -95,23 +110,6 @@ public class TimeRegistration extends DockLayoutPanel {
 		buttons.add(dpDate);
 		buttons.add(lbNext);
 		
-		final ListBox cmbPrintOuts = new ListBox();
-		cmbPrintOuts.setVisibleItemCount(1);
-		Image lbPdf = new Image("/icons/16/Adobe-PDF-Document-icon.png");
-		lbPdf.setStyleName("linkButton");
-		lbPdf.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				String baseUrl = GWT.getModuleBaseURL();
-				Window.open(baseUrl + "download?type=timesheet&userid=" + clDoc.getSession().getUser().getId() + "&month=" + cmbPrintOuts.getValue(cmbPrintOuts.getSelectedIndex()) , "_blank", "");
-			}
-		});
-		
-		populatePrintOutBox(cmbPrintOuts); 
-		buttons.add(cmbPrintOuts);
-		buttons.add(lbPdf);
-		
 		lbPrev.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -130,8 +128,8 @@ public class TimeRegistration extends DockLayoutPanel {
 
 		final ActClass actClass = new ActClass(WORKINGTIME_ACT);
 
-		LayoutPanel vp = new LayoutPanel();
-		actListRenderer = new MapListRenderer(new String[]{"von", "bis", "Bemerkung"}, 
+		VerticalPanel vp = new VerticalPanel();
+		actListRenderer = new MapListRenderer(new String[]{"von", "bis", "Bemerkung", "Dauer"}, 
 				new Runnable() {
 					@Override
 					public void run() {
@@ -157,48 +155,41 @@ public class TimeRegistration extends DockLayoutPanel {
 				attributes.put("role", Participation.ADMINISTRATOR.code);
 				attributes.put("which", "start");
 				attributes.put("required", "true");
-				DateLink fromLink = new ParticipationTimeFactory().createLink(interactor, "von", attributes );
+				final DateLink fromLink = new ParticipationTimeFactory().createLink(interactor, "von", attributes );
 				setWidget(row, col, fromLink.getWidget());
 				interactor.addLink(fromLink);
 				col++;
 				attributes.put("which", "end");
-				DateLink toLink = new ParticipationTimeFactory().createLink(interactor, "bis", attributes );
+				final DateLink toLink = new ParticipationTimeFactory().createLink(interactor, "bis", attributes );
 				setWidget(row, col, toLink.getWidget());
 				interactor.addLink(toLink);
+				col++;
+
+				TextBox textBox = new TextBox();
+				setWidget(row, col, textBox);
+				interactor.addLink(new TextLink(interactor, "Bemerkung", textBox, null));
+				col++;
+
+				col++;
+				final Label lblDuration = new Label();
+				setWidget(row, col, lblDuration);
 				
 				interactor.addLink(new DurationLink(interactor, fromLink, toLink) {
 
 					@Override
 					protected void hilite(boolean isValid) {
+						lblDuration.setText("---");
 						if (isValid) {
 							getRowFormatter().removeStyleName(row, "invalidContent");
+							if (!isEmpty()) {
+								lblDuration.setText(getDurationAsString(fromLink.getWidget().getDate(), toLink.getWidget().getDate()));
+							}
 						} else {
 							getRowFormatter().addStyleName(row, "invalidContent");
 						}
 					}
 					
 				});
-				
-				col++;
-				TextBox textBox = new TextBox();
-				setWidget(row, col, textBox);
-				interactor.addLink(new TextLink(interactor, "Bemerkung", textBox, null));
-				col++;
-
-				final Label overlap = new Label();
-				setWidget(row, col, overlap);
-
-//				interactor.addChangeHandler(new Runnable() {
-//					
-//					@Override
-//					public void run() {
-//						if (isOverlapping(interactor)) {
-//							overlap.setText("overlap!");
-//						} else {
-//							overlap.setText("ok");
-//						}
-//					}
-//				});
 				
 			}
 			
@@ -228,8 +219,8 @@ public class TimeRegistration extends DockLayoutPanel {
 		};
 				
 		vp.add(actListRenderer);
-		vp.setWidgetLeftWidth(actListRenderer, 0, Unit.PX, 100, Unit.PCT);
-		vp.setWidgetTopHeight(actListRenderer, 0, Unit.PX, 100, Unit.PCT);
+//		vp.setWidgetLeftWidth(actListRenderer, 0, Unit.PX, 100, Unit.PCT);
+//		vp.setWidgetTopHeight(actListRenderer, 0, Unit.PX, 100, Unit.PCT);
 		pbSave = new LinkButton(SRV.c.save(), "icons/32/Save-icon.png", "icons/32/Save-icon.disabled.png", new ClickHandler() {
 			
 			@Override
@@ -244,9 +235,8 @@ public class TimeRegistration extends DockLayoutPanel {
 			}
 		});
 		pbSave.enable(false);
+		pbSave.setPixelSize(32, 32);
 		vp.add(pbSave);
-		vp.setWidgetLeftWidth(pbSave, 0, Unit.PX, 42, Unit.PX);
-		vp.setWidgetBottomHeight(pbSave, 0, Unit.PX, 42, Unit.PX);
 		add(vp);
 		vp.ensureDebugId("vp");
 		selectActs();
@@ -268,37 +258,12 @@ public class TimeRegistration extends DockLayoutPanel {
 			Participation p2 = act2.getParticipation(Participation.ADMINISTRATOR);
 			
 			if (p1.start != null && p1.end != null && p2.start != null && p2.end != null) {
-				overlap = p2.start.getTime() >= p1.start.getTime() && p2.start.getTime() <= p1.end.getTime();
-				overlap |= p2.end.getTime() >= p1.start.getTime() && p2.end.getTime() <= p1.end.getTime();
-				overlap |= p2.start.getTime() <= p1.start.getTime() && p2.end.getTime() >= p1.end.getTime();
+				overlap = p2.start.getTime() > p1.start.getTime() && p2.start.getTime() < p1.end.getTime();
+				overlap |= p2.end.getTime() > p1.start.getTime() && p2.end.getTime() < p1.end.getTime();
+				overlap |= p2.start.getTime() < p1.start.getTime() && p2.end.getTime() > p1.end.getTime();
 			}
 		}
 		return overlap;
-	}
-
-	private void populatePrintOutBox(final ListBox cmbPrintOuts) {
-		SRV.actService.findByEntity(clDoc.getSession(), clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, new DefaultCallback<List<Act>>(clDoc, "load") {
-
-			@Override
-			public void onSuccess(List<Act> result) {
-				cmbPrintOuts.clear();
-				if (result != null) {
-					Set<Date> months = new TreeSet<Date>();
-					for (Act act:result) {
-						if (WORKINGTIME_ACT.equals(act.actClass.name)) {
-							Participation p = act.getParticipation(Participation.ADMINISTRATOR);
-							months.add(getFirstOfMonth(p.start));
-						}
-					}
-					if (!months.isEmpty()) {
-						DateTimeFormat dtf = DateTimeFormat.getFormat("MMM yy");
-						for (Date m:months) {
-							cmbPrintOuts.addItem(dtf.format(m), dtf.format(m));
-						}
-					}
-				}
-			}
-		});
 	}
 
 	protected Date getFirstOfMonth(Date start) {
@@ -331,7 +296,10 @@ public class TimeRegistration extends DockLayoutPanel {
 				Interactor inner = iter.next();
 				if (inner != outer) {
 					overlapping = overlaps(inner, outer);
-					inner.hilite(!overlapping);
+					boolean innerValid = inner.isEmpty() || (!overlapping && inner.isValid());
+					inner.hilite(innerValid);
+					boolean outerValid = outer.isEmpty() || (!overlapping && outer.isValid());
+					outer.hilite(outerValid);
 				}
 			}
 		}
@@ -432,11 +400,12 @@ public class TimeRegistration extends DockLayoutPanel {
 	}
 	
 	private void selectActs(final Date date) {
-		SRV.actService.findByEntity(clDoc.getSession(), clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, date, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
+		SRV.actService.findByEntity(clDoc.getSession(), clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, date, null, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
 
 			@Override
 			public void onSuccess(List<Act> result) {
 				actListRenderer.setActs(toMaps(result));
+				isOverlapping();
 			}
 		});
 

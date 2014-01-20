@@ -21,7 +21,7 @@ public interface ActServiceAsync {
 	void save(ISession session, List<Act> acts, AsyncCallback<List<Act>> callback);
 	void print(ISession session, Act act, AsyncCallback<String> callback);
 	void findById(ISession session, long id, AsyncCallback<Act> callback);
-	void findByEntity(ISession session, IEntity e, Long roleId, Date date, AsyncCallback<List<Act>> callback);
+	void findByEntity(ISession session, IEntity e, Long roleId, Date dateFrom, Date dateTo, AsyncCallback<List<Act>> callback);
 	
 	void listAttachments(ISession session, Act act, AsyncCallback<List<Attachment>> callback);
 	void saveAttachment(ISession session, Attachment attachment, AsyncCallback<Attachment> callback);

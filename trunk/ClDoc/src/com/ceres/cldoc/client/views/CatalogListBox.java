@@ -104,10 +104,16 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 
 	@Override
 	public Catalog getSelected() {
-		int index = getSelectedIndex();
-		Catalog selected = index >= 0 ? catalogs.get(index) : null; 
+		Catalog selected = null;
 		
-		return selected != null && !selected.equals(emptyRecord) ? selected : null;
+		if (catalogs != null) {
+			int index = getSelectedIndex();
+			Catalog selectedItem = index >= 0 ? catalogs.get(index) : null; 
+			selected = selectedItem != null && !selectedItem.equals(emptyRecord) ? selectedItem : null;
+		} else {
+			selected = this.selected;
+		}
+		return selected;
 	}
 
 
