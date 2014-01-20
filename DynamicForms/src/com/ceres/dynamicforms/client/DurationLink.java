@@ -8,8 +8,8 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 
 public abstract class DurationLink extends InteractorLink {
 
-	private DateLink fromLink;
-	private DateLink toLink;
+	private final DateLink fromLink;
+	private final DateLink toLink;
 
 	public DurationLink(final Interactor interactor, DateLink fromLink, DateLink toLink) {
 		super(interactor, "duration:" + fromLink.getName() + "-" + toLink.getName());
@@ -58,7 +58,7 @@ public abstract class DurationLink extends InteractorLink {
 
 	@Override
 	public boolean isEmpty() {
-		return fromLink.isEmpty() && toLink.isEmpty();
+		return fromLink.isEmpty() || toLink.isEmpty();
 	}
 
 	@Override

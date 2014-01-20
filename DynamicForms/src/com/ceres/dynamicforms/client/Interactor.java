@@ -12,7 +12,7 @@ public class Interactor {
 	private final Collection<InteractorLink> links = new ArrayList<InteractorLink>();
 	private List<Runnable> changeHandlers;
 	private boolean isModified;
-	private boolean isValid;
+	private Boolean isValid = null;
 	
 	public void addLink(InteractorLink link) {
 		links.add(link);
@@ -48,6 +48,9 @@ public class Interactor {
 	}
 
 	public boolean isValid() {
+		if (isValid == null) {
+			validateAll();
+		}
 		return isValid;
 	}
 
@@ -58,7 +61,7 @@ public class Interactor {
 		if (!link.isValid()) {
 			isValid = false;
 		} else {
-			if (!isValid){
+			if (isValid == null || !isValid){
 				validateAll();
 			}
 		}
