@@ -37,6 +37,28 @@ body, table td, select, button {
 	width: 5em; 
 }
 
+.weekendDate {
+	font-style: italic;
+	color: red;
+}
+
+.headerDate {
+	font-size: smaller;
+}
+
+.timeSheetRow {
+	font-size: smaller;
+}
+
+.timeSheetRow:HOVER {
+	background-color: silver;
+}
+
+.workingDate {
+	font-weight: bold;
+	font-size: larger;
+}
+
 .linkButton:hover {
 	background-color:silver;
 }
