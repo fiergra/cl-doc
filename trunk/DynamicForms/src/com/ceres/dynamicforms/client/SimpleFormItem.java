@@ -30,7 +30,7 @@ public class SimpleFormItem extends Panel  {
 	public void add(Widget child) {
 		this.content = child;
 		if (child != null) {
-			this.content.addStyleName("simpleFormItem");
+//			this.content.addStyleName("simpleFormItem");
 			simpleForm.setWidget(row, 1, this.content);
 		}
 
