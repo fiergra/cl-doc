@@ -381,19 +381,19 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<Act> load(final ISession session, final IEntity entity, final Long roleId, final Date date) {
+	public List<Act> load(final ISession session, final IEntity entity, final Long roleId, final Date dateFrom, final Date dateTo) {
 		List<Act> acts = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public List<Act> execute(Connection con) throws SQLException {
-				return executeSelect(session, con, null, entity, roleId, date, null);
+				return executeSelect(session, con, null, entity, roleId, dateFrom, dateTo, null);
 			}
 		});
 		
 		return acts;
 	}
 
-	private List<Act> executeSelect(ISession session, Connection con, Long id, IEntity entity, Long roleId, Date date, Boolean singleton) throws SQLException {
+	private List<Act> executeSelect(ISession session, Connection con, Long id, IEntity entity, Long roleId, Date dateFrom, Date dateTo, Boolean singleton) throws SQLException {
 		String sql = "select " +
 				"i.id actid, i.date, i.summary, actclass.id classid, actclass.name classname, actclass.summarydef, actclass.entitytype entitytype, actclass.singleton singleton, actclassfield.name fieldname, actclassfield.type, field.*," +
 				"uc.id createdByUserId, uc.name createdByUserName, um.id modifiedByUserId, um.name modifiedByUserName " +
@@ -418,8 +418,12 @@ public class ActServiceImpl implements IActService {
 				sql += "and i.id in (select actid from Participation where entityid = ?) ";
 			}
 		}
-		if (date != null) {
-			sql += "and date(i.date) = date(?) ";
+		if (dateFrom != null) {
+			if (dateTo != null) {
+				sql += "and date(i.date) between date(?) and date(?)";
+			} else {
+				sql += "and date(i.date) = date(?) ";
+			}
 		}
 		
 		sql += " order by i.id, i.date desc";
@@ -437,8 +441,13 @@ public class ActServiceImpl implements IActService {
 				s.setLong(i++, roleId);
 			}
 		}
-		if (date != null) {
-			s.setDate(i++, new java.sql.Date(date.getTime()));
+		if (dateFrom != null) {
+			if (dateTo != null) {
+				s.setDate(i++, new java.sql.Date(dateFrom.getTime()));
+				s.setDate(i++, new java.sql.Date(dateTo.getTime()));
+			} else {
+				s.setDate(i++, new java.sql.Date(dateFrom.getTime()));
+			}
 		}
 		ResultSet rs = s.executeQuery();
 		List<Act>acts = fetchActs(session, rs);
@@ -466,7 +475,7 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public Act execute(Connection con) throws SQLException {
-				Collection<Act>acts = executeSelect(session, con, id, null, null, null, null);
+				Collection<Act>acts = executeSelect(session, con, id, null, null, null, null, null);
 				return acts.isEmpty() ? null : acts.iterator().next();
 			}
 		});
