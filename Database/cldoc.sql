@@ -343,7 +343,9 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
 /*insert into Catalog (id, parent, code, text, shorttext, logical_order) values (10, 2, 'Calendar', 'Calendar', 'Calendar', 5);*/
+
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (30, 2, 'TimeRegistration', 'Zeiterfassung', 'Zeiterfassung', 6);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (31, 2, 'LeaveRegistration', 'Urlaubserfassung', 'Urlaubserfassung', 7);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (8, 7, 'Formulare', 'Formulare', 'Formulare', 1);

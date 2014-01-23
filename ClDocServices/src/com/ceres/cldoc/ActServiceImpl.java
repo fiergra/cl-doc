@@ -381,19 +381,19 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<Act> load(final ISession session, final IEntity entity, final Long roleId, final Date dateFrom, final Date dateTo) {
+	public List<Act> load(final ISession session, final String className, final IEntity entity, final Long roleId, final Date dateFrom, final Date dateTo) {
 		List<Act> acts = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public List<Act> execute(Connection con) throws SQLException {
-				return executeSelect(session, con, null, entity, roleId, dateFrom, dateTo, null);
+				return executeSelect(session, con, null, className, entity, roleId, dateFrom, dateTo, null);
 			}
 		});
 		
 		return acts;
 	}
 
-	private List<Act> executeSelect(ISession session, Connection con, Long id, IEntity entity, Long roleId, Date dateFrom, Date dateTo, Boolean singleton) throws SQLException {
+	private List<Act> executeSelect(ISession session, Connection con, Long id, String className, IEntity entity, Long roleId, Date dateFrom, Date dateTo, Boolean singleton) throws SQLException {
 		String sql = "select " +
 				"i.id actid, i.date, i.summary, actclass.id classid, actclass.name classname, actclass.summarydef, actclass.entitytype entitytype, actclass.singleton singleton, actclassfield.name fieldname, actclassfield.type, field.*," +
 				"uc.id createdByUserId, uc.name createdByUserName, um.id modifiedByUserId, um.name modifiedByUserName " +
@@ -410,6 +410,9 @@ public class ActServiceImpl implements IActService {
 		}
 		if (singleton != null) {
 			sql += "and actclass.singleton  = ? ";
+		}
+		if (className != null) {
+			sql += "and actclass.name  = ? ";
 		}
 		if (entity != null) {
 			if (roleId != null) {
@@ -442,6 +445,9 @@ public class ActServiceImpl implements IActService {
 		}
 		if (singleton != null) {
 			s.setBoolean(i++, singleton);
+		}
+		if (className != null) {
+			s.setString(i++, className);
 		}
 		if (entity != null) {
 			s.setLong(i++, entity.getId());
@@ -483,7 +489,7 @@ public class ActServiceImpl implements IActService {
 			
 			@Override
 			public Act execute(Connection con) throws SQLException {
-				Collection<Act>acts = executeSelect(session, con, id, null, null, null, null, null);
+				Collection<Act>acts = executeSelect(session, con, id, null, null, null, null, null, null);
 				return acts.isEmpty() ? null : acts.iterator().next();
 			}
 		});

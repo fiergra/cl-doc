@@ -439,7 +439,7 @@ public class TimeRegistration extends DockLayoutPanel {
 	}
 	
 	private void selectActs(final Date date) {
-		SRV.actService.findByEntity(clDoc.getSession(), clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, date, null, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
+		SRV.actService.findByEntity(clDoc.getSession(), null, clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, date, null, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
 
 			@Override
 			public void onSuccess(List<Act> result) {

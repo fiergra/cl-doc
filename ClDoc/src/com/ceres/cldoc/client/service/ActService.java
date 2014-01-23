@@ -16,7 +16,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("act")
 public interface ActService extends RemoteService {
-	List<Act> findByEntity(ISession session, IEntity entity, Long roleId, Date dateFrom, Date dateTo);
+	List<Act> findByEntity(ISession session, String className, IEntity entity, Long roleId, Date dateFrom, Date dateTo);
 	List<LogEntry> listRecent(ISession session);
 	Act findById(ISession session, long id);
 	Act save(ISession session, Act act);

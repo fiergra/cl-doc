@@ -55,7 +55,7 @@ public class TimeSheetSummary extends DockLayoutPanel {
 	}
 	
 	private void populatePrintOutBox(final ListBox cmbPrintOuts) {
-		SRV.actService.findByEntity(clDoc.getSession(), clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "load") {
+		SRV.actService.findByEntity(clDoc.getSession(), null, clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "load") {
 
 			@Override
 			public void onSuccess(List<Act> result) {
@@ -160,7 +160,7 @@ public class TimeSheetSummary extends DockLayoutPanel {
 	public void setDate(final Date date) {
 		this.date = date;
 //		if (!dtf.format(date).equals(currentMonth)) {
-			SRV.actService.findByEntity(clDoc.getSession(), clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
+			SRV.actService.findByEntity(clDoc.getSession(), null, clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
 
 				@Override
 				public void onSuccess(List<Act> result) {

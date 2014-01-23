@@ -30,8 +30,8 @@ public class ActServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public List<Act> findByEntity(ISession session, IEntity entity, Long roleId, Date dateFrom, Date dateTo) {
-		return getActService().load(session, entity, roleId, dateFrom, dateTo);
+	public List<Act> findByEntity(ISession session, String className, IEntity entity, Long roleId, Date dateFrom, Date dateTo) {
+		return getActService().load(session, className, entity, roleId, dateFrom, dateTo);
 	}
 
 	@Override
