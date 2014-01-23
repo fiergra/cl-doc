@@ -11,7 +11,7 @@ import com.ceres.cldoc.model.Participation;
 import com.ceres.dynamicforms.client.DateLink;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
-import com.ceres.dynamicforms.client.InteractorLink;
+import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 
 public class ParticipationTimeFactory implements ILinkFactory {
@@ -20,9 +20,11 @@ public class ParticipationTimeFactory implements ILinkFactory {
 	public DateLink createLink(
 			Interactor interactor, String fieldName,
 			HashMap<String, String> attributes) {
-		final TimeTextBox db = new TimeTextBox();
 		final String role = attributes.get("role");
 		final String which = attributes.get("which");
+		final String dateTime = attributes.get("dateTime");
+
+		final DateTextBox db = "date".equals(dateTime) ? new TimeTextBox() : new DateTextBox();
 		
 		DateLink link = new DateLink(interactor, fieldName, db, attributes) {
 

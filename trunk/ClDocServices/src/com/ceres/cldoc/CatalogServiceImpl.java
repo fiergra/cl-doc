@@ -324,6 +324,7 @@ public class CatalogServiceImpl implements ICatalogService {
 		} else {
 			sql += "parent = ?";
 		}
+		sql += " order by logical_order";
 
 		PreparedStatement s = con.prepareStatement(sql);
 		s.setString(1, code);

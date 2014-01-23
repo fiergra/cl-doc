@@ -198,7 +198,7 @@ public class ClDoc implements EntryPoint, IApplication {
 				@Override
 				public void onSuccess(final LayoutDefinition ld) {
 					if (ld != null) {
-						SRV.actService.findByEntity(ClDoc.this.session, ClDoc.this.session.getUser().getOrganisation(), Participation.PROTAGONIST.id, 
+						SRV.actService.findByEntity(ClDoc.this.session, null, ClDoc.this.session.getUser().getOrganisation(), Participation.PROTAGONIST.id, 
 								 null, null, new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
 
 									@Override

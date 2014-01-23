@@ -6,6 +6,7 @@ import com.ceres.cldoc.client.views.Configurator;
 import com.ceres.cldoc.client.views.DebugPanel;
 import com.ceres.cldoc.client.views.EntityConfigurator;
 import com.ceres.cldoc.client.views.EntitySearch;
+import com.ceres.cldoc.client.views.LeaveRegistration;
 import com.ceres.cldoc.client.views.OrganisationsPanel;
 import com.ceres.cldoc.client.views.Persons;
 import com.ceres.cldoc.client.views.Reporting;
@@ -32,6 +33,8 @@ public class DynamicLoader {
 			result = new Configurator((ClDoc) model);
 		} else if (code.equals("TimeRegistration")) {
 			result = new TimeRegistration((ClDoc) model);
+		} else if (code.equals("LeaveRegistration")) {
+			result = new LeaveRegistration((ClDoc) model);
 //		} else if (name.equals("Formulare")) {
 //			result = new HistoryView(clDoc, (Entity) model);
 //		} else if (name.equals("Stammdaten")) {

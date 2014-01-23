@@ -115,7 +115,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 					
 					@Override
 					public void onClick(ClickEvent event) {
-						SRV.actService.findByEntity(clDoc.getSession(), entry, Participation.PROTAGONIST.id, null, null, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
+						SRV.actService.findByEntity(clDoc.getSession(), null, entry, Participation.PROTAGONIST.id, null, null, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
 
 							@Override
 							public void onSuccess(List<Act> masterData) {
