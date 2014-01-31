@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
@@ -28,7 +29,19 @@ public class SimpleFormItem extends Panel  {
 	
 	@Override
 	public void add(Widget child) {
-		this.content = child;
+		if (this.content == null) {
+			this.content = child;
+		} else {
+			if (this.content instanceof Panel) {
+				((Panel)this.content).add(child);
+			} else {
+				VerticalPanel vp = new VerticalPanel();
+				vp.setWidth("100%");
+				vp.add(this.content);
+				vp.add(child);
+				this.content = vp;
+			}
+		}
 		if (child != null) {
 //			this.content.addStyleName("simpleFormItem");
 			simpleForm.setWidget(row, 1, this.content);

@@ -8,12 +8,12 @@ import com.ceres.dynamicforms.client.components.LongTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -30,8 +30,18 @@ import com.google.gwt.xml.client.XMLParser;
 
 public class WidgetCreator {
 
-	@SuppressWarnings("unused")
+	public static boolean isIE() {
+		String ua = Window.Navigator.getUserAgent().toLowerCase();
+		return ua.contains("msie");
+	}
+
+
 	public static Widget createWidget(String xml, Interactor interactor) {
+		return createWidget(xml, interactor, null);
+	}	
+	
+	@SuppressWarnings("unused")
+	public static Widget createWidget(String xml, Interactor interactor, ITranslator translator) {
 		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
 		Document document = XMLParser.parse(xml);
 		Element root = document.getDocumentElement();
@@ -39,7 +49,7 @@ public class WidgetCreator {
 		if (root != null) {
 			NodeList children = document.getChildNodes();//root.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
-				processChild(document, children.item(i), mainPanel, interactor, 0);
+				processChild(document, children.item(i), mainPanel, interactor, 0, translator);
 			}
 		}
 		
@@ -49,6 +59,9 @@ public class WidgetCreator {
 			theTab.add(createEditor(document), ">Layout");
 			return theTab;
 		} else {
+			if (isIE()) {
+				mainPanel.forceLayout();
+			}
 			return mainPanel;
 		}
 	}
@@ -63,7 +76,7 @@ public class WidgetCreator {
 		return document.toString();
 	}
 
-	private static void processChild(Document document, Node item, Widget panel, Interactor interactor, int level) {
+	private static void processChild(Document document, Node item, Widget panel, Interactor interactor, int level, ITranslator translator) {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
@@ -71,7 +84,7 @@ public class WidgetCreator {
 
 			element = preprocess(document, element);
 		
-			Widget widget = createWidgetFromElement(element, interactor);
+			Widget widget = createWidgetFromElement(element, interactor, translator);
 			if (widget != null) {
 				if (panel instanceof Panel){
 					((Panel)panel).add(widget);
@@ -82,7 +95,7 @@ public class WidgetCreator {
 						(widget instanceof Panel || widget instanceof TabLayoutPanel)) {
 					NodeList children = element.getChildNodes();
 					for (int i = 0; i < children.getLength(); i++) {
-						processChild(document, children.item(i), widget, interactor, level + 1);
+						processChild(document, children.item(i), widget, interactor, level + 1, translator);
 					}
 				}
 			}
@@ -175,12 +188,12 @@ public class WidgetCreator {
 		linkFactories.put(localName, factory);
 	}
 	
-	private static Widget createWidgetFromElement(Element element, Interactor interactor) {
+	private static Widget createWidgetFromElement(Element element, Interactor interactor, ITranslator translator) {
 		String tagName = element.getTagName();
-		return createWidgetFromElementName(tagName, asHashMap(element.getAttributes()), interactor);
+		return createWidgetFromElementName(tagName, asHashMap(element.getAttributes()), interactor, translator);
 	}
 	
-	public static Widget createWidgetFromElementName(String tagName, HashMap<String, String> attributes, Interactor interactor) {
+	public static Widget createWidgetFromElementName(String tagName, HashMap<String, String> attributes, Interactor interactor, ITranslator translator) {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
@@ -211,10 +224,17 @@ public class WidgetCreator {
 				widget.setTitle(attributes.get("label"));
 			}
 		} else if ("ResourceFormItem".equals(localName) || "FormItem".equals(localName)){
+			if (translator != null && attributes.containsKey("label")) {
+				attributes.put("label", translator.getLabel(attributes.get("label")));
+			}
 			widget = new SimpleFormItem(attributes);
 		} else if ("line".equals(localName)){
 			if (!attributes.containsKey("label")) {
 				attributes.put("label", fieldName);
+			}
+			
+			if (translator != null) {
+				attributes.put("label", translator.getLabel(attributes.get("label")));
 			}
 			widget = new SimpleFormItem(attributes);
 		} else if ("ItemFieldDateField".equals(localName) || "date".equals(localName)){
@@ -267,10 +287,10 @@ public class WidgetCreator {
 
 		if (widget != null) {
 			if (attributes.containsKey("width")) {
-				widget.setWidth(attributes.get("width"));
+				widget.setWidth(checkUnit(attributes.get("width")));
 			}
 			if (attributes.containsKey("height")) {
-				widget.setWidth(attributes.get("height"));
+				widget.setWidth(checkUnit(attributes.get("height")));
 			}
 			
 			if (link != null && link.getName() != null) {
@@ -279,6 +299,11 @@ public class WidgetCreator {
 		}
 		
 		return widget;
+	}
+
+
+	private static String checkUnit(String size) {
+		return size.endsWith("%") ? size : size + "px";
 	}
 
 	private static HashMap<String, String> asHashMap(NamedNodeMap attributes) {
