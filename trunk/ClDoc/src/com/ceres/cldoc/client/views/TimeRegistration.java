@@ -40,6 +40,10 @@ import com.google.gwt.user.datepicker.client.DateBox;
 public class TimeRegistration extends DockLayoutPanel {
 
 	public static final String WORKINGTIME_ACT = "WorkingTime";
+	public static final String ANNUAL_LEAVE_ACT = "AnnualLeave";
+	public static final String SICK_LEAVE_ACT = "SickLeave";
+
+	
 	private final ClDoc clDoc;
 	
 	private MapListRenderer actListRenderer;

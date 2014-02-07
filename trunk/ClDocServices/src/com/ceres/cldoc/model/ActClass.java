@@ -50,6 +50,17 @@ public class ActClass implements Serializable {
 	public String toString() {
 		return "#" + id + ":" + name;
 	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ActClass) {
+			return ((ActClass)obj).name.equals(name);
+		} else {
+			return super.equals(obj);
+		}
+	}
 	
 	
 }

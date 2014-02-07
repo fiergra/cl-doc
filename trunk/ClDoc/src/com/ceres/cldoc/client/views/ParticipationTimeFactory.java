@@ -24,7 +24,7 @@ public class ParticipationTimeFactory implements ILinkFactory {
 		final String which = attributes.get("which");
 		final String dateTime = attributes.get("dateTime");
 
-		final DateTextBox db = "date".equals(dateTime) ? new TimeTextBox() : new DateTextBox();
+		final DateTextBox db = "date".equals(dateTime) ? new DateTextBox() : new TimeTextBox();
 		
 		DateLink link = new DateLink(interactor, fieldName, db, attributes) {
 

@@ -3,15 +3,11 @@ package com.ceres.cldoc.client.views;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Participation;
-import com.ceres.dynamicforms.client.Interactor;
-import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,16 +17,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
 public class TimeSheetSummary extends DockLayoutPanel {
@@ -54,30 +44,30 @@ public class TimeSheetSummary extends DockLayoutPanel {
 		return date;
 	}
 	
-	private void populatePrintOutBox(final ListBox cmbPrintOuts) {
-		SRV.actService.findByEntity(clDoc.getSession(), null, clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "load") {
-
-			@Override
-			public void onSuccess(List<Act> result) {
-				cmbPrintOuts.clear();
-				if (result != null) {
-					Set<Date> months = new TreeSet<Date>();
-					for (Act act:result) {
-						if (TimeRegistration.WORKINGTIME_ACT.equals(act.actClass.name)) {
-							Participation p = act.getParticipation(Participation.ADMINISTRATOR);
-							months.add(getFirstOfMonth(p.start));
-						}
-					}
-					if (!months.isEmpty()) {
-						DateTimeFormat dtf = DateTimeFormat.getFormat("MMM yy");
-						for (Date m:months) {
-							cmbPrintOuts.addItem(dtf.format(m), dtf.format(m));
-						}
-					}
-				}
-			}
-		});
-	}
+//	private void populatePrintOutBox(final ListBox cmbPrintOuts) {
+//		SRV.actService.findByEntity(clDoc.getSession(), null, clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "load") {
+//
+//			@Override
+//			public void onSuccess(List<Act> result) {
+//				cmbPrintOuts.clear();
+//				if (result != null) {
+//					Set<Date> months = new TreeSet<Date>();
+//					for (Act act:result) {
+//						if (TimeRegistration.WORKINGTIME_ACT.equals(act.actClass.name)) {
+//							Participation p = act.getParticipation(Participation.ADMINISTRATOR);
+//							months.add(getFirstOfMonth(p.start));
+//						}
+//					}
+//					if (!months.isEmpty()) {
+//						DateTimeFormat dtf = DateTimeFormat.getFormat("MMM yy");
+//						for (Date m:months) {
+//							cmbPrintOuts.addItem(dtf.format(m), dtf.format(m));
+//						}
+//					}
+//				}
+//			}
+//		});
+//	}
 
 
 	protected Date getFirstOfMonth(Date start) {
@@ -88,18 +78,18 @@ public class TimeSheetSummary extends DockLayoutPanel {
 
 
 	private void setup() {
-		HorizontalPanel header = new HorizontalPanel();
-		header.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		header.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		header.setStylePrimaryName("buttonsPanel");
-
-		HorizontalPanel buttons = new HorizontalPanel();
-		buttons.setSpacing(5);
-		buttons.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		header.add(buttons);
-
-		header.add(lbMonth);
-		addNorth(header, 3);
+//		HorizontalPanel header = new HorizontalPanel();
+//		header.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+//		header.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//		header.setStylePrimaryName("buttonsPanel");
+//
+//		HorizontalPanel buttons = new HorizontalPanel();
+//		buttons.setSpacing(5);
+//		buttons.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//		header.add(buttons);
+//
+//		header.add(lbMonth);
+//		addNorth(header, 3);
 		add(new ScrollPanel(daysTable));
 		
 		lbMonth.addStyleName("timeRegistrationDate");
@@ -128,34 +118,34 @@ public class TimeSheetSummary extends DockLayoutPanel {
 			}
 		});
 		
-		populatePrintOutBox(cmbPrintOuts); 
-		buttons.add(cmbPrintOuts);
-		buttons.add(lbPdf);
-		
-		PushButton pbAddHoliday = new PushButton("Urlaub...");
-		buttons.add(pbAddHoliday);
-		pbAddHoliday.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				addHolidays();
-			}
-		});
+//		populatePrintOutBox(cmbPrintOuts); 
+//		buttons.add(cmbPrintOuts);
+//		buttons.add(lbPdf);
+//		
+//		PushButton pbAddHoliday = new PushButton("Urlaub...");
+//		buttons.add(pbAddHoliday);
+//		pbAddHoliday.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				addHolidays();
+//			}
+//		});
 		
 
 	}
 
-	protected void addHolidays() {
-		Interactor interactor = new Interactor();
-		Widget w = WidgetCreator.createWidget("<form><line name=\"von\" type=\"participationtime\" which=\"start\" role=\"ADMINISTRATOR\"/><line name=\"bis\" type=\"participationtime\" which=\"end\" role=\"ADMINISTRATOR\"/></form>", interactor);
-		PopupManager.showModal("Urlaub anlegen", w, new OnClick<PopupPanel>() {
-			
-			@Override
-			public void onClick(PopupPanel pp) {
-				pp.hide();
-			}
-		}, null);
-	}
+//	protected void addHolidays() {
+//		Interactor interactor = new Interactor();
+//		Widget w = WidgetCreator.createWidget("<form><line name=\"von\" type=\"participationtime\" which=\"start\" role=\"ADMINISTRATOR\"/><line name=\"bis\" type=\"participationtime\" which=\"end\" role=\"ADMINISTRATOR\"/></form>", interactor);
+//		PopupManager.showModal("Urlaub anlegen", w, new OnClick<PopupPanel>() {
+//			
+//			@Override
+//			public void onClick(PopupPanel pp) {
+//				pp.hide();
+//			}
+//		}, null);
+//	}
 
 	public void setDate(final Date date) {
 		this.date = date;
@@ -167,11 +157,21 @@ public class TimeSheetSummary extends DockLayoutPanel {
 					currentMonth = dtf.format(date);
 					lbMonth.setText(dtf.format(date));
 					daysTable.removeAllRows();
-					calculate(date, result);
+					calculate(date, result, getLeaves(result));
 				}
 			});
 
 //		}
+	}
+
+	protected List<Act> getLeaves(List<Act> result) {
+		List<Act> leaves = new ArrayList<Act>();
+		for (Act a:result) {
+			if (a.actClass.name.equals(TimeRegistration.ANNUAL_LEAVE_ACT)) {
+				leaves.add(a);
+			}
+		}
+		return leaves;
 	}
 
 	private List<List<Participation>> groupByDay(Date date, List<Act> result) {
@@ -180,11 +180,13 @@ public class TimeSheetSummary extends DockLayoutPanel {
 			grouped.add(null);
 		}
 		for (Act act:result) {
-			Participation par = act.getParticipation(Participation.ADMINISTRATOR);
-			
-			if (par != null && par.start != null && par.end != null && currentMonth.equals(dtf.format(par.start))) {
-				List<Participation> participations = getParticipations(grouped, par);
-				participations.add(par);
+			if (act.actClass.name.equals(TimeRegistration.WORKINGTIME_ACT)) {
+				Participation par = act.getParticipation(Participation.ADMINISTRATOR);
+				
+				if (par != null && par.start != null && par.end != null && currentMonth.equals(dtf.format(par.start))) {
+					List<Participation> participations = getParticipations(grouped, par);
+					participations.add(par);
+				}
 			}
 		}
 
@@ -201,7 +203,7 @@ public class TimeSheetSummary extends DockLayoutPanel {
 		return participations;
 	}
 
-	private void calculate(Date date, List<Act> result) {
+	private void calculate(Date date, List<Act> result, List<Act> leaves) {
 		DateTimeFormat dtfRowHeader = DateTimeFormat.getFormat("dd., E");
 		List<List<Participation>> grouped = groupByDay(date, result);
 		int month = date.getMonth();
@@ -210,6 +212,9 @@ public class TimeSheetSummary extends DockLayoutPanel {
 		int row = 0;
 		
 		while (curDate.getMonth() == month) {
+			if (LeaveRegistration.isLeave(leaves, curDate) != null) {
+				daysTable.getRowFormatter().addStyleName(row, "leaveDay");
+			} 
 			Label dayLabel = new Label(dtfRowHeader.format(curDate));
 			dayLabel.addStyleName("headerDate");
 			if (isWeekEnd(curDate)) {
@@ -226,6 +231,7 @@ public class TimeSheetSummary extends DockLayoutPanel {
 				daysTable.setWidget(row, 1, new Label("---"));
 				daysTable.setWidget(row, 2, new Label("---"));
 			}
+
 			CalendarUtil.addDaysToDate(curDate, 1);
 			row++;
 		}
