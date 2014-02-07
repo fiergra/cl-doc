@@ -43,6 +43,12 @@ body, table td, select, button {
 	background-color: lime;
 }
 
+.sickLeaveDay {
+	font-style: italic;
+	color: white;
+	background-color: red;
+}
+
 .leaveStart {
 	font-weight: bold;
 	font-style: italic;
