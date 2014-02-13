@@ -42,28 +42,22 @@ public class WidgetCreator {
 	
 	@SuppressWarnings("unused")
 	public static Widget createWidget(String xml, Interactor interactor, ITranslator translator) {
-		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
+//		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
+		Widget result = null;
 		Document document = XMLParser.parse(xml);
 		Element root = document.getDocumentElement();
 		
 		if (root != null) {
 			NodeList children = document.getChildNodes();//root.getChildNodes();
 			for (int i = 0; i < children.getLength(); i++) {
-				processChild(document, children.item(i), mainPanel, interactor, 0, translator);
+				result = processChild(document, children.item(i), null, interactor, 0, translator);
 			}
 		}
 		
-		if (false) {//application.getSession().isActionAllowed("WORKFLOW_TAB", "DON'T CARE", "VIEW")) {
-			TabLayoutPanel theTab = new TabLayoutPanel(3, Unit.EM);
-			theTab.add(mainPanel, ">Form");
-			theTab.add(createEditor(document), ">Layout");
-			return theTab;
-		} else {
-			if (isIE()) {
-				mainPanel.forceLayout();
-			}
-			return mainPanel;
-		}
+//		if (isIE()) {
+//			mainPanel.forceLayout();
+//		}
+		return result;
 	}
 
 	private static Widget createEditor(Document document) {
@@ -76,7 +70,8 @@ public class WidgetCreator {
 		return document.toString();
 	}
 
-	private static void processChild(Document document, Node item, Widget panel, Interactor interactor, int level, ITranslator translator) {
+	private static Widget processChild(Document document, Node item, Widget panel, Interactor interactor, int level, ITranslator translator) {
+		Widget widget = null;
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
@@ -84,12 +79,12 @@ public class WidgetCreator {
 
 			element = preprocess(document, element);
 		
-			Widget widget = createWidgetFromElement(element, interactor, translator);
+			widget = createWidgetFromElement(element, interactor, translator);
 			if (widget != null) {
 				if (panel instanceof Panel){
 					((Panel)panel).add(widget);
 				} else if (panel instanceof TabLayoutPanel) {
-					((TabLayoutPanel)panel).add(widget);
+					((TabLayoutPanel)panel).add(widget, widget.getTitle());
 				}
 				if (element.hasChildNodes() && 
 						(widget instanceof Panel || widget instanceof TabLayoutPanel)) {
@@ -100,6 +95,7 @@ public class WidgetCreator {
 				}
 			}
 		}
+		return widget;
 	}
 
 	private static String levelPrefix(int level) {
@@ -212,6 +208,8 @@ public class WidgetCreator {
 		} else if ("HBox".equals(localName)){
 			widget = new HorizontalPanel();
 			widget.setStyleName("HBox");
+		} else if ("Tab".equals(localName)){
+			widget = new TabLayoutPanel(3, Unit.EM);
 		} else if ("Form".equals(localName)){
 			widget = new SimpleForm();
 			if (attributes.containsKey("label")) {
@@ -286,6 +284,10 @@ public class WidgetCreator {
 		}
 
 		if (widget != null) {
+			if (attributes.containsKey("label")) {
+				widget.setTitle(translator != null ? translator.getLabel(attributes.get("label")) : attributes.get("label") );
+			}
+
 			if (attributes.containsKey("width")) {
 				widget.setWidth(checkUnit(attributes.get("width")));
 			}

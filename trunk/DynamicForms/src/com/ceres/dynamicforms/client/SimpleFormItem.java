@@ -76,6 +76,10 @@ public class SimpleFormItem extends Panel  {
 	public void setWidth(String width) {
 	}
 
+	@Override
+	public void setTitle(String title) {
+	}
+
 	public String getAttribute(String key) {
 		return attributes != null ? attributes.get(key) : null;
 	}
