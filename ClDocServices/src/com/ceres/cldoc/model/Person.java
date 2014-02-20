@@ -35,5 +35,10 @@ public class Person extends Entity implements IPerson {
 		return firstName;
 	}
 
+	@Override
+	public String getLastName() {
+		return lastName;
+	}
+
 	
 }

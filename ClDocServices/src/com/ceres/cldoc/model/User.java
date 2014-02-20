@@ -37,8 +37,7 @@ public class User implements IUser {
 
 	@Override
 	public String getUserName() {
-		// TODO Auto-generated method stub
-		return null;
+		return userName;
 	}
 
 }

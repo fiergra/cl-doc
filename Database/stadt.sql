@@ -1,5 +1,6 @@
 insert into Catalog (id, parent, code, text, shorttext) values (65, 51, 'Jugend_USER', 'Jugend_USER', 'Jugend_USER');
 insert into Catalog (id, parent, code, text, shorttext) values (66, 51, 'Jugend_MANAGER', 'Jugend_MANAGER', 'Jugend_MANAGER');
+insert into Catalog (id, parent, code, text, shorttext) values (67, 51, 'Zeiterfassung', 'Zeiterfassung', 'Zeiterfassung');
 
 DROP TABLE IF EXISTS WorkPattern;
 
@@ -145,10 +146,13 @@ insert into EntityRelation (type, subjectid, objectid) values (155, 5001, 531);
 
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (5000, 'bmann', 50);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (5001, 'tawsteff', 531);
+insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (1, 'ze', 531);
 
 insert into Assignment(userid, role, startdate) values ((select id from User where name='bmann'), 65, CURRENT_DATE);
 insert into Assignment(userid, role, startdate) values ((select id from User where name='bmann'), 66, CURRENT_DATE);
 insert into Assignment(userid, role, startdate) values ((select id from User where name='tawsteff'), 65, CURRENT_DATE);
+insert into Assignment(userid, role, startdate) values ((select id from User where name='tawsteff'), 66, CURRENT_DATE);
+insert into Assignment(userid, role, startdate) values ((select id from User where name='ze'), 67, CURRENT_DATE);
 
 insert into Catalog (parent, code, text, shorttext, logical_order, number1) values (2, 'JugendOrga', 'Organisation', 'Organisation', 1, 50);
 
@@ -159,6 +163,11 @@ insert into Policy (role, objectType, action, startDate) values (65,(select id f
 insert into Policy (role, objectType, action, startDate) values (54,(select id from Catalog where code ='TimeRegistration'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='LeaveRegistration'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (54,(select id from Catalog where code ='LeaveRegistration'),71, CURRENT_DATE);
+
+insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='TimeRegistration'),71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='LeaveRegistration'),71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='TimeSheet'),71, CURRENT_DATE);
+
 
 insert into Catalog (id, parent, code, text, shorttext) values (550, 150, 'Altersgruppe', 'Altersgruppe', 'Altersgruppe');
 insert into Catalog (parent, code, text, shorttext) values (550, '6-12', '6-12 Jahre', '6-12');

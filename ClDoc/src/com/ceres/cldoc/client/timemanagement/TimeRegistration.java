@@ -1,4 +1,4 @@
-package com.ceres.cldoc.client.views;
+package com.ceres.cldoc.client.timemanagement;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +11,10 @@ import java.util.Map;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.DefaultCallback;
+import com.ceres.cldoc.client.views.MessageBox;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
+import com.ceres.cldoc.client.views.ParticipationTimeFactory;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Participation;

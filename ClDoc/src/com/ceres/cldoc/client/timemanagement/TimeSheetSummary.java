@@ -1,4 +1,4 @@
-package com.ceres.cldoc.client.views;
+package com.ceres.cldoc.client.timemanagement;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.views.DefaultCallback;
+import com.ceres.cldoc.client.views.LeaveRegistration;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Participation;
 import com.google.gwt.core.client.GWT;
@@ -167,7 +169,7 @@ public class TimeSheetSummary extends DockLayoutPanel {
 	protected List<Act> getLeaves(List<Act> result) {
 		List<Act> leaves = new ArrayList<Act>();
 		for (Act a:result) {
-			if (a.actClass.name.equals(TimeRegistration.ANNUAL_LEAVE_ACT)) {
+			if (a.actClass.name.equals(TimeRegistration.ANNUAL_LEAVE_ACT) || a.actClass.name.equals(TimeRegistration.SICK_LEAVE_ACT)) {
 				leaves.add(a);
 			}
 		}
@@ -212,8 +214,14 @@ public class TimeSheetSummary extends DockLayoutPanel {
 		int row = 0;
 		
 		while (curDate.getMonth() == month) {
-			if (LeaveRegistration.isLeave(leaves, curDate) != null) {
-				daysTable.getRowFormatter().addStyleName(row, "leaveDay");
+			Act leave = LeaveRegistration.isLeave(leaves, curDate); 
+			if (leave != null) {
+				if (leave.actClass.name.equals(TimeRegistration.ANNUAL_LEAVE_ACT)) {
+					daysTable.getRowFormatter().addStyleName(row, "leaveDay");
+				} else {
+					daysTable.getRowFormatter().addStyleName(row, "sickLeaveDay");
+				}
+
 			} 
 			Label dayLabel = new Label(dtfRowHeader.format(curDate));
 			dayLabel.addStyleName("headerDate");

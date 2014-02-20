@@ -7,6 +7,7 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.client.timemanagement.TimeRegistration;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Participation;

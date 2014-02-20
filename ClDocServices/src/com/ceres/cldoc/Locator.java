@@ -1,5 +1,8 @@
 package com.ceres.cldoc;
 
+import com.ceres.cldoc.timemanagement.ITimeManagementService;
+import com.ceres.cldoc.timemanagement.TimeManagementServiceImpl;
+
 public class Locator {
 
 	private static IEntityService entityService;
@@ -13,6 +16,7 @@ public class Locator {
 	private static DocArchive docArchive;
 	private static IReportService reportService;
 	private static ISettingsService settingsService;
+	private static ITimeManagementService timeManagementService;
 	
 	public static IDocArchive getDocArchive() {
 		if (docArchive == null) {
@@ -89,6 +93,13 @@ public class Locator {
 			reportService = new ReportServiceImpl();
 		}
 		return reportService;
+	}
+
+	public static ITimeManagementService getTimeManagementService() {
+		if (timeManagementService == null) {
+			timeManagementService = new TimeManagementServiceImpl();
+		}
+		return timeManagementService;
 	}
 
 }
