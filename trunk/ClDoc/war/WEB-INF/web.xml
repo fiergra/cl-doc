@@ -44,6 +44,16 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>timemanagementServlet</servlet-name>
+    <servlet-class>com.ceres.cldoc.server.timemanagement.TimeManagementServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>timemanagementServlet</servlet-name>
+    <url-pattern>/cldoc/timemanagement</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>entityServlet</servlet-name>
     <servlet-class>com.ceres.cldoc.server.service.GWTEntityServiceImpl</servlet-class>
   </servlet>

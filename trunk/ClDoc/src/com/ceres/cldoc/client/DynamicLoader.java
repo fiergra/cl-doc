@@ -1,5 +1,7 @@
 package com.ceres.cldoc.client;
 
+import com.ceres.cldoc.client.timemanagement.TimeRegistration;
+import com.ceres.cldoc.client.timemanagement.TimeSheet;
 import com.ceres.cldoc.client.views.AssignmentsPanel;
 import com.ceres.cldoc.client.views.CatalogConfigurator2;
 import com.ceres.cldoc.client.views.Configurator;
@@ -12,7 +14,6 @@ import com.ceres.cldoc.client.views.Persons;
 import com.ceres.cldoc.client.views.Reporting;
 import com.ceres.cldoc.client.views.SettingsPanel;
 import com.ceres.cldoc.client.views.Styler;
-import com.ceres.cldoc.client.views.TimeRegistration;
 import com.ceres.cldoc.model.Catalog;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -35,6 +36,8 @@ public class DynamicLoader {
 			result = new TimeRegistration((ClDoc) model);
 		} else if (code.equals("LeaveRegistration")) {
 			result = new LeaveRegistration((ClDoc) model);
+		} else if (code.equals("TimeSheet")) {
+			result = new TimeSheet((ClDoc) model);
 //		} else if (name.equals("Formulare")) {
 //			result = new HistoryView(clDoc, (Entity) model);
 //		} else if (name.equals("Stammdaten")) {

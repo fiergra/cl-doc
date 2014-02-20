@@ -72,24 +72,40 @@ public class ClDoc implements EntryPoint, IApplication {
 		WidgetCreator.addLinkFactory("multiselect", new CatalogMultiSelectorFactory(this));
 		WidgetCreator.addLinkFactory("participationtime", new ParticipationTimeFactory());
 		
-		LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<ISession>() {
-			
-			@Override
-			public void onOk(ISession result) {
-				session = result;
-				if (result != null) {
-					if (((User)session.getUser()).hash == null) {
-						setPassword(session);
-					} else {
-						setupMain(result);
-						preload(result);
-					}
-				} else {
-					
+		
+		String user = System.getProperty("user", null);
+		String pwd = System.getProperty("pwd", null);
+		if (user != null && pwd != null) {
+			SRV.userService.login(user, pwd, new DefaultCallback<ISession>(this, "login") {
+
+				@Override
+				public void onSuccess(ISession result) {
+					session = result;
+					setupMain(result);
+					preload(result);
 				}
-			}
-		});
-		RootLayoutPanel.get().add(loginScreen);
+			});
+		} else {
+			
+			LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<ISession>() {
+				
+				@Override
+				public void onOk(ISession result) {
+					session = result;
+					if (result != null) {
+						if (((User)session.getUser()).hash == null) {
+							setPassword(session);
+						} else {
+							setupMain(result);
+							preload(result);
+						}
+					} else {
+						
+					}
+				}
+			});
+			RootLayoutPanel.get().add(loginScreen);
+		}
 		
 	}
 	
@@ -257,7 +273,7 @@ public class ClDoc implements EntryPoint, IApplication {
 	}
 
 	private String getDisplayName(ISession s) {
-		return s.getUser().getUserName() + "[" + s.getUser().getPerson().getFirstName()  + " " + s.getUser().getPerson().getFirstName() +"]";
+		return s.getUser().getUserName() + "[" + s.getUser().getPerson().getFirstName()  + " " + s.getUser().getPerson().getLastName() +"]";
 	}
 
 	public void setLogOutput(LogOutput logOutput) {
