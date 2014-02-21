@@ -88,6 +88,7 @@ body, table td, select, button {
 
 .headerDate {
 	font-size: smaller;
+	white-space: nowrap;
 }
 
 .timeSheetRow {
