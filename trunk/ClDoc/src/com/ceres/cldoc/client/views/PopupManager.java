@@ -44,14 +44,16 @@ public class PopupManager {
 	public static <T> PopupPanel showModal(String title, IsWidget content, OnClick<PopupPanel> onClickSave, OnClick<PopupPanel> onClickDelete) {
 		VerticalPanel vp = new VerticalPanel();
 		vp.add(content);
-		vp.add(new HTML("<hr width=\"100%\">"));
 		final PopupPanel popup = PopupManager.createPopup(title, vp, false);
 		HorizontalPanel buttons = addButtons(popup, onClickSave, onClickDelete);//, onClickCancel);
-		vp.add(buttons);
+		HorizontalPanel wrapper = new HorizontalPanel();
+		wrapper.addStyleName("buttonsPanel");
+		wrapper.add(buttons);
+		vp.add(wrapper);
 		
-		int height = RootLayoutPanel.get().getOffsetHeight() - 120;
-		int width = RootLayoutPanel.get().getOffsetWidth() - 80;
-		content.asWidget().setPixelSize(width, height);
+//		int height = RootLayoutPanel.get().getOffsetHeight() - 120;
+//		int width = RootLayoutPanel.get().getOffsetWidth() - 80;
+//		content.asWidget().setPixelSize(width, height);
 		
 		popup.center();
 		return popup;

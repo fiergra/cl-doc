@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client.timemanagement;
 
 import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.timemanagement.TimeSheetYear;
 import com.ceres.cldoc.timemanagement.WorkPattern;
 import com.ceres.core.ISession;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -13,4 +14,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface TimeManagementService extends RemoteService {
 	WorkPattern getWorkPattern(ISession session);
 	WorkPattern getWorkPattern(ISession session, Person person);
+	TimeSheetYear loadTimeSheetYear(ISession session, Person person, int year);
 }

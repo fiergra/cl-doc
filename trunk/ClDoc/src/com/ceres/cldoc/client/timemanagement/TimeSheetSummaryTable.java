@@ -62,7 +62,7 @@ public class TimeSheetSummaryTable extends FlexTable {
 			} 
 			Label dayLabel = new Label(dtfRowHeader.format(curDate));
 			dayLabel.addStyleName("headerDate");
-			if (isWeekEnd(curDate)) {
+			if (TimeRegistration.isWeekEnd(curDate)) {
 				dayLabel.addStyleName("weekendDate");
 			}
 			setWidget(row, 0, dayLabel);
@@ -91,11 +91,6 @@ public class TimeSheetSummaryTable extends FlexTable {
 //			}
 //		}
 		
-	}
-
-	private boolean isWeekEnd(Date curDate) {
-		int weekDay = curDate.getDay();
-		return  weekDay == 0 || weekDay == 6;
 	}
 
 	private int getDuration(List<Participation> participations) {

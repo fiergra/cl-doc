@@ -126,6 +126,7 @@ public class ClDoc implements EntryPoint, IApplication {
 	protected void setPassword(final ISession session) {
 		final PasswordTextBox pwdField1 = new PasswordTextBox();
 		final PasswordTextBox pwdField2 = new PasswordTextBox();
+		
 		SimpleForm createPwd = new SimpleForm();
 		createPwd.addLine("Passwort", pwdField1);
 		createPwd.addLine("Passwort Wiederholung", pwdField2);
