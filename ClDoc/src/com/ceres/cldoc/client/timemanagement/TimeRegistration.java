@@ -82,6 +82,14 @@ public class TimeRegistration extends DockLayoutPanel {
 		return duration;
 	}
 
+	public static boolean isWeekEnd(Date curDate) {
+		int weekDay = curDate.getDay();
+		return  weekDay == 0 || weekDay == 6;
+	}
+
+
+	
+	
 	private void setup(final ClDoc clDoc) {
 		HorizontalPanel header = new HorizontalPanel();
 		header.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);

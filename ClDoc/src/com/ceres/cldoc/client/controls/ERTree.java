@@ -80,7 +80,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				new MessageBox("Loeschen", "Wollen Sie die Relation entfernen?" , MessageBox.MB_YES | MessageBox.MB_YES, MESSAGE_ICONS.MB_ICON_QUESTION){
+				new MessageBox("Loeschen", "Wollen Sie die Relation entfernen?" , MessageBox.MB_YES | MessageBox.MB_NO, MESSAGE_ICONS.MB_ICON_QUESTION){
 
 					@Override
 					protected void onClick(int result) {

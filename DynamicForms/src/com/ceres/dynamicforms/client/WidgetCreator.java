@@ -292,7 +292,7 @@ public class WidgetCreator {
 				widget.setWidth(checkUnit(attributes.get("width")));
 			}
 			if (attributes.containsKey("height")) {
-				widget.setWidth(checkUnit(attributes.get("height")));
+				widget.setHeight(checkUnit(attributes.get("height")));
 			}
 			
 			if (link != null && link.getName() != null) {
@@ -305,7 +305,7 @@ public class WidgetCreator {
 
 
 	private static String checkUnit(String size) {
-		return size.endsWith("%") ? size : size + "px";
+		return size.endsWith("%") || size.endsWith("px") || size.endsWith("em") ? size : size + "px";
 	}
 
 	private static HashMap<String, String> asHashMap(NamedNodeMap attributes) {

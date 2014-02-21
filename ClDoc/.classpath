@@ -7,10 +7,5 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ClDocServices"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/DynamicForms"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ApplicationCoreModel"/>
-	<classpathentry kind="lib" path="C:/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.5.0.v201212122042-rel-r42/gwt-2.5.0/gwt-user.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/eclipse/plugins/com.google.gwt.eclipse.sdkbundle_2.5.0.v201212122042-rel-r42/gwt-2.5.0/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

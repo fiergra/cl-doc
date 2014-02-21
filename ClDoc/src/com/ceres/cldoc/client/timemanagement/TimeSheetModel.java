@@ -11,7 +11,7 @@ import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.timemanagement.WorkPattern;
 import com.google.gwt.user.datepicker.client.CalendarUtil;
 
-public class TimeSheetModel {
+public class TimeSheetModel  {
 	public static class TimeSheetEntry {
 		public TimeSheetEntry(Date date, int durationShould) {
 			this.date = date;
@@ -66,8 +66,9 @@ public class TimeSheetModel {
 		
 		while (curDate.getMonth() == month) {
 			TimeSheetEntry tse = byDate.get(curDate.getDate());
+			int normalWorkingTime = (int) ((workPattern.weeklyHours * 60) / 5);
 			if (tse == null) {
-				tse = new TimeSheetEntry(curDate, (int) ((workPattern.weeklyHours * 60) / 5));
+				tse = new TimeSheetEntry(curDate, normalWorkingTime);
 				tse.leave = LeaveRegistration.isLeave(leaves, curDate);
 				byDate.put(curDate.getDate(), tse);
 				grouped.add(tse);

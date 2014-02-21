@@ -258,13 +258,9 @@ body, table td, select, button {
 	background-color:#b7babc;
 	cursor: no-drop;
 }
-.gwt-SuggestBox {
-	font-family: Calibri;
-	font-weight: normal;
-	font-size: medium;
-}
-
 .gwt-TextArea {
+	padding: 2px;
+	border: 1px solid #CCC;
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;
@@ -274,10 +270,13 @@ body, table td, select, button {
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;
+	padding: 2px;
+	border: 1px solid #CCC;
 }
 
 .gwt-DateBox {
 	padding: 5px 4px;
+	border: 1px solid #CCC;
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;
@@ -287,10 +286,14 @@ body, table td, select, button {
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;
+	padding: 2px;
+	border: 1px solid #CCC;
 }
 
 
+
 .gwt-ListBox {
+	border: 1px solid #CCC;
 	font-family: Calibri;
 	font-weight: normal;
 	font-size: medium;
@@ -308,28 +311,24 @@ body, table td, select, button {
 	font-size: medium;
 }
 
-.gwt-SplitLayoutPanel {
-  background-color: white;
-}
-
 .gwt-SplitLayoutPanel-HDragger {
-background: whiteurl(images/thumb_vertical.png) center center no-repeat;
+background: #DDD url(images/thumb_vertical.png) center center no-repeat;
 cursor: col-resize;
 }
 
 .gwt-Tree .gwt-TreeItem-selected {
-background: #6DA8C8;
+background: #63D36A;
 }
 
 .gwt-TabLayoutPanel {
 }
 
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
-  background: #6DA8C8;
+  background: #4290B6;
   padding-top: 0px;
   padding-left: 0px;
   border-bottom-style: solid;
-  border-bottom-color: #4290B6;
+  border-bottom-color: #6DA8C8;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
   border-color: #ccc;
@@ -343,21 +342,228 @@ background: #6DA8C8;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
   margin-left: 4px;
-  padding: 4px 8px 0px 8px;
+  padding: 4px 8px 4px 8px;
   cursor: pointer;
   cursor: hand;
   color: lightgray;
   font-weight: normal;
   font-size: larger;
   text-align: center;
-  background: #6DA8C8;
+  background: #4290B6;
   -moz-border-radius: 0px;
   border-radius: 0px;
   height: 34px;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   cursor: default;
-  background: #4290B6;
+  background: #6DA8C8;
   color: white;
   font-weight: normal;
 }
+
+
+.gwt-SuggestBox {
+  padding: 5px 4px;
+  border: none;
+  border-top: none;
+  font-size: 100%;
+  font-family: Calibri;
+}
+
+.gwt-SuggestBoxPopup {
+}
+
+.gwt-SuggestBoxPopup .item {
+  padding: 2px 6px;
+  color: #000;
+  cursor: default;
+  font-size: 110%;
+}
+.gwt-SuggestBoxPopup .item-selected {
+  background: #6DA8C8;
+  color: white;
+}
+.gwt-SuggestBoxPopup .suggestPopupContent {
+  background: white;
+}
+.gwt-SuggestBoxPopup .suggestPopupTopCenter {
+  border-top: none;
+  background: white;
+}
+.gwt-SuggestBoxPopup .suggestPopupBottomCenter {
+  border-bottom: none;
+  background: white;
+}
+.gwt-SuggestBoxPopup .suggestPopupTopCenterInner,
+.gwt-SuggestBoxPopup .suggestPopupBottomCenterInner {
+  height: 1px;
+  line-height: 1px;
+}
+.gwt-SuggestBoxPopup .suggestPopupMiddleLeft {
+  border-left: none;
+  background: white;
+}
+.gwt-SuggestBoxPopup .suggestPopupMiddleRight {
+  border-right: none;
+  background: white;
+}
+.gwt-SuggestBoxPopup .suggestPopupMiddleLeftInner,
+.gwt-SuggestBoxPopup .suggestPopupMiddleRightInner {
+  width: 1px;
+  line-height: 1px;
+}
+.gwt-SuggestBoxPopup .suggestPopupTopLeftInner {
+  width: 0px;
+  height: 0px;
+  zoom: 1;  
+}
+.gwt-SuggestBoxPopup .suggestPopupTopRightInner {
+  width: 0px;
+  height: 0px;
+  zoom: 1;
+}
+.gwt-SuggestBoxPopup .suggestPopupBottomLeftInner {
+  width: 0px;
+  height: 0px;
+  zoom: 1;
+}
+.gwt-SuggestBoxPopup .suggestPopupBottomRightInner {
+  width: 0px;
+  height: 0px;
+  zoom: 1;
+}
+.gwt-SuggestBoxPopup .suggestPopupTopLeft {
+  background: white;
+  -background: white;
+  width:5px;
+  height:5px;
+}
+.gwt-SuggestBoxPopup .suggestPopupTopRight {
+  background: white;
+  -background: white;
+  width:0px;
+  height:0px;
+}
+.gwt-SuggestBoxPopup .suggestPopupBottomLeft {
+  background: white;
+  -background: white;
+  width:0px;
+  height:0px;
+}
+.gwt-SuggestBoxPopup .suggestPopupBottomRight {
+  background: white;
+  -background: white;
+  width:0px;
+  height:0px;
+}
+* html .gwt-SuggestBoxPopup .suggestPopupTopLeftInner {
+  width: 0px;
+  height: 0px;
+  overflow: hidden;
+}
+* html .gwt-SuggestBoxPopup .suggestPopupTopRightInner {
+  width: 0px;
+  height: 0px;
+  overflow: hidden;
+}
+* html .gwt-SuggestBoxPopup .suggestPopupBottomLeftInner {
+  width: 0px;
+  height: 0px;
+  overflow: hidden;
+}
+* html .gwt-SuggestBoxPopup .suggestPopupBottomRightInner {
+  width: 0px;
+  height: 0px;
+  overflow: hidden;
+}
+
+.gwt-DialogBox .Caption {
+  background: #518EAB;
+  color:white;
+  padding: 4px 8px 4px 4px;
+  cursor: default;
+  font-family: Calibri;
+  font-size: x-large;
+  border-bottom: 0px;
+  border-top: 0px;
+}
+
+.gwt-DialogBox .dialogContent {
+}
+.gwt-DialogBox .dialogMiddleCenter {
+  padding: 0px;
+  background: white;
+  border: 1px solid #518EAB;
+}
+.gwt-DialogBox .dialogBottomCenter {
+  background: none;
+  -background: none;
+}
+.gwt-DialogBox .dialogMiddleLeft {
+  background: none;
+}
+.gwt-DialogBox .dialogMiddleRight {
+  background: none;
+  -background: none;
+}
+.gwt-DialogBox .dialogTopLeftInner {
+  width: 10px;
+  height: 8px;
+  zoom: 1;
+}
+.gwt-DialogBox .dialogTopRightInner {
+  width: 12px;
+  zoom: 1;
+}
+.gwt-DialogBox .dialogBottomLeftInner {
+  width: 10px;
+  height: 12px;
+  zoom: 1;
+}
+.gwt-DialogBox .dialogBottomRightInner {
+  width: 12px;
+  height: 12px;
+  zoom: 1;
+}
+.gwt-DialogBox .dialogTopLeft {
+  background: none;
+  -background: none;
+}
+.gwt-DialogBox .dialogTopRight {
+  background: none;
+  -background: none;
+}
+.gwt-DialogBox .dialogBottomLeft {
+  background: none;
+  -background: none;
+}
+.gwt-DialogBox .dialogBottomRight {
+  background: none;
+  -background: none;
+}
+* html .gwt-DialogBox .dialogTopLeftInner {
+  width: 10px;
+  overflow: hidden;
+}
+* html .gwt-DialogBox .dialogTopRightInner {
+  width: 12px;
+  overflow: hidden;
+}
+* html .gwt-DialogBox .dialogBottomLeftInner {
+  width: 10px;
+  height: 12px;
+  overflow: hidden;
+}
+* html .gwt-DialogBox .dialogBottomRightInner {
+  width: 12px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.gwt-PopupPanelGlass {
+  background-color: lightgray;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+
+

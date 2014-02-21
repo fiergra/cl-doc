@@ -9,8 +9,9 @@ CREATE TABLE IF NOT EXISTS WorkPattern(
     CONSTRAINT FK_WorkPattern_ENTITY FOREIGN KEY (Id)
         REFERENCES ENTITY (Id),
     WeeklyHours FLOAT NOT NULL,
-    StartDate DATETIME NOT NULL,
-    EndDate DATETIME
+    LeaveEntitlement INTEGER NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE
 );
 
 
@@ -19,9 +20,9 @@ insert into Entity (id, TYPE, NAME) values (1101, 1001, 'Vollzeit');
 insert into Entity (id, TYPE, NAME) values (1102, 1001, 'Teilzeit50');
 insert into Entity (id, TYPE, NAME) values (1103, 1001, 'Teilzeit20');
 
-insert into WorkPattern (id, WeeklyHours, StartDate) values (1101, 38.5, CURRENT_DATE);
-insert into WorkPattern (id, WeeklyHours, StartDate) values (1102, 19.25, CURRENT_DATE);
-insert into WorkPattern (id, WeeklyHours, StartDate) values (1103, 7.7, CURRENT_DATE);
+insert into WorkPattern (id, WeeklyHours, LeaveEntitlement, StartDate) values (1101, 38.5, 30, CURRENT_DATE);
+insert into WorkPattern (id, WeeklyHours, LeaveEntitlement, StartDate) values (1102, 19.25, 30, CURRENT_DATE);
+insert into WorkPattern (id, WeeklyHours, LeaveEntitlement, StartDate) values (1103, 7.7, 30, CURRENT_DATE);
 
 insert into Catalog (parent, code, text, shorttext) values (154, 'arbeitet entsprechend', 'arbeitet entsprechend', 'arbeitet entsprechend');
 
