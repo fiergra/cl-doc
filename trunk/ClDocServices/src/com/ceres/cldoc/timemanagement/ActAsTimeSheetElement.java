@@ -11,6 +11,9 @@ public class ActAsTimeSheetElement implements TimeSheetElement {
 	private static final long serialVersionUID = 4598196757943108004L;
 	private Act act;
 
+	public ActAsTimeSheetElement() {
+	}
+
 	public ActAsTimeSheetElement(Act act) {
 		this.act = act;
 	}
