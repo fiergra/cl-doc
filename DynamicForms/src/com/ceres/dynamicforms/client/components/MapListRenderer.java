@@ -13,8 +13,8 @@ import com.google.gwt.user.client.ui.Label;
 public abstract class MapListRenderer extends FlexTable {
 	
 	static class LineContext {
-		private int row;
-		private MapListRenderer mlr;
+		private final int row;
+		private final MapListRenderer mlr;
 		public LineContext(MapListRenderer mlr, int row, Map<String, Serializable> act) {
 			this.mlr = mlr;
 			this.row = row;
@@ -108,6 +108,15 @@ public abstract class MapListRenderer extends FlexTable {
 
 	protected boolean isLastLine(LineContext interactor) {
 		return lineContexts.indexOf(interactor) == lineContexts.size() - 1;
+	}
+
+	public List<Map<String,Serializable>> getActs() {
+		List<Map<String,Serializable>> acts = new ArrayList<Map<String,Serializable>>(lineContexts.size() - 1);
+		for (int i = 0; i < lineContexts.size() - 1; i++) {
+			LineContext lc =lineContexts.get(i);
+			acts.add(lc.act);
+		}
+		return acts;
 	}
 
 	public void setActs(List<Map<String,Serializable>> result) {

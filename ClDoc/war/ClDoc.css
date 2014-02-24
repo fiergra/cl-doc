@@ -30,6 +30,13 @@ body, table td, select, button {
 	cursor: pointer; 
 }
 
+.monthTable {
+	background-color: white;
+}
+
+.dateColumn {
+}
+
 .timeRegistrationDate {
 	font-size: large;
 	border: none;
@@ -89,10 +96,16 @@ body, table td, select, button {
 .headerDate {
 	font-size: smaller;
 	white-space: nowrap;
+	width: 3em;
 }
 
 .timeSheetRow {
 	font-size: smaller;
+	border-top-style: solid;
+	border-width: 1px;
+	border-color: #DDD;
+	width: 8em;
+	height: 2em;
 }
 
 .timeSheetRow:HOVER {
@@ -101,8 +114,25 @@ body, table td, select, button {
 }
 
 .workingDate {
-	font-weight: bold;
 	font-size: larger;
+}
+
+.positiveBalance {
+	font-size: large;
+	font-weight: bold;
+	color: green;
+}
+
+.negativeBalance {
+	font-size: large;
+	font-weight: bold;
+	color: red;
+}
+
+.weekendCell {
+	border-color: red;
+	border-bottom: solid;
+	border-width: 1px;
 }
 
 .linkButton:hover {

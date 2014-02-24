@@ -21,6 +21,11 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 		this.quota = quota;
 	}
 
+	protected void clearChildren() {
+		children = null;
+	}
+
+
 	@Override
 	public int getQuota() {
 		int q;
@@ -37,6 +42,7 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 		return q;
 	}
 
+	@Override
 	public boolean isAbsent() {
 		return !absenceType.equals(AbsenceType.NONE);
 	}

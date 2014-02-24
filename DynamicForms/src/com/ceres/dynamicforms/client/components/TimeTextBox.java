@@ -22,8 +22,8 @@ public class TimeTextBox extends DateTextBox {
 	
 	private boolean isTimeSet(Date date) {
 		if (date != null) {
-			String sDate = DateTimeFormat.getFormat("kkHmmssS").format(date);
-			return !sDate.equals("24000000");
+			String sDate = DateTimeFormat.getFormat("kkHmmss").format(date);
+			return !sDate.equals("2400000");
 		} else {
 			return false;
 		}
