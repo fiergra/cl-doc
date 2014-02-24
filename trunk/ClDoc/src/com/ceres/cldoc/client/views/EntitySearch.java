@@ -61,7 +61,8 @@ public class EntitySearch extends SplitLayoutPanel {
 
 			@Override
 			protected TreeItem getRoot() {
-				TreeItem root = new TreeItem(entity.getName());
+				TreeItem root = new TreeItem();
+				root.setText(entity.getName());
 				EntityRelation er = new EntityRelation();
 				er.subject = entity;
 				root.setUserObject(er);

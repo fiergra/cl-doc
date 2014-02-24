@@ -6,19 +6,16 @@ import java.sql.ResultSet;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.util.Jdbc;
 import com.ceres.core.ISession;
 
-import de.jollyday.Holiday;
 import de.jollyday.HolidayCalendar;
 import de.jollyday.HolidayManager;
 
@@ -79,6 +76,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 	}
 
 	private TimeSheetYear initTimeSheetYear(ISession session, Entity person, int year) {
+		Calendar now = Calendar.getInstance();
 		Calendar c = Calendar.getInstance();
 		c.set(year, 0, 1);
 		WorkPattern wp = getWorkPattern(session, person, c.getTime());

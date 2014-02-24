@@ -338,7 +338,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 					@Override
 					public void onSuccess(List<Catalog> result) {
 						@SuppressWarnings("deprecation")
-						TreeItem root = new TreeItem("root");
+						TreeItem root = new TreeItem();
 						addTreeItems(root, result);
 						tree.addItem(root);
 						root.setState(true);
@@ -361,8 +361,8 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 	}
 
 	private TreeItem catalog2TreeItem(Catalog c) {
-		@SuppressWarnings("deprecation")
-		TreeItem ti = new TreeItem(c.id + "|<b>" + c.code + "</b> - <i>" + c.shortText + "</i>");
+		TreeItem ti = new TreeItem();
+		ti.setText(c.id + "|<b>" + c.code + "</b> - <i>" + c.shortText + "</i>");
 		ti.setUserObject(c);
 		return ti;
 	}

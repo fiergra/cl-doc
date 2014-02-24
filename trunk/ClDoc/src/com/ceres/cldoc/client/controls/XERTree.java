@@ -34,7 +34,8 @@ public class XERTree extends Tree {
 
 			@Override
 			public void onSuccess(List<EntityRelation> result) {
-				TreeItem root = new TreeItem(entity.getName());
+				TreeItem root = new TreeItem();
+				root.setText(entity.getName());
 				addTreeItems(root, result);
 				addItem(root);
 				root.setState(true);

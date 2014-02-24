@@ -1,7 +1,9 @@
 package com.ceres.cldoc.timemanagement;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Participation;
@@ -78,6 +80,10 @@ public class ActAsTimeSheetElement implements TimeSheetElement {
 	@Override
 	public AbsenceType getAbsenceType() {
 		return AbsenceType.NONE;
+	}
+
+	public Map<String, Serializable> getAct() {
+		return act;
 	}
 
 }
