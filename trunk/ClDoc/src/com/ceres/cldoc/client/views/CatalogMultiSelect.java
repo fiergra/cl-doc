@@ -28,7 +28,7 @@ public class CatalogMultiSelect extends FlexTable implements
 				new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 					@Override
-					public void onSuccess(List<Catalog> result) {
+					public void onResult(List<Catalog> result) {
 						if (result != null) {
 							buttons = new HashMap<Long, CheckBox>(result.size());
 	

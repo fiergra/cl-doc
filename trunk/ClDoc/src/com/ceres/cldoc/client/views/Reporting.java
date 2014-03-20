@@ -22,7 +22,7 @@ public class Reporting extends TabLayoutPanel  {
 		SRV.configurationService.listReportDefinitions(clDoc.getSession(), new DefaultCallback<List<ReportDefinition>>(clDoc, "list report defs") {
 
 			@Override
-			public void onSuccess(List<ReportDefinition> reportDefs) {
+			public void onResult(List<ReportDefinition> reportDefs) {
 				for (ReportDefinition rd:reportDefs) {
 					add(new ReportTab(clDoc, rd), rd.name);
 				}

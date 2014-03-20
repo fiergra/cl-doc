@@ -74,7 +74,7 @@ public class AttachmentsPanel extends DockLayoutPanel {
 											SRV.actService.deleteAttachment(clDoc.getSession(), attachment, new DefaultCallback<Void>(clDoc, "delete") {
 					
 												@Override
-												public void onSuccess(Void result) {
+												public void onResult(Void result) {
 													attachments.refresh();
 												}
 											});

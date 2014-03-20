@@ -7,7 +7,6 @@ import java.util.List;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.controls.LinkButton;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.client.timemanagement.TimeRegistration;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Participation;
@@ -33,12 +32,16 @@ import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class LeaveRegistration extends DockLayoutPanel {
 
+	public static final String WORKINGTIME_ACT = "WorkingTime";
+	public static final String ANNUAL_LEAVE_ACT = "AnnualLeave";
+	public static final String SICK_LEAVE_ACT = "SickLeave";
+	
 	final DatePicker dpFrom = new DatePicker();
 	final DatePicker dpTo = new DatePicker();
 	final FlexTable leaveTable = new FlexTable();
 	
-	final ActClass annualLeaveClass = new ActClass(TimeRegistration.ANNUAL_LEAVE_ACT);
-	final ActClass sickLeaveClass = new ActClass(TimeRegistration.SICK_LEAVE_ACT);
+	final ActClass annualLeaveClass = new ActClass(ANNUAL_LEAVE_ACT);
+	final ActClass sickLeaveClass = new ActClass(SICK_LEAVE_ACT);
 
 	private final class FromToValueChangeHandler implements
 			ValueChangeHandler<Date> {
@@ -121,7 +124,7 @@ public class LeaveRegistration extends DockLayoutPanel {
 					SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "delete") {
 
 						@Override
-						public void onSuccess(Act result) {
+						public void onResult(Act result) {
 							leaves.remove(act);
 							showLeaves();
 						}
@@ -412,7 +415,7 @@ public class LeaveRegistration extends DockLayoutPanel {
 		SRV.actService.save(clDoc.getSession(), leaveAct, new DefaultCallback<Act>(clDoc, "save leave") {
 
 			@Override
-			public void onSuccess(Act result) {
+			public void onResult(Act result) {
 				start = null;
 				end = null;
 				leaves.add(result);
@@ -427,7 +430,7 @@ public class LeaveRegistration extends DockLayoutPanel {
 		SRV.actService.findByEntity(clDoc.getSession(), null, clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR.id, null, null, new DefaultCallback<List<Act>>(clDoc, "list acts by date") {
 
 			@Override
-			public void onSuccess(List<Act> result) {
+			public void onResult(List<Act> result) {
 				leaves.clear();
 				for (Act a:result) {
 					if (isLeave(a)) {
@@ -487,7 +490,7 @@ public class LeaveRegistration extends DockLayoutPanel {
 		Date cur = new Date(start.getTime());
 		while (cur.getTime() < end.getTime()) {
 			if (dp.isDateVisible(cur)) {
-				if (className.equals(TimeRegistration.ANNUAL_LEAVE_ACT)) {
+				if (className.equals(ANNUAL_LEAVE_ACT)) {
 					dp.addStyleToDates("leaveDay", cur);
 				} else {
 					dp.addStyleToDates("sickLeaveDay", cur);

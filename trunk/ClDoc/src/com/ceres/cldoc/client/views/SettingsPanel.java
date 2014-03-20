@@ -73,7 +73,7 @@ public class SettingsPanel extends DockLayoutPanel {
 							SRV.configurationService.set(clDoc.getSession(), "LUCENE_INDEX_PATH", fsn.absolutePath, null, new DefaultCallback<Void>(clDoc, "") {
 
 								@Override
-								public void onSuccess(Void result) {
+								public void onResult(Void result) {
 									pp.hide();
 								}
 							});
@@ -116,11 +116,11 @@ public class SettingsPanel extends DockLayoutPanel {
 							SRV.configurationService.set(clDoc.getSession(), IDocArchive.DOC_ARCHIVE_PATH, fsn.absolutePath, null, new DefaultCallback<Void>(clDoc, "") {
 
 								@Override
-								public void onSuccess(Void result) {
+								public void onResult(Void result) {
 									SRV.configurationService.setDocArchivePath(clDoc.getSession(),fsn.absolutePath, new DefaultCallback<Void>(clDoc, "") {
 
 										@Override
-										public void onSuccess(Void result) {
+										public void onResult(Void result) {
 											new MessageBox("DocARchive", "DocArchive path set to '" + fsn.absolutePath + "'", MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO).show();
 										}
 									});
@@ -177,7 +177,7 @@ public class SettingsPanel extends DockLayoutPanel {
 		SRV.configurationService.getDocArchivePath(new DefaultCallback<String>(clDoc, "getDocArchivePath") {
 
 			@Override
-			public void onSuccess(String text) {
+			public void onResult(String text) {
 				HashMap<String, Serializable> act = new HashMap<String, Serializable>();
 				act.put("docArchivePath", text);
 				ia.toDialog(act);

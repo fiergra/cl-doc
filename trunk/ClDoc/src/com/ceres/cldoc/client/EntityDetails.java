@@ -31,7 +31,7 @@ public class EntityDetails {}/*extends DockLayoutPanel {
 				new DefaultCallback<Catalog>(clDoc, "getEntityType") {
 
 					@Override
-					public void onSuccess(final Catalog catalog) {
+					public void onResult(final Catalog catalog) {
 
 						SRV.actService.findByEntity(clDoc.getSession(), entity, Participation.MASTERDATA.id,
 								new DefaultCallback<List<Act>>(clDoc,
@@ -40,7 +40,7 @@ public class EntityDetails {}/*extends DockLayoutPanel {
 									private Act masterData;
 									
 									@Override
-									public void onSuccess(List<Act> result) {
+									public void onResult(List<Act> result) {
 										Iterator<Act> iter = result.iterator();
 										while (iter.hasNext() && masterData == null) {
 											Act next = iter.next();
@@ -59,7 +59,7 @@ public class EntityDetails {}/*extends DockLayoutPanel {
 															"getMasterDataLayout") {
 
 														@Override
-														public void onSuccess(
+														public void onResult(
 																LayoutDefinition layout) {
 															masterDataForm
 																	.setModel(masterData);
@@ -102,7 +102,7 @@ public class EntityDetails {}/*extends DockLayoutPanel {
 				SRV.actService.save(clDoc.getSession(), (Act)masterDataForm.getModel(), new DefaultCallback<Act>(clDoc,"saveMasterData") {
 
 					@Override
-					public void onSuccess(Act result) {
+					public void onResult(Act result) {
 						masterDataForm.clearModification();
 						masterDataForm.setModel(result);
 						pbSave.setVisible(false);

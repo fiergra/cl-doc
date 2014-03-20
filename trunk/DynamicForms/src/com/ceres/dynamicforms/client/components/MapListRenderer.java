@@ -38,6 +38,8 @@ public abstract class MapListRenderer extends FlexTable {
 	
 	private final List<LineContext> lineContexts = new ArrayList<LineContext>();
 	private final List<Interactor> interactors = new ArrayList<Interactor>();
+	private final List<Map<String, Serializable>> deleted = new ArrayList<Map<String,Serializable>>();
+
 	
 	private final String[] labels;
 	private final Runnable setModified;
@@ -85,9 +87,12 @@ public abstract class MapListRenderer extends FlexTable {
 					addEmptyLine();
 				} else if (lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
+						lineContext.act.put("isDeleted", true);
 						removeRow(row);
 						lineContexts.remove(lineContext);
 						interactors.remove(lineContext.interactor);
+						
+						deleted.add(lineContext.act);
 					}
 				}
 			}
@@ -122,6 +127,7 @@ public abstract class MapListRenderer extends FlexTable {
 	public void setActs(List<Map<String,Serializable>> result) {
 		lineContexts.clear();
 		interactors.clear();
+		deleted.clear();
 		
 		clear();
 		removeAllRows();
@@ -152,6 +158,10 @@ public abstract class MapListRenderer extends FlexTable {
 				lc.interactor.fromDialog(lc.act);
 				result.add(lc.act);
 			}
+		}
+		
+		for (Map<String, Serializable> d:deleted) {
+			result.add(d);
 		}
 		return result;
 	}

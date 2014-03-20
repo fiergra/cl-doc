@@ -543,10 +543,16 @@ public class EntityServiceImpl implements IEntityService {
 			@Override
 			public EntityRelation execute(Connection con) throws SQLException {
 				PreparedStatement s = con.prepareStatement(
-						"insert into EntityRelation (type, subjectid, objectid) values (?,?,?);", new String[]{"ID"});
+						"insert into EntityRelation (type, subjectid, objectid, startdate) values (?,?,?,?);", new String[]{"ID"});
 				s.setLong(1, er.type.id);
 				s.setLong(2, er.subject.getId());
 				s.setLong(3, er.object.getId());
+				if (er.startDate != null) {
+					s.setDate(4, new java.sql.Date(er.startDate.getTime()));
+				} else {
+					s.setNull(4, Types.DATE);
+				}
+
 				er.id = Jdbc.exec(s);
 				s.close();
 				return er;

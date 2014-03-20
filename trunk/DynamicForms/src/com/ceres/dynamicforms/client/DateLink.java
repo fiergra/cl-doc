@@ -29,5 +29,4 @@ public class DateLink extends TextLink {
 		return (DateTextBox) super.getWidget();
 	}
 
-
 }

@@ -145,7 +145,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 		SRV.entityService.delete(clDoc.getSession(), er, new DefaultCallback<Void>(clDoc, "delete ER") {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResult(Void result) {
 				refresh();
 			}
 		});
@@ -238,7 +238,7 @@ public class ERTree extends ClickableTree<EntityRelation> {
 							SRV.entityService.save(clDoc.getSession(), er, new DefaultCallback<EntityRelation>(clDoc, "saveER") {
 	
 								@Override
-								public void onSuccess(EntityRelation result) {
+								public void onResult(EntityRelation result) {
 									popup.hide();
 									refresh();
 								}

@@ -114,7 +114,7 @@ public class AddAct extends DialogBox {
 		SRV.configurationService.getLayoutDefinition(clDoc.getSession(), selection, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "getLayoutDef") {
 
 			@Override
-			public void onSuccess(LayoutDefinition result) {
+			public void onResult(LayoutDefinition result) {
 				Act vb = new Act(result.actClass);
 				onOk.onOk(vb);
 				close();
@@ -130,7 +130,7 @@ public class AddAct extends DialogBox {
 		SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, entityType, null, new DefaultCallback<List<LayoutDefinition>>(clDoc, "getLayoutDefs") {
 
 			@Override
-			public void onSuccess(List<LayoutDefinition> result) {
+			public void onResult(List<LayoutDefinition> result) {
 				list.clear();
 				int row = 0;
 				

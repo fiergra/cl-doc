@@ -50,6 +50,7 @@ public class MessageBox extends DialogBox {
 		
 		HorizontalPanel buttonsPanel = new HorizontalPanel();
 		HorizontalPanel innerButtonsPanel = new HorizontalPanel();
+		buttonsPanel.setSpacing(3);
 		innerButtonsPanel.setSpacing(3);
 		buttonsPanel.add(innerButtonsPanel);
 		
@@ -90,7 +91,7 @@ public class MessageBox extends DialogBox {
 			dlgWidget.addWest(imagePanel, 64);
 		}
 		
-		dlgWidget.addSouth(buttonsPanel, 32);
+		dlgWidget.addSouth(buttonsPanel, 42);
 		dlgWidget.add(theMessage);
 		
 		setWidget(dlgWidget);

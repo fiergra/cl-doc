@@ -14,15 +14,18 @@ import com.ceres.dynamicforms.client.LongLink;
 import com.ceres.dynamicforms.client.TextLink;
 import com.ceres.dynamicforms.client.components.LongTextBox;
 import com.ceres.dynamicforms.client.components.MapListRenderer;
+import com.gargoylesoftware.htmlunit.html.HtmlAttributeChangeEvent;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -162,7 +165,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 						new DefaultCallback<Void>(clDoc, "saveAll") {
 
 							@Override
-							public void onSuccess(Void result) {
+							public void onResult(Void result) {
 								refreshTree(tree);
 							}
 
@@ -236,7 +239,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 							new DefaultCallback<Void>(clDoc, "delete") {
 
 						@Override
-						public void onSuccess(Void result) {
+						public void onResult(Void result) {
 							afterDelete.run();
 						}
 
@@ -281,7 +284,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 				new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 					@Override
-					public void onSuccess(List<Catalog> result) {
+					public void onResult(List<Catalog> result) {
 						nvl.setActs(wrap(result));
 					}
 				});
@@ -336,7 +339,7 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 				new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 					@Override
-					public void onSuccess(List<Catalog> result) {
+					public void onResult(List<Catalog> result) {
 						@SuppressWarnings("deprecation")
 						TreeItem root = new TreeItem();
 						addTreeItems(root, result);
@@ -361,8 +364,9 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 	}
 
 	private TreeItem catalog2TreeItem(Catalog c) {
-		TreeItem ti = new TreeItem();
-		ti.setText(c.id + "|<b>" + c.code + "</b> - <i>" + c.shortText + "</i>");
+		HTML html = new HTML(c.id + "|<b>" + c.code + "</b> - <i>" + c.shortText + "</i>");
+		html.addStyleName("treeLabel");
+		TreeItem ti = new TreeItem(html);
 		ti.setUserObject(c);
 		return ti;
 	}

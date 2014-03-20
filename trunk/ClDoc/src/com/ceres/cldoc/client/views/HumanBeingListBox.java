@@ -83,7 +83,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 		SRV.catalogService.getCatalog(clDoc.getSession(), "ROLES." + role , new DefaultCallback<Catalog>(clDoc, "load role catalog") {
 
 			@Override
-			public void onSuccess(Catalog result) {
+			public void onResult(Catalog result) {
 				HumanBeingListBox.this.role = result;
 			}
 		});

@@ -23,7 +23,7 @@ public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 		SRV.catalogService.listCatalogs(clDoc.getSession(), parent, new DefaultCallback <List<Catalog>>(clDoc, "listCatalogs") {
 			
 			@Override
-			public void onSuccess(List<Catalog> result) {
+			public void onResult(List<Catalog> result) {
 				if (!result.isEmpty()) {
 					for (Catalog catalog : result) {
 						if (clDoc.getSession().isAllowed(new Action(catalog.code, Catalog.VIEW.code))) {

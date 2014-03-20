@@ -117,7 +117,7 @@ public abstract class ClickableTable<T> extends DockLayoutPanel {
 		listRetrieval.retrieve(null, new DefaultCallback<List<T>>(clDoc, this.getTitle()) {
 
 			@Override
-			public void onSuccess(List<T> result) {
+			public void onResult(List<T> result) {
 				list = result;
 				displayList = new ArrayList<T>();
 				beforeUpdate(result);

@@ -1,54 +1,58 @@
 package com.ceres.cldoc.timemanagement;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.ceres.cldoc.model.Act;
 
 public class TimeSheetDay extends SimpleTimeSheetElement {
 	private static final long serialVersionUID = -7687397537201248342L;
-	private boolean isHoliday;
+	private boolean isPublicHoliday;
+	private int quota = 0;
 
-	public TimeSheetDay() {}
+	public TimeSheetDay() {
+	}
 
-	public TimeSheetDay(Date date, boolean isHoliday, int quota) {
-		super(date, quota);
-		this.isHoliday = isHoliday;
+	public TimeSheetDay(TimeSheetMonth tsm) {
+		super(tsm);
+	}
+
+	public TimeSheetDay(TimeSheetMonth tsm, Date date, boolean isPublicHoliday, int quota) {
+		super(tsm, date);
+		this.isPublicHoliday = isPublicHoliday;
+		this.quota = quota;
 	}
 	
+	@Override
+	public int getQuota() {
+		return isAbsent() ? 0 : (quota + super.getQuota());
+	}
 
-	
+
 	public void add(Act act) {
 		addChild(new ActAsTimeSheetElement(act));
 	}
 
 	@Override
 	public String toString() {
-		return (isHoliday ? "*DAY" : " DAY: ") + getDate() + ": " + super.toString();
+		return (isPublicHoliday ? "*DAY" : " DAY: ") + getDate() + ": " + super.toString();
 	}
 
 	@Override
-	public int getAbsences() {
-		return isHoliday ? 0 : super.getAbsences();
+	public int getAnnualLeaveDays() {
+		return (isPublicHoliday || quota == 0) ? 0 : super.getAnnualLeaveDays();
 	}
 
-	@Override
-	public int getQuota() {
-		return isAbsent() ? 0 : super.getQuota();
+	public boolean isPublicHoliday() {
+		return isPublicHoliday;
 	}
 
-
-	public boolean isHoliday() {
-		return isHoliday;
-	}
-
-	public void setActs(List<Map<String, Serializable>> acts) {
+	public void setActs(List<Act> acts) {
 		clearChildren();
-		for (Map<String, Serializable> act:acts) {
-			add((Act) act);
+		for (Act act:acts) {
+			add(act);
 		}
+		notifyParent();
 	}
 
 	@Override

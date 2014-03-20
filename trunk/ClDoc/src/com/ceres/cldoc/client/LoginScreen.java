@@ -74,7 +74,7 @@ public class LoginScreen extends LayoutPanel {
 						new DefaultCallback<ISession>(clDoc, "") {
 
 					@Override
-					public void onSuccess(ISession result) {
+					public void onResult(ISession result) {
 						if (result != null) {
 							onOk.onOk(result);
 						} else {
@@ -130,7 +130,7 @@ public class LoginScreen extends LayoutPanel {
 //						SRV.userService.register(person, null, txtNewUserName.getText(), txtPwd1.getText(), new DefaultCallback<Void>(clDoc, "register") {
 //
 //							@Override
-//							public void onSuccess(Void result) {
+//							public void onResult(Void result) {
 //								txtUserName.setText(txtNewUserName.getText());
 //								txtUserName.setFocus(true);
 //							}

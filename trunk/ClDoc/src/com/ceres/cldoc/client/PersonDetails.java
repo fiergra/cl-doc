@@ -79,7 +79,7 @@ public class PersonDetails extends DockLayoutPanel {
 								new DefaultCallback<Person>(clDoc, "save") {
 
 									@Override
-									public void onSuccess(Person result) {
+									public void onResult(Person result) {
 										pbSave.enable(false);
 									}
 								});

@@ -146,7 +146,7 @@ public class ActRenderer extends LayoutPanel implements IActRenderer {
 							SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "delete") {
 	
 								@Override
-								public void onSuccess(Act result) {
+								public void onResult(Act result) {
 									setAct(null, null);
 									if (onInsertUpdateDelete != null) {
 										onInsertUpdateDelete.onOk(SAVE_DELETE);
@@ -195,7 +195,7 @@ public class ActRenderer extends LayoutPanel implements IActRenderer {
 		SRV.actService.save(clDoc.getSession(), act, new DefaultCallback<Act>(clDoc, "listCatalogs") {
 
 			@Override
-			public void onSuccess(Act act) {
+			public void onResult(Act act) {
 				interactor.toDialog(act);
 				pbSave.enable(false);
 				setTitle(act);

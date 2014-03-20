@@ -131,7 +131,7 @@ public class Styler extends DockLayoutPanel {
 					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "") {
 
 						@Override
-						public void onSuccess(LayoutDefinition result) {
+						public void onResult(LayoutDefinition result) {
 							if (result != null) {
 								if (result.type == LayoutDefinition.FORM_LAYOUT/* || result.type == LayoutDefinition.MASTER_DATA_LAYOUT*/) {
 									formLayoutDescTextArea.setText(result.xmlLayout);
@@ -220,7 +220,7 @@ public class Styler extends DockLayoutPanel {
 					AsyncCallback<LayoutDefinition> callback = new DefaultCallback<LayoutDefinition>(clDoc, "saveLayout") {
 	
 						@Override
-						public void onSuccess(LayoutDefinition result) {
+						public void onResult(LayoutDefinition result) {
 							cmbClasses.refresh();
 						}
 					};
@@ -257,7 +257,7 @@ public class Styler extends DockLayoutPanel {
 					SRV.configurationService.deleteLayoutDefinition(clDoc.getSession(), actClass.name, new DefaultCallback<Void>(clDoc, "deleteLayout") {
 	
 						@Override
-						public void onSuccess(Void result) {
+						public void onResult(Void result) {
 	//						refreshOracle();
 						}
 					});
@@ -315,7 +315,7 @@ public class Styler extends DockLayoutPanel {
 //		SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), null, new DefaultCallback<List<LayoutDefinition>>(clDoc, "listLayout") {
 //
 //			@Override
-//			public void onSuccess(List<LayoutDefinition> result) {
+//			public void onResult(List<LayoutDefinition> result) {
 //				for (LayoutDefinition fcd : result) {
 //					mwso.add(fcd.name);
 //				}

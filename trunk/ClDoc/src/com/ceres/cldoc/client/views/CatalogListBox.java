@@ -22,7 +22,7 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 			@Override
-			public void onSuccess(List<Catalog> result) {
+			public void onResult(List<Catalog> result) {
 				CatalogListBox.this.catalogs = new ArrayList<Catalog>(result);
 				
 				if (!isMandatory) {

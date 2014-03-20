@@ -33,7 +33,7 @@ public class XERTree extends Tree {
 		SRV.entityService.listRelations(clDoc.getSession(), entity, asSubject, null, new DefaultCallback<List<EntityRelation>>(clDoc, "listRelations") {
 
 			@Override
-			public void onSuccess(List<EntityRelation> result) {
+			public void onResult(List<EntityRelation> result) {
 				TreeItem root = new TreeItem();
 				root.setText(entity.getName());
 				addTreeItems(root, result);

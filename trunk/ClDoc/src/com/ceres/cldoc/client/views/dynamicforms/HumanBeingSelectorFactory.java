@@ -37,10 +37,10 @@ public class HumanBeingSelectorFactory implements ILinkFactory {
 				
 				if (selectedId != null) {
 					isSelecting = true;
-					SRV.humanBeingService.findById(application.getSession(), selectedId, new DefaultCallback<Person>() {
+					SRV.humanBeingService.findById(application.getSession(), selectedId, new DefaultCallback<Person>(application, "find person by id") {
 
 						@Override
-						public void onSuccess(Person result) {
+						public void onResult(Person result) {
 							hbl.setSelected(result);
 							isSelecting = false;
 						}

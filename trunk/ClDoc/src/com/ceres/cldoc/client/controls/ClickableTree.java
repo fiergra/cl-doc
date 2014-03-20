@@ -95,7 +95,7 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 		listRetrieval.retrieve(filter, new DefaultCallback<List<T>>(clDoc, this.getTitle()) {
 
 			@Override
-			public void onSuccess(List<T> result) {
+			public void onResult(List<T> result) {
 				TreeItem root = getRoot();
 				addTreeItems(root, result);
 				if (root != null) {

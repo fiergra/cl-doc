@@ -19,34 +19,6 @@ import com.ceres.cldoc.timemanagement.TimeSheetYear;
 
 public class TestTimeManagement extends TransactionalTest {
 
-	public void testTimeSheet() throws Exception {
-		Date month = new Date();
-		TimeSheetMonth tsm = new TimeSheetMonth(month, -10 * 60);
-		
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.DATE, 1);
-		int curMonth = c.get(Calendar.MONTH);
-		while (curMonth == c.get(Calendar.MONTH)) {
-			TimeSheetDay tsd;
-			
-			if (c.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY && c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
-				tsd = new TimeSheetDay(c.getTime(), false, 8 * 60);
-				if (c.get(Calendar.DATE) > 23) {
-					tsd.setAbsence(TimeSheetElement.AbsenceType.HOLIDAY);
-				} else {
-					tsd.setWorkingTime(8 * 60);// - (c.get(Calendar.DATE) % 4));
-				}
-			} else {
-				tsd = new TimeSheetDay(c.getTime(), true, 0);
-				tsd.setWorkingTime(0);
-			}
-			tsm.addChild(tsd);
-			c.add(Calendar.DATE, 1);
-		}
-		
-		System.out.println(tsm);
-		
-	}
 	
 	public void testGetYearlySheet() throws Exception {
 		Person p = new Person();

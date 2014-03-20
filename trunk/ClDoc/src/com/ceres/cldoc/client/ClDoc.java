@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.ceres.cldoc.client.views.ParticipationTimeFactory;
 import com.ceres.cldoc.client.views.PopupManager;
 import com.ceres.cldoc.client.views.dynamicforms.CatalogMultiSelectorFactory;
 import com.ceres.cldoc.client.views.dynamicforms.CatalogSingleSelectorFactory;
+import com.ceres.cldoc.client.views.dynamicforms.EntitySelectorFactory;
 import com.ceres.cldoc.client.views.dynamicforms.HumanBeingSelectorFactory;
 import com.ceres.cldoc.client.views.dynamicforms.PagesFactory;
 import com.ceres.cldoc.model.Act;
@@ -54,9 +56,10 @@ public class ClDoc implements EntryPoint, IApplication {
 	 */
 
 	private ConfiguredTabPanel<ClDoc> mainTab;
-//	private final Label statusMessage = new Label();
+	private static long callId = 0;
 	private ISession session;
 	private LogOutput logOutput;
+	private Image progress = new Image("images/progress.gif");
 	
 	@Override
 	public ISession getSession() {
@@ -67,6 +70,7 @@ public class ClDoc implements EntryPoint, IApplication {
 	public void onModuleLoad() {
 		WidgetCreator.addLinkFactory("pages", new PagesFactory());
 		WidgetCreator.addLinkFactory("humanbeing", new HumanBeingSelectorFactory(this));
+		WidgetCreator.addLinkFactory("entity", new EntitySelectorFactory(this));
 		WidgetCreator.addLinkFactory("list", new CatalogSingleSelectorFactory(this, true));
 		WidgetCreator.addLinkFactory("option", new CatalogSingleSelectorFactory(this, false));
 		WidgetCreator.addLinkFactory("multiselect", new CatalogMultiSelectorFactory(this));
@@ -79,7 +83,7 @@ public class ClDoc implements EntryPoint, IApplication {
 			SRV.userService.login(user, pwd, new DefaultCallback<ISession>(this, "login") {
 
 				@Override
-				public void onSuccess(ISession result) {
+				public void onResult(ISession result) {
 					session = result;
 					setupMain(result);
 					preload(result);
@@ -138,7 +142,7 @@ public class ClDoc implements EntryPoint, IApplication {
 				SRV.userService.setPassword(session, (User) session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>(ClDoc.this, "setPassword") {
 
 					@Override
-					public void onSuccess(Long result) {
+					public void onResult(Long result) {
 						if (result.equals(IUserService.SUCCESS)) {
 							setupMain(session);
 						}
@@ -213,13 +217,13 @@ public class ClDoc implements EntryPoint, IApplication {
 			SRV.configurationService.getLayoutDefinition(getSession(), open, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(this, "getLayoutDef") {
 
 				@Override
-				public void onSuccess(final LayoutDefinition ld) {
+				public void onResult(final LayoutDefinition ld) {
 					if (ld != null) {
 						SRV.actService.findByEntity(ClDoc.this.session, null, ClDoc.this.session.getUser().getOrganisation(), Participation.PROTAGONIST.id, 
 								 null, null, new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
 
 									@Override
-									public void onSuccess(List<Act> result) {
+									public void onResult(List<Act> result) {
 										Act act = null;
 										Iterator<Act> iter = result.iterator();
 										
@@ -256,6 +260,14 @@ public class ClDoc implements EntryPoint, IApplication {
 			mainPanel.add(vp);
 			mainPanel.setWidgetHorizontalPosition(vp, Alignment.END);
 			mainPanel.setWidgetVerticalPosition(vp, Alignment.END);
+			
+			mainPanel.add(progress);
+			progress.setStyleName("topOfTheRocks");
+			progress.setVisible(false);
+			mainPanel.setWidgetHorizontalPosition(progress, Alignment.END);
+			mainPanel.setWidgetVerticalPosition(progress, Alignment.BEGIN);
+
+			
 			mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
 			mainPanel.add(mainTab);
 	
@@ -284,6 +296,25 @@ public class ClDoc implements EntryPoint, IApplication {
 	@Override
 	public String getLabel(String label) {
 		return label;
+	}
+
+	
+	private HashMap<Long, String> asyncCalls = new HashMap<Long, String>();
+	
+	@Override
+	public long startAsyncCall(String description) {
+		callId++;
+		asyncCalls.put(callId, description);
+		progress.setVisible(true);
+		return callId;
+	}
+
+	@Override
+	public void stopAsyncCall(long callId) {
+		asyncCalls.remove(callId);
+		if (asyncCalls.isEmpty()) {
+			progress.setVisible(false);
+		}
 	}
 
 	

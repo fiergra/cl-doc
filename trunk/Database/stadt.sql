@@ -8,25 +8,21 @@ CREATE TABLE IF NOT EXISTS WorkPattern(
     Id INTEGER PRIMARY KEY NOT NULL,
     CONSTRAINT FK_WorkPattern_ENTITY FOREIGN KEY (Id)
         REFERENCES ENTITY (Id),
-    WeeklyHours FLOAT NOT NULL,
-    LeaveEntitlement INTEGER NOT NULL,
-    StartDate DATE NOT NULL,
-    EndDate DATE
+    Pattern VARCHAR(20) NOT NULL,
+    LeaveEntitlement INTEGER NOT NULL
 );
 
 
 insert into Catalog (id, parent, code, text, shorttext) values (1001, 180, 'Arbeitszeitmuster', 'Arbeitszeitmuster', 'Arbeitszeitmuster');
 insert into Entity (id, TYPE, NAME) values (1101, 1001, 'Vollzeit');
 insert into Entity (id, TYPE, NAME) values (1102, 1001, 'Teilzeit50');
-insert into Entity (id, TYPE, NAME) values (1103, 1001, 'Teilzeit20');
+insert into Entity (id, TYPE, NAME) values (1103, 1001, 'Teilzeit80');
 
-insert into WorkPattern (id, WeeklyHours, LeaveEntitlement, StartDate) values (1101, 38.5, 30, CURRENT_DATE);
-insert into WorkPattern (id, WeeklyHours, LeaveEntitlement, StartDate) values (1102, 19.25, 30, CURRENT_DATE);
-insert into WorkPattern (id, WeeklyHours, LeaveEntitlement, StartDate) values (1103, 7.7, 30, CURRENT_DATE);
+insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1101, '8-8-8-8-7.5', 30);
+insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1102, '8-8-4-0-0', 30);
+insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1103, '8-8-8-8-0', 30);
 
 insert into Catalog (parent, code, text, shorttext) values (154, 'arbeitet entsprechend', 'arbeitet entsprechend', 'arbeitet entsprechend');
-
-
 
 insert into Entity (ID,TYPE,NAME) values (50, 182, 'Jugendhilfeplanung');
 
@@ -102,48 +98,48 @@ insert into Organisation (Id) values (533);
 insert into Organisation (Id) values (534);
 
 
-insert into EntityRelation (type, subjectid, objectid) values (158, 501, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 502, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 503, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 504, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 505, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 506, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 507, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 508, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 509, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 510, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 511, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 512, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 513, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 514, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 515, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 516, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 517, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 518, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 519, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 520, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 521, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 522, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 523, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 524, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 525, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 526, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 527, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 528, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 529, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 530, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 531, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 532, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 533, 50);
-insert into EntityRelation (type, subjectid, objectid) values (158, 534, 50);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 501, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 502, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 503, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 504, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 505, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 506, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 507, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 508, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 509, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 510, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 511, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 512, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 513, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 514, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 515, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 516, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 517, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 518, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 519, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 520, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 521, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 522, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 523, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 524, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 525, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 526, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 527, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 528, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 529, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 530, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 531, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 532, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 533, 50, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (158, 534, 50, CURRENT_DATE);
 
 insert into Entity (ID, TYPE, NAME) values (5000, 181, 'Bettina Mann');
 insert into Person (ID, FIRSTNAME, LASTNAME) values (5000, 'Bettina', 'Mann');
-insert into EntityRelation (type, subjectid, objectid) values (155, 5000, 50);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (155, 5000, 50, CURRENT_DATE);
 
 insert into Entity (ID, TYPE, NAME) values (5001, 181, 'Stefan Zawar-Schlegel');
 insert into Person (ID, FIRSTNAME, LASTNAME) values (5001, 'Stefan', 'Zawar-Schlegel');
-insert into EntityRelation (type, subjectid, objectid) values (155, 5001, 531);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (155, 5001, 531, CURRENT_DATE);
 
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (5000, 'bmann', 50);
 insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (5001, 'tawsteff', 531);
@@ -160,12 +156,7 @@ insert into Catalog (parent, code, text, shorttext, logical_order, number1) valu
 insert into Policy (role, objectType, action, startDate) values (66,(select id from Catalog where code ='SucheDKG'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='Personen'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='JugendOrga'),71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='TimeRegistration'),71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (54,(select id from Catalog where code ='TimeRegistration'),71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='LeaveRegistration'),71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (54,(select id from Catalog where code ='LeaveRegistration'),71, CURRENT_DATE);
 
-insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='TimeRegistration'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='LeaveRegistration'),71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='TimeSheet'),71, CURRENT_DATE);
 

@@ -82,7 +82,10 @@ CREATE TABLE IF NOT EXISTS EntityRelation (
         REFERENCES ENTITY (Id),
     ObjectID INTEGER NOT NULL,
     CONSTRAINT FK_EntityRelationObject_ENTITY FOREIGN KEY (ObjectID)
-        REFERENCES ENTITY (Id));
+        REFERENCES ENTITY (Id),
+    StartDate DATE NOT NULL,
+    EndDate DATE 
+);
 
 
 CREATE TABLE IF NOT EXISTS Address(
@@ -403,6 +406,12 @@ insert into Catalog (id, parent, code, text, shorttext) values (180, 150, 'Entit
 insert into Catalog (id, parent, code, text, shorttext) values (181, 180, 'Person', 'Person', 'Person');
 insert into Catalog (id, parent, code, text, shorttext) values (182, 180, 'Organisation', 'Organisation', 'Organisation');
 
+insert into Catalog (id, parent, code, text, shorttext) values (190, 150, ' ', 'LEAVETYPES', 'LEAVETYPES');
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (191, 190, 'ANNUAL LEAVE', 'Urlaub', 'Urlaub', 1);
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (192, 190, 'SICK LEAVE', 'Krankmeldung', 'Krankmeldung', 2);
+
+
+
 insert into Entity (ID, TYPE, NAME) values (1, 181, 'Ralph FIERGOLLA');
 insert into Person (ID, FIRSTNAME, LASTNAME, DATEOFBIRTH) 
 values (1, 'Ralph', 'Fiergolla', '1969-08-05');
@@ -418,9 +427,9 @@ insert into Entity (ID,TYPE,NAME) values (25, 182, 'C.I.T');
 insert into Organisation (Id) values (25);
 
 /* Ralph is member of CERES */
-insert into EntityRelation (type, subjectid, objectid) values (155, 1, 20);
-insert into EntityRelation (type, subjectid, objectid) values (155, 1, 25);
-insert into EntityRelation (type, subjectid, objectid) values (155, 6, 25);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (155, 1, 20, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (155, 1, 25, CURRENT_DATE);
+insert into EntityRelation (type, subjectid, objectid, startdate) values (155, 6, 25, CURRENT_DATE);
 
 insert into Assignment(entityid, role, startdate) values (1, 51, CURRENT_DATE);
 
