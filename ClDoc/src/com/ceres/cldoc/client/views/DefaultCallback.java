@@ -7,11 +7,16 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public abstract class DefaultCallback<T> implements AsyncCallback<T> {
 
+	private long callId;
+	private IApplication clDoc;
+
 	public DefaultCallback(IApplication clDoc, String name) {
+		this.clDoc = clDoc;
 		clDoc.status(name);
+		callId = clDoc.startAsyncCall(name);
 	}
 	
-	public DefaultCallback() {
+	private DefaultCallback() {
 	}
 	
 	@Override
@@ -29,4 +34,13 @@ public abstract class DefaultCallback<T> implements AsyncCallback<T> {
 		PopupManager.showModal("Error", vp, true);
 	}
 
+	@Override
+	public void onSuccess(T result) {
+		clDoc.stopAsyncCall(callId);
+		onResult(result);
+	}
+
+	public abstract void onResult(T result);
+
+	
 }

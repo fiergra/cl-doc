@@ -11,6 +11,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -20,6 +21,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.xml.client.Document;
 import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.NamedNodeMap;
@@ -39,9 +41,7 @@ public class WidgetCreator {
 		return createWidget(xml, interactor, null);
 	}	
 	
-	@SuppressWarnings("unused")
 	public static Widget createWidget(String xml, Interactor interactor, ITranslator translator) {
-//		DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
 		Widget result = null;
 		Document document = XMLParser.parse(xml);
 		Element root = document.getDocumentElement();
@@ -53,20 +53,7 @@ public class WidgetCreator {
 			}
 		}
 		
-//		if (isIE()) {
-//			mainPanel.forceLayout();
-//		}
 		return result;
-	}
-
-	private static Widget createEditor(Document document) {
-		TextArea txtArea = new TextArea();
-		txtArea.setText(prettyPrint(document));
-		return txtArea;
-	}
-
-	private static String prettyPrint(Document document) {
-		return document.toString();
 	}
 
 	private static Widget processChild(Document document, Node item, Widget panel, Interactor interactor, int level, ITranslator translator) {
@@ -234,6 +221,10 @@ public class WidgetCreator {
 				attributes.put("label", translator.getLabel(attributes.get("label")));
 			}
 			widget = new SimpleFormItem(attributes);
+		} else if ("datebox".equals(localName)){
+			final DateBox db =  new DateBox();
+			link = new DateBoxLink(interactor, fieldName, db, attributes);
+			widget = db;
 		} else if ("ItemFieldDateField".equals(localName) || "date".equals(localName)){
 			DateTextBox db =  new DateTextBox();
 			link = new DateLink(interactor, fieldName, db, attributes);
@@ -293,6 +284,9 @@ public class WidgetCreator {
 			if (attributes.containsKey("height")) {
 				widget.setHeight(checkUnit(attributes.get("height")));
 			}
+			if (widget instanceof HasEnabled && attributes.containsKey("enabled")) {
+				((HasEnabled)widget).setEnabled(asBoolean(attributes.get("enabled")));
+			}
 			
 			if (link != null && link.getName() != null) {
 				interactor.addLink(link);
@@ -305,6 +299,10 @@ public class WidgetCreator {
 
 	private static String checkUnit(String size) {
 		return size.endsWith("%") || size.endsWith("px") || size.endsWith("em") ? size : size + "px";
+	}
+
+	private static boolean asBoolean(String b) {
+		return "true".equalsIgnoreCase(b);
 	}
 
 	private static HashMap<String, String> asHashMap(NamedNodeMap attributes) {

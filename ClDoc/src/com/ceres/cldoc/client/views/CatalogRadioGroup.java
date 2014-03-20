@@ -25,7 +25,7 @@ public class CatalogRadioGroup extends HorizontalPanel implements IEntitySelecto
 		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 
 			@Override
-			public void onSuccess(List<Catalog> result) {
+			public void onResult(List<Catalog> result) {
 				if (result != null) {
 					buttons = new HashMap<Long, RadioButton>(result.size());
 					String groupName = String.valueOf("rbgroup" + ++groupCount);

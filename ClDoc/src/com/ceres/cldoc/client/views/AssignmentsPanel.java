@@ -119,7 +119,7 @@ public class AssignmentsPanel extends DockLayoutPanel {
 					SRV.userService.removeRole(clDoc.getSession(), user, role, new DefaultCallback<Void>(clDoc, "") {
 
 						@Override
-						public void onSuccess(Void result) {
+						public void onResult(Void result) {
 							userList.refresh();
 						}
 					});
@@ -146,7 +146,7 @@ public class AssignmentsPanel extends DockLayoutPanel {
 					SRV.userService.addRole(clDoc.getSession(), user, selected, new DefaultCallback<Void>(clDoc, ""){
 
 						@Override
-						public void onSuccess(Void result) {
+						public void onResult(Void result) {
 							popup.hide();
 							userList.refresh();
 						}});

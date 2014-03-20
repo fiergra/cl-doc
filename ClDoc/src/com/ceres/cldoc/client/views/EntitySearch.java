@@ -75,7 +75,7 @@ public class EntitySearch extends SplitLayoutPanel {
 		SRV.entityService.findById(clDoc.getSession(), entityId, new DefaultCallback<Entity>(clDoc, "loadEntity") {
 
 			@Override
-			public void onSuccess(final Entity entity) {
+			public void onResult(final Entity entity) {
 				EntitySearch.this.entity = entity;
 				tree.setListRetrieval(new ListRetrievalService<EntityRelation>() {
 					

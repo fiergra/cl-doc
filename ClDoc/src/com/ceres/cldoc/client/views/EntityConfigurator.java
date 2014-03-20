@@ -118,7 +118,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 						SRV.actService.findByEntity(clDoc.getSession(), null, entry, Participation.PROTAGONIST.id, null, null, new DefaultCallback<List<Act>>(clDoc, "loadMasterData") {
 
 							@Override
-							public void onSuccess(List<Act> masterData) {
+							public void onResult(List<Act> masterData) {
 								Catalog type = getSelectedType(cmbTypes, entityTypes);
 								editOrCreateMasterData(clDoc, type, entry, masterData);
 							}
@@ -133,7 +133,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 						SRV.entityService.delete(clDoc.getSession(), entry, new DefaultCallback<Void>(clDoc, "deleteEntity") {
 
 							@Override
-							public void onSuccess(Void result) {
+							public void onResult(Void result) {
 //								entityTable.refresh();
 							}
 						});
@@ -159,7 +159,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 		SRV.configurationService.listCatalogs(clDoc.getSession(), "MASTERDATA.EntityTypes", new DefaultCallback<List<Catalog>>(clDoc, "list entity types") {
 
 			@Override
-			public void onSuccess(List<Catalog> result) {
+			public void onResult(List<Catalog> result) {
 				entityTypes.clear();
 				entityTypes.addAll(result);
 				
@@ -268,7 +268,7 @@ public class EntityConfigurator extends DockLayoutPanel {
 			SRV.configurationService.listLayoutDefinitions(clDoc.getSession(), LayoutDefinition.FORM_LAYOUT, type.id, true, new DefaultCallback<List<LayoutDefinition>>(clDoc, "list masterdata layouts") {
 	
 				@Override
-				public void onSuccess(final List<LayoutDefinition> layoutDefinitions) {
+				public void onResult(final List<LayoutDefinition> layoutDefinitions) {
 					final Runnable refresh = new Runnable() {
 						
 						@Override

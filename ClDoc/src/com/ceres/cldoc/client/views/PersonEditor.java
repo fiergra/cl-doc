@@ -39,7 +39,7 @@ public class PersonEditor {
 //				SRV.humanBeingService.getUniqueId(getClDoc().getSession(), new DefaultCallback<Long>(getClDoc(), "get unique id") {
 //	
 //					@Override
-//					public void onSuccess(Long newId) {
+//					public void onResult(Long newId) {
 //						((TextBox)id).setValue(String.valueOf(newId));
 //					}
 //				});
@@ -134,7 +134,7 @@ public class PersonEditor {
 		SRV.humanBeingService.save(clDoc.getSession(), result, new DefaultCallback<Person>(clDoc, "save") {
 
 			@Override
-			public void onSuccess(Person result) {
+			public void onResult(Person result) {
 //				if (onSave != null) {
 //					onSave.onClick(result);
 //				}
@@ -149,7 +149,7 @@ public class PersonEditor {
 		SRV.humanBeingService.delete(clDoc.getSession(), person, new DefaultCallback<Void>(clDoc, "deletePerson"){
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResult(Void result) {
 				
 			}});
 	}

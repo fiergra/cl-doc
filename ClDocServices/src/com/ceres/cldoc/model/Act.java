@@ -208,6 +208,9 @@ public class Act extends AbstractNamedValueAccessor {
 		if ("dateFrom".equals(key)) {
 			setDate((Date) value);
 			return null;
+		} else if ("isDeleted".equals(key)) {
+			isDeleted = (Boolean) value;
+			return null;
 		} else {
 			return setValue(key, value);
 		}

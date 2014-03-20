@@ -1,6 +1,7 @@
 package com.ceres.cldoc.timemanagement;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -50,11 +51,11 @@ public class ActAsTimeSheetElement implements TimeSheetElement {
 	}
 
 	@Override
-	public void setAbsence(AbsenceType absenceType) {
+	public void setAbsence(Act absence) {
 	}
 
 	@Override
-	public int getAbsences() {
+	public int getAnnualLeaveDays() {
 		return 0;
 	}
 
@@ -78,12 +79,31 @@ public class ActAsTimeSheetElement implements TimeSheetElement {
 	}
 
 	@Override
-	public AbsenceType getAbsenceType() {
-		return AbsenceType.NONE;
+	public Act getAbsence() {
+		return null;
 	}
 
 	public Map<String, Serializable> getAct() {
 		return act;
 	}
+
+	@Override
+	public void publish(TimeSheetElement simpleTimeSheetElement) {
+		for (Runnable run:subscribers) {
+			run.run();
+		}
+		
+	}
+
+	private List<Runnable>subscribers;
+	
+	@Override
+	public void subscribe(Runnable run) {
+		if (subscribers == null) {
+			subscribers = new ArrayList<Runnable>();
+		}
+		subscribers.add(run);
+	}
+	
 
 }

@@ -8,14 +8,14 @@ import com.ceres.cldoc.model.Participation;
 public class TimeSheetYear extends SimpleTimeSheetElement {
 
 	private static final long serialVersionUID = -1017251656742685721L;
-	private int leaveEntitlement;
+	private int baseEntitlement;
 	private int year;
 
 	public TimeSheetYear() {}
 
-	public TimeSheetYear(Date year, int leaveEntitlement) {
-		super(year, 0);
-		this.leaveEntitlement = leaveEntitlement;
+	public TimeSheetYear(Date year, int baseEntitlement) {
+		super(null, year);
+		this.baseEntitlement = baseEntitlement;
 		this.year = year.getYear() + 1900;
 	}
 
@@ -26,13 +26,22 @@ public class TimeSheetYear extends SimpleTimeSheetElement {
 	}
 
 
-	public int getAbsenceBalance() {
-		return leaveEntitlement - getAbsences();
+	public float getAbsenceBalance() {
+		return getLeaveEntitlement() - getAnnualLeaveDays();
 	}
+
+	public float getLeaveEntitlement() {
+		float leaveEntitlement = 0f;
+		for (TimeSheetElement tsm:getChildren()) {
+			leaveEntitlement += ((TimeSheetMonth)tsm).getLeaveEntitlement(baseEntitlement);
+		}
+		return leaveEntitlement;
+	}
+
 
 	@Override
 	public String toString() {
-		return "YEAR: " + year + " (" + leaveEntitlement + " - " + getAbsences() + " = " + getAbsenceBalance() + "): " + super.toString();
+		return "YEAR: " + year + " (" + getLeaveEntitlement() + " - " + getAnnualLeaveDays() + " = " + getAbsenceBalance() + "): " + super.toString();
 	}
 
 	private boolean isLeave(Act act) {
@@ -60,17 +69,17 @@ public class TimeSheetYear extends SimpleTimeSheetElement {
 		Participation p = act.getParticipation(Participation.ADMINISTRATOR); 
 		Date start = p.start;
 		Date end = p.end;
-		AbsenceType absenceType = getAbsenceType(act);
-		
 		if (start != null && end != null && (start.getYear() + 1900) <= year && (end.getYear() + 1900) >= year) {
 			int month = start.getMonth();
 			int day = start.getDate() - 1;
 			while (month <= end.getMonth()) {
 				TimeSheetMonth tsm = (TimeSheetMonth) getChildren().get(month);
 				TimeSheetDay tsd = (TimeSheetDay) tsm.getChildren().get(day);
-				while (day < tsm.getChildren().size() && ldate(tsd.getDate()).compareTo(ldate(end)) < 0) {
+				while (day < tsm.getChildren().size() && ldate(tsd.getDate()).compareTo(ldate(end)) <= 0) {
+					if (!tsd.isAbsent() || tsd.getAbsence().actClass.name.equals(ITimeManagementService.ANNUAL_LEAVE_ACT)) {
+						tsd.setAbsence(act);
+					}
 					tsd = (TimeSheetDay) tsm.getChildren().get(day++);
-					tsd.setAbsence(absenceType);
 				}
 				day = 0;
 				month++;

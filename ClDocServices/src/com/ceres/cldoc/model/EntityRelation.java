@@ -1,6 +1,7 @@
 package com.ceres.cldoc.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 public class EntityRelation implements Serializable, HasChildren<EntityRelation> {
@@ -10,6 +11,8 @@ public class EntityRelation implements Serializable, HasChildren<EntityRelation>
 	public Catalog type;
 	public Entity object;
 	public List<EntityRelation> children;
+	public Date startDate;
+	public Date endDate;
 	
 	public boolean hasChildren() {
 		return children != null && !children.isEmpty();

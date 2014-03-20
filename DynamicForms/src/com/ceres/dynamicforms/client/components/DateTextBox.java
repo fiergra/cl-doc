@@ -9,13 +9,10 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class DateTextBox extends TextBox {
 
 	private Date dateValue = null;
-	private DatePicker dp;
-	
 	public DateTextBox() {
 		super();
 		addChangeHandler(new ChangeHandler() {

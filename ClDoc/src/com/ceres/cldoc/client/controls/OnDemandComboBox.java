@@ -115,7 +115,7 @@ public class OnDemandComboBox <T extends Serializable> extends HorizontalPanel i
 		listRetrievalService.retrieve(value, new DefaultCallback<List<T>>(clDoc, "retrieve") {
 
 			@Override
-			public void onSuccess(List<T> result) {
+			public void onResult(List<T> result) {
 				itemList = result;
 				if (itemList.isEmpty()) {
 					hidePopup();

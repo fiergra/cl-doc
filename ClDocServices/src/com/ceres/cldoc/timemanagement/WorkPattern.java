@@ -9,6 +9,7 @@ public class WorkPattern extends Entity {
 		super(1001);
 	}
 
-	public float weeklyHours;
-	public int leaveEntitlement;
+	public float[] hours;
+	public String pattern;
+	
 }

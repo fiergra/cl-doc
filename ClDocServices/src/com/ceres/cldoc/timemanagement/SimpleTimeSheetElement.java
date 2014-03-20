@@ -4,21 +4,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class SimpleTimeSheetElement implements TimeSheetElement {
+import com.ceres.cldoc.model.Act;
 
+public class SimpleTimeSheetElement implements TimeSheetElement {
+	private static final long serialVersionUID = -2991289817578845216L;
+	
 	private Date date;
-	private int quota;
 	private int workingTime;
-	private AbsenceType absenceType = AbsenceType.NONE;
+	private Act absence = null;
 	
 	private List<TimeSheetElement> children;
+	private TimeSheetElement parent;
 
 	public SimpleTimeSheetElement() {
 	}
 
-	public SimpleTimeSheetElement(Date date, int quota) {
+	public SimpleTimeSheetElement(TimeSheetElement parent) {
+		this.parent = parent;
+	}
+
+	public SimpleTimeSheetElement(TimeSheetElement parent, Date date) {
+		this(parent);
 		this.date = date;
-		this.quota = quota;
 	}
 
 	protected void clearChildren() {
@@ -29,22 +36,20 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 	@Override
 	public int getQuota() {
 		int q;
-		if (isAbsent()) {
-			q = 0;
-		} else {
-			q = quota;
-			if (hasChildren()) {
-				for (TimeSheetElement tse:getChildren()) {
-					q += tse.getQuota();
-				}
+
+		q = 0;
+		if (hasChildren()) {
+			for (TimeSheetElement tse:getChildren()) {
+				q += tse.getQuota();
 			}
 		}
+
 		return q;
 	}
 
 	@Override
 	public boolean isAbsent() {
-		return !absenceType.equals(AbsenceType.NONE);
+		return absence != null;
 	}
 
 	@Override
@@ -79,7 +84,7 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 
 	@Override
 	public int getBalance() {
-		return getWorkingTime() - getQuota();
+		return isAbsent() ? 0 : getWorkingTime() - getQuota();
 	}
 
 	public void setWorkingTime(int workingTime) {
@@ -88,7 +93,7 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer("SimpleTimeSheetElement [absent=" + getAbsences() + ", quota=" + getQuota() + ", workingTime="
+		StringBuffer sb = new StringBuffer("SimpleTimeSheetElement [absent=" + getAnnualLeaveDays() + ", quota=" + getQuota() + ", workingTime="
 				+ getWorkingTime() + "(" + getBalance() + ")]\n");
 		if (hasChildren()) {
 			for (TimeSheetElement tse:getChildren()) {
@@ -100,16 +105,26 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 	}
 
 	
+	public boolean isHoliday(Act act) {
+		return act.actClass.name.equals(ITimeManagementService.ANNUAL_LEAVE_ACT);
+	}
+
+	
+	public boolean isPublicHoliday() {
+		return isAbsent() && isHoliday(getAbsence());
+	}
+
+	
 	@Override
-	public int getAbsences() {
+	public int getAnnualLeaveDays() {
 		int absences = 0 ;
 		
-		if (isAbsent()) {
+		if (isAbsent() && isHoliday(getAbsence())) {
 			absences = 1;
 		} else {
 			if (hasChildren()) {
 				for (TimeSheetElement tse:getChildren()) {
-					absences += tse.getAbsences();  
+					absences += tse.getAnnualLeaveDays();  
 				}
 
 			}
@@ -118,13 +133,13 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 	}
 
 	@Override
-	public void setAbsence(AbsenceType absenceType) {
-		this.absenceType = absenceType;
+	public void setAbsence(Act absence) {
+		this.absence = absence;
 	}
 
 	@Override
-	public AbsenceType getAbsenceType() {
-		return absenceType;
+	public Act getAbsence() {
+		return absence;
 	}
 
 	@Override
@@ -132,6 +147,30 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 		return date;
 	}
 
+	protected void notifyParent() {
+		parent.publish(this);
+	}
+
+	@Override
+	public void publish(TimeSheetElement simpleTimeSheetElement) {
+		if (subscribers != null) {
+			for (Runnable run:subscribers) {
+				run.run();
+			}
+		}
+		if (parent != null) {
+			parent.publish(this);
+		}
+	}
+
+	private List<Runnable>subscribers;
 	
+	@Override
+	public void subscribe(Runnable run) {
+		if (subscribers == null) {
+			subscribers = new ArrayList<Runnable>();
+		}
+		subscribers.add(run);
+	}
 	
 }

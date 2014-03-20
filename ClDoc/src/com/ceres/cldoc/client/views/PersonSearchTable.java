@@ -115,7 +115,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>(clDoc, "findById") {
 
 			@Override
-			public void onSuccess(Person result) {
+			public void onResult(Person result) {
 				clDoc.openEntityFile(clDoc.getSession(), result, new PersonalFileHeader(result), "CLDOC.PERSONALFILE");
 			}
 		});
@@ -125,7 +125,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		SRV.humanBeingService.findById(clDoc.getSession(), pid, new DefaultCallback<Person>(clDoc, "findById") {
 
 			@Override
-			public void onSuccess(Person result) {
+			public void onResult(Person result) {
 				editPerson(clDoc, result);
 			}
 		});
@@ -137,7 +137,7 @@ public class PersonSearchTable extends ClickableTable<Person> {
 		SRV.humanBeingService.findById(clDoc.getSession(), person.getId(), new DefaultCallback<Person>(clDoc, "findById") {
 
 			@Override
-			public void onSuccess(Person result) {
+			public void onResult(Person result) {
 				clDoc.openEntityFile(result, new PersonalFileHeader(result), "CLDOC.PERSONALFILE");
 			}
 		});

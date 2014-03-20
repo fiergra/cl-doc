@@ -66,7 +66,7 @@ public class ReportingPanel extends DockLayoutPanel {
 //		SRV.configurationService.listReportDefinitions(clDoc.getSession(), new DefaultCallback<List<ReportDefinition>>(clDoc, "list reports") {
 //
 //			@Override
-//			public void onSuccess(List<ReportDefinition> result) {
+//			public void onResult(List<ReportDefinition> result) {
 //				for (ReportDefinition rd:result) {
 //					reports.add(new ReportTab(clDoc, rd), rd.name);
 //				}

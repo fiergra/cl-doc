@@ -9,4 +9,7 @@ public interface IApplication {
 
 	ISession getSession();
 
+	long startAsyncCall(String description);
+	void stopAsyncCall(long callId);
+
 }

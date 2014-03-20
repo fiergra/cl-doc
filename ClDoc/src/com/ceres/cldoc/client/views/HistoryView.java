@@ -66,7 +66,7 @@ public class HistoryView extends DockLayoutPanel {
 				SRV.actService.findById(clDoc.getSession(), act.id, new DefaultCallback<Act>(clDoc, "load act"){
 
 					@Override
-					public void onSuccess(Act result) {
+					public void onResult(Act result) {
 						setSelectedAct(result);
 					}});
 			}
@@ -157,7 +157,7 @@ public class HistoryView extends DockLayoutPanel {
 								new DefaultCallback<Act>(clDoc, "save") {
 
 									@Override
-									public void onSuccess(Act act) {
+									public void onResult(Act act) {
 										refresh(act);
 										setSelectedAct(act);
 									}
@@ -227,13 +227,13 @@ public class HistoryView extends DockLayoutPanel {
 			SRV.actService.findById(clDoc.getSession(), act.id, new DefaultCallback<Act>(clDoc, "reload master data act") {
 
 				@Override
-				public void onSuccess(final Act reloaded) {
+				public void onResult(final Act reloaded) {
 					SRV.configurationService.getLayoutDefinition(clDoc.getSession(), reloaded.actClass.name, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(clDoc, "load layout definition") {
 
 						private ActRenderer ar;
 
 						@Override
-						public void onSuccess(LayoutDefinition result) {
+						public void onResult(LayoutDefinition result) {
 							ar = new ActRenderer(clDoc,
 									new OnOkHandler<Integer>() {
 
@@ -275,7 +275,7 @@ public class HistoryView extends DockLayoutPanel {
 						new DefaultCallback<LayoutDefinition>(clDoc, "getLayoutDef") {
 
 							@Override
-							public void onSuccess(LayoutDefinition ld) {
+							public void onResult(LayoutDefinition ld) {
 								layouts.put(act.actClass.name, ld);
 //								Locator.getLogService().log(clDoc.getSession(), ILogService.VIEW, act, "");
 								if (viewer.setAct(ld, act)) {
@@ -298,7 +298,7 @@ public class HistoryView extends DockLayoutPanel {
 //				new DefaultCallback<List<Act>>(clDoc, "findByEntity") {
 //
 //					@Override
-//					public void onSuccess(List<Act> result) {
+//					public void onResult(List<Act> result) {
 //						refresh(result, act);
 //					}
 //				});

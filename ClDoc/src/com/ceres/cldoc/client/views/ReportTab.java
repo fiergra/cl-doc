@@ -97,7 +97,7 @@ public class ReportTab extends SplitLayoutPanel {
 		SRV.configurationService.executeReport(clDoc.getSession(), reportDefinition, filters, new DefaultCallback<List<HashMap<String,Serializable>>>(clDoc, "exec:") {
 
 			@Override
-			public void onSuccess(List<HashMap<String, Serializable>> result) {
+			public void onResult(List<HashMap<String, Serializable>> result) {
 				table.removeAllRows();
 				Iterator<HashMap<String, Serializable>> iter = result.iterator();
 				int row = 0;

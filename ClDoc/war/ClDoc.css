@@ -4,7 +4,51 @@
 body, table td, select, button {
 	font-family: Calibri;
 	font-smooth: always;
-	font-size: small; 
+	font-size: medium;
+} 
+
+.gradientBackground {
+	background: #A7D4FF;
+	background: -webkit-gradient(linear, left top, left bottom, from(#A7D4FF), to(#4290B6));
+	background: -moz-linear-gradient(top,  #A7D4FF,  #4290B6);
+}
+
+.headerSeparator {
+	height: 32px;
+	color: #ccc;
+	background-color: #ccc;
+}
+
+.titleBar {
+	border-bottom-color: #518EAB;
+	border-bottom-width: 3px;
+	border-bottom-style: solid;
+	width: 100%;
+	height: 40px;
+}
+
+.titleBarLeft {
+	padding: 5px;
+	background-color: #6DA8C8;
+	color: white;
+	font-size: larger;
+	width: 100%;
+	height: 100%;
+}
+
+.titleBarRight {
+	padding: 5px;
+	background-color: #4290B6;
+	color: white;
+	font-size: larger;
+	width: 100%;
+	height: 100%;
+}
+
+.titleBarLabel {
+	color: white;
+	font-size: larger;
+	width: 100%;
 }
 
 
@@ -25,13 +69,30 @@ body, table td, select, button {
 	height:100%; /* Mindesth�he f�r den IE */ 
 }
 
+.imagePanel {
+    width: 48px; 
+	height: 48px;
+	padding: 5px;
+}
 
+.treeLabel {
+	background-color: inherit;
+}
+	
 .linkButton {
 	cursor: pointer; 
 }
 
 .monthTable {
 	background-color: white;
+}
+
+.monthLabel {
+	font-size: large;
+}
+
+.wpLabel {
+	font-size: small;
 }
 
 .dateColumn {
@@ -104,8 +165,8 @@ body, table td, select, button {
 	border-top-style: solid;
 	border-width: 1px;
 	border-color: #DDD;
-	width: 8em;
-	height: 2em;
+	width: 10em;
+	height: 2.5em;
 }
 
 .timeSheetRow:HOVER {
@@ -279,6 +340,12 @@ body, table td, select, button {
 
 .theMessage {
 	font-size: larger;
+	padding: 10px;
+}
+
+
+.messageButtonsPanel{
+	padding: 3px;
 }
 
 .historyEntry {
