@@ -337,6 +337,7 @@ CREATE TABLE IF NOT EXISTS Policy (
 
 insert into Catalog (id, parent, code, text, shorttext) values (1, null, 'CLDOC', 'CLDOC', 'CLDOC');
 insert into Catalog (id, parent, code, text, shorttext) values (2, 1, 'MAIN', 'MAIN', 'MAIN');
+insert into Catalog (id, parent, code, text, shorttext, logical_order) values (3, 2, 'Personen', 'Personen', 'Personen', 2);
 
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (5, 2, 'Configuration', 'Configuration', 'CONFIG', 3);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (21, 5, 'Layouts', 'Layouts', 'Layouts', 1);
@@ -346,6 +347,7 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (2
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (25, 5, 'Einstellungen', 'Einstellungen', 'Einstellungen', 5);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6, 2, 'Reporting', 'Reporting', 'Reporting', 4);
 /*insert into Catalog (id, parent, code, text, shorttext, logical_order) values (10, 2, 'Calendar', 'Calendar', 'Calendar', 5);*/
+
 
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (30, 2, 'TimeRegistration', 'Anwesenheit', 'Anwesenheit', 6);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (31, 2, 'LeaveRegistration', 'Abwesend', 'Abwesend', 7);
@@ -406,7 +408,7 @@ insert into Catalog (id, parent, code, text, shorttext) values (180, 150, 'Entit
 insert into Catalog (id, parent, code, text, shorttext) values (181, 180, 'Person', 'Person', 'Person');
 insert into Catalog (id, parent, code, text, shorttext) values (182, 180, 'Organisation', 'Organisation', 'Organisation');
 
-insert into Catalog (id, parent, code, text, shorttext) values (190, 150, ' ', 'LEAVETYPES', 'LEAVETYPES');
+insert into Catalog (id, parent, code, text, shorttext) values (190, 150, 'LEAVETYPES', 'LEAVETYPES', 'LEAVETYPES');
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (191, 190, 'ANNUAL LEAVE', 'Urlaub', 'Urlaub', 1);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (192, 190, 'SICK LEAVE', 'Krankmeldung', 'Krankmeldung', 2);
 
@@ -440,7 +442,7 @@ insert into User (PERSON_ID, NAME, ORGANISATION_ID) values (6, 'kypriky', 25);
 insert into Assignment(userid, role, startdate) values ((select id from User where name='fiergra'), 51, CURRENT_DATE);
 insert into Assignment(userid, role, startdate) values ((select id from User where name='u'), 54, CURRENT_DATE);
 
-/*insert into Policy (role, objectType, action, startDate) values (52,4,71, CURRENT_DATE);*/
+insert into Policy (role, objectType, action, startDate) values (51,3,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,30,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,10,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (56,5,71, CURRENT_DATE);
