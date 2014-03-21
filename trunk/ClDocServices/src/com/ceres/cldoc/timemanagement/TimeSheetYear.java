@@ -20,10 +20,10 @@ public class TimeSheetYear extends SimpleTimeSheetElement {
 	}
 
 	
-	@Override
-	public int getQuota() {
-		return 0;
-	}
+//	@Override
+//	public int getQuota() {
+//		return 0;
+//	}
 
 
 	public float getAbsenceBalance() {

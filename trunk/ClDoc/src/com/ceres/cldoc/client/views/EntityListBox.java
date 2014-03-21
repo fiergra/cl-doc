@@ -14,19 +14,22 @@ public class EntityListBox <T extends Entity> extends ListBox implements IEntity
 	private T selected;
 	private List<T> entities;
 
-	public EntityListBox(final IApplication clDoc, final int typeId) {
+	public EntityListBox(final IApplication clDoc, final int typeId, final boolean hasNullValue) {
 		SRV.entityService.list(clDoc.getSession(), typeId, new DefaultCallback<List<T>>(clDoc, "retrieve entities") {
 
 			@Override
 			public void onResult(List<T> result) {
 				entities = result;
+				
+				if (hasNullValue) {
+					entities.add(0, null);
+				}
+				
 				for (T e:result) {
 					addItem(getLabel(e));
 				}
 				
-				if (selected != null) {
-					setSelected(selected);
-				}
+				setSelected(selected);
 			}
 		});
 		addStyleName("humanBeingListBox");
@@ -47,7 +50,7 @@ public class EntityListBox <T extends Entity> extends ListBox implements IEntity
 	}
 
 	protected String getLabel(T e) {
-		return e.getName();
+		return e != null ? e.getName() : "---";
 	}
 
 	@Override
@@ -57,10 +60,8 @@ public class EntityListBox <T extends Entity> extends ListBox implements IEntity
 		selected = entity;
 		if (entities != null) {
 			int index = entities.indexOf(entity);
-			if (index != -1) {
-				setSelectedIndex(index);
-				result = true;
-			}
+			setSelectedIndex(index);
+			result = true;
 		}
 		return result;
 	}

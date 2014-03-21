@@ -14,34 +14,43 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ConfiguredTabPanel<T> extends TabLayoutPanel {
 
-	public ConfiguredTabPanel(ClDoc clDoc, String name, T model) {
+	public ConfiguredTabPanel(ClDoc clDoc, String name) {
 		super(2.5, Unit.EM);
-		setup(clDoc, name, model);
+		setup(clDoc, name);
 	}
 
-	private void setup(final ClDoc clDoc, String parent, final T model) {
+	public ConfiguredTabPanel(ClDoc clDoc, List<Catalog> catalogs) {
+		super(2.5, Unit.EM);
+		addTabs(clDoc, catalogs);
+	}
+
+	private void setup(final ClDoc clDoc, String parent) {
 		SRV.catalogService.listCatalogs(clDoc.getSession(), parent, new DefaultCallback <List<Catalog>>(clDoc, "listCatalogs") {
 			
 			@Override
 			public void onResult(List<Catalog> result) {
 				if (!result.isEmpty()) {
-					for (Catalog catalog : result) {
-						if (clDoc.getSession().isAllowed(new Action(catalog.code, Catalog.VIEW.code))) {
-							addTab(clDoc, catalog, model);
-						}
-					}
-					if (getWidgetCount() > 0) {
-						selectTab(0);
-					}
-					
+					addTabs(clDoc, result);
 				}
 			}
 			
 		});
 	}
 
-	protected void addTab(ClDoc clDoc, Catalog catalog, T model) {
-		Widget w = DynamicLoader.create(clDoc, catalog, model);
+	private void addTabs(ClDoc clDoc, List<Catalog> result) {
+		for (Catalog catalog : result) {
+			if (clDoc.getSession().isAllowed(new Action(catalog.code, Catalog.VIEW.code))) {
+				addTab(clDoc, catalog);
+			}
+		}
+		if (getWidgetCount() > 0) {
+			selectTab(0);
+		}
+		
+	}
+	
+	protected void addTab(ClDoc clDoc, Catalog catalog) {
+		Widget w = DynamicLoader.create(clDoc, catalog);
 		add(w, new Label("> " + catalog.text));
 	}
 	

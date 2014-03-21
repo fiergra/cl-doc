@@ -27,10 +27,7 @@ public class Session implements ISession, Serializable {
 		return policies != null ? policies.isAllowed(a.type, a.action) : false;
 	}
 
-	private boolean isAllowed(String type, String action) {
-		return policies != null ? policies.isAllowed(type, action) : false;
-	}
-//	public ISession(User user, long id) {
+	//	public ISession(User user, long id) {
 //		this.user = user;
 //		this.id = id;
 //	}

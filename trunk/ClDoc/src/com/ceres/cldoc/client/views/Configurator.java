@@ -5,7 +5,7 @@ import com.ceres.cldoc.client.ClDoc;
 public class Configurator extends ConfiguredTabPanel<ClDoc> {
 
 	public Configurator(ClDoc clDoc) {
-		super(clDoc, "CLDOC.MAIN.Configuration", clDoc);
+		super(clDoc, "CLDOC.MAIN.Configuration");
 	}
 
 }
