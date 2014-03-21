@@ -1,5 +1,4 @@
 
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (3, 2, 'Personen', 'Personen', 'Personen', 2);
 insert into Catalog (parent, code, text, shorttext, logical_order, number1) values (2, 'SucheDKG', 'Organisation', 'Organisation', 1, 21);
 
 insert into Catalog (parent, code, text, shorttext) values (6, 'Veranstaltungen', 'Veranstaltungen', 'Veranstaltungen');
