@@ -8,9 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ceres.cldoc.Action;
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
+import com.ceres.cldoc.client.views.HumanBeingListBox;
 import com.ceres.cldoc.client.views.LeaveRegistration;
 import com.ceres.cldoc.client.views.MessageBox;
 import com.ceres.cldoc.client.views.OnClick;
@@ -29,6 +31,7 @@ import com.ceres.cldoc.timemanagement.TimeSheetElement;
 import com.ceres.cldoc.timemanagement.TimeSheetMonth;
 import com.ceres.cldoc.timemanagement.TimeSheetYear;
 import com.ceres.cldoc.timemanagement.WorkPattern;
+import com.ceres.core.IPerson;
 import com.ceres.dynamicforms.client.DateLink;
 import com.ceres.dynamicforms.client.DurationLink;
 import com.ceres.dynamicforms.client.Interactor;
@@ -36,6 +39,8 @@ import com.ceres.dynamicforms.client.TextLink;
 import com.ceres.dynamicforms.client.WidgetCreator;
 import com.ceres.dynamicforms.client.components.MapListRenderer;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -58,11 +63,18 @@ public class TimeSheet extends DockLayoutPanel {
 
 	private final ClDoc clDoc;
 	private HorizontalPanel timeSheetPanel = new HorizontalPanel();
-	private Label balanceLabel = new Label();
+	private Label leaveBalanceLabel = new Label();
+	private Label hourBalanceLabel = new Label();
+	private IPerson person;
 
 	public TimeSheet(ClDoc clDoc) {
+		this(clDoc, clDoc.getSession().getUser().getPerson());
+	}
+		
+	public TimeSheet(ClDoc clDoc, IPerson person) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
+		this.person = person;
 		loadAndDisplay(clDoc);
 	}
 
@@ -89,8 +101,8 @@ public class TimeSheet extends DockLayoutPanel {
 	
 	protected void editWorkPattern(Person person, final TimeSheetMonth tsm) {
 		final Interactor interactor =  new Interactor();
-		Widget content = WidgetCreator.createWidget("<form><line label=\"Arbeitszeitmuster\" name=\"pattern\" type=\"Entity\" entityType=\"1001\" required=\"true\"/> <!--<line name=\"von\" type=\"datebox\" required=\"true\"/><line name=\"bis\" type=\"datebox\"/>--></form>", interactor);
-		DateTimeFormat dtf = DateTimeFormat.getFormat("LLLL");
+		Widget content = WidgetCreator.createWidget("<form><line label=\"Arbeitszeitmuster\" name=\"pattern\" type=\"Entity\" entityType=\"1001\" /> <!--<line name=\"von\" type=\"datebox\" required=\"true\"/><line name=\"bis\" type=\"datebox\"/>--></form>", interactor);
+		DateTimeFormat dtf = DateTimeFormat.getFormat("LLLL yyyy");
 		final Map<String, Serializable> item = new HashMap<String, Serializable>();
 		item.put("pattern", tsm.getWp());
 		
@@ -108,19 +120,13 @@ public class TimeSheet extends DockLayoutPanel {
 					}
 				});
 			}
-		}, new OnClick<PopupPanel>() {
-
-			@Override
-			public void onClick(PopupPanel pp) {
-				pp.hide();
-			}
-		});
+		}, null);
 		
 		interactor.toDialog(item);
 	}
 
 	private Person getPerson() {
-		return (Person) clDoc.getSession().getUser().getPerson();
+		return (Person) person;
 	}
 	
 	private void setup(TimeSheetYear tsy) {
@@ -136,39 +142,40 @@ public class TimeSheet extends DockLayoutPanel {
 
 		final Label lbYear = new Label(String.valueOf(tsy.getYear()));
 		header.add(lbYear);
+		lbYear.addStyleName("timeSheetYear");
+		
+		
+		if (clDoc.getSession().isAllowed(new Action("TimeSheet", "EDIT"))) {
+			final HumanBeingListBox hbl = new HumanBeingListBox(clDoc, null);
+			buttons.add(hbl);
+			hbl.addSelectionChangedHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					if (hbl.getSelected() != null) {
+						setPerson(hbl.getSelected());
+						reloadAndDisplay(clDoc);
+					}
+				}
+			});
+		} else {
+			Label nameLabel = new Label(getPerson().firstName + " " + getPerson().lastName);
+			nameLabel.addStyleName("timeSheetYear");
+			buttons.add(nameLabel);
+		}
 		
 		addNorth(header, 3);
 
 		Image lbRefresh = new Image("/icons/16/reload.png");
-		Image lbPrev = new Image("/icons/16/arrow-mini-left-icon.png");
-		Image lbNext = new Image("/icons/16/arrow-mini-right-icon.png");
 		lbRefresh.setStyleName("linkButton");
-		lbPrev.setStyleName("linkButton");
-		lbNext.setStyleName("linkButton");
 
 		buttons.add(lbRefresh);
-		buttons.add(lbPrev);
 		buttons.add(lbYear);
-		buttons.add(lbNext);
 
-		balanceLabel.setText(tsy.getAbsenceBalance() + " (" + tsy.getAnnualLeaveDays() + "/" + tsy.getLeaveEntitlement() + ")");
-		balanceLabel.addStyleName("balanceLabel");
-		buttons.add(balanceLabel);
+		leaveBalanceLabel.addStyleName("balanceLabel");
+		buttons.add(leaveBalanceLabel);
+		buttons.add(hourBalanceLabel);
 		
-		lbPrev.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-			}
-		});
-
-		lbNext.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-			}
-		});
-
 		lbRefresh.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -182,8 +189,21 @@ public class TimeSheet extends DockLayoutPanel {
 	}
 
 	
+	protected void setPerson(Person person) {
+		this.person = person;
+	}
+
 	private void createTimeSheet(HorizontalPanel hp, TimeSheetYear tsy) {
-		balanceLabel.setText(tsy.getAbsenceBalance() + " (" + tsy.getAnnualLeaveDays() + "/" + tsy.getLeaveEntitlement() + ")");
+		leaveBalanceLabel.setText("Resturlaub: " + tsy.getAbsenceBalance() + " (" + tsy.getAnnualLeaveDays() + "/" + tsy.getLeaveEntitlement() + ") ");
+		int hb = tsy.getBalance();
+		hourBalanceLabel.setText(getDurationAsString(hb));
+		if (hb < 0) {
+			hourBalanceLabel.removeStyleName("positiveBalance");
+			hourBalanceLabel.addStyleName("negativeBalance");
+		} else {
+			hourBalanceLabel.removeStyleName("negativeBalance");
+			hourBalanceLabel.addStyleName("positiveBalance");
+		}
 		List<TimeSheetElement>relevantMonths = new ArrayList<TimeSheetElement>();
 		for (TimeSheetElement tsm:tsy.getChildren()) {
 			VerticalPanel vp = new VerticalPanel();
@@ -236,17 +256,20 @@ public class TimeSheet extends DockLayoutPanel {
 		}		
 		vp.add(hp);
 		
-		final WorkPattern workPattern = ((TimeSheetMonth)tsm).getWp();
-		Label wpLabel = new Label(workPattern.getName() + "(" + ((TimeSheetMonth) tsm).getLeaveEntitlement(30) + ")");
-		wpLabel.addStyleName("wpLabel");
-		vp.add(wpLabel);
-		wpLabel.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				editWorkPattern(getPerson(), (TimeSheetMonth) tsm);
-			}
-		});
+		
+		if (clDoc.getSession().isAllowed(new Action("TimeSheet", "EDIT"))) {
+			final WorkPattern workPattern = ((TimeSheetMonth)tsm).getWp();
+			Label wpLabel = new Label(workPattern != null ? workPattern.getName() + "(" + ((TimeSheetMonth) tsm).getLeaveEntitlement(30) + ")" : "---");
+			wpLabel.addStyleName("wpLabel");
+			vp.add(wpLabel);
+			wpLabel.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					editWorkPattern(getPerson(), (TimeSheetMonth) tsm);
+				}
+			});
+		}
 		
 		return vp;
 	}
@@ -501,7 +524,7 @@ public class TimeSheet extends DockLayoutPanel {
 		
 		hp.setTitle(getToolTip(tsd));
 		
-		if (tsd.getDate().getTime() < new Date().getTime() && !tsd.isAbsent() && (tsd.getQuota() != 0 || tsd.getBalance() != 0)) {
+		if (/*tsd.getDate().getTime() < new Date().getTime() &&*/ !tsd.isAbsent() && (tsd.getQuota() != 0 || tsd.getBalance() != 0)) {
 			Label lbBalance = new Label(String.valueOf(getDurationAsString(tsd.getBalance())));
 			hp.add(lbBalance);
 			lbBalance.setStyleName(tsd.getBalance() >=  0 ? "positiveBalance" : "negativeBalance"); 
@@ -578,7 +601,7 @@ public class TimeSheet extends DockLayoutPanel {
 				Catalog leaveType = (Catalog) item.get("leaveType");
 				
 				Act leaveAct = new Act(new ActClass(leaveType.id == 191l ? ITimeManagementService.ANNUAL_LEAVE_ACT : ITimeManagementService.SICK_LEAVE_ACT));
-				leaveAct.setParticipant(clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR, tsd.getDate(), (Date)item.get("bis"));
+				leaveAct.setParticipant(getPerson(), Participation.ADMINISTRATOR, tsd.getDate(), (Date)item.get("bis"));
 				SRV.actService.save(clDoc.getSession(), leaveAct, new DefaultCallback<Act>(clDoc, "save leave") {
 
 					@Override

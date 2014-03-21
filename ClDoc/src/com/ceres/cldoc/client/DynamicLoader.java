@@ -20,21 +20,21 @@ import com.google.gwt.user.client.ui.Widget;
 //import com.ceres.cldoc.client.views.agenda.CalendarView;
 
 public class DynamicLoader {
-	public static <T> Widget create(ClDoc clDoc, Catalog catalog, T model) {
+	public static Widget create(ClDoc clDoc, Catalog catalog) {
 		Widget result = null;
 		String name = catalog.text;
 		String code = catalog.code;
 		
 		if (name.equals("Personen")) {
-			result = new Persons((ClDoc) model);
+			result = new Persons(clDoc);
 		} else if (catalog.code.equals("SucheDKG") || catalog.code.equals("SucheEART")) {
-			result = new EntitySearch((ClDoc) model, clDoc.getSession().getUser().getOrganisation().getId());
+			result = new EntitySearch(clDoc, clDoc.getSession().getUser().getOrganisation().getId());
 		} else if (name.equals("Configuration")) {
-			result = new Configurator((ClDoc) model);
+			result = new Configurator(clDoc);
 		} else if (code.equals("LeaveRegistration")) {
-			result = new LeaveRegistration((ClDoc) model);
+			result = new LeaveRegistration(clDoc);
 		} else if (code.equals("TimeSheet")) {
-			result = new TimeSheet((ClDoc) model);
+			result = new TimeSheet(clDoc);
 //		} else if (name.equals("Formulare")) {
 //			result = new HistoryView(clDoc, (Entity) model);
 //		} else if (name.equals("Stammdaten")) {

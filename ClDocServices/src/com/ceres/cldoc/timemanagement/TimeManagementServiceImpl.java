@@ -24,6 +24,12 @@ import de.jollyday.HolidayManager;
 
 public class TimeManagementServiceImpl implements ITimeManagementService {
 
+//	private static final WorkPattern EMPTY_PATTERN;
+//	static {
+//		EMPTY_PATTERN = new WorkPattern();
+//		EMPTY_PATTERN.hours = parsePattern("0-0-0-0-0");
+//	}
+
 	@Override
 	public WorkPattern getWorkPattern(ISession session, Entity person) {
 		return getWorkPattern(session, person, new Date());
@@ -63,7 +69,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 		});
 	}
 	
-	protected float[] parsePattern(String string) {
+	private static float[] parsePattern(String string) {
 		float[] result = null;
 		StringTokenizer st = new StringTokenizer(string, "-");
 		
@@ -96,14 +102,14 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 	private TimeSheetYear initTimeSheetYear(ISession session, Entity person, int year) {
 		Calendar c = Calendar.getInstance();
 		c.set(year, 0, 1);
-		WorkPattern wp = getWorkPattern(session, person, c.getTime());
+//		WorkPattern wp = getWorkPattern(session, person, c.getTime());
 		TimeSheetYear tsy = null;
-		if (wp != null) {
+//		if (wp != null) {
 			tsy = new TimeSheetYear(c.getTime(), 30);
 			for (int m = Calendar.JANUARY; m <= Calendar.DECEMBER; m++) {
 				TimeSheetMonth tsm = addMonthSheet(session, person, tsy, c.getTime());
 				c.add(Calendar.MONTH, 1);
-			}
+//			}
 		}		
 		return tsy;
 	}
@@ -118,6 +124,9 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 
 	private TimeSheetMonth addMonthSheet(ISession session, Entity person, TimeSheetYear tsy, Date month) {
 		WorkPattern wp = getWorkPattern(session, person, month);
+//		if (wp == null) {
+//			wp = EMPTY_PATTERN;
+//		}
 		TimeSheetMonth tsm = new TimeSheetMonth(tsy, wp, month);
 		tsy.addChild(tsm);
 		Calendar c = Calendar.getInstance();
@@ -134,8 +143,12 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 	}
 
 	private int getDailyMinutes(WorkPattern wp, Calendar c) {
-		int day = c.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY;
-		return (int) ((day >= 0 && day < 5 ? wp.hours[day] : 0) * 60);
+		if (wp != null) {
+			int day = c.get(Calendar.DAY_OF_WEEK) - Calendar.MONDAY;
+			return (int) ((day >= 0 && day < 5 ? wp.hours[day] : 0) * 60);
+		} else {
+			return 0;
+		}
 	}
 
 
@@ -160,16 +173,18 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 				int rows = s.executeUpdate();
 				s.close();
 				
-				EntityRelation er = new EntityRelation();
-				er.subject = person;
-				er.object = wp;
-				er.type = c;
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(startFromMonth);
-				cal.set(Calendar.DAY_OF_MONTH, 1);
-				er.startDate = cal.getTime();
-
-				Locator.getEntityService().save(session, er);
+				if (wp != null) {
+					EntityRelation er = new EntityRelation();
+					er.subject = person;
+					er.object = wp;
+					er.type = c;
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(startFromMonth);
+					cal.set(Calendar.DAY_OF_MONTH, 1);
+					er.startDate = cal.getTime();
+	
+					Locator.getEntityService().save(session, er);
+				}
 				return null;
 			}
 		});

@@ -178,6 +178,11 @@ body, table td, select, button {
 	font-size: larger;
 }
 
+.timeSheetYear{
+	font-size: large;
+	font-weight: bold;
+}
+
 .positiveBalance {
 	font-size: large;
 	font-weight: bold;

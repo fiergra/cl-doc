@@ -26,7 +26,7 @@ public class EntitySelectorFactory implements ILinkFactory {
 	public InteractorWidgetLink createLink(final Interactor interactor, final String fieldName,
 			HashMap<String, String> attributes) {
 		
-		final EntityListBox<Entity>hbl = new EntityListBox(application, getTypeId(attributes));
+		final EntityListBox<Entity>hbl = new EntityListBox(application, getTypeId(attributes), !"true".equals(attributes.get("required")));
 		final InteractorWidgetLink link = new InteractorWidgetLink(interactor, fieldName, hbl, attributes) {
 			
 			private boolean isSelecting = false;

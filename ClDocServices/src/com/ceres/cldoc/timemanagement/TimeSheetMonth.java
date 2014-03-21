@@ -29,13 +29,17 @@ public class TimeSheetMonth extends SimpleTimeSheetElement {
 	}
 
 	public float getLeaveEntitlement(int baseEntitlement) {
-		float workigDaysPerWeek = 0f;
-		for (float f : getWp().hours) {
-			if (f > 0f) {
-				workigDaysPerWeek++;
+		if (getWp() != null) {
+			float workigDaysPerWeek = 0f;
+			for (float f : getWp().hours) {
+				if (f > 0f) {
+					workigDaysPerWeek++;
+				}
 			}
+			return (workigDaysPerWeek / 5 * baseEntitlement) / 12;
+		} else {
+			return 0f;
 		}
-		return (workigDaysPerWeek / 5 * baseEntitlement) / 12;
 	}
 	
 	

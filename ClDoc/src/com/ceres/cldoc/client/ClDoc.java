@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ceres.cldoc.Action;
 import com.ceres.cldoc.IUserService;
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.ActRenderer;
 import com.ceres.cldoc.client.views.ClosableTab;
@@ -56,6 +58,7 @@ public class ClDoc implements EntryPoint, IApplication {
 	 */
 
 	private ConfiguredTabPanel<ClDoc> mainTab;
+	
 	private static long callId = 0;
 	private ISession session;
 	private LogOutput logOutput;
@@ -100,7 +103,7 @@ public class ClDoc implements EntryPoint, IApplication {
 						if (((User)session.getUser()).hash == null) {
 							setPassword(session);
 						} else {
-							setupMain(result);
+							setupMain((Session) result);
 							preload(result);
 						}
 					} else {
@@ -144,7 +147,7 @@ public class ClDoc implements EntryPoint, IApplication {
 					@Override
 					public void onResult(Long result) {
 						if (result.equals(IUserService.SUCCESS)) {
-							setupMain(session);
+							setupMain((Session) session);
 						}
 					}
 				});
@@ -195,87 +198,124 @@ public class ClDoc implements EntryPoint, IApplication {
 //		statusMessage.setText("");
 	}
 	
-	private void setupMain(ISession result) {
-		LayoutPanel mainPanel = new LayoutPanel();
+	private void setupMain(final ISession session) {
+		final LayoutPanel mainPanel = new LayoutPanel();
+
 		final String open = Window.Location.getParameter("open");
 		if (open != null) {
-			final ActRenderer hp = new ActRenderer(this, new OnOkHandler<Integer>() {
-
-				@Override
-				public void onOk(Integer result) {
-				}
-			}, new Runnable() {
-
-				@Override
-	 			public void run() {
-
-				}
-			});
-			hp.addStyleName("viewer");
-			mainPanel.add(hp);
+			openForm(mainPanel, open);
+		} else {
+			addSessionLogo(session, mainPanel);
+			addProgressIndicator(mainPanel);
 			
-			SRV.configurationService.getLayoutDefinition(getSession(), open, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(this, "getLayoutDef") {
-
+			SRV.catalogService.listCatalogs(session, "CLDOC.MAIN", new DefaultCallback <List<Catalog>>(this, "listCatalogs") {
+				
 				@Override
-				public void onResult(final LayoutDefinition ld) {
-					if (ld != null) {
-						SRV.actService.findByEntity(ClDoc.this.session, null, ClDoc.this.session.getUser().getOrganisation(), Participation.PROTAGONIST.id, 
-								 null, null, new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
+				public void onResult(List<Catalog> catalogs) {
+					Widget mainWidget;
+					
+					filter(session, catalogs);
+					if (catalogs.size() > 1) {
+						mainWidget = mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, catalogs);
+					} else if (catalogs.size() == 1){
+						mainWidget = DynamicLoader.create(ClDoc.this, catalogs.get(0));
+					} else {
+						mainWidget = new Label("missing configuration in 'CLDOC.MAIN'");
+					}
+					mainPanel.add(mainWidget);
+				}
 
-									@Override
-									public void onResult(List<Act> result) {
-										Act act = null;
-										Iterator<Act> iter = result.iterator();
-										
-										while (iter.hasNext() && act == null) {
-											Act next = iter.next();
-											if (next.actClass.name.equals(open)) {
-												act = next;
-											}
-										}
-										if (act == null) {
-											act = new Act(ld.actClass);
-											act.setParticipant(session.getUser().getOrganisation(), Participation.PROTAGONIST, new Date(), null);
-											act.setParticipant(session.getUser().getPerson(), Participation.ADMINISTRATOR, new Date(), null);
-											act.setParticipant(session.getUser().getOrganisation(), Participation.ORGANISATION, new Date(), null);
-										}
-										hp.setAct(ld, act);
-									}
-						});
+				private void filter(ISession session, List<Catalog> catalogs) {
+					Iterator<Catalog> iter = catalogs.iterator();
+					while (iter.hasNext()) {
+						if (!session.isAllowed(new Action(iter.next().code, Catalog.VIEW.code))) {
+							iter.remove();
+						}
 					}
 				}
+				
 			});
 
 			
-		} else {
-	
-			Image logo = getSessionLogo();
-			Label welcome = new Label(getDisplayName(result));
-			VerticalPanel vp = new VerticalPanel();
-			vp.setSpacing(5);
-			vp.add(welcome);
-			vp.add(logo);
-			vp.setStyleName("topOfTheRocks");
-			
-			mainPanel.add(vp);
-			mainPanel.setWidgetHorizontalPosition(vp, Alignment.END);
-			mainPanel.setWidgetVerticalPosition(vp, Alignment.END);
-			
-			mainPanel.add(progress);
-			progress.setStyleName("topOfTheRocks");
-			progress.setVisible(false);
-			mainPanel.setWidgetHorizontalPosition(progress, Alignment.END);
-			mainPanel.setWidgetVerticalPosition(progress, Alignment.BEGIN);
-
-			
-			mainTab = new ConfiguredTabPanel<ClDoc>(ClDoc.this, "CLDOC.MAIN", ClDoc.this);
-			mainPanel.add(mainTab);
 	
 		}			
 		RootLayoutPanel.get().clear();
 		mainPanel.addStyleName("background");
 		RootLayoutPanel.get().add(mainPanel);
 
+	}
+
+	private void addProgressIndicator(LayoutPanel mainPanel) {
+		mainPanel.add(progress);
+		progress.setStyleName("topOfTheRocks");
+		progress.setVisible(false);
+		mainPanel.setWidgetHorizontalPosition(progress, Alignment.END);
+		mainPanel.setWidgetVerticalPosition(progress, Alignment.BEGIN);
+	}
+
+	private void addSessionLogo(ISession session, LayoutPanel mainPanel) {
+		Image logo = getSessionLogo();
+		Label welcome = new Label(getDisplayName(session));
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(5);
+		vp.add(welcome);
+		vp.add(logo);
+		vp.setStyleName("topOfTheRocks");
+		
+		mainPanel.add(vp);
+		mainPanel.setWidgetHorizontalPosition(vp, Alignment.END);
+		mainPanel.setWidgetVerticalPosition(vp, Alignment.END);
+	}
+
+	private void openForm(LayoutPanel mainPanel, final String open) {
+		final ActRenderer hp = new ActRenderer(this, new OnOkHandler<Integer>() {
+
+			@Override
+			public void onOk(Integer result) {
+			}
+		}, new Runnable() {
+
+			@Override
+ 			public void run() {
+
+			}
+		});
+		hp.addStyleName("viewer");
+		mainPanel.add(hp);
+		
+		SRV.configurationService.getLayoutDefinition(getSession(), open, LayoutDefinition.FORM_LAYOUT, new DefaultCallback<LayoutDefinition>(this, "getLayoutDef") {
+
+			@Override
+			public void onResult(final LayoutDefinition ld) {
+				if (ld != null) {
+					SRV.actService.findByEntity(ClDoc.this.session, null, ClDoc.this.session.getUser().getOrganisation(), Participation.PROTAGONIST.id, 
+							 null, null, new DefaultCallback<List<Act>>(ClDoc.this, "find by type") {
+
+								@Override
+								public void onResult(List<Act> result) {
+									Act act = null;
+									Iterator<Act> iter = result.iterator();
+									
+									while (iter.hasNext() && act == null) {
+										Act next = iter.next();
+										if (next.actClass.name.equals(open)) {
+											act = next;
+										}
+									}
+									if (act == null) {
+										act = new Act(ld.actClass);
+										act.setParticipant(session.getUser().getOrganisation(), Participation.PROTAGONIST, new Date(), null);
+										act.setParticipant(session.getUser().getPerson(), Participation.ADMINISTRATOR, new Date(), null);
+										act.setParticipant(session.getUser().getOrganisation(), Participation.ORGANISATION, new Date(), null);
+									}
+									hp.setAct(ld, act);
+								}
+					});
+				}
+			}
+		});
+
+		
 	}
 
 	public Image getSessionLogo() {

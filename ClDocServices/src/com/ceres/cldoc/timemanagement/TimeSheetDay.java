@@ -25,7 +25,9 @@ public class TimeSheetDay extends SimpleTimeSheetElement {
 	
 	@Override
 	public int getQuota() {
-		return isAbsent() ? 0 : (quota + super.getQuota());
+//		return isAbsent() ? 0 : (quota + super.getQuota());
+		Date now = new Date();
+		return (isAbsent() || getDate().getTime() >= now.getTime() ) ? 0 : (quota + super.getQuota());
 	}
 
 
