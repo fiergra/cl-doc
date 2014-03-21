@@ -2,9 +2,14 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.PersonDetails;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.shared.domain.PatientWrapper;
+import com.ceres.cldoc.shared.domain.PersonWrapper;
 import com.ceres.core.IApplication;
+import com.ceres.dynamicforms.client.Interactor;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 
 public class PersonEditor {
@@ -76,14 +81,19 @@ public class PersonEditor {
 //	}
 //
 	public static void editPerson(final IApplication clDoc, final Person person, final OnClick<Person> onSave) {
-		PersonDetails pd = new PersonDetails(clDoc, person);
+		final Interactor ia = new Interactor();
+		final PersonWrapper personWrapper = person instanceof Patient ? new PatientWrapper((Patient) person) : new PersonWrapper(person);
+		Widget pd = PersonDetails.create(clDoc, person, ia);
+		ia.toDialog(personWrapper);
+
 		PopupManager.showModal("Neue Person anlegen", pd,
 		new OnClick<PopupPanel>() {
 			
 			@Override
 			public void onClick(final PopupPanel v) {
 				v.hide();
-				savePerson(clDoc, person);
+				ia.fromDialog(personWrapper);
+				savePerson(clDoc, personWrapper.unwrap());
 			}
 		},
 		new OnClick<PopupPanel>() {
