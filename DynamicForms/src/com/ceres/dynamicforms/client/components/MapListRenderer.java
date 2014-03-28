@@ -85,7 +85,7 @@ public abstract class MapListRenderer extends FlexTable {
 				}
 				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext)) {
 					addEmptyLine();
-				} else if (lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
+				} else if (lineContexts.contains(lineContext) && lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
 						lineContext.act.put("isDeleted", true);
 						removeRow(row);

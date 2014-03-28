@@ -12,6 +12,9 @@ import com.ceres.cldoc.model.Participation;
 public class ActAsTimeSheetElement implements TimeSheetElement {
 
 	private static final long serialVersionUID = 4598196757943108004L;
+	
+	private static final int MAX_CONTINOUS = 6 * 60;
+	
 	private Act act;
 
 	public ActAsTimeSheetElement() {
@@ -65,6 +68,11 @@ public class ActAsTimeSheetElement implements TimeSheetElement {
 
 	private int getDuration(Date start, Date end) {
 		int duration = (int) (end.getTime() - start.getTime()) / (1000 * 60);
+		
+		if (duration > MAX_CONTINOUS) {
+			duration -= 30;
+		}
+		
 		return duration;
 	}
 
