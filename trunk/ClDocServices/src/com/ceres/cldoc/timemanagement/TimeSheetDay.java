@@ -7,6 +7,9 @@ import com.ceres.cldoc.model.Act;
 
 public class TimeSheetDay extends SimpleTimeSheetElement {
 	private static final long serialVersionUID = -7687397537201248342L;
+
+	private static final int MAX_DAILY = 10 * 60;
+
 	private boolean isPublicHoliday;
 	private int quota = 0;
 
@@ -67,5 +70,13 @@ public class TimeSheetDay extends SimpleTimeSheetElement {
 		return d;
 	}
 
+	@Override
+	public int getWorkingTime() {
+		int workingTime = super.getWorkingTime();
+		return workingTime > MAX_DAILY ? MAX_DAILY : workingTime;
+	}
+
+	
+	
 
 }

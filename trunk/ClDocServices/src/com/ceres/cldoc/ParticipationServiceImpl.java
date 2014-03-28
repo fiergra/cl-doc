@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,7 +96,8 @@ public class ParticipationServiceImpl implements IParticipationService {
 					p.entity = entityService.load(session, rs.getLong("entityid"));
 					p.role = getRole(session, rs.getLong("role"));
 					p.start = new Date(rs.getTimestamp("startdate").getTime());
-					p.end = rs.getTimestamp("enddate");
+					Timestamp end = rs.getTimestamp("enddate"); 
+					p.end = end != null ? new Date(end.getTime()) : null;
 					if (rs.wasNull()) {
 						p.end = null;
 					}

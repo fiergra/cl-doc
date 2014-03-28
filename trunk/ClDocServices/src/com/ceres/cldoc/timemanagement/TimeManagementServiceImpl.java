@@ -1,12 +1,26 @@
 package com.ceres.cldoc.timemanagement;
 
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.Map.Entry;
+
+import jxl.Workbook;
+import jxl.format.CellFormat;
+import jxl.write.DateTime;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 
 import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.Locator;
@@ -16,6 +30,7 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.util.Jdbc;
 import com.ceres.core.ISession;
 
@@ -188,6 +203,47 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 				return null;
 			}
 		});
+	}
+
+	@Override
+	public byte[] exportXLS(ISession session, Long personId) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Person person = Locator.getEntityService().load(session, personId);
+		try {
+			WritableWorkbook workbook = Workbook.createWorkbook(out); 
+			WritableSheet sheet = workbook.createSheet("Zeiterfassung", 0);
+			int col = 0;
+			int row = 0;
+
+			sheet.addCell(new Label(0, row, person.firstName));
+			sheet.addCell(new Label(1, row, person.lastName));
+
+			row++;
+			
+			TimeSheetYear tsy = loadTimeSheetYear(session, person, 1900 + new Date().getYear());
+			
+			for (TimeSheetElement tsm:tsy.getChildren()) {
+				row = 5;
+				sheet.addCell(new DateTime(col, row, tsm.getDate()));
+				sheet.addCell(new jxl.write.Number(col + 1, row, tsm.getBalance()));
+				row++;
+				row++;
+				for (TimeSheetElement tsd:tsm.getChildren()) {
+					DateTime dateCell = new DateTime(col, row, tsd.getDate());
+					sheet.addCell(dateCell);
+					sheet.addCell(new jxl.write.Number(col + 1, row, tsd.getBalance()));
+					row++;
+				}
+				col += 2;
+			}
+			
+			workbook.write();
+			workbook.close();
+			
+			return out.toByteArray();
+		} catch (Exception wx) {
+			throw new RuntimeException(wx);
+		}
 	}
 
 }

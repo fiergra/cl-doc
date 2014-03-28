@@ -38,6 +38,7 @@ import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.TextLink;
 import com.ceres.dynamicforms.client.WidgetCreator;
 import com.ceres.dynamicforms.client.components.MapListRenderer;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -45,6 +46,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.i18n.shared.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable.Cell;
@@ -129,7 +131,7 @@ public class TimeSheet extends DockLayoutPanel {
 		return (Person) person;
 	}
 	
-	private void setup(TimeSheetYear tsy) {
+	private void setup(final TimeSheetYear tsy) {
 		HorizontalPanel header = new HorizontalPanel();
 		header.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		header.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -144,6 +146,9 @@ public class TimeSheet extends DockLayoutPanel {
 		header.add(lbYear);
 		lbYear.addStyleName("timeSheetYear");
 		
+		Image lbRefresh = new Image("/icons/16/reload.png");
+		lbRefresh.setStyleName("linkButton");
+		buttons.add(lbRefresh);
 		
 		if (clDoc.getSession().isAllowed(new Action("TimeSheet", "EDIT"))) {
 			final HumanBeingListBox hbl = new HumanBeingListBox(clDoc, null);
@@ -166,15 +171,23 @@ public class TimeSheet extends DockLayoutPanel {
 		
 		addNorth(header, 3);
 
-		Image lbRefresh = new Image("/icons/16/reload.png");
-		lbRefresh.setStyleName("linkButton");
-
-		buttons.add(lbRefresh);
 		buttons.add(lbYear);
 
 		leaveBalanceLabel.addStyleName("balanceLabel");
 		buttons.add(leaveBalanceLabel);
 		buttons.add(hourBalanceLabel);
+		
+		Image lbExcel = new Image("/icons/16/Document-Microsoft-Excel.png");
+		lbExcel.setStyleName("linkButton");
+		buttons.add(lbExcel);
+		lbExcel.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				exportToExcel(tsy);
+			}
+		});
+
 		
 		lbRefresh.addClickHandler(new ClickHandler() {
 
@@ -189,6 +202,11 @@ public class TimeSheet extends DockLayoutPanel {
 	}
 
 	
+	protected void exportToExcel(TimeSheetYear tsy) {
+		String baseUrl = GWT.getModuleBaseURL();
+		Window.open(baseUrl + "download?type=timesheet&id=" + getPerson().getId() , "_blank", "");
+	}
+
 	protected void setPerson(Person person) {
 		this.person = person;
 	}

@@ -54,15 +54,18 @@ public class DownloadServlet extends HttpServlet {
 					Logger.getAnonymousLogger().warning("FILTERS ARE NOT YET SUPPORTED!!!");
 					out = Locator.getReportService().exportXLS(session, Long.valueOf(reportId), null);
 				}
+			} else if ("timesheet".equals(type)) {
+				resp.setContentType("application/x-msexcel");
+				resp.setHeader("Content-Disposition", "attachment; filename=timesheet.xls");
+				final String id = req.getParameter("id");
+				if (id != null) {
+					out = Locator.getTimeManagementService().exportXLS(session, Long.valueOf(id));
+				}
 			} else if ("pdf".equals(type)) {
 				final String sid = req.getParameter("id");
 				final long id = Long.valueOf(sid);
 				Act act = Locator.getActService().load(session, id);
 				out = Locator.getDocService().print(session, act);
-			} else if ("timesheet".equals(type)) {
-				final String sUserId = req.getParameter("userid");
-				final String sMonth = req.getParameter("month");
-				out = (sUserId + " " + sMonth).getBytes();
 			} else {
 				String fileName = req.getParameter("file");
 				if (fileName != null) {

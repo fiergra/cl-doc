@@ -48,10 +48,6 @@ public class TimeSheetYear extends SimpleTimeSheetElement {
 		return act.actClass.name.equals(ITimeManagementService.ANNUAL_LEAVE_ACT) || act.actClass.name.equals(ITimeManagementService.SICK_LEAVE_ACT);
 	}
 	
-	private AbsenceType getAbsenceType(Act act) {
-		return isLeave(act) ? (act.actClass.name.equals(ITimeManagementService.ANNUAL_LEAVE_ACT) ? AbsenceType.HOLIDAY : AbsenceType.SICK) : AbsenceType.NONE;
-	}
-	
 	public void add(Act act) {
 		if (isLeave(act)) {
 			addLeave(act);
@@ -75,11 +71,15 @@ public class TimeSheetYear extends SimpleTimeSheetElement {
 			while (month <= end.getMonth()) {
 				TimeSheetMonth tsm = (TimeSheetMonth) getChildren().get(month);
 				TimeSheetDay tsd = (TimeSheetDay) tsm.getChildren().get(day);
-				while (day < tsm.getChildren().size() && ldate(tsd.getDate()).compareTo(ldate(end)) <= 0) {
+				while (day <= tsm.getChildren().size() && ldate(tsd.getDate()).compareTo(ldate(end)) <= 0) {
 					if (!tsd.isAbsent() || tsd.getAbsence().actClass.name.equals(ITimeManagementService.ANNUAL_LEAVE_ACT)) {
 						tsd.setAbsence(act);
 					}
-					tsd = (TimeSheetDay) tsm.getChildren().get(day++);
+					if (day < tsm.getChildren().size()) {
+						tsd = (TimeSheetDay) tsm.getChildren().get(day++);
+					} else {
+						day++;
+					}
 				}
 				day = 0;
 				month++;
