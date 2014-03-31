@@ -10,6 +10,8 @@ public interface ITimeManagementService {
 	public static final String WORKINGTIME_ACT = "WorkingTime";
 	public static final String ANNUAL_LEAVE_ACT = "AnnualLeave";
 	public static final String SICK_LEAVE_ACT = "SickLeave";
+	public static final String HALFDAY_START = "halfDayStart";
+	public static final String HALFDAY_END = "halfDayEnd";
 
 	WorkPattern getWorkPattern(ISession session, Entity person);
 	WorkPattern getWorkPattern(ISession session, Entity person, Date referenceDate);

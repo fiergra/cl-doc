@@ -58,7 +58,7 @@ public class ActAsTimeSheetElement implements TimeSheetElement {
 	}
 
 	@Override
-	public int getAnnualLeaveDays() {
+	public float getAnnualLeaveDays() {
 		return 0;
 	}
 

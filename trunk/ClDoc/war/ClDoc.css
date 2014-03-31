@@ -111,10 +111,22 @@ body, table td, select, button {
 	background-color: lime;
 }
 
+.halfLeaveDay {
+	font-style: italic;
+	color: green;
+	background-color: navy;
+}
+
 .sickLeaveDay {
 	font-style: italic;
 	color: white;
 	background-color: red;
+}
+
+.halfSickLeaveDay {
+	font-style: italic;
+	color: white;
+	background-color: purple;
 }
 
 .leaveStart {
