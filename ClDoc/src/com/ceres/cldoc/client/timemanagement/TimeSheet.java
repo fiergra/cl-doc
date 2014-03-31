@@ -528,10 +528,10 @@ public class TimeSheet extends DockLayoutPanel {
 		ft.setWidget(row, 0, hp);
 		
 		if (tsd.isAbsent()) {
-			if (isHoliday(tsd.getAbsence())) {
-				ft.getRowFormatter().addStyleName(row, "leaveDay");
+			if (tsd.isAnnualLeave()) {
+				ft.getRowFormatter().addStyleName(row, tsd.getAbsenceDays() == 1f ? "leaveDay" : "halfLeaveDay");
 			} else {
-				ft.getRowFormatter().addStyleName(row, "sickLeaveDay");
+				ft.getRowFormatter().addStyleName(row, tsd.getAbsenceDays() == 1f ? "sickLeaveDay" : "halfSickLeaveDay");
 			}
 
 		} 
@@ -604,22 +604,28 @@ public class TimeSheet extends DockLayoutPanel {
 
 	protected void registerLeave(Person person, final TimeSheetDay tsd) {
 		final Interactor interactor =  new Interactor();
-		Widget content = WidgetCreator.createWidget("<form><line label=\"abwesend von\" name=\"von\" type=\"datebox\" enabled=\"false\"/><line label=\"bis\" name=\"bis\" type=\"datebox\" required=\"true\"/> <line label=\"\" name=\"leaveType\" type=\"option\" parent=\"MASTERDATA.LEAVETYPES\" required=\"true\"/></form>", interactor);
+		Widget content = WidgetCreator.createWidget("<form>" +
+				"<line label=\"abwesend von\" name=\"von\" type=\"datebox\" enabled=\"false\"/>" +
+				"<line label=\"halbtags\" name=\""+ ITimeManagementService.HALFDAY_START + "\" type=\"boolean\"/>" +
+				"<line label=\"bis\" name=\"bis\" type=\"datebox\" required=\"true\"/>" +
+				"<line label=\"halbtags\" name=\""+ ITimeManagementService.HALFDAY_END + "\" type=\"boolean\"/>" +
+				"<line label=\"\" name=\"leaveType\" type=\"option\" parent=\"MASTERDATA.LEAVETYPES\" required=\"true\"/>" +
+				"</form>", interactor);
 		DateTimeFormat dtf = DateTimeFormat.getFormat("LLLL");
-		final Map<String, Serializable> item = new HashMap<String, Serializable>();
-		
-		item.put("von", tsd.getDate());
-		item.put("bis", tsd.getDate());
-		item.put("leaveType", new Catalog(191l));
+
+		final Act leaveAct = new Act();
+		leaveAct.put("von", tsd.getDate());
+		leaveAct.put("bis", tsd.getDate());
+		leaveAct.put("leaveType", new Catalog(191l));
 		PopupManager.showModal("Abwesentheit registrieren", content, new OnClick<PopupPanel>() {
 
 			@Override
 			public void onClick(final PopupPanel pp) {
-				interactor.fromDialog(item);
-				Catalog leaveType = (Catalog) item.get("leaveType");
+				interactor.fromDialog(leaveAct);
+				Catalog leaveType = leaveAct.getCatalog("leaveType");
+				leaveAct.actClass = new ActClass(leaveType.id == 191l ? ITimeManagementService.ANNUAL_LEAVE_ACT : ITimeManagementService.SICK_LEAVE_ACT);
 				
-				Act leaveAct = new Act(new ActClass(leaveType.id == 191l ? ITimeManagementService.ANNUAL_LEAVE_ACT : ITimeManagementService.SICK_LEAVE_ACT));
-				leaveAct.setParticipant(getPerson(), Participation.ADMINISTRATOR, tsd.getDate(), (Date)item.get("bis"));
+				leaveAct.setParticipant(getPerson(), Participation.ADMINISTRATOR, tsd.getDate(), (Date)leaveAct.getDate("bis"));
 				SRV.actService.save(clDoc.getSession(), leaveAct, new DefaultCallback<Act>(clDoc, "save leave") {
 
 					@Override
@@ -632,7 +638,7 @@ public class TimeSheet extends DockLayoutPanel {
 			}
 		}, null);
 		
-		interactor.toDialog(item);
+		interactor.toDialog(leaveAct);
 	}
 
 }

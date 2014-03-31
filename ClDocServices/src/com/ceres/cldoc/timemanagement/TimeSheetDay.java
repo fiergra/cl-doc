@@ -3,6 +3,8 @@ package com.ceres.cldoc.timemanagement;
 import java.util.Date;
 import java.util.List;
 
+import sun.security.action.GetLongAction;
+
 import com.ceres.cldoc.model.Act;
 
 public class TimeSheetDay extends SimpleTimeSheetElement {
@@ -28,9 +30,19 @@ public class TimeSheetDay extends SimpleTimeSheetElement {
 	
 	@Override
 	public int getQuota() {
-//		return isAbsent() ? 0 : (quota + super.getQuota());
+		int q;
+//		Date now = new Date();
+//		return (isAbsent() || getDate().getTime() >= now.getTime() ) ? 0 : (quota + super.getQuota());
 		Date now = new Date();
-		return (isAbsent() || getDate().getTime() >= now.getTime() ) ? 0 : (quota + super.getQuota());
+		if (isAbsent()) {
+			int sq = quota + super.getQuota();
+			q = new Float(sq - getAbsenceDays() * sq).intValue();
+		} else if (getDate().getTime() >= now.getTime()) {
+			q = 0;
+		} else {
+			q = quota + super.getQuota();
+		}
+		return q;
 	}
 
 
@@ -44,7 +56,7 @@ public class TimeSheetDay extends SimpleTimeSheetElement {
 	}
 
 	@Override
-	public int getAnnualLeaveDays() {
+	public float getAnnualLeaveDays() {
 		return (isPublicHoliday || quota == 0) ? 0 : super.getAnnualLeaveDays();
 	}
 

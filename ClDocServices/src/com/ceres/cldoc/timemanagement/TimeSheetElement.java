@@ -16,7 +16,7 @@ public interface TimeSheetElement extends Serializable {
 	
 	void setAbsence(Act absence);
 	Act getAbsence();
-	int getAnnualLeaveDays();
+	float getAnnualLeaveDays();
 	boolean isAbsent();
 	
 	boolean hasChildren();

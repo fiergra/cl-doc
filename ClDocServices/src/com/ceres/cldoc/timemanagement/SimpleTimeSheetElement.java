@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.Participation;
 
 public class SimpleTimeSheetElement implements TimeSheetElement {
 	private static final long serialVersionUID = -2991289817578845216L;
@@ -105,22 +106,22 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 	}
 
 	
-	public boolean isHoliday(Act act) {
-		return act.actClass.name.equals(ITimeManagementService.ANNUAL_LEAVE_ACT);
+	public boolean isAnnualLeave() {
+		return getAbsence() != null ? getAbsence().actClass.name.equals(ITimeManagementService.ANNUAL_LEAVE_ACT) : false;
 	}
 
 	
-	public boolean isPublicHoliday() {
-		return isAbsent() && isHoliday(getAbsence());
-	}
+//	private boolean isPublicHoliday() {
+//		return isAbsent() && isAnnualLeave(getAbsence());
+//	}
 
 	
 	@Override
-	public int getAnnualLeaveDays() {
-		int absences = 0 ;
+	public float getAnnualLeaveDays() {
+		float absences = 0f;
 		
-		if (isAbsent() && isHoliday(getAbsence())) {
-			absences = 1;
+		if (isAbsent() && isAnnualLeave()) {
+			absences = checkHalfDays(getAbsence().getParticipation(Participation.ADMINISTRATOR), getDate());
 		} else {
 			if (hasChildren()) {
 				for (TimeSheetElement tse:getChildren()) {
@@ -130,6 +131,32 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 			}
 		}
 		return absences;
+	}
+
+	
+	private Integer ldate(Date d) {
+		return (d.getYear() + 1900) * 10000 + d.getMonth() * 100 + d.getDate();
+	}
+
+	public float getAbsenceDays() {
+		return isAbsent() ? checkHalfDays(getAbsence().getParticipation(Participation.ADMINISTRATOR), getDate()) : 0;  
+	}
+
+	private float checkHalfDays(Participation participation, Date date) {
+		long start = ldate(participation.start);
+		long end = ldate(participation.end);
+		long ldate = ldate(date);
+		float leaveDays = 1f;
+		
+		if (ldate == start && ldate == end) {
+			leaveDays = (getAbsence().getBoolean(ITimeManagementService.HALFDAY_START) || getAbsence().getBoolean(ITimeManagementService.HALFDAY_END)) ? 0.5f : 1f;
+		} else if (ldate == start) {
+			leaveDays = getAbsence().getBoolean(ITimeManagementService.HALFDAY_START) ? 0.5f : 1f;
+		} else if (ldate == end) {
+			leaveDays = getAbsence().getBoolean(ITimeManagementService.HALFDAY_END) ? 0.5f : 1f;
+		} 
+		
+		return leaveDays;
 	}
 
 	@Override
