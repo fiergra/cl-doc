@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface ILayoutDefinitionService {
 	void save(ISession session, LayoutDefinition ld);

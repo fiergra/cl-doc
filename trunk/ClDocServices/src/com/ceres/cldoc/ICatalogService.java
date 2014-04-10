@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface ICatalogService {
 	void save(ISession session, Catalog catalog);

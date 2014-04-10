@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.core.IApplication;
+import com.ceres.cldoc.model.IApplication;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.ceres.core.IEntity;
+import com.ceres.cldoc.model.IEntity;
 
 public class Act extends AbstractNamedValueAccessor {
 

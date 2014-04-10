@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 import com.ceres.cldoc.model.Act;
+import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.Participation;
-import com.ceres.core.ISession;
 
 public class ActFieldVisitor {
 	

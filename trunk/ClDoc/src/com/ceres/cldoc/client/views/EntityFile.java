@@ -2,11 +2,11 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.PersonDetails;
+import com.ceres.cldoc.model.IEntity;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PatientWrapper;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
-import com.ceres.core.IEntity;
 import com.ceres.dynamicforms.client.Interactor;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.layout.client.Layout.Alignment;

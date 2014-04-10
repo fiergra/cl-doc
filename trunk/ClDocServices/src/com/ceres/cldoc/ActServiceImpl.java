@@ -23,11 +23,11 @@ import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.CatalogList;
 import com.ceres.cldoc.model.IActField;
+import com.ceres.cldoc.model.IEntity;
+import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.IEntity;
-import com.ceres.core.ISession;
 
 public class ActServiceImpl implements IActService {
 

@@ -13,9 +13,9 @@ import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
 
 public class AccessControl {
 	public static Policies get(final ISession session, final User user, final Entity entity) {

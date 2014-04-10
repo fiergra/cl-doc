@@ -10,8 +10,8 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.CatalogList;
-import com.ceres.core.IEntity;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.IEntity;
+import com.ceres.cldoc.model.ISession;
 
 public interface IActService {
 	void save(ISession session, Act act);

@@ -4,12 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.EntityListBox;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.core.IApplication;
-import com.ceres.core.IEntity;
+import com.ceres.cldoc.model.IApplication;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorWidgetLink;
@@ -29,7 +26,7 @@ public class EntitySelectorFactory implements ILinkFactory {
 		final EntityListBox<Entity>hbl = new EntityListBox(application, getTypeId(attributes), !"true".equals(attributes.get("required")));
 		final InteractorWidgetLink link = new InteractorWidgetLink(interactor, fieldName, hbl, attributes) {
 			
-			private boolean isSelecting = false;
+			private final boolean isSelecting = false;
 			
 			@Override
 			public void toDialog(Map<String, Serializable> item) {

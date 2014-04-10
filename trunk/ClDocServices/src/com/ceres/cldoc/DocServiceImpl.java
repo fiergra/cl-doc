@@ -25,7 +25,7 @@ import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;

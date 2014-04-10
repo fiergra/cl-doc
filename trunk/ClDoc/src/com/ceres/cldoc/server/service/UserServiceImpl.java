@@ -11,7 +11,7 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.core.IApplication;
+import com.ceres.cldoc.model.IApplication;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.ListBox;
 

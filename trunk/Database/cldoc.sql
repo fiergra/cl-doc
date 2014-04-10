@@ -444,7 +444,7 @@ insert into Assignment(userid, role, startdate) values ((select id from User whe
 
 insert into Policy (role, objectType, action, startDate) values (51,3,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,30,71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (52,10,71, CURRENT_DATE);
+/*insert into Policy (role, objectType, action, startDate) values (52,10,71, CURRENT_DATE);*/
 insert into Policy (role, objectType, action, startDate) values (56,5,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,6,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,7,71, CURRENT_DATE);

@@ -16,7 +16,7 @@ import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class EntityServiceImplTest extends TransactionalTest {
 

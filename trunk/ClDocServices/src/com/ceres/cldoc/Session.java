@@ -2,11 +2,11 @@ package com.ceres.cldoc;
 
 import java.io.Serializable;
 
+import com.ceres.cldoc.model.IAction;
+import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.model.IUser;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.Policies;
-import com.ceres.core.IAction;
-import com.ceres.core.ISession;
-import com.ceres.core.IUser;
 
 public class Session implements ISession, Serializable {
 

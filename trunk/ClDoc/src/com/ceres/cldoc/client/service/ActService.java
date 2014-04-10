@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Attachment;
+import com.ceres.cldoc.model.IEntity;
+import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.LogEntry;
-import com.ceres.core.IEntity;
-import com.ceres.core.ISession;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

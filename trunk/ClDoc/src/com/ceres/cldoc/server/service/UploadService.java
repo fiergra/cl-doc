@@ -26,7 +26,7 @@ import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Participation;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 //The FormPanel must submit to a servlet that extends HttpServlet  
 //RemoteServiceServlet cannot be used

@@ -32,7 +32,7 @@ import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 import de.jollyday.HolidayCalendar;
 import de.jollyday.HolidayManager;

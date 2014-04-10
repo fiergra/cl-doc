@@ -86,7 +86,6 @@ background: #63D36A;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
   margin-left: 4px;
-  padding: 4px 8px 4px 8px;
   cursor: pointer;
   cursor: hand;
   color: lightgray;
@@ -96,7 +95,7 @@ background: #63D36A;
   background: #4290B6;
   -moz-border-radius: 0px;
   border-radius: 0px;
-  height: 34px;
+  height: 28px;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
   cursor: default;

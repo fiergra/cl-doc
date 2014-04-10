@@ -3,7 +3,7 @@ package com.ceres.cldoc.client.service;
 import java.util.List;
 
 import com.ceres.cldoc.model.Person;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 

@@ -1,8 +1,8 @@
 package com.ceres.cldoc.client;
 
+import com.ceres.cldoc.model.IApplication;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
-import com.ceres.core.IApplication;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.user.client.ui.Widget;

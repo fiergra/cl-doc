@@ -2,7 +2,7 @@ package com.ceres.cldoc.model;
 
 import java.util.Date;
 
-import com.ceres.core.IPerson;
+import com.ceres.cldoc.model.IPerson;
 
 public class Person extends Entity implements IPerson {
 

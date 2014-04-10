@@ -2,11 +2,11 @@ package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.PersonDetails;
 import com.ceres.cldoc.client.service.SRV;
+import com.ceres.cldoc.model.IApplication;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PatientWrapper;
 import com.ceres.cldoc.shared.domain.PersonWrapper;
-import com.ceres.core.IApplication;
 import com.ceres.dynamicforms.client.Interactor;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;

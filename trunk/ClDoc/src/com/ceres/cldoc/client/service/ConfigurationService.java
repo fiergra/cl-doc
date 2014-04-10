@@ -14,7 +14,7 @@ import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.shared.layout.LayoutElement;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

@@ -6,7 +6,7 @@ import com.ceres.cldoc.IEntityService;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.client.service.HumanBeingService;
 import com.ceres.cldoc.model.Person;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

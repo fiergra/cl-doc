@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.ceres.cldoc.Action;
 import com.ceres.cldoc.IUserService;
-import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.ActRenderer;
 import com.ceres.cldoc.client.views.ClosableTab;
@@ -27,12 +26,12 @@ import com.ceres.cldoc.client.views.dynamicforms.PagesFactory;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.IApplication;
+import com.ceres.cldoc.model.IOrganisation;
+import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.User;
-import com.ceres.core.IApplication;
-import com.ceres.core.IOrganisation;
-import com.ceres.core.ISession;
 import com.ceres.dynamicforms.client.SimpleForm;
 import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.core.client.EntryPoint;
@@ -62,7 +61,7 @@ public class ClDoc implements EntryPoint, IApplication {
 	private static long callId = 0;
 	private ISession session;
 	private LogOutput logOutput;
-	private Image progress = new Image("images/progress.gif");
+	private final Image progress = new Image("images/progress.gif");
 	
 	@Override
 	public ISession getSession() {
@@ -103,7 +102,7 @@ public class ClDoc implements EntryPoint, IApplication {
 						if (((User)session.getUser()).hash == null) {
 							setPassword(session);
 						} else {
-							setupMain((Session) result);
+							setupMain(result);
 							preload(result);
 						}
 					} else {
@@ -147,7 +146,7 @@ public class ClDoc implements EntryPoint, IApplication {
 					@Override
 					public void onResult(Long result) {
 						if (result.equals(IUserService.SUCCESS)) {
-							setupMain((Session) session);
+							setupMain(session);
 						}
 					}
 				});
@@ -205,7 +204,7 @@ public class ClDoc implements EntryPoint, IApplication {
 		if (open != null) {
 			openForm(mainPanel, open);
 		} else {
-			addSessionLogo(session, mainPanel);
+//			addSessionLogo(session, mainPanel);
 			addProgressIndicator(mainPanel);
 			
 			SRV.catalogService.listCatalogs(session, "CLDOC.MAIN", new DefaultCallback <List<Catalog>>(this, "listCatalogs") {
@@ -254,7 +253,7 @@ public class ClDoc implements EntryPoint, IApplication {
 	}
 
 	private void addSessionLogo(ISession session, LayoutPanel mainPanel) {
-		Image logo = getSessionLogo();
+		Image logo = getSessionLogo(session);
 		Label welcome = new Label(getDisplayName(session));
 		VerticalPanel vp = new VerticalPanel();
 		vp.setSpacing(5);
@@ -318,7 +317,7 @@ public class ClDoc implements EntryPoint, IApplication {
 		
 	}
 
-	public Image getSessionLogo() {
+	public Image getSessionLogo(ISession session) {
 		IOrganisation organisation = session.getUser().getOrganisation();
 		Image logo = new Image("icons/" + organisation.getName() + ".png");
 		logo.setHeight("50px");
@@ -339,7 +338,7 @@ public class ClDoc implements EntryPoint, IApplication {
 	}
 
 	
-	private HashMap<Long, String> asyncCalls = new HashMap<Long, String>();
+	private final HashMap<Long, String> asyncCalls = new HashMap<Long, String>();
 	
 	@Override
 	public long startAsyncCall(String description) {

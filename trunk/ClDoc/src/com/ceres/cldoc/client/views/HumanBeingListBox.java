@@ -8,9 +8,9 @@ import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.IApplication;
+import com.ceres.cldoc.model.IEntity;
 import com.ceres.cldoc.model.Person;
-import com.ceres.core.IApplication;
-import com.ceres.core.IEntity;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TextBox;
 

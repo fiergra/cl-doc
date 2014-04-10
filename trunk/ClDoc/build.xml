@@ -12,28 +12,35 @@
 	<!-- ================================= 
           target: ${default}              
          ================================= -->
-	<target name="${default}" depends="color_blue,war">
+	<target name="${default}" depends="war">
     </target>
 
+	<!--
 	<target name="dkg" depends="color_green,war">
     </target>
 
 	<target name="eart" depends="color_eart,war">
     </target>
-
+-->
 	<!-- - - - - - - - - - - - - - - - - - 
           target: ${depends}                      
          - - - - - - - - - - - - - - - - - -->
 	<target name="war" depends="compress">
-		<delete file="../../Tomcat6.0/ClDoc.war"></delete>
-		<war destfile="../../Tomcat6.0/ClDoc.war" basedir="war"></war>
+		<delete file="../../Tomcat6.0/ClDoc.war" failonerror="false"></delete>
+		<war destfile="../../Tomcat6.0/ClDoc.war" basedir="c:/temp/war"></war>
 	</target>
 
 	<target name="compress">
-		<jar destfile="war/WEB-INF/lib/ClDocServices.jar" basedir="../ClDocServices/bin"></jar>
+		<delete dir="c:/temp/war" failonerror="false"/>
+		<mkdir dir="c:/temp/war"/>
+		<copy todir="c:/temp/war">
+		  <fileset dir="war" includes="**"/>
+		</copy>
+		<jar destfile="c:/temp/war/WEB-INF/lib/ClDocServices.jar" basedir="../ClDocServices/bin"></jar>
+		<jar destfile="c:/temp/war/WEB-INF/lib/DynamicForms.jar" basedir="../DynamicForms/war/WEB-INF/classes"></jar>
 	</target>
 	
-	
+	<!--
 	<target name="color_palais">
 		<copy overwrite="true"  tofile="war/ClDoc.css" file="war/no-color.css"/>
 		<replace token="$COLOR_1" value="#910029" file="war/ClDoc.css"/>
@@ -61,5 +68,5 @@
 		<replace token="$COLOR_2" value="#B5CF00" file="war/ClDoc.css"/>
 		<replace token="$COLOR_WHITE" value="#FAFAFA" file="war/ClDoc.css"/>
 	</target>
-
+-->
 </project>

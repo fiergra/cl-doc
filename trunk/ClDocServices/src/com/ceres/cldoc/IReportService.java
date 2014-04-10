@@ -8,7 +8,7 @@ import java.util.List;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.ReportDefinition;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface IReportService {
 	List <ReportDefinition> list(ISession session, Long type);

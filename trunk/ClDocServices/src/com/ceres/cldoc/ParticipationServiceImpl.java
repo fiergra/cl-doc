@@ -14,7 +14,7 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class ParticipationServiceImpl implements IParticipationService {
 
