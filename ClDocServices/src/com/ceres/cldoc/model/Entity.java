@@ -3,7 +3,7 @@ package com.ceres.cldoc.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ceres.core.IEntity;
+import com.ceres.cldoc.model.IEntity;
 
 public class Entity implements IEntity {
 	private static final long serialVersionUID = 1L;

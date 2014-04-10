@@ -40,7 +40,7 @@ import org.xml.sax.SAXException;
 
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class CatalogServiceImpl implements ICatalogService {
 

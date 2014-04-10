@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface ITimeManagementService {
 	public static final String WORKINGTIME_ACT = "WorkingTime";

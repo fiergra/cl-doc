@@ -11,7 +11,7 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.FileSystemNode;
 import com.ceres.cldoc.util.Files;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class SettingsServiceImpl implements ISettingsService {
 

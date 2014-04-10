@@ -1,6 +1,7 @@
 package com.ceres.cldoc;
 
-import com.ceres.core.IAction;
+import com.ceres.cldoc.model.IAction;
+
 
 public class Action implements IAction {
 	public final String type;

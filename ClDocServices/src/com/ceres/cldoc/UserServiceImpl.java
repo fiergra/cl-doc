@@ -15,7 +15,7 @@ import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.AccessControl;
 import com.ceres.cldoc.util.Jdbc;
 import com.ceres.cldoc.util.Strings;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class UserServiceImpl implements IUserService {
 
@@ -23,7 +23,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public ISession login(final ISession session, final String userName, final String password) {
-		return Jdbc.doTransactional(session, new ITransactional() {
+		ISession s = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public ISession execute(Connection con) throws SQLException {
@@ -57,7 +57,7 @@ public class UserServiceImpl implements IUserService {
 				return user != null ? new Session(user, AccessControl.get(session, user, null)) : null;
 			}
 		});
-		
+		return s;
 	}
 
 	@Override

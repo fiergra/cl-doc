@@ -20,7 +20,7 @@ import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class EntityServiceImpl implements IEntityService {
 

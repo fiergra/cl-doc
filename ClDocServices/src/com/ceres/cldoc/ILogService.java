@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.LogEntry;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface ILogService {
 	final static int INSERT = 1;

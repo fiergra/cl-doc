@@ -1,6 +1,6 @@
 package com.ceres.cldoc.model;
 
-import com.ceres.core.IOrganisation;
+import com.ceres.cldoc.model.IOrganisation;
 
 
 public class Organisation extends Entity implements IOrganisation {

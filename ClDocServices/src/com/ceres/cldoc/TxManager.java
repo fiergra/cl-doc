@@ -9,7 +9,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 
 public class TxManager {
@@ -24,24 +24,26 @@ public class TxManager {
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				dataSource = (DataSource) envCtx.lookup("jdbc/ClDoc");
 				dataSource.getConnection().close();
-//				
-//				if (dataSource instanceof MysqlConnectionPoolDataSource) {
-//					MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
-//					ds.setDatabaseName("ClDoc");
-//					ds.setUser("ralph4");
-//					ds.setPassword("sql4");
-//					ds.setProfileSQL(false);
-//					ds.setDumpMetadataOnColumnNotFound(true);
-//					ds.setDumpQueriesOnException(true);
-//					try {
-//						ds.getConnection().close();
-//					} catch (SQLException x) {
-//						ds.setUser("root");
-//						ds.setPassword("sql4");
-//						ds.getConnection().close();
-//					}
-//					dataSource = ds;
-//				}
+				
+				if (dataSource instanceof MysqlConnectionPoolDataSource) {
+					log.info("MysqlConnectionPoolDataSource");
+					MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
+					ds.setDatabaseName("ClDoc");
+					ds.setUser("ralph4");
+					ds.setPassword("sql4");
+					ds.setProfileSQL(false);
+					ds.setDumpMetadataOnColumnNotFound(true);
+					ds.setDumpQueriesOnException(true);
+					try {
+						ds.getConnection().close();
+					} catch (SQLException x) {
+						log.info("re-set user name");
+						ds.setUser("root");
+						ds.setPassword("sql4");
+						ds.getConnection().close();
+					}
+					dataSource = ds;
+				}
 				
 				log.info("datasource resource found!");
 			} catch (Exception x) {
@@ -62,7 +64,7 @@ public class TxManager {
 							+ e.getLocalizedMessage());
 					MysqlConnectionPoolDataSource ds = new MysqlConnectionPoolDataSource();
 					ds.setDatabaseName("ClDoc");
-					ds.setServerName("krebsgesellschaft.dyndns.org");
+					ds.setServerName("dynko.krebsgesellschaft.org");
 					ds.setPort(2007);
 					ds.setUser("ralph4");
 					ds.setPassword("sql4");
@@ -75,20 +77,16 @@ public class TxManager {
 
 	}
 
-	private static Connection getConnection() {
+	private static Connection getConnection() throws SQLException {
 		Connection con = null;
-		try {
-			con = getDataSource().getConnection();
-			con.setAutoCommit(false);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		con = getDataSource().getConnection();
+		con.setAutoCommit(false);
 		return con;
 	}
 
 	private static ConcurrentHashMap<ISession, Transaction> transactions = new ConcurrentHashMap<ISession, Transaction>();
 
-	public static synchronized Connection start(ISession session) {
+	public static synchronized Connection start(ISession session) throws SQLException {
 		Transaction tx = transactions.get(session);
 		if (tx == null) {
 			log.finest("starting transaction (" + session.getId() + ")");

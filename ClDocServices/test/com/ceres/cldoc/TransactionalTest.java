@@ -3,7 +3,7 @@ package com.ceres.cldoc;
 import junit.framework.TestCase;
 
 import com.ceres.cldoc.model.User;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class TransactionalTest extends TestCase {
 

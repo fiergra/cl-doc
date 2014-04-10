@@ -22,6 +22,7 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.model.IPerson;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.timemanagement.ActAsTimeSheetElement;
@@ -31,7 +32,6 @@ import com.ceres.cldoc.timemanagement.TimeSheetElement;
 import com.ceres.cldoc.timemanagement.TimeSheetMonth;
 import com.ceres.cldoc.timemanagement.TimeSheetYear;
 import com.ceres.cldoc.timemanagement.WorkPattern;
-import com.ceres.core.IPerson;
 import com.ceres.dynamicforms.client.DateLink;
 import com.ceres.dynamicforms.client.DurationLink;
 import com.ceres.dynamicforms.client.Interactor;
@@ -64,9 +64,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class TimeSheet extends DockLayoutPanel {
 
 	private final ClDoc clDoc;
-	private HorizontalPanel timeSheetPanel = new HorizontalPanel();
-	private Label leaveBalanceLabel = new Label();
-	private Label hourBalanceLabel = new Label();
+	private final HorizontalPanel timeSheetPanel = new HorizontalPanel();
+	private final Label leaveBalanceLabel = new Label();
+	private final Label hourBalanceLabel = new Label();
 	private IPerson person;
 
 	public TimeSheet(ClDoc clDoc) {
@@ -78,6 +78,7 @@ public class TimeSheet extends DockLayoutPanel {
 		this.clDoc = clDoc;
 		this.person = person;
 		loadAndDisplay(clDoc);
+		addStyleName("timeSheet");
 	}
 
 	private void loadAndDisplay(ClDoc clDoc) {
@@ -119,6 +120,7 @@ public class TimeSheet extends DockLayoutPanel {
 					@Override
 					public void onResult(Void result) {
 						pp.hide();
+						reloadAndDisplay(clDoc);
 					}
 				});
 			}
@@ -212,6 +214,7 @@ public class TimeSheet extends DockLayoutPanel {
 	}
 
 	private void createTimeSheet(HorizontalPanel hp, TimeSheetYear tsy) {
+		addStyleName("timeSheet");
 		leaveBalanceLabel.setText("Resturlaub: " + tsy.getAbsenceBalance() + " (" + tsy.getAnnualLeaveDays() + "/" + tsy.getLeaveEntitlement() + ") ");
 		int hb = tsy.getBalance();
 		hourBalanceLabel.setText(getDurationAsString(hb));
@@ -368,7 +371,7 @@ public class TimeSheet extends DockLayoutPanel {
 				Act newAct = new Act(new ActClass(ITimeManagementService.WORKINGTIME_ACT));
 				Date date = tsd.getDate();
 				newAct.date = date; 
-				newAct.setParticipant(clDoc.getSession().getUser().getPerson(), Participation.ADMINISTRATOR, date, date);
+				newAct.setParticipant(getPerson(), Participation.ADMINISTRATOR, date, date);
 
 				return newAct;
 			}
@@ -625,7 +628,7 @@ public class TimeSheet extends DockLayoutPanel {
 				Catalog leaveType = leaveAct.getCatalog("leaveType");
 				leaveAct.actClass = new ActClass(leaveType.id == 191l ? ITimeManagementService.ANNUAL_LEAVE_ACT : ITimeManagementService.SICK_LEAVE_ACT);
 				
-				leaveAct.setParticipant(getPerson(), Participation.ADMINISTRATOR, tsd.getDate(), (Date)leaveAct.getDate("bis"));
+				leaveAct.setParticipant(getPerson(), Participation.ADMINISTRATOR, tsd.getDate(), leaveAct.getDate("bis"));
 				SRV.actService.save(clDoc.getSession(), leaveAct, new DefaultCallback<Act>(clDoc, "save leave") {
 
 					@Override

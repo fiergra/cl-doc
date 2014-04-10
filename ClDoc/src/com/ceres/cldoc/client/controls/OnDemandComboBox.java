@@ -7,7 +7,7 @@ import java.util.List;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.IEntitySelector;
 import com.ceres.cldoc.client.views.OnClick;
-import com.ceres.core.IApplication;
+import com.ceres.cldoc.model.IApplication;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeHandler;

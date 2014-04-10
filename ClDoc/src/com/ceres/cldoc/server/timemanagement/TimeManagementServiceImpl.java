@@ -8,7 +8,7 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.timemanagement.TimeSheetYear;
 import com.ceres.cldoc.timemanagement.WorkPattern;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**

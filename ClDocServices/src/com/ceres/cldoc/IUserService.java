@@ -6,7 +6,7 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface IUserService {
 	public static final long NO_USER = 3;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.FileSystemNode;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface ISettingsService {
 	List<FileSystemNode> listFiles(String directory);

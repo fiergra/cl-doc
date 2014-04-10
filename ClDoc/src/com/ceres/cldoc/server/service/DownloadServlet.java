@@ -18,7 +18,7 @@ import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 @SuppressWarnings("serial")
 public class DownloadServlet extends HttpServlet {

@@ -142,7 +142,9 @@ public abstract class ClickableTree <T extends HasChildren<T>> extends DockLayou
 	}
 
 	protected Widget itemRenderer(T er) {
-		return new Label(er.toString());
+		Label l = new Label(er.toString());
+		l.addStyleName("treeLabel");
+		return l;
 	}
 
 	public Image addButton(String label, String source) {

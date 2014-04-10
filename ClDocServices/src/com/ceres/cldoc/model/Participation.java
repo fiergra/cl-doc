@@ -3,7 +3,7 @@ package com.ceres.cldoc.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.ceres.core.IEntity;
+import com.ceres.cldoc.model.IEntity;
 
 public class Participation implements Serializable {
 

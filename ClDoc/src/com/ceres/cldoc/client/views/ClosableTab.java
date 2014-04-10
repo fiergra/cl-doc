@@ -14,7 +14,7 @@ public class ClosableTab extends Grid {
 		super(1, 2);
 		addStyleName("closableTab");
 		Image closeButton = new Image("icons/Button-Close-01.png");
-		setHeight("12px");
+//		setHeight("12px");
 		closeButton.setSize("10px", "10px");
 		Label label = new Label(labelText);
 

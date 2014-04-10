@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Participation;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public interface IParticipationService {
 	void save(ISession session, Participation participation);

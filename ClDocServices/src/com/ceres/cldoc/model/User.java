@@ -2,9 +2,9 @@ package com.ceres.cldoc.model;
 
 import java.util.Set;
 
-import com.ceres.core.IOrganisation;
-import com.ceres.core.IPerson;
-import com.ceres.core.IUser;
+import com.ceres.cldoc.model.IOrganisation;
+import com.ceres.cldoc.model.IPerson;
+import com.ceres.cldoc.model.IUser;
 
 public class User implements IUser {
 	private static final long serialVersionUID = 4918516919583093321L;

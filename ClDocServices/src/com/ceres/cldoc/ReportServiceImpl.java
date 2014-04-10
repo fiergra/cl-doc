@@ -34,7 +34,7 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class ReportServiceImpl implements IReportService {
 

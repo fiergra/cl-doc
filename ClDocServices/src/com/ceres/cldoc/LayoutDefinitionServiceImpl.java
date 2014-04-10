@@ -38,7 +38,7 @@ import org.xml.sax.SAXException;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.core.ISession;
+import com.ceres.cldoc.model.ISession;
 
 public class LayoutDefinitionServiceImpl implements ILayoutDefinitionService {
 

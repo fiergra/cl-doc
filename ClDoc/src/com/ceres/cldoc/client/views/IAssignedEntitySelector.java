@@ -1,7 +1,7 @@
 package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.core.IEntity;
+import com.ceres.cldoc.model.IEntity;
 
 
 
