@@ -7,7 +7,9 @@
 		<actclass isSingleton="false" name="Sozio-Demographische Daten"/>
 		<actclass isSingleton="false" name="Veranstaltungsbericht"/>
 	</actclasses>
-	<layout name="Beratungsgespraech" type="1">
+
+
+	<!--<layout name="Beratungsgespraech" type="1">
 		<pages classid="5" classname="Beratungsgespraech" entitytype="181" singleton="false">
 			<form label="Kontakt">
 				<line name="Kontakt" parent="MASTERDATA.KONTAKTART" type="option"/>
@@ -43,7 +45,40 @@
 				<line height="100%" name="Protokoll" type="Text" width="100%"/>
 			</form>
 		</pages>
-	</layout>
+	</layout>-->
+
+	<layout name="Beratungsgespraech" type="1">
+	<pages classid="5" classname="Beratungsgespraech" entitytype="181" singleton="false">
+		<form label="Kontakt">
+			<line name="Kontakt" parent="MASTERDATA.KONTAKTART" type="option"/>
+			<line label="Datum" type="actdate"/>
+			<line name="Erstkontakt" type="Boolean"/>
+
+			<line label="Ort" name="Ort" type="string"/>
+			<line label="" name="Ortauswahl" parent="MASTERDATA.ORT" type="option"/>
+			<line title="Gesprächspartner" type="separator"/>
+			<!--  <line name="Patient" type="boolean"/>-->
+			<line name="" parent="MASTERDATA.GESPRAECHSPARTNER" type="multiselect"/>
+			<line name="patientenbezogen" type="boolean"/>
+			<line name="Sonstige" type="String"/>
+			<line label="Bemerkung" name="bemerkung" type="text"/>
+		</form>
+		<form label="Inhalt">
+			<line title="Inhalt" type="separator"/>
+			<line name="Sozialrechtliche Fragen" parent="MASTERDATA.FRAGESTELLUNG.SOZIALRECHTLICH" type="multiselect"/>
+			<line label="sonstiges" name="sonstigerInhalt" type="text"/>
+			<line name="Behandlung" parent="MASTERDATA.FRAGESTELLUNG.BEHANDLUNG" type="multiselect"/>
+			<line name="Befindlichkeit" parent="MASTERDATA.FRAGESTELLUNG.BEFINDLICHKEIT" type="multiselect"/>
+			<line columns="4" name="Sonstiges" parent="MASTERDATA.FRAGESTELLUNG.SONSTIGE" type="multiselect"/>
+			<line title="In Angelegenheit" type="separator"/>
+			<line label="" name="Angelegenheit" parent="MASTERDATA.BERATUNG.ANGELEGENHEIT" type="multiselect"/>
+			<line label="Sonstige Personen" name="sonstPers" type="text"/>
+		</form>
+		<form label="Gesprächsprotokoll">
+			<line height="100%" name="Protokoll" type="Text" width="100%"/>
+		</form>
+	</pages>
+</layout>
 	<layout name="Kostentraeger" type="1">
 		<form classname="Kostentraeger" entitytype="181" singleton="true">
 			<line label="Krankenkasse" name="gkk" parent="MASTERDATA.KRANKENKASSEN" type="option"/>

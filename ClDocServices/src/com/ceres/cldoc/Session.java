@@ -15,6 +15,10 @@ public class Session implements ISession, Serializable {
 	private User user;
 	private long id;
 	private Policies policies;
+
+	private String dbUserName;
+
+	private String dbURL;
 	
 	private static long sessionIds = 1;
 	
@@ -32,9 +36,10 @@ public class Session implements ISession, Serializable {
 //		this.id = id;
 //	}
 //
-	public Session(User user, Policies policies) {
-//		this(user, createISessionId());
+	public Session(User user, String dbUserName, String dbURL, Policies policies) {
 		this.user = user;
+		this.dbUserName = dbUserName;
+		this.dbURL = dbURL;
 		this.policies = policies;
 		this.id = createISessionId();
 	}

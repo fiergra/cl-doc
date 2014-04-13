@@ -26,8 +26,8 @@
           target: ${depends}                      
          - - - - - - - - - - - - - - - - - -->
 	<target name="war" depends="compress">
-		<delete file="../../Tomcat6.0/ClDoc.war" failonerror="false"></delete>
-		<war destfile="../../Tomcat6.0/ClDoc.war" basedir="c:/temp/war"></war>
+		<delete file="../../Tomcat6/ClDoc.war" failonerror="false"></delete>
+		<war destfile="../../Tomcat6/ClDoc.war" basedir="c:/temp/war"></war>
 	</target>
 
 	<target name="compress">

@@ -1,30 +1,6 @@
 
 insert into Catalog (id, parent, code, text, shorttext) values (65, 51, 'Jugend_USER', 'Jugend_USER', 'Jugend_USER');
 insert into Catalog (id, parent, code, text, shorttext) values (66, 51, 'Jugend_MANAGER', 'Jugend_MANAGER', 'Jugend_MANAGER');
-insert into Catalog (id, parent, code, text, shorttext) values (67, 51, 'Zeiterfassung', 'Zeiterfassung', 'Zeiterfassung');
-insert into Catalog (id, parent, code, text, shorttext) values (68, 51, 'ZeitManager', 'ZeitManager', 'ZeitManager');
-
-DROP TABLE IF EXISTS WorkPattern;
-
-CREATE TABLE IF NOT EXISTS WorkPattern(
-    Id INTEGER PRIMARY KEY NOT NULL,
-    CONSTRAINT FK_WorkPattern_ENTITY FOREIGN KEY (Id)
-        REFERENCES ENTITY (Id),
-    Pattern VARCHAR(20) NOT NULL,
-    LeaveEntitlement INTEGER NOT NULL
-);
-
-
-insert into Catalog (id, parent, code, text, shorttext) values (1001, 180, 'Arbeitszeitmuster', 'Arbeitszeitmuster', 'Arbeitszeitmuster');
-insert into Entity (id, TYPE, NAME) values (1101, 1001, 'Vollzeit');
-insert into Entity (id, TYPE, NAME) values (1102, 1001, 'Teilzeit50');
-insert into Entity (id, TYPE, NAME) values (1103, 1001, 'Teilzeit80');
-
-insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1101, '8-8-8-8-7.5', 30);
-insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1102, '8-8-4-0-0', 30);
-insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1103, '8-8-8-8-0', 30);
-
-insert into Catalog (parent, code, text, shorttext) values (154, 'arbeitet entsprechend', 'arbeitet entsprechend', 'arbeitet entsprechend');
 
 insert into Entity (ID,TYPE,NAME) values (50, 182, 'Jugendhilfeplanung');
 
@@ -159,11 +135,6 @@ insert into Catalog (parent, code, text, shorttext, logical_order, number1) valu
 insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='Personen'),71, CURRENT_DATE);*/
 insert into Policy (role, objectType, action, startDate) values (65,(select id from Catalog where code ='JugendOrga'),71, CURRENT_DATE);
 
-/* time user: EDIT */
-insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='TimeSheet'),71, CURRENT_DATE);
-/* time manager: EDIT + VIEW */
-insert into Policy (role, objectType, action, startDate) values (68,(select id from Catalog where code ='TimeSheet'),71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (68,(select id from Catalog where code ='TimeSheet'),72, CURRENT_DATE);
 
 
 insert into Catalog (id, parent, code, text, shorttext) values (550, 150, 'Altersgruppe', 'Altersgruppe', 'Altersgruppe');

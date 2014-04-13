@@ -1,6 +1,7 @@
 package com.ceres.cldoc;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -24,28 +25,12 @@ public class TxManager {
 				Context envCtx = (Context) initCtx.lookup("java:comp/env");
 				dataSource = (DataSource) envCtx.lookup("jdbc/ClDoc");
 				dataSource.getConnection().close();
-				
-				if (dataSource instanceof MysqlConnectionPoolDataSource) {
-					log.info("MysqlConnectionPoolDataSource");
-					MysqlConnectionPoolDataSource ds = (MysqlConnectionPoolDataSource) dataSource;
-					ds.setDatabaseName("ClDoc");
-					ds.setUser("ralph4");
-					ds.setPassword("sql4");
-					ds.setProfileSQL(false);
-					ds.setDumpMetadataOnColumnNotFound(true);
-					ds.setDumpQueriesOnException(true);
-					try {
-						ds.getConnection().close();
-					} catch (SQLException x) {
-						log.info("re-set user name");
-						ds.setUser("root");
-						ds.setPassword("sql4");
-						ds.getConnection().close();
-					}
-					dataSource = ds;
-				}
-				
+				log.info(dataSource.getClass().getCanonicalName());
 				log.info("datasource resource found!");
+				Connection c = dataSource.getConnection();
+				DatabaseMetaData md = c.getMetaData();
+				log.info(md.getURL());
+				c.close();
 			} catch (Exception x) {
 				try {
 					log.info("datasource resource NOT found: "

@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Catalog;
+import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.AccessControl;
 import com.ceres.cldoc.util.Jdbc;
 import com.ceres.cldoc.util.Strings;
-import com.ceres.cldoc.model.ISession;
 
 public class UserServiceImpl implements IUserService {
 
@@ -54,7 +54,7 @@ public class UserServiceImpl implements IUserService {
 				rs.close();
 				s.close();
 				
-				return user != null ? new Session(user, AccessControl.get(session, user, null)) : null;
+				return user != null ? new Session(user, con.getMetaData().getUserName(), con.getMetaData().getURL(), AccessControl.get(session, user, null)) : null;
 			}
 		});
 		return s;
