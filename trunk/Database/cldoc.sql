@@ -349,9 +349,9 @@ insert into Catalog (id, parent, code, text, shorttext, logical_order) values (6
 /*insert into Catalog (id, parent, code, text, shorttext, logical_order) values (10, 2, 'Calendar', 'Calendar', 'Calendar', 5);*/
 
 
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (30, 2, 'TimeRegistration', 'Anwesenheit', 'Anwesenheit', 6);
+/*insert into Catalog (id, parent, code, text, shorttext, logical_order) values (30, 2, 'TimeRegistration', 'Anwesenheit', 'Anwesenheit', 6);
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (31, 2, 'LeaveRegistration', 'Abwesend', 'Abwesend', 7);
-insert into Catalog (id, parent, code, text, shorttext, logical_order) values (32, 2, 'TimeSheet', 'Arbeitszeiten', 'Arbeitszeiten', 8);
+*/insert into Catalog (id, parent, code, text, shorttext, logical_order) values (32, 2, 'TimeSheet', 'Arbeitszeiten', 'Arbeitszeiten', 8);
 
 insert into Catalog (id, parent, code, text, shorttext) values (7, 1, 'PERSONALFILE', 'PERSONALFILE', 'PERSONALFILE');
 insert into Catalog (id, parent, code, text, shorttext, logical_order) values (8, 7, 'Formulare', 'Formulare', 'Formulare', 1);
@@ -443,8 +443,8 @@ insert into Assignment(userid, role, startdate) values ((select id from User whe
 insert into Assignment(userid, role, startdate) values ((select id from User where name='u'), 54, CURRENT_DATE);
 
 insert into Policy (role, objectType, action, startDate) values (51,3,71, CURRENT_DATE);
-insert into Policy (role, objectType, action, startDate) values (52,30,71, CURRENT_DATE);
-/*insert into Policy (role, objectType, action, startDate) values (52,10,71, CURRENT_DATE);*/
+/*insert into Policy (role, objectType, action, startDate) values (52,30,71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (52,10,71, CURRENT_DATE);*/
 insert into Policy (role, objectType, action, startDate) values (56,5,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,6,71, CURRENT_DATE);
 insert into Policy (role, objectType, action, startDate) values (52,7,71, CURRENT_DATE);
@@ -459,6 +459,7 @@ insert into Policy (role, objectType, action, startDate) values (56,25,71, CURRE
 
 insert into ActClass (Id,Name) values (301, 'WorkingTime');
 
+/*
 
 insert into ActClass (Id,Name) values (1, 'Beispiel1');
 insert into LayoutDefinition(typeid, Actclassid, xml) values (1,1,'<form><line label="label" name="name" type="String"/></form>');
@@ -505,3 +506,37 @@ insert into LayoutDefinition(typeid, Actclassid, xml) values (1,4,'<form>
    <line name="Katalog3" type="Option" parent="BEISPIEL.BEISPIEL1"/>
 </form>');
 
+*/
+
+
+
+insert into Catalog (id, parent, code, text, shorttext) values (67, 51, 'Zeiterfassung', 'Zeiterfassung', 'Zeiterfassung');
+insert into Catalog (id, parent, code, text, shorttext) values (68, 51, 'ZeitManager', 'ZeitManager', 'ZeitManager');
+
+DROP TABLE IF EXISTS WorkPattern;
+
+CREATE TABLE IF NOT EXISTS WorkPattern(
+    Id INTEGER PRIMARY KEY NOT NULL,
+    CONSTRAINT FK_WorkPattern_ENTITY FOREIGN KEY (Id)
+        REFERENCES ENTITY (Id),
+    Pattern VARCHAR(20) NOT NULL,
+    LeaveEntitlement INTEGER NOT NULL
+);
+
+
+insert into Catalog (id, parent, code, text, shorttext) values (1001, 180, 'Arbeitszeitmuster', 'Arbeitszeitmuster', 'Arbeitszeitmuster');
+insert into Entity (id, TYPE, NAME) values (1101, 1001, 'Vollzeit');
+insert into Entity (id, TYPE, NAME) values (1102, 1001, 'Teilzeit50');
+insert into Entity (id, TYPE, NAME) values (1103, 1001, 'Teilzeit80');
+
+insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1101, '8-8-8-8-7.5', 30);
+insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1102, '8-8-4-0-0', 30);
+insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1103, '8-8-8-8-0', 30);
+
+insert into Catalog (parent, code, text, shorttext) values (154, 'arbeitet entsprechend', 'arbeitet entsprechend', 'arbeitet entsprechend');
+
+/* time user: EDIT */
+insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='TimeSheet'),71, CURRENT_DATE);
+/* time manager: EDIT + VIEW */
+insert into Policy (role, objectType, action, startDate) values (68,(select id from Catalog where code ='TimeSheet'),71, CURRENT_DATE);
+insert into Policy (role, objectType, action, startDate) values (68,(select id from Catalog where code ='TimeSheet'),72, CURRENT_DATE);

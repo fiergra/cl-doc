@@ -261,6 +261,15 @@ public class WidgetCreator {
 		} else if ("Label".equals(localName)){
 			widget = new Label(attributes.get("text"));
 			widget.addStyleName("formLabel");
+		} else if ("FormHeading".equalsIgnoreCase(localName)){
+			HorizontalPanel hp = new HorizontalPanel();
+			Label l = new Label(attributes.get("label"));
+			hp.addStyleName("formHeading");
+			l.addStyleName("formHeadingLabel");
+			hp.add(l);
+			HTML hr = new HTML("<hr/>");
+			hp.add(hr);
+			widget = hp;
 		} else if ("HRule".equals(localName)){
 			widget = new HTML("<hr/>");
 		} else {
