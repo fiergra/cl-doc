@@ -28,5 +28,11 @@ public class LongLink extends TextLink {
 		return (LongTextBox) super.getWidget();
 	}
 
+	@Override
+	public boolean isValid() {
+		return !isEmpty() ? (getWidget().getLong() != null) : super.isValid();
+	}
+
+	
 	
 }
