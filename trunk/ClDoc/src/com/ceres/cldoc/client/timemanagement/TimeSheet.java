@@ -358,7 +358,7 @@ public class TimeSheet extends DockLayoutPanel {
 
 	private void editDay(final FlexTable ft, final int row, final TimeSheetDay tsd) {
 		VerticalPanel vp = new VerticalPanel();
-		actListRenderer = new MapListRenderer(new String[]{"von", "bis", "Bemerkung", "Dauer"}, 
+		actListRenderer = new MapListRenderer(new String[]{"von", "bis", "Bemerkung"}, 
 				new Runnable() {
 					@Override
 					public void run() {
@@ -399,15 +399,15 @@ public class TimeSheet extends DockLayoutPanel {
 				interactor.addLink(new TextLink(interactor, "Bemerkung", textBox, null));
 				col++;
 
-				col++;
-				final Label lblDuration = new Label();
-				setWidget(row, col, lblDuration);
+//				col++;
+//				final Label lblDuration = new Label();
+//				setWidget(row, col, lblDuration);
 				
 				interactor.addLink(new DurationLink(interactor, fromLink, toLink) {
 
 					@Override
 					protected void hilite(boolean isValid) {
-						lblDuration.setText("---");
+//						lblDuration.setText("---");
 						if (isValid) {
 							getRowFormatter().removeStyleName(row, "invalidContent");
 							if (!isEmpty()) {
