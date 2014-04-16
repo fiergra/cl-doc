@@ -241,6 +241,10 @@ public class WidgetCreator {
 			FloatTextBox db = new FloatTextBox();
 			link = new FloatLink(interactor, fieldName, db, attributes);
 			widget = db;
+		} else if ("ItemFieldNumberInput".equals(localName)){
+			LongTextBox db = new LongTextBox();
+			link = new LongLink(interactor, fieldName, db, attributes);
+			widget = db;
 		} else if ("ItemFromDateField".equals(localName)){
 			fieldName = "dateFrom";
 			DateTextBox db =  new DateTextBox();
@@ -258,10 +262,10 @@ public class WidgetCreator {
 		} else if ("ItemFieldTextArea".equals(localName)){
 			widget = new TextArea();
 			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
-		} else if ("Label".equals(localName)){
+		} else if ("Label".equals(localName) || "ResourceLabel".equals(localName)){
 			widget = new Label(attributes.get("text"));
 			widget.addStyleName("formLabel");
-		} else if ("FormHeading".equalsIgnoreCase(localName)){
+		} else if ("FormHeading".equalsIgnoreCase(localName) || "ResourceFormHeading".equalsIgnoreCase(localName)){
 			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(attributes.get("label"));
 			hp.addStyleName("formHeading");
@@ -311,7 +315,7 @@ public class WidgetCreator {
 	}
 
 	private static boolean asBoolean(String b) {
-		return "true".equalsIgnoreCase(b);
+		return !"false".equalsIgnoreCase(b);
 	}
 
 	private static HashMap<String, String> asHashMap(NamedNodeMap attributes) {
