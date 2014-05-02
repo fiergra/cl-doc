@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.FloatTextBox;
-import com.ceres.dynamicforms.client.components.LongTextBox;
+import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
 import com.google.gwt.dom.client.Style.Unit;
@@ -233,17 +233,17 @@ public class WidgetCreator {
 			TimeTextBox db = new TimeTextBox();
 			link = new DateLink(interactor, fieldName, db, attributes);
 			widget = db;
-		} else if ("long".equals(localName)){
-			LongTextBox db = new LongTextBox();
-			link = new LongLink(interactor, fieldName, db, attributes);
+		} else if ("long".equals(localName) || "float".equals(localName)){
+			NumberTextBox db = new NumberTextBox();
+			link = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("float".equals(localName)){
 			FloatTextBox db = new FloatTextBox();
 			link = new FloatLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFieldNumberInput".equals(localName)){
-			LongTextBox db = new LongTextBox();
-			link = new LongLink(interactor, fieldName, db, attributes);
+			NumberTextBox db = new NumberTextBox();
+			link = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFromDateField".equals(localName)){
 			fieldName = "dateFrom";
