@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ceres.dynamicforms.client.components.LongTextBox;
+import com.ceres.dynamicforms.client.components.NumberTextBox;
 
-public class LongLink extends TextLink {
+public class NumberLink extends TextLink {
 
-	public LongLink(Interactor interactor, String fieldName, LongTextBox widget,
+	public NumberLink(Interactor interactor, String fieldName, NumberTextBox widget,
 			HashMap<String, String> attributes) {
 		super(interactor, fieldName, widget, attributes);
 	}
@@ -24,8 +24,8 @@ public class LongLink extends TextLink {
 	}
 
 	@Override
-	public LongTextBox getWidget() {
-		return (LongTextBox) super.getWidget();
+	public NumberTextBox getWidget() {
+		return (NumberTextBox) super.getWidget();
 	}
 
 	@Override
