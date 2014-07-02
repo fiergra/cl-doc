@@ -1,5 +1,6 @@
 package com.ceres.cldoc.client.controls;
 
+import java.util.Date;
 import java.util.List;
 
 import com.ceres.cldoc.client.ClDoc;
@@ -16,6 +17,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -26,6 +30,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class ERTree extends ClickableTree<EntityRelation> {
 	private Entity entity;
@@ -154,10 +159,15 @@ public class ERTree extends ClickableTree<EntityRelation> {
 	
 	protected void addRelation(Entity entity) {
 		int row = 0;
-		Grid content = new Grid(4, 3);
+		Grid content = new Grid(6, 3);
 		final EntityRelation er = new EntityRelation();
 		final CatalogListBox cmbTypes = new CatalogListBox(clDoc, "MASTERDATA.EntityTypes");
 		final CatalogListBox cmbRelationTypes = new CatalogListBox(clDoc, "MASTERDATA.ER");
+		final DateBox dfStart = new DateBox();
+		final DateBox dfEnd = new DateBox();
+		
+		dfStart.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("dd.MM.yyyy")));
+		dfEnd.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("dd.MM.yyyy")));
 		
 		final OnDemandComboBox<Entity> cmbEntities = new OnDemandComboBox<Entity>(clDoc, 
 				new ListRetrievalService<Entity>() {
@@ -227,6 +237,33 @@ public class ERTree extends ClickableTree<EntityRelation> {
 			content.setWidget(row, 0, newLabel("Object"));
 			content.setWidget(row, 1, new Label(entity.getName()));
 		}
+
+		content.setWidget(row, 0, newLabel("Start"));
+		content.setWidget(row, 1, dfStart);
+		dfStart.setValue(new Date());
+		er.startDate = dfStart.getValue();
+		
+		dfStart.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				er.startDate = event.getValue();
+			}
+		});
+		row++;
+
+		content.setWidget(row, 0, newLabel("End"));
+		content.setWidget(row, 1, dfEnd);
+		dfEnd.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				er.endDate = event.getValue();
+			}
+		});
+		row++;
+
+		
 
 		PopupManager.showModal("Neue Beziehung", content, 
 				new OnClick<PopupPanel>() {

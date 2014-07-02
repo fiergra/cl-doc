@@ -14,14 +14,13 @@ import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.cldoc.model.ISession;
 
 public class ParticipationServiceImpl implements IParticipationService {
 
 	private static Logger log = Logger.getLogger("ParticipationService");
 
 	@Override
-	public void save(ISession session, final Participation participation) {
+	public void save(Session session, final Participation participation) {
 		Participation p = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -79,7 +78,7 @@ public class ParticipationServiceImpl implements IParticipationService {
 	}
 
 	@Override
-	public HashMap<String, Participation> load(final ISession session, final Act act) {
+	public HashMap<String, Participation> load(final Session session, final Act act) {
 		HashMap<String, Participation> result = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -113,12 +112,12 @@ public class ParticipationServiceImpl implements IParticipationService {
 		return result;
 	}
 
-	protected Catalog getRole(ISession session, long roleId) {
+	protected Catalog getRole(Session session, long roleId) {
 		return roleId == 101l ? Participation.PROTAGONIST : Locator.getCatalogService().load(session, roleId);
 	}
 
 	@Override
-	public void delete(ISession session, final long actId, final String roleId) {
+	public void delete(Session session, final long actId, final String roleId) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

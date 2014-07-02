@@ -34,12 +34,12 @@ import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.IAct;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 public class ReportServiceImpl implements IReportService {
 
 	@Override
-	public List<ReportDefinition> list(ISession session, final Long type) {
+	public List<ReportDefinition> list(Session session, final Long type) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -74,7 +74,7 @@ public class ReportServiceImpl implements IReportService {
 	}
 
 	@Override
-	public List<HashMap<String, Serializable>> execute(ISession session, final ReportDefinition rd, final IAct filters) {
+	public List<HashMap<String, Serializable>> execute(Session session, final ReportDefinition rd, final IAct filters) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -149,7 +149,7 @@ public class ReportServiceImpl implements IReportService {
 	}
 
 	@Override
-	public byte[] exportXLS(ISession session, long reportId, IAct filters) throws IOException {
+	public byte[] exportXLS(Session session, long reportId, IAct filters) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		WritableWorkbook workbook = Workbook.createWorkbook(out); 
 		WritableSheet sheet = workbook.createSheet("First Sheet", 0); 
@@ -195,7 +195,7 @@ public class ReportServiceImpl implements IReportService {
 	}
 
 	@Override
-	public ReportDefinition load(ISession session, Catalog catalog) {
+	public ReportDefinition load(Session session, Catalog catalog) {
 		// TODO Auto-generated method stub
 		return null;
 	}

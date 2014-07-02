@@ -1,11 +1,10 @@
 package com.ceres.cldoc.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ceres.cldoc.model.IEntity;
-
-public class Entity implements IEntity {
+public class Entity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public static final int ENTITY_TYPE_PERSON = 181;
@@ -17,7 +16,7 @@ public class Entity implements IEntity {
 	protected Long id;
 
 	protected String name;
-	@Override
+
 	public String getName() {
 		return name;
 	}
@@ -91,7 +90,6 @@ public class Entity implements IEntity {
 		return id;
 	}
 
-	@Override
 	public Long getId() {
 		return id;
 	}
@@ -100,7 +98,6 @@ public class Entity implements IEntity {
 		this.id = id;
 	}
 
-	@Override
 	public int getType() {
 		return type;
 	}

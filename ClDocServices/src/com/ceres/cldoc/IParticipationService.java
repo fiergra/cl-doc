@@ -4,10 +4,10 @@ import java.util.HashMap;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Participation;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 public interface IParticipationService {
-	void save(ISession session, Participation participation);
-	HashMap<String, Participation> load(ISession session, Act act);
-	void delete(ISession session, long actId, String role);
+	void save(Session session, Participation participation);
+	HashMap<String, Participation> load(Session session, Act act);
+	void delete(Session session, long actId, String role);
 }

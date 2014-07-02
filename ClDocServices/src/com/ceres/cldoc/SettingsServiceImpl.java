@@ -11,7 +11,7 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.FileSystemNode;
 import com.ceres.cldoc.util.Files;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 public class SettingsServiceImpl implements ISettingsService {
 
@@ -21,7 +21,7 @@ public class SettingsServiceImpl implements ISettingsService {
 	}
 
 	@Override
-	public void set(ISession session, final String name, final String value, final Entity entity) {
+	public void set(Session session, final String name, final String value, final Entity entity) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -55,7 +55,7 @@ public class SettingsServiceImpl implements ISettingsService {
 	}
 
 	@Override
-	public String get(ISession session, final String name, final Entity entity) {
+	public String get(Session session, final String name, final Entity entity) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

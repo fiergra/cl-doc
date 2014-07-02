@@ -18,15 +18,15 @@ import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.cldoc.model.IEntity;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.Session;
 
 public class LogServiceImpl implements ILogService {
 
 	private static Logger log = Logger.getLogger("LogService");
 
 	@Override
-	public void log(final ISession session, final int type, final Act act, final String logEntry) {
+	public void log(final Session session, final int type, final Act act, final String logEntry) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -41,7 +41,7 @@ public class LogServiceImpl implements ILogService {
 					s.setNull(i++, Types.INTEGER);
 				}
 				Participation participation = act.getParticipation(Participation.PROTAGONIST);
-				IEntity entity = participation != null ? participation.entity : null;
+				Entity entity = participation != null ? participation.entity : null;
 				
 				if (entity != null && entity.getId() != null) {
 					s.setLong(i++, entity.getId());
@@ -57,7 +57,7 @@ public class LogServiceImpl implements ILogService {
 	}
 
 	@Override
-	public List<LogEntry> listRecent(final ISession session) {
+	public List<LogEntry> listRecent(final Session session) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

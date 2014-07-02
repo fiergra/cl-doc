@@ -8,13 +8,13 @@ import java.util.List;
 import com.ceres.cldoc.IEntityService;
 import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.Locator;
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.GWTEntityService;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.cldoc.model.ISession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -29,33 +29,33 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public Entity save(ISession session, Entity entity) {
+	public Entity save(Session session, Entity entity) {
 		getEntityService().save(session, entity);
 		return entity;
 	}
 
 	@Override
-	public EntityRelation save(ISession session, EntityRelation er) {
+	public EntityRelation save(Session session, EntityRelation er) {
 		return getEntityService().save(session, er);
 	}
 
 	@Override
-	public void delete(ISession session, EntityRelation er) {
+	public void delete(Session session, EntityRelation er) {
 		getEntityService().delete(session, er);
 	}
 
 	@Override
-	public Person save(ISession session, Person person) {
+	public Person save(Session session, Person person) {
 		getEntityService().save(session, person);
 		return person;
 	}
 
 	@Override
-	public void delete(ISession session, Person person) {
+	public void delete(Session session, Person person) {
 	}
 
 	@Override
-	public void delete(ISession session, final Entity entity) {
+	public void delete(Session session, final Entity entity) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -92,32 +92,32 @@ public class GWTEntityServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<Person> search(ISession session, String criteria) {
+	public List<Person> search(Session session, String criteria) {
 		return getEntityService().search(session, criteria);
 	}
 
 	@Override
-	public List<Entity> search(ISession session, String criteria, int type) {
+	public List<Entity> search(Session session, String criteria, int type) {
 		return getEntityService().list(session, criteria, type);
 	}
 
 	@Override
-	public <T extends Entity> T findById(ISession session, long id) {
+	public <T extends Entity> T findById(Session session, long id) {
 		return getEntityService().load(session, id);
 	}
 
 	@Override
-	public List<Person> findByAssignment(ISession session, String filter, String roleCode) {
+	public List<Person> findByAssignment(Session session, String filter, String roleCode) {
 		return getEntityService().load(session, filter, roleCode);
 	}
 
 	@Override
-	public <T extends Entity> List<T> list(ISession session,	Integer typeId) {
+	public <T extends Entity> List<T> list(Session session,	Integer typeId) {
 		return getEntityService().list(session, typeId);
 	}
 
 	@Override
-	public List<EntityRelation> listRelations(ISession session, Entity entity, boolean asSubject, Catalog relationType) {
+	public List<EntityRelation> listRelations(Session session, Entity entity, boolean asSubject, Catalog relationType) {
 		return getEntityService().listRelations(session, entity, asSubject, relationType);
 	}
 

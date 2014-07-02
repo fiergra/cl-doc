@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.IEntitySelector;
 import com.ceres.cldoc.client.views.OnClick;
-import com.ceres.cldoc.model.IApplication;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -31,10 +31,10 @@ public class OnDemandComboBox <T extends Serializable> extends HorizontalPanel i
 //	private final Image pbNew = new Image("icons/16/Button-Add-01.png");
 	
 	private List<T> itemList;
-	private final IApplication clDoc;
+	private final ClDoc clDoc;
 //	private final OnDemandChangeListener<T> changeListener;
 	
-	public OnDemandComboBox(final IApplication clDoc, 
+	public OnDemandComboBox(final ClDoc clDoc, 
 			ListRetrievalService<T> listRetrievalService, 
 			LabelFunction <T> labelFunxtion, 
 			final OnClick<TextBox> notFound,

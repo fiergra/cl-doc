@@ -1,8 +1,8 @@
 package com.ceres.cldoc.client.views;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.PersonDetails;
 import com.ceres.cldoc.client.service.SRV;
-import com.ceres.cldoc.model.IApplication;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.shared.domain.PatientWrapper;
@@ -14,10 +14,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PersonEditor {
 //
-//	private final OnClick<Person> onSave;
+	private OnClick<Person> onSave;
 //	private final PersonWrapper personWrapper;
 //	
-//	public PersonEditor(IApplication clDoc, final Person person, Runnable setModified, OnClick<Person> onSave) {
+//	public PersonEditor(ClDoc clDoc, final Person person, Runnable setModified, OnClick<Person> onSave) {
 //		super(Unit.EM);
 //		this.personWrapper = new PersonWrapper(person);
 //		this.onSave = onSave;
@@ -80,7 +80,7 @@ public class PersonEditor {
 //		addWidgetsAndFields(SRV.c.postCode(), lineDefs);
 //	}
 //
-	public static void editPerson(final IApplication clDoc, final Person person, final OnClick<Person> onSave) {
+	public static void editPerson(final ClDoc clDoc, final Person person, final OnClick<Person> onSave) {
 		final Interactor ia = new Interactor();
 		final PersonWrapper personWrapper = person instanceof Patient ? new PatientWrapper((Patient) person) : new PersonWrapper(person);
 		Widget pd = PersonDetails.create(clDoc, person, ia);
@@ -93,7 +93,7 @@ public class PersonEditor {
 			public void onClick(final PopupPanel v) {
 				v.hide();
 				ia.fromDialog(personWrapper);
-				savePerson(clDoc, personWrapper.unwrap());
+				savePerson(clDoc, personWrapper.unwrap(), onSave);
 			}
 		},
 		new OnClick<PopupPanel>() {
@@ -140,14 +140,14 @@ public class PersonEditor {
 //		return person instanceof Patient ? new PatientWrapper((Patient) person) : new PersonWrapper(person);
 //	}
 //
-	private static void savePerson(IApplication clDoc, Person result) {
+	private static void savePerson(ClDoc clDoc, Person result, final OnClick<Person> onSave) {
 		SRV.humanBeingService.save(clDoc.getSession(), result, new DefaultCallback<Person>(clDoc, "save") {
 
 			@Override
 			public void onResult(Person result) {
-//				if (onSave != null) {
-//					onSave.onClick(result);
-//				}
+				if (onSave != null) {
+					onSave.onClick(result);
+				}
 //				searchBox.setText(result.lastName);
 //				doSearch();
 			}
@@ -155,7 +155,7 @@ public class PersonEditor {
 		
 	}
 	
-	private static void deletePerson(IApplication clDoc, Person person) {
+	private static void deletePerson(ClDoc clDoc, Person person) {
 		SRV.humanBeingService.delete(clDoc.getSession(), person, new DefaultCallback<Void>(clDoc, "deletePerson"){
 
 			@Override

@@ -11,14 +11,14 @@ import java.util.Iterator;
 
 import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.Locator;
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.util.Jdbc;
 
 public class AccessControl {
-	public static Policies get(final ISession session, final User user, final Entity entity) {
+	public static Policies get(final Session session, final User user, final Entity entity) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -72,7 +72,7 @@ public class AccessControl {
 				}
 			}
 
-			private void getRoles(final ISession session, Connection con,
+			private void getRoles(final Session session, Connection con,
 					final User user, final Entity entity) throws SQLException {
 				String sql = "select * from Assignment where startdate <= CURRENT_DATE AND (enddate is null OR enddate > CURRENT_DATE) ";
 

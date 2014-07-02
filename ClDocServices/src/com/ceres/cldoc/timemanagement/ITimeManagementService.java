@@ -4,7 +4,7 @@ import java.util.Date;
 
 import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 public interface ITimeManagementService {
 	public static final String WORKINGTIME_ACT = "WorkingTime";
@@ -13,9 +13,9 @@ public interface ITimeManagementService {
 	public static final String HALFDAY_START = "halfDayStart";
 	public static final String HALFDAY_END = "halfDayEnd";
 
-	WorkPattern getWorkPattern(ISession session, Entity person);
-	WorkPattern getWorkPattern(ISession session, Entity person, Date referenceDate);
-	TimeSheetYear loadTimeSheetYear(ISession session, Entity person, int year);
-	void setWorkPattern(ISession session, Person person, Entity wp, Date startFromMonth);
-	byte[] exportXLS(ISession session, Long valueOf);
+	WorkPattern getWorkPattern(Session session, Entity person);
+	WorkPattern getWorkPattern(Session session, Entity person, Date referenceDate);
+	TimeSheetYear loadTimeSheetYear(Session session, Entity person, int year);
+	void setWorkPattern(Session session, Person person, Entity wp, Date startFromMonth);
+	byte[] exportXLS(Session session, Long valueOf);
 }

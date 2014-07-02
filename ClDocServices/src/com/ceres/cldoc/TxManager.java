@@ -10,7 +10,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 
 public class TxManager {
@@ -69,9 +69,9 @@ public class TxManager {
 		return con;
 	}
 
-	private static ConcurrentHashMap<ISession, Transaction> transactions = new ConcurrentHashMap<ISession, Transaction>();
+	private static ConcurrentHashMap<Session, Transaction> transactions = new ConcurrentHashMap<Session, Transaction>();
 
-	public static synchronized Connection start(ISession session) throws SQLException {
+	public static synchronized Connection start(Session session) throws SQLException {
 		Transaction tx = transactions.get(session);
 		if (tx == null) {
 			log.finest("starting transaction (" + session.getId() + ")");
@@ -88,7 +88,7 @@ public class TxManager {
 		return tx.con;
 	}
 
-	public static synchronized void end(ISession session) {
+	public static synchronized void end(Session session) {
 		Transaction tx = transactions.get(session);
 
 		if (--tx.txCount == 0) {
@@ -107,7 +107,7 @@ public class TxManager {
 		}
 	}
 
-	public static synchronized void cancel(ISession session) {
+	public static synchronized void cancel(Session session) {
 		Transaction tx = transactions.get(session);
 
 		if (tx.txCount > 0) {

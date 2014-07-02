@@ -3,12 +3,10 @@ package com.ceres.cldoc;
 import java.io.Serializable;
 
 import com.ceres.cldoc.model.IAction;
-import com.ceres.cldoc.model.ISession;
-import com.ceres.cldoc.model.IUser;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.security.Policies;
 
-public class Session implements ISession, Serializable {
+public class Session implements Serializable {
 
 	private static final long serialVersionUID = -5371736346089900693L;
 
@@ -25,13 +23,12 @@ public class Session implements ISession, Serializable {
 	public Session() {
 	}
 
-	@Override
 	public boolean isAllowed(IAction action) {
 		Action a = (Action)action;
 		return policies != null ? policies.isAllowed(a.type, a.action) : false;
 	}
 
-	//	public ISession(User user, long id) {
+	//	public Session(User user, long id) {
 //		this.user = user;
 //		this.id = id;
 //	}
@@ -41,20 +38,18 @@ public class Session implements ISession, Serializable {
 		this.dbUserName = dbUserName;
 		this.dbURL = dbURL;
 		this.policies = policies;
-		this.id = createISessionId();
+		this.id = createSessionId();
 	}
 
-	private synchronized static long createISessionId() {
+	private synchronized static long createSessionId() {
 		return sessionIds++;
 	}
 
-	@Override
 	public long getId() {
 		return id;
 	}
 
-	@Override
-	public IUser getUser() {
+	public User getUser() {
 		return user;
 	}
 	

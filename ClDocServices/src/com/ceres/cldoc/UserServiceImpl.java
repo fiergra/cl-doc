@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.User;
@@ -22,11 +21,11 @@ public class UserServiceImpl implements IUserService {
 	private static Logger log = Logger.getLogger("UserService");
 
 	@Override
-	public ISession login(final ISession session, final String userName, final String password) {
-		ISession s = Jdbc.doTransactional(session, new ITransactional() {
+	public Session login(final Session session, final String userName, final String password) {
+		Session s = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
-			public ISession execute(Connection con) throws SQLException {
+			public Session execute(Connection con) throws SQLException {
 				IEntityService entityService = Locator.getEntityService();
 				User user = null;
 				String hash = Strings.hash(password);
@@ -61,7 +60,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public User register(final ISession session, final Person person, final Organisation organisation, final String userName, final String password) {
+	public User register(final Session session, final Person person, final Organisation organisation, final String userName, final String password) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -105,7 +104,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public long setPassword(ISession session, final User user, final String password1, String password2) {
+	public long setPassword(Session session, final User user, final String password1, String password2) {
 		long returnCode; 
 		
 		if (password1 != null && password2 != null) {
@@ -135,7 +134,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public List<User> listUsers(final ISession session, final String filter) {
+	public List<User> listUsers(final Session session, final String filter) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -170,7 +169,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public void addRole(ISession session, final User user, final Catalog role) {
+	public void addRole(Session session, final User user, final Catalog role) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -185,7 +184,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public void removeRole(ISession session, final User user, final Catalog role) {
+	public void removeRole(Session session, final User user, final Catalog role) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

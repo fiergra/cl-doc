@@ -23,8 +23,8 @@ import com.ceres.cldoc.model.Attachment;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.CatalogList;
 import com.ceres.cldoc.model.IActField;
-import com.ceres.cldoc.model.IEntity;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.model.Entity;
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.util.Jdbc;
@@ -34,7 +34,7 @@ public class ActServiceImpl implements IActService {
 	private static Logger log = Logger.getLogger("GenericActService");
 
 	@Override
-	public void save(final ISession session, final Collection<Act> acts) {
+	public void save(final Session session, final Collection<Act> acts) {
 		for (Act act:acts) {
 			if (act != null) {
 				save(session, act);
@@ -44,7 +44,7 @@ public class ActServiceImpl implements IActService {
 	
 	
 	@Override
-	public void save(final ISession session, final Act act) {
+	public void save(final Session session, final Act act) {
 		Act i = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -77,7 +77,7 @@ public class ActServiceImpl implements IActService {
 		});
 	}
 
-	protected String generateSummary(ISession session, Act act) {
+	protected String generateSummary(Session session, Act act) {
 		String summary;
 		if (act.actClass.name.equals(ActClass.EXTERNAL_DOC.name)) {
 			String comment = act.getString("comment");
@@ -91,7 +91,7 @@ public class ActServiceImpl implements IActService {
 		return summary;
 	}
 
-	protected void saveParticipations(ISession session, Act act) {
+	protected void saveParticipations(Session session, Act act) {
 		if (act.participations != null) {
 			Iterator<Entry<String, Participation>> iter = act.participations.entrySet().iterator();
 			while (iter.hasNext()) {
@@ -101,7 +101,7 @@ public class ActServiceImpl implements IActService {
 		}
 	}
 
-	private void saveParticipation(ISession session, Act act, String roleId, Participation participation) {
+	private void saveParticipation(Session session, Act act, String roleId, Participation participation) {
 		IParticipationService participationService = Locator.getParticipationService();
 		if (participation != null) {
 			participationService.save(session, participation);
@@ -110,7 +110,7 @@ public class ActServiceImpl implements IActService {
 		}
 	}
 
-	protected void saveFields(ISession session, Connection con, Act act) throws SQLException {
+	protected void saveFields(Session session, Connection con, Act act) throws SQLException {
 		if (act.fields != null) {
 			Iterator<Entry<String, IActField>> fieldsIter = act.fields.entrySet().iterator();
 			while (fieldsIter.hasNext()) {
@@ -119,7 +119,7 @@ public class ActServiceImpl implements IActService {
 		}
 	}
 
-	private void saveField(ISession session, Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
+	private void saveField(Session session, Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
 		if (entry.getValue() != null && entry.getValue().getId() == null) {
 			insertField(session, con, act, entry, true);
 		} else {
@@ -127,7 +127,7 @@ public class ActServiceImpl implements IActService {
 		}
 	}
 
-	private void updateField(ISession session, Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
+	private void updateField(Session session, Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
 				"update ActField set catalogValue = ?, intvalue = ?, stringvalue = ?, datevalue = ?, floatvalue = ?, listValue = ? where id = ?");
 		String fieldName = entry.getKey();
@@ -138,7 +138,7 @@ public class ActServiceImpl implements IActService {
 		s.close();
 	}
 
-	private void insertField(ISession session, Connection con, Act act, Entry<String, IActField> entry, boolean register) throws SQLException {
+	private void insertField(Session session, Connection con, Act act, Entry<String, IActField> entry, boolean register) throws SQLException {
 		try {
 			PreparedStatement s = con.prepareStatement(
 					"insert into ActField " +
@@ -175,7 +175,7 @@ public class ActServiceImpl implements IActService {
 	}
 
 
-	private int bindVariables(ISession session, PreparedStatement s, int i, Act act,
+	private int bindVariables(Session session, PreparedStatement s, int i, Act act,
 			String fieldName, IActField field)
 			throws SQLException {
 		if (field.getType() == IActField.FT_CATALOG && field.getCatalogValue() != null) {
@@ -258,7 +258,7 @@ public class ActServiceImpl implements IActService {
 		s.close();
 	}
 
-	private void delete(ISession session, Connection con, Act act) throws SQLException {
+	private void delete(Session session, Connection con, Act act) throws SQLException {
 		PreparedStatement s = con.prepareStatement("delete from Participation where actid = ?");
 		s.setLong(1, act.id);
 		int rows = s.executeUpdate();
@@ -284,7 +284,7 @@ public class ActServiceImpl implements IActService {
 		s.close();
 	}
 
-	private Act update(ISession session, Connection con, Act act) throws SQLException {
+	private Act update(Session session, Connection con, Act act) throws SQLException {
 		PreparedStatement s = con.prepareStatement("update Act set Date = ?, ModifiedByUserId = ?, summary = ? where id = ?");
 		int i = 1;
 		s.setTimestamp(i++, new java.sql.Timestamp(act.date != null ? act.date.getTime() : new Date().getTime()));
@@ -296,7 +296,7 @@ public class ActServiceImpl implements IActService {
 		return act;
 	}
 
-	private Act insert(ISession session, Connection con, Act act, boolean register) throws SQLException {
+	private Act insert(Session session, Connection con, Act act, boolean register) throws SQLException {
 		try {
 			PreparedStatement s = con.prepareStatement("insert into Act (ActClassId,Date,summary,CreatedByUserId,ModifiedByUserId ) values ((select id from ActClass where name = ?), ?, ?, ?, ?)",
 					new String[]{"ID"});
@@ -381,7 +381,7 @@ public class ActServiceImpl implements IActService {
 	}
 
 	@Override
-	public List<Act> load(final ISession session, final String className, final IEntity entity, final Long roleId, final Date dateFrom, final Date dateTo) {
+	public List<Act> load(final Session session, final String className, final Entity entity, final Long roleId, final Date dateFrom, final Date dateTo) {
 		List<Act> acts = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -393,7 +393,7 @@ public class ActServiceImpl implements IActService {
 		return acts;
 	}
 
-	private List<Act> executeSelect(ISession session, Connection con, Long id, String className, IEntity entity, Long roleId, Date dateFrom, Date dateTo, Boolean singleton) throws SQLException {
+	private List<Act> executeSelect(Session session, Connection con, Long id, String className, Entity entity, Long roleId, Date dateFrom, Date dateTo, Boolean singleton) throws SQLException {
 		String sql = "select " +
 				"i.id actid, i.date, i.summary, actclass.id classid, actclass.name classname, actclass.summarydef, actclass.entitytype entitytype, actclass.singleton singleton, actclassfield.name fieldname, actclassfield.type, field.*," +
 				"uc.id createdByUserId, uc.name createdByUserName, um.id modifiedByUserId, um.name modifiedByUserName " +
@@ -484,7 +484,7 @@ public class ActServiceImpl implements IActService {
 
 	
 	@Override
-	public Act load(final ISession session, final long id) {
+	public Act load(final Session session, final long id) {
 		Act act = Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -501,7 +501,7 @@ public class ActServiceImpl implements IActService {
 		return act;
 	}
 
-	private List<Act> fetchActs(ISession session, ResultSet rs) throws SQLException {
+	private List<Act> fetchActs(Session session, ResultSet rs) throws SQLException {
 		List<Act> acts = new ArrayList<Act>();
 		Act act = null;
 		ICatalogService catalogService = Locator.getCatalogService();
@@ -570,7 +570,7 @@ public class ActServiceImpl implements IActService {
 
 	
 	@Override
-	public CatalogList loadCatalogList(ISession session, final long listId) {
+	public CatalogList loadCatalogList(Session session, final long listId) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -595,7 +595,7 @@ public class ActServiceImpl implements IActService {
 	}
 
 //	@Override
-//	public void delete(ISession session, final Act act) {
+//	public void delete(Session session, final Act act) {
 //		Jdbc.doTransactional(session, new ITransactional() {
 //			
 //			@Override
@@ -630,7 +630,7 @@ public class ActServiceImpl implements IActService {
 //	}
 //
 	@Override
-	public List<ActClass> listClasses(ISession session, final String filter) {
+	public List<ActClass> listClasses(Session session, final String filter) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -655,7 +655,7 @@ public class ActServiceImpl implements IActService {
 	}
 
 //	@Override
-//	public void rebuildIndex(final ISession session) {
+//	public void rebuildIndex(final Session session) {
 //		Jdbc.doTransactional(session, new ITransactional() {
 //			
 //			@Override
@@ -676,7 +676,7 @@ public class ActServiceImpl implements IActService {
 //	}
 	
 	@Override
-	public List<Attachment> listAttachments(final ISession session, final Act act) {
+	public List<Attachment> listAttachments(final Session session, final Act act) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -703,7 +703,7 @@ public class ActServiceImpl implements IActService {
 	}
 	
 	@Override
-	public void saveAttachment(final ISession session, final Attachment attachment) {
+	public void saveAttachment(final Session session, final Attachment attachment) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -738,7 +738,7 @@ public class ActServiceImpl implements IActService {
 	}
 	
 	@Override
-	public void deleteAttachment(final ISession session, final Attachment attachment) {
+	public void deleteAttachment(final Session session, final Attachment attachment) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override

@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.HumanBeingListBox;
-import com.ceres.cldoc.model.IApplication;
-import com.ceres.cldoc.model.IEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
@@ -17,9 +17,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 
 public class HumanBeingSelectorFactory implements ILinkFactory {
-	private final IApplication application;
+	private final ClDoc application;
 	
-	public HumanBeingSelectorFactory(final IApplication application) {
+	public HumanBeingSelectorFactory(final ClDoc application) {
 		this.application = application;
 	}
 	@Override
@@ -51,7 +51,7 @@ public class HumanBeingSelectorFactory implements ILinkFactory {
 			
 			@Override
 			public void fromDialog(Map<String, Serializable> item) {
-				IEntity e = hbl.getSelected();
+				Entity e = hbl.getSelected();
 				item.put(fieldName, e != null ? e.getId() : null);
 			}
 
