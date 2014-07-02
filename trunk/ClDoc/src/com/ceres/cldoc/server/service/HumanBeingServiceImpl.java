@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.ceres.cldoc.IEntityService;
 import com.ceres.cldoc.Locator;
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.HumanBeingService;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.model.ISession;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -21,33 +21,33 @@ public class HumanBeingServiceImpl extends RemoteServiceServlet implements
 	}
 	
 	@Override
-	public Person save(ISession session, Person person) {
+	public Person save(Session session, Person person) {
 		getEntityService().save(session, person);
 		return person;
 	}
 
 	@Override
-	public void delete(ISession session, Person person) {
+	public void delete(Session session, Person person) {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public List<Person> search(ISession session, String criteria) {
+	public List<Person> search(Session session, String criteria) {
 		return getEntityService().search(session, criteria);
 	}
 
 	@Override
-	public Person findById(ISession session, long id) {
+	public Person findById(Session session, long id) {
 		return getEntityService().load(session, id);
 	}
 
 	@Override
-	public List<Person> findByAssignment(ISession session, String filter, String roleCode) {
+	public List<Person> findByAssignment(Session session, String filter, String roleCode) {
 		return getEntityService().load(session, filter, roleCode);
 	}
 
 	@Override
-	public Long getUniqueId(ISession session) {
+	public Long getUniqueId(Session session) {
 		return getEntityService().getUniqueId(session);
 	}
 

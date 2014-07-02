@@ -2,9 +2,9 @@ package com.ceres.cldoc.client.views;
 
 import java.util.List;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.IApplication;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.ListBox;
@@ -14,7 +14,7 @@ public class EntityListBox <T extends Entity> extends ListBox implements IEntity
 	private T selected;
 	private List<T> entities;
 
-	public EntityListBox(final IApplication clDoc, final int typeId, final boolean hasNullValue) {
+	public EntityListBox(final ClDoc clDoc, final int typeId, final boolean hasNullValue) {
 		SRV.entityService.list(clDoc.getSession(), typeId, new DefaultCallback<List<T>>(clDoc, "retrieve entities") {
 
 			@Override

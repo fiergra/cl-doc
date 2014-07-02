@@ -4,14 +4,14 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.ceres.cldoc.model.LayoutDefinition;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 public interface ILayoutDefinitionService {
-	void save(ISession session, LayoutDefinition ld);
-	LayoutDefinition load(ISession session, String className, int typeId);
-	List<LayoutDefinition> listLayoutDefinitions(ISession session, String filter, Integer typeId, Long entityType, Boolean isSingleton);
-	void delete(ISession session, String className);
+	void save(Session session, LayoutDefinition ld);
+	LayoutDefinition load(Session session, String className, int typeId);
+	List<LayoutDefinition> listLayoutDefinitions(Session session, String filter, Integer typeId, Long entityType, Boolean isSingleton);
+	void delete(Session session, String className);
 	
-	String exportLayouts(ISession session);
-	void importLayouts(ISession session, InputStream in);
+	String exportLayouts(Session session);
+	void importLayouts(Session session, InputStream in);
 }

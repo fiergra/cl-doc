@@ -8,8 +8,8 @@ import com.ceres.cldoc.client.controls.OnDemandComboBox;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.IApplication;
-import com.ceres.cldoc.model.IEntity;
+import com.ceres.cldoc.client.ClDoc;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TextBox;
@@ -18,7 +18,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 	
 	private Catalog role;
 	
-	public HumanBeingListBox(final IApplication clDoc, final String role) {
+	public HumanBeingListBox(final ClDoc clDoc, final String role) {
 		super(clDoc, 
 			role == null ?
 			new ListRetrievalService<Person>() {
@@ -97,7 +97,7 @@ public class HumanBeingListBox extends OnDemandComboBox <Person> implements IAss
 	}
 
 	@Override
-	public boolean setSelected(IEntity entity) {
+	public boolean setSelected(Entity entity) {
 		return super.setSelected((Person) entity);
 	}
 

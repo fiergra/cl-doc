@@ -4,11 +4,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.CatalogListBox;
 import com.ceres.cldoc.client.views.CatalogRadioGroup;
 import com.ceres.cldoc.client.views.IEntitySelector;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.IApplication;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorWidgetLink;
@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class CatalogSingleSelectorFactory implements ILinkFactory {
 
 	final private boolean useList;
-	final private IApplication application;
+	final private ClDoc application;
 
-	public CatalogSingleSelectorFactory(IApplication application, boolean useList) {
+	public CatalogSingleSelectorFactory(ClDoc application, boolean useList) {
 		this.useList = useList;
 		this.application = application;
 	}

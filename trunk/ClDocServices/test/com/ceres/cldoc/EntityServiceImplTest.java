@@ -16,7 +16,6 @@ import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.model.ISession;
 
 public class EntityServiceImplTest extends TransactionalTest {
 
@@ -91,7 +90,7 @@ public class EntityServiceImplTest extends TransactionalTest {
 		IUserService userService = Locator.getUserService();
 		IEntityService entityService = Locator.getEntityService();
 		
-		ISession session = userService.login(getSession(), "heinz", "achmed");
+		Session session = userService.login(getSession(), "heinz", "achmed");
 		Assert.assertNull(session);
 		Person person = new Person();
 		person.firstName = "Heinz";

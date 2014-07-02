@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
-import com.ceres.cldoc.model.IApplication;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.ListBox;
 
@@ -17,7 +17,7 @@ public class CatalogListBox extends ListBox implements IEntitySelector <Catalog>
 	private final boolean isMandatory = false;
 	private Catalog emptyRecord;
 
-	public CatalogListBox(IApplication clDoc, String parentCode) {
+	public CatalogListBox(ClDoc clDoc, String parentCode) {
 		addStyleName("cataloglistbox");
 		SRV.catalogService.listCatalogs(clDoc.getSession(), parentCode, new DefaultCallback<List<Catalog>>(clDoc, "listCatalogs") {
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.LogEntry;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 public interface ILogService {
 	final static int INSERT = 1;
@@ -13,6 +13,6 @@ public interface ILogService {
 	static final int ADD_ATTACHMENT = 10;
 	static final int DELETE_ATTACHMENT = 11;
 
-	void log(ISession session, int type, Act act, String logEntry);
-	List<LogEntry> listRecent(ISession session);
+	void log(Session session, int type, Act act, String logEntry);
+	List<LogEntry> listRecent(Session session);
 }

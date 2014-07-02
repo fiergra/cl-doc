@@ -14,7 +14,6 @@ import com.ceres.cldoc.client.views.dynamicforms.IActRenderer;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.IEntity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
 import com.google.gwt.dom.client.Style.Unit;
@@ -39,12 +38,12 @@ public class HistoryView extends DockLayoutPanel {
 	private final IActRenderer viewer;
 	private final ClickableTable<Act>historyTable;
 	
-	private IEntity e;
+	private Entity e;
 	private final ClDoc clDoc;
 	private final TabLayoutPanel tab;
 	private final HashMap<String, LayoutDefinition> layouts = new HashMap<String, LayoutDefinition>();
 
-	public HistoryView(final ClDoc clDoc, IEntity entity, final TabLayoutPanel tab) {
+	public HistoryView(final ClDoc clDoc, Entity entity, final TabLayoutPanel tab) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.e = entity;

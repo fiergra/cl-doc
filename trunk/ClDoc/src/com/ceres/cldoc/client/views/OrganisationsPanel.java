@@ -1,11 +1,11 @@
 package com.ceres.cldoc.client.views;
 
 import com.ceres.cldoc.client.ClDoc;
-import com.ceres.cldoc.model.IOrganisation;
+import com.ceres.cldoc.model.Organisation;
 
-public class OrganisationsPanel extends EntityFile<IOrganisation> {
+public class OrganisationsPanel extends EntityFile<Organisation> {
 
-	public OrganisationsPanel(ClDoc clDoc, IOrganisation organisation) {
+	public OrganisationsPanel(ClDoc clDoc, Organisation organisation) {
 		super(clDoc, organisation, clDoc.getSessionLogo(clDoc.getSession()), "");
 	}
 

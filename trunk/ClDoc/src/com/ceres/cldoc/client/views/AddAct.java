@@ -7,7 +7,7 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
-import com.ceres.cldoc.model.IEntity;
+import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -30,7 +30,7 @@ public class AddAct extends DialogBox {
 	private final OnOkHandler<Act> onOk;
 	private final ClDoc clDoc;
 
-	public AddAct(ClDoc clDoc, IEntity humanBeing, List<Act> acts, OnOkHandler<Act> onOk) {
+	public AddAct(ClDoc clDoc, Entity humanBeing, List<Act> acts, OnOkHandler<Act> onOk) {
 		this.clDoc = clDoc;
 		this.onOk = onOk;
 		setup(humanBeing, acts);
@@ -44,7 +44,7 @@ public class AddAct extends DialogBox {
 //	hp.add(addNew);
 //
 	
-	private void setup(final IEntity entity, final List<Act> acts) {
+	private void setup(final Entity entity, final List<Act> acts) {
 		setText(SRV.c.add());
 		DockLayoutPanel widget = new DockLayoutPanel(Unit.PX);
 		final ListBox list = new ListBox();
@@ -154,7 +154,7 @@ public class AddAct extends DialogBox {
 		});
 	}
 	
-	public static void addAct(ClDoc clDoc, IEntity humanBeing, List<Act> acts, OnOkHandler<Act> onOk) {
+	public static void addAct(ClDoc clDoc, Entity humanBeing, List<Act> acts, OnOkHandler<Act> onOk) {
 		AddAct avb = new AddAct(clDoc, humanBeing, acts, onOk);
 		avb.setGlassEnabled(true);
 		avb.setAnimationEnabled(true);

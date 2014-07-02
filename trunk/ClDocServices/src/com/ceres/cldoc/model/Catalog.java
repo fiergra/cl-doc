@@ -16,6 +16,9 @@ public class Catalog implements Serializable, HasChildren<Catalog> {
 	public static final Catalog VIEW = new Catalog(71l, "VIEW");
 	public static final Catalog EDIT = new Catalog(72l, "EDIT");
 
+	public static final Catalog ISMEMBEROF = new Catalog(155l, "IsMemberOf");
+	public static final Catalog WORKSFOR = new Catalog(159l, "WorksFor");
+
 	private static final long serialVersionUID = -6847677602213023115L;
 	
 

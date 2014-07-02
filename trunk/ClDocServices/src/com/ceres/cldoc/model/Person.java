@@ -2,9 +2,7 @@ package com.ceres.cldoc.model;
 
 import java.util.Date;
 
-import com.ceres.cldoc.model.IPerson;
-
-public class Person extends Entity implements IPerson {
+public class Person extends Entity {
 
 	private static final long serialVersionUID = -6144522368213126601L;
 
@@ -30,12 +28,10 @@ public class Person extends Entity implements IPerson {
 		return firstName + " " + lastName;
 	}
 
-	@Override
 	public String getFirstName() {
 		return firstName;
 	}
 
-	@Override
 	public String getLastName() {
 		return lastName;
 	}

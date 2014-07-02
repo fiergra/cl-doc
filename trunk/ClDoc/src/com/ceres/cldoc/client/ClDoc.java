@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.ceres.cldoc.Action;
 import com.ceres.cldoc.IUserService;
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.client.views.ActRenderer;
 import com.ceres.cldoc.client.views.ClosableTab;
@@ -26,12 +27,9 @@ import com.ceres.cldoc.client.views.dynamicforms.PagesFactory;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.IApplication;
-import com.ceres.cldoc.model.IOrganisation;
-import com.ceres.cldoc.model.ISession;
 import com.ceres.cldoc.model.LayoutDefinition;
+import com.ceres.cldoc.model.Organisation;
 import com.ceres.cldoc.model.Participation;
-import com.ceres.cldoc.model.User;
 import com.ceres.dynamicforms.client.SimpleForm;
 import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.core.client.EntryPoint;
@@ -50,7 +48,7 @@ import com.google.gwt.user.client.ui.Widget;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class ClDoc implements EntryPoint, IApplication {
+public class ClDoc implements EntryPoint {
 
 	/**
 	 * This is the entry point method.
@@ -59,12 +57,11 @@ public class ClDoc implements EntryPoint, IApplication {
 	private ConfiguredTabPanel<ClDoc> mainTab;
 	
 	private static long callId = 0;
-	private ISession session;
+	private Session session;
 	private LogOutput logOutput;
 	private final Image progress = new Image("images/progress.gif");
 	
-	@Override
-	public ISession getSession() {
+	public Session getSession() {
 		return session;
 	}
 	
@@ -82,10 +79,10 @@ public class ClDoc implements EntryPoint, IApplication {
 		String user = System.getProperty("user", null);
 		String pwd = System.getProperty("pwd", null);
 		if (user != null && pwd != null) {
-			SRV.userService.login(user, pwd, new DefaultCallback<ISession>(this, "login") {
+			SRV.userService.login(user, pwd, new DefaultCallback<Session>(this, "login") {
 
 				@Override
-				public void onResult(ISession result) {
+				public void onResult(Session result) {
 					session = result;
 					setupMain(result);
 					preload(result);
@@ -93,13 +90,13 @@ public class ClDoc implements EntryPoint, IApplication {
 			});
 		} else {
 			
-			LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<ISession>() {
+			LoginScreen loginScreen = new LoginScreen(this, new OnOkHandler<Session>() {
 				
 				@Override
-				public void onOk(ISession result) {
+				public void onOk(Session result) {
 					session = result;
 					if (result != null) {
-						if (((User)session.getUser()).hash == null) {
+						if (session.getUser().hash == null) {
 							setPassword(session);
 						} else {
 							setupMain(result);
@@ -115,7 +112,7 @@ public class ClDoc implements EntryPoint, IApplication {
 		
 	}
 	
-	protected void preload(ISession result) {
+	protected void preload(Session result) {
 		SRV.catalogService.listCatalogs(result, "ROLES", new AsyncCallback<List<Catalog>>() {
 			
 			@Override
@@ -129,7 +126,7 @@ public class ClDoc implements EntryPoint, IApplication {
 		});
 	}
 
-	protected void setPassword(final ISession session) {
+	protected void setPassword(final Session session) {
 		final PasswordTextBox pwdField1 = new PasswordTextBox();
 		final PasswordTextBox pwdField2 = new PasswordTextBox();
 		
@@ -141,7 +138,7 @@ public class ClDoc implements EntryPoint, IApplication {
 			@Override
 			public void onClick(PopupPanel pp) {
 				pp.hide();
-				SRV.userService.setPassword(session, (User) session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>(ClDoc.this, "setPassword") {
+				SRV.userService.setPassword(session, session.getUser(), pwdField1.getText(), pwdField2.getText(), new DefaultCallback<Long>(ClDoc.this, "setPassword") {
 
 					@Override
 					public void onResult(Long result) {
@@ -185,7 +182,6 @@ public class ClDoc implements EntryPoint, IApplication {
 		mainTab.selectTab(mainTab.getWidgetIndex(entityFile));
 	}
 	
-	@Override
 	public void status(String text) {
 //		statusMessage.setText(text);
 		if (logOutput != null) {
@@ -197,7 +193,7 @@ public class ClDoc implements EntryPoint, IApplication {
 //		statusMessage.setText("");
 	}
 	
-	private void setupMain(final ISession session) {
+	private void setupMain(final Session session) {
 		final LayoutPanel mainPanel = new LayoutPanel();
 
 		final String open = Window.Location.getParameter("open");
@@ -224,7 +220,7 @@ public class ClDoc implements EntryPoint, IApplication {
 					mainPanel.add(mainWidget);
 				}
 
-				private void filter(ISession session, List<Catalog> catalogs) {
+				private void filter(Session session, List<Catalog> catalogs) {
 					Iterator<Catalog> iter = catalogs.iterator();
 					while (iter.hasNext()) {
 						if (!session.isAllowed(new Action(iter.next().code, Catalog.VIEW.code))) {
@@ -252,7 +248,7 @@ public class ClDoc implements EntryPoint, IApplication {
 		mainPanel.setWidgetVerticalPosition(progress, Alignment.BEGIN);
 	}
 
-	private void addSessionLogo(ISession session, LayoutPanel mainPanel) {
+	private void addSessionLogo(Session session, LayoutPanel mainPanel) {
 		Image logo = getSessionLogo(session);
 		Label welcome = new Label(getDisplayName(session));
 		VerticalPanel vp = new VerticalPanel();
@@ -317,14 +313,14 @@ public class ClDoc implements EntryPoint, IApplication {
 		
 	}
 
-	public Image getSessionLogo(ISession session) {
-		IOrganisation organisation = session.getUser().getOrganisation();
+	public Image getSessionLogo(Session session) {
+		Organisation organisation = session.getUser().getOrganisation();
 		Image logo = new Image("icons/" + organisation.getName() + ".png");
 		logo.setHeight("50px");
 		return logo;
 	}
 
-	private String getDisplayName(ISession s) {
+	private String getDisplayName(Session s) {
 		return s.getUser().getUserName() + "[" + s.getUser().getPerson().getFirstName()  + " " + s.getUser().getPerson().getLastName() +"]";
 	}
 
@@ -332,7 +328,6 @@ public class ClDoc implements EntryPoint, IApplication {
 		this.logOutput = logOutput;
 	}
 
-	@Override
 	public String getLabel(String label) {
 		return label;
 	}
@@ -340,7 +335,6 @@ public class ClDoc implements EntryPoint, IApplication {
 	
 	private final HashMap<Long, String> asyncCalls = new HashMap<Long, String>();
 	
-	@Override
 	public long startAsyncCall(String description) {
 		callId++;
 		asyncCalls.put(callId, description);
@@ -348,7 +342,6 @@ public class ClDoc implements EntryPoint, IApplication {
 		return callId;
 	}
 
-	@Override
 	public void stopAsyncCall(long callId) {
 		asyncCalls.remove(callId);
 		if (asyncCalls.isEmpty()) {

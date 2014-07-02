@@ -2,19 +2,19 @@ package com.ceres.cldoc;
 
 import junit.framework.TestCase;
 
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.model.User;
-import com.ceres.cldoc.model.ISession;
 
 public class TransactionalTest extends TestCase {
 
 	private User user;
-	private ISession session;
+	private Session session;
 	
 	public User getUser() {
 		return user;
 	}
 
-	public ISession getSession() {
+	public Session getSession() {
 		return session;
 	}
 
@@ -23,7 +23,7 @@ public class TransactionalTest extends TestCase {
 		super.setUp();
 		user = new User();
 		user.id = 1l;
-		session = new Session(user, null);
+		session = new Session(user, "anonymous", "no-db", null);
 		TxManager.start(session);
 	}
 

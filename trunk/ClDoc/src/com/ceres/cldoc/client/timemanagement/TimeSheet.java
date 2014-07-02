@@ -15,16 +15,19 @@ import com.ceres.cldoc.client.views.DefaultCallback;
 import com.ceres.cldoc.client.views.HumanBeingListBox;
 import com.ceres.cldoc.client.views.LeaveRegistration;
 import com.ceres.cldoc.client.views.MessageBox;
+import com.ceres.cldoc.client.views.MessageBox.MESSAGE_ICONS;
 import com.ceres.cldoc.client.views.OnClick;
 import com.ceres.cldoc.client.views.ParticipationTimeFactory;
+import com.ceres.cldoc.client.views.PersonEditor;
 import com.ceres.cldoc.client.views.PopupManager;
 import com.ceres.cldoc.model.Act;
 import com.ceres.cldoc.model.ActClass;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.IPerson;
+import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
+import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.timemanagement.ActAsTimeSheetElement;
 import com.ceres.cldoc.timemanagement.ITimeManagementService;
 import com.ceres.cldoc.timemanagement.TimeSheetDay;
@@ -67,13 +70,13 @@ public class TimeSheet extends DockLayoutPanel {
 	private final HorizontalPanel timeSheetPanel = new HorizontalPanel();
 	private final Label leaveBalanceLabel = new Label();
 	private final Label hourBalanceLabel = new Label();
-	private IPerson person;
+	private Person person;
 
 	public TimeSheet(ClDoc clDoc) {
 		this(clDoc, clDoc.getSession().getUser().getPerson());
 	}
 		
-	public TimeSheet(ClDoc clDoc, IPerson person) {
+	public TimeSheet(ClDoc clDoc, Person person) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.person = person;
@@ -130,7 +133,7 @@ public class TimeSheet extends DockLayoutPanel {
 	}
 
 	private Person getPerson() {
-		return (Person) person;
+		return person;
 	}
 	
 	private void setup(final TimeSheetYear tsy) {
@@ -165,6 +168,27 @@ public class TimeSheet extends DockLayoutPanel {
 					}
 				}
 			});
+			
+			Image pbNew = createWidget(SRV.c.newPPP(), "icons/32/Person-New-icon.png", new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					PersonEditor.editPerson(clDoc, new Person(), new OnClick<Person>(){
+
+						@Override
+						public void onClick(Person person) {
+							addWorksForRelation(person);
+							setPerson(person);
+							reloadAndDisplay(clDoc);
+						}
+
+});
+
+				}
+			});
+			pbNew.setPixelSize(18,18);
+			buttons.add(pbNew);
+
 		} else {
 			Label nameLabel = new Label(getPerson().firstName + " " + getPerson().lastName);
 			nameLabel.addStyleName("timeSheetYear");
@@ -201,6 +225,15 @@ public class TimeSheet extends DockLayoutPanel {
 
 		createTimeSheet(timeSheetPanel, tsy);
 		add(new ScrollPanel(timeSheetPanel));
+	}
+
+	private Image createWidget(String label, String source,
+			ClickHandler clickHandler) {
+		Image img = new Image(source);
+		img.setTitle(label);
+		img.addStyleName("linkButton");
+		img.addClickHandler(clickHandler);
+		return img;
 	}
 
 	
@@ -644,4 +677,36 @@ public class TimeSheet extends DockLayoutPanel {
 		interactor.toDialog(leaveAct);
 	}
 
+	private void addWorksForRelation(Person person) {
+		User user = clDoc.getSession().getUser();
+		SRV.entityService.listRelations(clDoc.getSession(), user.getPerson(), true, Catalog.WORKSFOR, new DefaultCallback<List<EntityRelation>>(clDoc, "") {
+
+			@Override
+			public void onResult(List<EntityRelation> result) {
+				if (result.isEmpty()) {
+					new MessageBox(clDoc.getLabel("missingER"), clDoc.getLabel("missingERText"), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_EXCLAMATION).show();
+				} else {
+					final Interactor interactor =  new Interactor();
+					Widget content = WidgetCreator.createWidget("<form><line label=\"Organisation\" name=\"orga\" type=\"Entity\" entityType=\"182\" /> " +
+							"<line name=\"start\" type=\"datebox\" required=\"true\"/>" +
+							"<line name=\"end\" label=\"bis\" type=\"datebox\"/></form>", interactor);
+					final Map<String, Serializable> item = new HashMap<String, Serializable>();
+					item.put("orga", result.get(0).object);
+					item.put("start", new Date());
+					
+					PopupManager.showModal(clDoc.getLabel("AddWorksForRelation"), content, new OnClick<PopupPanel>() {
+
+						@Override
+						public void onClick(final PopupPanel pp) {
+							interactor.fromDialog(item);
+							pp.hide();
+						}
+					}, null);
+					
+					interactor.toDialog(item);
+				}
+			}
+		});
+	}
+	
 }

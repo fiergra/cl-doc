@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.ceres.cldoc.model.IEntity;
-
 public class Act extends AbstractNamedValueAccessor {
 
 	private static final long serialVersionUID = 5273635419946319483L;
@@ -67,7 +65,7 @@ public class Act extends AbstractNamedValueAccessor {
 		setParticipant(e, role, null, null);
 	}
 	
-	public void setParticipant(IEntity e, Catalog role, Date start, Date end) {
+	public void setParticipant(Entity e, Catalog role, Date start, Date end) {
 		if (participations == null) {
 			participations = new HashMap<String, Participation>();
 		}

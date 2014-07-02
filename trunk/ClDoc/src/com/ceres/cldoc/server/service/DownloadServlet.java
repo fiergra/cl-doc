@@ -18,7 +18,7 @@ import com.ceres.cldoc.IDocArchive;
 import com.ceres.cldoc.Locator;
 import com.ceres.cldoc.client.service.UserService;
 import com.ceres.cldoc.model.Act;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 @SuppressWarnings("serial")
 public class DownloadServlet extends HttpServlet {
@@ -31,7 +31,7 @@ public class DownloadServlet extends HttpServlet {
 
 		final String type = req.getParameter("type");
 		byte[] out = null;
-		ISession session = (ISession) req.getSession().getAttribute(UserService.CLDOC_SESSION);
+		Session session = (Session) req.getSession().getAttribute(UserService.CLDOC_SESSION);
 		
 		if (session != null) {
 			if ("form_layouts".equals(type)) {

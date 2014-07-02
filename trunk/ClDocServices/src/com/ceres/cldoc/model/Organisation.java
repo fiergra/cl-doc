@@ -1,9 +1,8 @@
 package com.ceres.cldoc.model;
 
-import com.ceres.cldoc.model.IOrganisation;
 
 
-public class Organisation extends Entity implements IOrganisation {
+public class Organisation extends Entity {
 
 	private static final long serialVersionUID = -6144522368213126601L;
 

@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 
 import com.ceres.cldoc.model.Act;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 import com.ceres.cldoc.model.Participation;
 
 public class ActFieldVisitor {
 	
 	
-	public static String replaceVars(ISession session, Act act, String text) {
+	public static String replaceVars(Session session, Act act, String text) {
 		int index = text.indexOf('{');
 
 		while (index != -1) {
@@ -22,7 +22,7 @@ public class ActFieldVisitor {
 		return text;
 	}
 
-	private static String getValue(ISession session, Act act, String varName) {
+	private static String getValue(Session session, Act act, String varName) {
 		Serializable value = null;
 		int index = varName.indexOf('.');
 		

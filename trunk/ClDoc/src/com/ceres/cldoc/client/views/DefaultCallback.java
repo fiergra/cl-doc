@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client.views;
 
-import com.ceres.cldoc.model.IApplication;
+import com.ceres.cldoc.client.ClDoc;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public abstract class DefaultCallback<T> implements AsyncCallback<T> {
 
 	private long callId;
-	private IApplication clDoc;
+	private ClDoc clDoc;
 
-	public DefaultCallback(IApplication clDoc, String name) {
+	public DefaultCallback(ClDoc clDoc, String name) {
 		this.clDoc = clDoc;
 		clDoc.status(name);
 		callId = clDoc.startAsyncCall(name);

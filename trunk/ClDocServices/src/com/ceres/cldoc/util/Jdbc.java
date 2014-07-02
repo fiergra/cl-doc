@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import com.ceres.cldoc.ITransactional;
 import com.ceres.cldoc.TxManager;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 public class Jdbc {
 
@@ -26,7 +26,7 @@ public class Jdbc {
 		return id;
 	}
 
-	public static <T> T doTransactional(ISession session, ITransactional itransactional) {
+	public static <T> T doTransactional(Session session, ITransactional itransactional) {
 		try {
 			Connection con = TxManager.start(session);
 			T result = itransactional.execute(con);

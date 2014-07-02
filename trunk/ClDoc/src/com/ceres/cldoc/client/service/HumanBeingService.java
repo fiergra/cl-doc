@@ -3,7 +3,7 @@ package com.ceres.cldoc.client.service;
 import java.util.List;
 
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -12,11 +12,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("humanbeing")
 public interface HumanBeingService extends RemoteService {
-	Long getUniqueId(ISession session);
-	Person save(ISession session, Person humanBeing);
-	void delete(ISession session, Person person);
-	Person findById(ISession session, long id);
+	Long getUniqueId(Session session);
+	Person save(Session session, Person humanBeing);
+	void delete(Session session, Person person);
+	Person findById(Session session, long id);
 
-	List<Person> search(ISession session, String criteria);
-	List<Person> findByAssignment(ISession session, String criteria, String roleCode);
+	List<Person> search(Session session, String criteria);
+	List<Person> findByAssignment(Session session, String criteria, String roleCode);
 }

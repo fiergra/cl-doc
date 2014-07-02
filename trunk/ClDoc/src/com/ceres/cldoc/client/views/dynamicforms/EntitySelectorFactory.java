@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.ceres.cldoc.client.views.EntityListBox;
 import com.ceres.cldoc.model.Entity;
-import com.ceres.cldoc.model.IApplication;
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorWidgetLink;
@@ -14,9 +14,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 
 public class EntitySelectorFactory implements ILinkFactory {
-	private final IApplication application;
+	private final ClDoc application;
 	
-	public EntitySelectorFactory(final IApplication application) {
+	public EntitySelectorFactory(final ClDoc application) {
 		this.application = application;
 	}
 	@Override

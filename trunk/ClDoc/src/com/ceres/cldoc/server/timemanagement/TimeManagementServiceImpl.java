@@ -8,7 +8,7 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.timemanagement.TimeSheetYear;
 import com.ceres.cldoc.timemanagement.WorkPattern;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
@@ -19,22 +19,22 @@ public class TimeManagementServiceImpl extends RemoteServiceServlet implements
 		TimeManagementService {
 
 	@Override
-	public WorkPattern getWorkPattern(ISession session) {
+	public WorkPattern getWorkPattern(Session session) {
 		return Locator.getTimeManagementService().getWorkPattern(session, (Person) session.getUser().getPerson());
 	}
 
 	@Override
-	public WorkPattern getWorkPattern(ISession session, Person person) {
+	public WorkPattern getWorkPattern(Session session, Person person) {
 		return Locator.getTimeManagementService().getWorkPattern(session, person);
 	}
 
 	@Override
-	public TimeSheetYear loadTimeSheetYear(ISession session, Person person, int year) {
+	public TimeSheetYear loadTimeSheetYear(Session session, Person person, int year) {
 		return Locator.getTimeManagementService().loadTimeSheetYear(session, person, year);
 	}
 
 	@Override
-	public void setWorkPattern(ISession session, Person person, Entity wp, Date startFromMonth) {
+	public void setWorkPattern(Session session, Person person, Entity wp, Date startFromMonth) {
 		Locator.getTimeManagementService().setWorkPattern(session, person, wp, startFromMonth);
 	}
 

@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.views.CatalogMultiSelect;
 import com.ceres.cldoc.client.views.IEntitySelector;
 import com.ceres.cldoc.model.CatalogList;
-import com.ceres.cldoc.model.IApplication;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorWidgetLink;
@@ -17,9 +17,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CatalogMultiSelectorFactory implements ILinkFactory {
 
-	private final IApplication application;
+	private final ClDoc application;
 	
-	public CatalogMultiSelectorFactory(IApplication application) {
+	public CatalogMultiSelectorFactory(ClDoc application) {
 		this.application = application;
 	}
 	

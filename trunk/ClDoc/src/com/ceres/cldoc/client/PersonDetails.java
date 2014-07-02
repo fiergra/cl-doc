@@ -1,6 +1,6 @@
 package com.ceres.cldoc.client;
 
-import com.ceres.cldoc.model.IApplication;
+import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.model.Patient;
 import com.ceres.cldoc.model.Person;
 import com.ceres.dynamicforms.client.Interactor;
@@ -8,7 +8,7 @@ import com.ceres.dynamicforms.client.WidgetCreator;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PersonDetails {
-	public static Widget create(IApplication clDoc, Person person, Interactor ia) {
+	public static Widget create(ClDoc clDoc, Person person, Interactor ia) {
 		Widget content = WidgetCreator.createWidget(
 				"<Form>" +
 				((person instanceof Patient) ? "<FormItem label=\"ID\"><long fieldName=\"perId\" required=\"true\"/></FormItem>" : "") +

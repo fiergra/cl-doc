@@ -25,7 +25,7 @@ import com.ceres.cldoc.model.IActField;
 import com.ceres.cldoc.model.LayoutDefinition;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -40,7 +40,7 @@ public class DocServiceImpl implements IDocService {
 	private static Logger log = Logger.getLogger("DocService");
 
 	@Override
-	public byte[] print(final ISession session, final Act act) {
+	public byte[] print(final Session session, final Act act) {
 		LayoutDefinition ld = Locator.getLayoutDefinitionService().load(
 				session, act.actClass.name, LayoutDefinition.PRINT_LAYOUT);
 		Document document = new Document();
@@ -64,7 +64,7 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
-	private void defaultLayout(ISession session, Act act, Document document,
+	private void defaultLayout(Session session, Act act, Document document,
 			PdfWriter writer) throws DocumentException {
 		document.setMargins(72, 72, 108, 180);
 		document.add(new Paragraph(act.actClass.name, new Font(
@@ -88,7 +88,7 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
-	private void render(ISession session, Act act, Document document,
+	private void render(Session session, Act act, Document document,
 			PdfWriter writer, String template)
 			throws ParserConfigurationException, SAXException, IOException,
 			DocumentException {
@@ -134,7 +134,7 @@ public class DocServiceImpl implements IDocService {
 
 	HashMap<String, Object> defaults;
 
-	private void traverse(ISession session, Act act, Node domNode,
+	private void traverse(Session session, Act act, Node domNode,
 			Element pdfNode, Document document, PdfWriter writer)
 			throws DocumentException {
 		int type = domNode.getNodeType();
@@ -200,7 +200,7 @@ public class DocServiceImpl implements IDocService {
 		}
 	}
 
-	private void addAddress(ISession session, Act act, Element pdfNode,
+	private void addAddress(Session session, Act act, Element pdfNode,
 			Node domNode, Document document, PdfWriter writer) throws DocumentException {
 		
 		String type = getString(domNode.getAttributes(), "type", "patient");
@@ -286,7 +286,7 @@ public class DocServiceImpl implements IDocService {
 		return Paragraph.ALIGN_UNDEFINED;
 	}
 
-	private void traverseChildren(ISession session, Act act, Element pdfNode,
+	private void traverseChildren(Session session, Act act, Element pdfNode,
 			Document document, PdfWriter writer, NodeList childNodes)
 			throws DocumentException {
 		if (childNodes != null) {

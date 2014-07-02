@@ -32,7 +32,7 @@ import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
 import com.ceres.cldoc.model.ReportDefinition;
 import com.ceres.cldoc.util.Jdbc;
-import com.ceres.cldoc.model.ISession;
+import com.ceres.cldoc.Session;
 
 import de.jollyday.HolidayCalendar;
 import de.jollyday.HolidayManager;
@@ -46,12 +46,12 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 //	}
 
 	@Override
-	public WorkPattern getWorkPattern(ISession session, Entity person) {
+	public WorkPattern getWorkPattern(Session session, Entity person) {
 		return getWorkPattern(session, person, new Date());
 	}
 
 	@Override
-	public WorkPattern getWorkPattern(final ISession session, final Entity person, final Date referenceDate) {
+	public WorkPattern getWorkPattern(final Session session, final Entity person, final Date referenceDate) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -106,7 +106,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 	}
 	
 	@Override
-	public TimeSheetYear loadTimeSheetYear(ISession session, Entity person, int year) {
+	public TimeSheetYear loadTimeSheetYear(Session session, Entity person, int year) {
 		TimeSheetYear tsy = initTimeSheetYear(session, person, year);
 		if (tsy != null) {
 			loadTimeSheetYearData(session, tsy, person, year);
@@ -114,7 +114,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 		return tsy;
 	}
 
-	private TimeSheetYear initTimeSheetYear(ISession session, Entity person, int year) {
+	private TimeSheetYear initTimeSheetYear(Session session, Entity person, int year) {
 		Calendar c = Calendar.getInstance();
 		c.set(year, 0, 1);
 //		WorkPattern wp = getWorkPattern(session, person, c.getTime());
@@ -129,7 +129,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 		return tsy;
 	}
 
-	private void loadTimeSheetYearData(ISession session, TimeSheetYear tsy, Entity person, int year) {
+	private void loadTimeSheetYearData(Session session, TimeSheetYear tsy, Entity person, int year) {
 		List<Act> acts = Locator.getActService().load(session, null, person, Participation.ADMINISTRATOR.id, getDate(1,Calendar.JANUARY,year), getDate(31,Calendar.DECEMBER,year));
 		for (Act act:acts) {
 			tsy.add(act);
@@ -137,7 +137,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 	}
 	
 
-	private TimeSheetMonth addMonthSheet(ISession session, Entity person, TimeSheetYear tsy, Date month) {
+	private TimeSheetMonth addMonthSheet(Session session, Entity person, TimeSheetYear tsy, Date month) {
 		WorkPattern wp = getWorkPattern(session, person, month);
 //		if (wp == null) {
 //			wp = EMPTY_PATTERN;
@@ -174,7 +174,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 	}
 
 	@Override
-	public void setWorkPattern(final ISession session, final Person person, final Entity wp, final Date startFromMonth) {
+	public void setWorkPattern(final Session session, final Person person, final Entity wp, final Date startFromMonth) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
@@ -206,7 +206,7 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 	}
 
 	@Override
-	public byte[] exportXLS(ISession session, Long personId) {
+	public byte[] exportXLS(Session session, Long personId) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Person person = Locator.getEntityService().load(session, personId);
 		try {
