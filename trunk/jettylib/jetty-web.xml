@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
+	<New id="ClDoc" class="org.eclipse.jetty.plus.jndi.Resource">
+		<Arg/>
+		<Arg>jdbc/ClDoc</Arg>
+		<Arg>
+			<New class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">
+				<Set name="Url">jdbc:mysql://dynko.krebsgesellschaft.org:2007/ClDoc</Set>
+				<Set name="User">ralph4</Set>
+				<Set name="Password">sql4</Set>
+			</New>
+		</Arg>
+	</New>
+</Configure>
+<!--<Arg>java:/comp/env/jdbc/dev</Arg><Arg><New class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource"><Set name="Url">jdbc:mysql://dynko.krebsgesellschaft.org:2007/ClDoc?autoReconnect=true</Set><Set name="User">ralph4</Set><Set name="Password">sql4</Set></New></Arg>-->
