@@ -177,7 +177,7 @@ public class TimeSheet extends DockLayoutPanel {
 
 						@Override
 						public void onClick(Person person) {
-							addWorksForRelation(person);
+							editWorkRelationDetails(person);
 							setPerson(person);
 							reloadAndDisplay(clDoc);
 						}
@@ -677,7 +677,7 @@ public class TimeSheet extends DockLayoutPanel {
 		interactor.toDialog(leaveAct);
 	}
 
-	private void addWorksForRelation(Person person) {
+	private void editWorkRelationDetails(Person person) {
 		User user = clDoc.getSession().getUser();
 		SRV.entityService.listRelations(clDoc.getSession(), user.getPerson(), true, Catalog.WORKSFOR, new DefaultCallback<List<EntityRelation>>(clDoc, "") {
 
@@ -689,12 +689,14 @@ public class TimeSheet extends DockLayoutPanel {
 					final Interactor interactor =  new Interactor();
 					Widget content = WidgetCreator.createWidget("<form><line label=\"Organisation\" name=\"orga\" type=\"Entity\" entityType=\"182\" /> " +
 							"<line name=\"start\" type=\"datebox\" required=\"true\"/>" +
-							"<line name=\"end\" label=\"bis\" type=\"datebox\"/></form>", interactor);
+							"<line name=\"end\" label=\"bis\" type=\"datebox\"/>" +
+							"<line name=\"AnnualLeaveRight\" label=\"Urlaubsanspruch\" type=\"float\"/>" +
+							"</form>", interactor);
 					final Map<String, Serializable> item = new HashMap<String, Serializable>();
 					item.put("orga", result.get(0).object);
 					item.put("start", new Date());
 					
-					PopupManager.showModal(clDoc.getLabel("AddWorksForRelation"), content, new OnClick<PopupPanel>() {
+					PopupManager.showModal(clDoc.getLabel("Details"), content, new OnClick<PopupPanel>() {
 
 						@Override
 						public void onClick(final PopupPanel pp) {
