@@ -394,6 +394,7 @@ insert into Catalog (id, parent, code, text, shorttext) values (155, 154, 'IsMem
 insert into Catalog (id, parent, code, text, shorttext) values (156, 154, 'IsLocatedIn', 'IsLocatedIn', 'IsLocatedIn');
 insert into Catalog (id, parent, code, text, shorttext) values (157, 154, 'IsPartOf', 'IsPartOf', 'IsPartOf');
 insert into Catalog (id, parent, code, text, shorttext) values (158, 154, 'ReportsTo', 'ReportsTo', 'ReportsTo');
+insert into Catalog (id, parent, code, text, shorttext) values (159, 154, 'WorksFor', 'WorksFor', 'WorksFor');
 
 insert into Catalog (id, parent, code, text, shorttext) values (160, 150, 'REPORTTYPE', 'REPORTTYPE', 'REPORTTYPE');
 insert into Catalog (id, parent, code, text, shorttext) values (161, 160, 'SYSTEM', 'SYSTEM', 'SYSTEM');
@@ -534,6 +535,7 @@ insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1102, '8-8-4-0-0
 insert into WorkPattern (id, Pattern, LeaveEntitlement) values (1103, '8-8-8-8-0', 30);
 
 insert into Catalog (parent, code, text, shorttext) values (154, 'arbeitet entsprechend', 'arbeitet entsprechend', 'arbeitet entsprechend');
+insert into Catalog (parent, code, text, shorttext) values (154, 'WorksFor', 'WorksFor', 'WorksFor');
 
 /* time user: EDIT */
 insert into Policy (role, objectType, action, startDate) values (67,(select id from Catalog where code ='TimeSheet'),71, CURRENT_DATE);
