@@ -15,12 +15,12 @@ public class NumberLink extends TextLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setLong((Long) get(item, name));
+		getWidget().setNumber((Number) get(item, name));
 	}
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, name, getWidget().getLong());
+		put(item, name, getWidget().getNumber());
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class NumberLink extends TextLink {
 
 	@Override
 	public boolean isValid() {
-		return !isEmpty() ? (getWidget().getLong() != null) : super.isValid();
+		return !isEmpty() ? (getWidget().getNumber() != null) : super.isValid();
 	}
 
 	

@@ -95,4 +95,9 @@ public class Interactor {
 		
 	}
 
+	public void enable(boolean enabled) {
+		for (InteractorLink il:links) {
+			il.enable(enabled);
+		}
+	}
 }

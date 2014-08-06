@@ -115,8 +115,20 @@ public abstract class MapListRenderer extends FlexTable {
 		return lineContexts.indexOf(interactor) == lineContexts.size() - 1;
 	}
 
+	public void fromDialog(List<Map<String,Serializable>> acts) {
+		for (int i = 0; i < lineContexts.size() - 1; i++) {
+			LineContext lc =lineContexts.get(i);
+			lc.interactor.fromDialog(lc.act);
+			acts.add(lc.act);
+		}
+	}
+
+	public void toDialog(List<Map<String,Serializable>> acts) {
+		setActs(acts);
+	}
+	
 	public List<Map<String,Serializable>> getActs() {
-		List<Map<String,Serializable>> acts = new ArrayList<Map<String,Serializable>>(lineContexts.size() - 1);
+		List<Map<String,Serializable>> acts = new ArrayList<Map<String,Serializable>>(lineContexts.size());
 		for (int i = 0; i < lineContexts.size() - 1; i++) {
 			LineContext lc =lineContexts.get(i);
 			acts.add(lc.act);

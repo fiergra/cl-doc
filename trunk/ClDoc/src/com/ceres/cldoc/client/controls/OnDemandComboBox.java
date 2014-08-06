@@ -73,7 +73,7 @@ public class OnDemandComboBox <T extends Serializable> extends HorizontalPanel i
 //				}
 //			});
 //		}
-		txtFilter.setWidth("100%");
+//		txtFilter.setWidth("100%");
 		add(txtFilter);
 //		add(hp);
 		txtFilter.addKeyUpHandler(new KeyUpHandler() {

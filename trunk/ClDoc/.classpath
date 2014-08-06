@@ -5,8 +5,8 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-fileupload-1.2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ClDocServices"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/DynamicForms"/>
-	<classpathentry kind="lib" path="C:/workspace/jettylib/jetty-naming-6.1.26.jar"/>
-	<classpathentry kind="lib" path="C:/workspace/jettylib/jetty-plus-6.1.26.jar"/>
+	<classpathentry kind="lib" path="E:/workspace/jettylib/jetty-naming-6.1.26.jar"/>
+	<classpathentry kind="lib" path="E:/workspace/jettylib/jetty-plus-6.1.26.jar"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
