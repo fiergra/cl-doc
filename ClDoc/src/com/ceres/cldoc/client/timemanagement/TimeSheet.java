@@ -169,6 +169,17 @@ public class TimeSheet extends DockLayoutPanel {
 				}
 			});
 			
+			Image pbEdit = createWidget(SRV.c.newPPP(), "icons/32/Edit-Document-icon.png", new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					editWorkRelationDetails(person);
+					reloadAndDisplay(clDoc);
+				}
+			});
+			pbEdit.setPixelSize(18,18);
+			buttons.add(pbEdit);
+
 			Image pbNew = createWidget(SRV.c.newPPP(), "icons/32/Person-New-icon.png", new ClickHandler() {
 				
 				@Override
@@ -677,30 +688,41 @@ public class TimeSheet extends DockLayoutPanel {
 		interactor.toDialog(leaveAct);
 	}
 
-	private void editWorkRelationDetails(Person person) {
-		User user = clDoc.getSession().getUser();
-		SRV.entityService.listRelations(clDoc.getSession(), user.getPerson(), true, Catalog.WORKSFOR, new DefaultCallback<List<EntityRelation>>(clDoc, "") {
+	private void editWorkRelationDetails(final Person person) {
+		SRV.entityService.listRelations(clDoc.getSession(), person, true, Catalog.WORKSFOR, new DefaultCallback<List<EntityRelation>>(clDoc, "") {
 
 			@Override
 			public void onResult(List<EntityRelation> result) {
 				if (result.isEmpty()) {
 					new MessageBox(clDoc.getLabel("missingER"), clDoc.getLabel("missingERText"), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_EXCLAMATION).show();
 				} else {
+					final EntityRelation er = result.get(0);
 					final Interactor interactor =  new Interactor();
 					Widget content = WidgetCreator.createWidget("<form><line label=\"Organisation\" name=\"orga\" type=\"Entity\" entityType=\"182\" /> " +
 							"<line name=\"start\" type=\"datebox\" required=\"true\"/>" +
 							"<line name=\"end\" label=\"bis\" type=\"datebox\"/>" +
-							"<line name=\"AnnualLeaveRight\" label=\"Urlaubsanspruch\" type=\"float\"/>" +
+							"<line name=\"AnnualLeaveRight\" label=\"Urlaubsanspruch (Tage/Jahr)\" type=\"float\"/>" +
 							"</form>", interactor);
 					final Map<String, Serializable> item = new HashMap<String, Serializable>();
-					item.put("orga", result.get(0).object);
-					item.put("start", new Date());
+					item.put("orga", er.object);
+					item.put("start", er.startDate);
+					item.put("end", er.endDate);
 					
-					PopupManager.showModal(clDoc.getLabel("Details"), content, new OnClick<PopupPanel>() {
+					PopupManager.showModal(clDoc.getLabel("Details: " + person.getFirstName() + " " + person.getLastName()), content, new OnClick<PopupPanel>() {
 
 						@Override
 						public void onClick(final PopupPanel pp) {
 							interactor.fromDialog(item);
+							er.startDate = (Date)item.get("start");
+							er.endDate = (Date)item.get("end");
+							er.object = (Entity)item.get("orga");
+							SRV.entityService.save(clDoc.getSession(), er, new DefaultCallback<EntityRelation>(clDoc, "save ER") {
+
+								@Override
+								public void onResult(EntityRelation result) {
+									
+								}
+							});
 							pp.hide();
 						}
 					}, null);

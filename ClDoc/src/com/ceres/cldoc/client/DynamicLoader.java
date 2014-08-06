@@ -1,6 +1,7 @@
 package com.ceres.cldoc.client;
 
 import com.ceres.cldoc.client.timemanagement.TimeSheet;
+import com.ceres.cldoc.client.views.AccessControlConfig;
 import com.ceres.cldoc.client.views.AssignmentsPanel;
 import com.ceres.cldoc.client.views.CatalogConfigurator2;
 import com.ceres.cldoc.client.views.Configurator;
@@ -58,7 +59,7 @@ public class DynamicLoader {
 		} else if (name.equals("Entitaeten")) {
 			result = new EntityConfigurator(clDoc);
 		} else if (name.equals("Berechtigungen")) {
-			result = new AssignmentsPanel(clDoc);
+			result = new AccessControlConfig(clDoc);
 		} else if (name.equals("Organisation")) {
 			result = new OrganisationsPanel(clDoc, clDoc.getSession().getUser().getOrganisation());
 		} else {

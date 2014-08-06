@@ -10,9 +10,9 @@ import com.ceres.cldoc.client.ClDoc;
 import com.ceres.cldoc.client.service.SRV;
 import com.ceres.cldoc.model.Catalog;
 import com.ceres.dynamicforms.client.Interactor;
-import com.ceres.dynamicforms.client.LongLink;
+import com.ceres.dynamicforms.client.NumberLink;
 import com.ceres.dynamicforms.client.TextLink;
-import com.ceres.dynamicforms.client.components.LongTextBox;
+import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.MapListRenderer;
 import com.gargoylesoftware.htmlunit.html.HtmlAttributeChangeEvent;
 import com.google.gwt.core.client.GWT;
@@ -115,9 +115,9 @@ public class CatalogConfigurator2 extends DockLayoutPanel {
 				interactor.addLink(new TextLink(interactor, fieldNames[col], textBox, null));
 				col++;
 				
-				LongTextBox ltb = new LongTextBox();
+				NumberTextBox ltb = new NumberTextBox();
 				setWidget(row, col, ltb);
-				interactor.addLink(new LongLink(interactor, fieldNames[col], ltb, null));
+				interactor.addLink(new NumberLink(interactor, fieldNames[col], ltb, null));
 				col++;
 			}
 

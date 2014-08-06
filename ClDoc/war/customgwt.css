@@ -1,6 +1,13 @@
 @CHARSET "ISO-8859-1";
 
+body, table td, select, button {
+	font-family: Calibri;
+	font-smooth: always;
+	font-size: medium;
+}
 
+
+/*
 .gwt-TextArea {
 	padding: 2px;
 	border: 1px solid #CCC;
@@ -309,4 +316,4 @@ background: #63D36A;
   filter: alpha(opacity=60);
 }
 
-
+*/

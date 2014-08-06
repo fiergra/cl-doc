@@ -43,7 +43,12 @@ public abstract class DurationLink extends InteractorLink {
 	public void fromDialog(Map<String, Serializable> item) {
 
 	}
+
 	
+
+	@Override
+	public void enable(boolean enabled) {
+	}
 
 	@Override
 	public boolean isValid() {

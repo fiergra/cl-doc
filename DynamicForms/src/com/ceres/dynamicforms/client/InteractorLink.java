@@ -14,6 +14,7 @@ public abstract class InteractorLink {
 
 	public abstract void toDialog(Map<String, Serializable> item);
 	public abstract void fromDialog(Map<String, Serializable> item);
+	public abstract void enable(boolean enabled);
 	protected abstract void hilite(boolean isValid);
 	public abstract boolean isEmpty();
 

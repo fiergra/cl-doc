@@ -17,7 +17,7 @@ public class NumberTextBox extends TextBox {
 				Number value = parseValue();
 				
 				if (value != null) {
-					setLong(value);
+					setNumber(value);
 				}
 			}
 		});
@@ -45,11 +45,11 @@ public class NumberTextBox extends TextBox {
 		return value;
 	}
 	
-	public Number getLong() {
+	public Number getNumber() {
 		return value;
 	}
 
-	public void setLong(Number value) {
+	public void setNumber(Number value) {
 		this.value = value;
 		
 		setText(value != null ? String.valueOf(value) : null);

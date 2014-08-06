@@ -479,7 +479,7 @@ public class EntityServiceImpl implements IEntityService {
 			public List<EntityRelation> execute(Connection con) throws SQLException {
 				ArrayList<EntityRelation> result = new ArrayList<EntityRelation>();
 				String sql =
-						"select er.id relationId, type.id type_id, type.code type_code, type.shorttext type_shorttext, type.logical_order type_logical_order, type.text type_text, type.date type_date, type.parent type_parent, type.number1 type_number1, type.number2 type_number2, " +
+						"select er.id relationId, type.id type_id, er.startdate, er.enddate, type.code type_code, type.shorttext type_shorttext, type.logical_order type_logical_order, type.text type_text, type.date type_date, type.parent type_parent, type.number1 type_number1, type.number2 type_number2, " +
 						"subject.id subject_entityId, subject.name subject_name, subject.type subject_type," +
 						"object.id object_entityId, object.name object_name, object.type object_type " +
 						" from EntityRelation er" +
@@ -509,9 +509,9 @@ public class EntityServiceImpl implements IEntityService {
 					er.id = rs.getLong("relationId");
 					er.subject = new Entity(rs.getLong("subject_entityId"), rs.getInt("subject_type"), rs.getString("subject_name"));
 					er.object = new Entity(rs.getLong("object_entityId"), rs.getInt("object_type"), rs.getString("object_name"));
-//					er.subject = fetchEntity(session, null, rs, "subject_");
-//					er.object = fetchEntity(session, null, rs, "object_");
 					er.type = CatalogServiceImpl.fetchCatalog(rs, "type_");
+					er.startDate = rs.getDate("startdate");
+					er.endDate = rs.getDate("enddate");
 					
 					er.children = listRelations(session, asSubject ? er.object : er.subject, asSubject, relationType);
 					result.add(er);
@@ -535,25 +535,59 @@ public class EntityServiceImpl implements IEntityService {
 		});
 	}
 
+	private void insertER(Connection con, EntityRelation er) throws SQLException {
+		PreparedStatement s = con.prepareStatement(
+				"insert into EntityRelation (type, subjectid, objectid, startdate, enddate) values (?,?,?,?);", new String[]{"ID"});
+		s.setLong(1, er.type.id);
+		s.setLong(2, er.subject.getId());
+		s.setLong(3, er.object.getId());
+		if (er.startDate != null) {
+			s.setDate(4, new java.sql.Date(er.startDate.getTime()));
+		} else {
+			s.setNull(4, Types.DATE);
+		}
+		if (er.startDate != null) {
+			s.setDate(5, new java.sql.Date(er.endDate.getTime()));
+		} else {
+			s.setNull(5, Types.DATE);
+		}
+
+		er.id = Jdbc.exec(s);
+		s.close();
+	}
+	
+	private void updateER(Connection con, EntityRelation er) throws SQLException {
+		PreparedStatement s = con.prepareStatement(
+				"update EntityRelation set type=?, subjectid=?, objectid=?, startdate=?, enddate=? where id = ?");
+		s.setLong(1, er.type.id);
+		s.setLong(2, er.subject.getId());
+		s.setLong(3, er.object.getId());
+		if (er.startDate != null) {
+			s.setDate(4, new java.sql.Date(er.startDate.getTime()));
+		} else {
+			s.setNull(4, Types.DATE);
+		}
+		if (er.endDate != null) {
+			s.setDate(5, new java.sql.Date(er.endDate.getTime()));
+		} else {
+			s.setNull(5, Types.DATE);
+		}
+		s.setLong(6, er.id);
+		s.execute();
+		s.close();
+	}
+	
 	@Override
 	public EntityRelation save(Session session, final EntityRelation er) {
 		return Jdbc.doTransactional(session, new ITransactional() {
 			
 			@Override
 			public EntityRelation execute(Connection con) throws SQLException {
-				PreparedStatement s = con.prepareStatement(
-						"insert into EntityRelation (type, subjectid, objectid, startdate) values (?,?,?,?);", new String[]{"ID"});
-				s.setLong(1, er.type.id);
-				s.setLong(2, er.subject.getId());
-				s.setLong(3, er.object.getId());
-				if (er.startDate != null) {
-					s.setDate(4, new java.sql.Date(er.startDate.getTime()));
+				if (er.id == null) {
+					insertER(con, er);
 				} else {
-					s.setNull(4, Types.DATE);
+					updateER(con, er);
 				}
-
-				er.id = Jdbc.exec(s);
-				s.close();
 				return er;
 			}
 		});
@@ -563,6 +597,7 @@ public class EntityServiceImpl implements IEntityService {
 	public void delete(Session session, final EntityRelation er) {
 		Jdbc.doTransactional(session, new ITransactional() {
 			
+			@SuppressWarnings("unchecked")
 			@Override
 			public Void execute(Connection con) throws SQLException {
 				PreparedStatement s = con.prepareStatement(

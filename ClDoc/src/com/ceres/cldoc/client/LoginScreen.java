@@ -47,14 +47,9 @@ public class LoginScreen extends LayoutPanel {
 		
 	}
 
-	private final ClDoc clDoc;;
-	
 	public LoginScreen(final ClDoc clDoc, final OnOkHandler<Session> onOk) {
 		super();
 		addStyleName("background");
-//		setSize("100%", "100%");
-		this.clDoc = clDoc;
-		
 		Grid g = new Grid(4, 3);
 		final TextBox txtUserName = new TextBox();
 		final PasswordTextBox txtPassWord = new PasswordTextBox();

@@ -9,6 +9,10 @@ public class TimeTextBox extends DateTextBox {
 	
 	private Date datePart;
 
+	public TimeTextBox() {
+		super();
+		setWidth("3em");
+	}
 
 	@Override
 	protected DateTimeFormat[] getDateTimeFormats() {

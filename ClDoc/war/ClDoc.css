@@ -1,12 +1,5 @@
 /** Add css rules here for your application. */
 
-
-body, table td, select, button {
-	font-family: Calibri;
-	font-smooth: always;
-	font-size: medium;
-} 
-
 .gradientBackground {
 	background: #A7D4FF;
 	background: -webkit-gradient(linear, left top, left bottom, from(#A7D4FF), to(#4290B6));
@@ -108,39 +101,39 @@ body, table td, select, button {
 .leaveDay {
 	font-style: italic;
 	color: green;
-	background-color: lime;
+	background-color: lightgreen;
 }
 
 .halfLeaveDay {
 	font-style: italic;
 	color: green;
-	background-color: navy;
+	background-color: lightblue;
 }
 
 .sickLeaveDay {
 	font-style: italic;
 	color: white;
-	background-color: red;
+	background-color: salmon;
 }
 
 .halfSickLeaveDay {
 	font-style: italic;
 	color: white;
-	background-color: purple;
+	background-color: salmon;
 }
 
 .leaveStart {
 	font-weight: bold;
 	font-style: italic;
-	color: white;
-	background-color: green;
+/*	color: white;
+	background-color: green;*/
 }
 
 .leaveEnd {
 	font-weight: bold;
 	font-style: italic;
-	color: white;
-	background-color: blue;
+/*	color: white;
+	background-color: blue;*/
 }
 
 .datePickerDayIsFiller {
