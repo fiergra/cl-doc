@@ -23,10 +23,15 @@ public class SimpleTimeSheetElement implements TimeSheetElement {
 	public SimpleTimeSheetElement(TimeSheetElement parent) {
 		this.parent = parent;
 	}
-
+	
 	public SimpleTimeSheetElement(TimeSheetElement parent, Date date) {
 		this(parent);
 		this.date = date;
+	}
+
+	
+	public TimeSheetElement getParent() {
+		return parent;
 	}
 
 	protected void clearChildren() {

@@ -120,10 +120,12 @@ public class ActServiceImpl implements IActService {
 	}
 
 	private void saveField(Session session, Connection con, Act act, Entry<String, IActField> entry) throws SQLException {
-		if (entry.getValue() != null && entry.getValue().getId() == null) {
-			insertField(session, con, act, entry, true);
-		} else {
-			updateField(session, con, act, entry);
+		if (entry.getValue().getType() != ActField.FT_TRANSIENT) {
+			if (entry.getValue() != null && entry.getValue().getId() == null) {
+				insertField(session, con, act, entry, true);
+			} else {
+				updateField(session, con, act, entry);
+			}
 		}
 	}
 

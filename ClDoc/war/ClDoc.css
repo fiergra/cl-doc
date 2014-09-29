@@ -78,17 +78,17 @@
 
 .monthTable {
 	background-color: white;
+	height: 100%;
+	width: 100%;
 }
 
 .monthLabel {
 	font-size: large;
+	font-weight: bold;
 }
 
 .wpLabel {
 	font-size: small;
-}
-
-.dateColumn {
 }
 
 .timeRegistrationDate {
@@ -99,41 +99,31 @@
 }
 
 .leaveDay {
-	font-style: italic;
 	color: green;
 	background-color: lightgreen;
 }
 
 .halfLeaveDay {
-	font-style: italic;
 	color: green;
 	background-color: lightblue;
 }
 
 .sickLeaveDay {
-	font-style: italic;
 	color: white;
 	background-color: salmon;
 }
 
 .halfSickLeaveDay {
-	font-style: italic;
 	color: white;
 	background-color: salmon;
 }
 
 .leaveStart {
 	font-weight: bold;
-	font-style: italic;
-/*	color: white;
-	background-color: green;*/
 }
 
 .leaveEnd {
 	font-weight: bold;
-	font-style: italic;
-/*	color: white;
-	background-color: blue;*/
 }
 
 .datePickerDayIsFiller {
@@ -155,29 +145,50 @@
 
 
 .weekendDate {
-	font-style: italic;
 	color: red;
 }
 
 .headerDate {
-	font-size: smaller;
+	font-size: larger;
+	font-weight: bold;
 	white-space: nowrap;
-	width: 3em;
+	text-align: right;
+	width: 1em;
 }
 
-.timeSheetRow {
+.headerDay {
+	font-size: x-small;
+	font-weight: normal;
+	white-space: nowrap;
+}
+
+.timeSheetPanel {
+ 	width: 100%;
+ 	border-spacing: 2px;
+}
+
+
+.monthColumn{
+	width: 100%;	
+}
+
+.timeSheetCell {
 	font-size: smaller;
 	border-top-style: solid;
 	border-width: 1px;
 	border-color: #DDD;
-	width: 10em;
-	height: 2.5em;
+	margin: 2px;
 }
 
-.timeSheetRow:HOVER {
+.timeSheetCell:HOVER {
 	background-color: silver;
 	cursor: pointer;
 }
+
+.timeSheetCellContent {
+	width: 100%;
+}
+
 
 .workingDate {
 	font-size: larger;
@@ -190,20 +201,17 @@
 
 .positiveBalance {
 	font-size: large;
-	font-weight: bold;
 	color: green;
+	text-align: right;
 }
 
 .negativeBalance {
 	font-size: large;
-	font-weight: bold;
 	color: red;
+	text-align: right;
 }
 
 .weekendCell {
-	border-color: red;
-	border-bottom: solid;
-	border-width: 1px;
 }
 
 .linkButton:hover {

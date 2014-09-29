@@ -3,7 +3,9 @@ package com.ceres.cldoc.client.service;
 import com.ceres.cldoc.client.timemanagement.TimeManagementService;
 import com.ceres.cldoc.client.timemanagement.TimeManagementServiceAsync;
 import com.ceres.cldoc.client.views.StringConstants;
+import com.ceres.cldoc.model.Act;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class SRV {
 
@@ -31,5 +33,17 @@ public abstract class SRV {
 	public static final TimeManagementServiceAsync timeManagementService = GWT
 	.create(TimeManagementService.class);
 
+	@SuppressWarnings("rawtypes")
+	public static final AsyncCallback NOP = new AsyncCallback() {
+		
+		
+		@Override
+		public void onFailure(Throwable caught) {
+		}
 
+		@Override
+		public void onSuccess(Object result) {
+		}
+	};
+	
 }

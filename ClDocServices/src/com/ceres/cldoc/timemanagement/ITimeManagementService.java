@@ -12,6 +12,8 @@ public interface ITimeManagementService {
 	public static final String SICK_LEAVE_ACT = "SickLeave";
 	public static final String HALFDAY_START = "halfDayStart";
 	public static final String HALFDAY_END = "halfDayEnd";
+	public static final String TIME_MGMNT_MASTERDATA = "TIME_MGMNT_MASTERDATA";
+	public static final String ANNUALLEAVERIGHT = "AnnualLeaveRight";
 
 	WorkPattern getWorkPattern(Session session, Entity person);
 	WorkPattern getWorkPattern(Session session, Entity person, Date referenceDate);

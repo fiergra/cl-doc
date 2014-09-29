@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -113,18 +114,45 @@ public class TimeManagementServiceImpl implements ITimeManagementService {
 		}
 		return tsy;
 	}
+//
+//	private List<TimeSheetMonth> initTimeSheets(Session session, Entity person, Date start, Date end) {
+//		Calendar c = Calendar.getInstance();
+//		c.setTime(start);
+//		Calendar cEnd = Calendar.getInstance();
+//		cEnd.setTime(end);
+//		
+//		List<TimeSheetMonth> list = new ArrayList<>();
+//		
+//		while (!c.after(cEnd)) {
+//			TimeSheetMonth tsm = addMonthSheet(session, person, null, c.getTime());
+//			list.add(tsm);
+//			c.add(Calendar.MONTH, 1);
+//		}		
+//		
+//		return list;
+//	}
+//
+//	private void loadTimeSheetData(Session session, List<TimeSheetMonth> months, Entity person, Date start, Date end) {
+//		List<Act> acts = Locator.getActService().load(session, null, person, Participation.ADMINISTRATOR.id, start, end);
+//
+//		for (Act act:acts) {
+//			tsy.add(act);
+//		}
+//	}
+//	
+//
 
 	private TimeSheetYear initTimeSheetYear(Session session, Entity person, int year) {
 		Calendar c = Calendar.getInstance();
 		c.set(year, 0, 1);
-//		WorkPattern wp = getWorkPattern(session, person, c.getTime());
 		TimeSheetYear tsy = null;
-//		if (wp != null) {
-			tsy = new TimeSheetYear(c.getTime(), 30);
-			for (int m = Calendar.JANUARY; m <= Calendar.DECEMBER; m++) {
-				TimeSheetMonth tsm = addMonthSheet(session, person, tsy, c.getTime());
-				c.add(Calendar.MONTH, 1);
-//			}
+		
+		List<Act> masterData = Locator.getActService().load(session, ITimeManagementService.TIME_MGMNT_MASTERDATA, person, Participation.PROTAGONIST.id, null, null);
+		Long annualLeaveRight = masterData != null && !masterData.isEmpty() ? masterData.get(0).getLong(ITimeManagementService.ANNUALLEAVERIGHT) : 30;
+		tsy = new TimeSheetYear(c.getTime(), annualLeaveRight.intValue());
+		for (int m = Calendar.JANUARY; m <= Calendar.DECEMBER; m++) {
+			TimeSheetMonth tsm = addMonthSheet(session, person, tsy, c.getTime());
+			c.add(Calendar.MONTH, 1);
 		}		
 		return tsy;
 	}
