@@ -35,7 +35,7 @@ public class TimeSheetYear extends SimpleTimeSheetElement {
 		for (TimeSheetElement tsm:getChildren()) {
 			leaveEntitlement += ((TimeSheetMonth)tsm).getLeaveEntitlement(baseEntitlement);
 		}
-		return leaveEntitlement;
+		return Math.round(leaveEntitlement);
 	}
 
 

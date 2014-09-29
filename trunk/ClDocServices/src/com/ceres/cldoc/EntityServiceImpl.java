@@ -537,7 +537,7 @@ public class EntityServiceImpl implements IEntityService {
 
 	private void insertER(Connection con, EntityRelation er) throws SQLException {
 		PreparedStatement s = con.prepareStatement(
-				"insert into EntityRelation (type, subjectid, objectid, startdate, enddate) values (?,?,?,?);", new String[]{"ID"});
+				"insert into EntityRelation (type, subjectid, objectid, startdate, enddate) values (?,?,?,?,?);", new String[]{"ID"});
 		s.setLong(1, er.type.id);
 		s.setLong(2, er.subject.getId());
 		s.setLong(3, er.object.getId());
@@ -546,7 +546,7 @@ public class EntityServiceImpl implements IEntityService {
 		} else {
 			s.setNull(4, Types.DATE);
 		}
-		if (er.startDate != null) {
+		if (er.endDate != null) {
 			s.setDate(5, new java.sql.Date(er.endDate.getTime()));
 		} else {
 			s.setNull(5, Types.DATE);

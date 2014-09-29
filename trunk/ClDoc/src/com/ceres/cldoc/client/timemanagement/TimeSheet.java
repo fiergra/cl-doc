@@ -27,7 +27,6 @@ import com.ceres.cldoc.model.Entity;
 import com.ceres.cldoc.model.EntityRelation;
 import com.ceres.cldoc.model.Participation;
 import com.ceres.cldoc.model.Person;
-import com.ceres.cldoc.model.User;
 import com.ceres.cldoc.timemanagement.ActAsTimeSheetElement;
 import com.ceres.cldoc.timemanagement.ITimeManagementService;
 import com.ceres.cldoc.timemanagement.TimeSheetDay;
@@ -67,25 +66,25 @@ import com.google.gwt.user.client.ui.Widget;
 public class TimeSheet extends DockLayoutPanel {
 
 	private final ClDoc clDoc;
-	private final HorizontalPanel timeSheetPanel = new HorizontalPanel();
+	private final FlexTable timeSheetPanel = new FlexTable();
 	private final Label leaveBalanceLabel = new Label();
 	private final Label hourBalanceLabel = new Label();
 	private Person person;
 
-	public TimeSheet(ClDoc clDoc) {
-		this(clDoc, clDoc.getSession().getUser().getPerson());
+	public TimeSheet(ClDoc clDoc, int year) {
+		this(clDoc, clDoc.getSession().getUser().getPerson(), year);
 	}
 		
-	public TimeSheet(ClDoc clDoc, Person person) {
+	public TimeSheet(ClDoc clDoc, Person person, int year) {
 		super(Unit.EM);
 		this.clDoc = clDoc;
 		this.person = person;
-		loadAndDisplay(clDoc);
+		loadAndDisplay(clDoc, year);
 		addStyleName("timeSheet");
 	}
 
-	private void loadAndDisplay(ClDoc clDoc) {
-		SRV.timeManagementService.loadTimeSheetYear(clDoc.getSession(), getPerson(), new Date().getYear() + 1900, new DefaultCallback<TimeSheetYear>(clDoc, "load timesheet") {
+	private void loadAndDisplay(ClDoc clDoc, int year) {
+		SRV.timeManagementService.loadTimeSheetYear(clDoc.getSession(), getPerson(), year, new DefaultCallback<TimeSheetYear>(clDoc, "load timesheet") {
 
 			@Override
 			public void onResult(TimeSheetYear tsy) {
@@ -233,7 +232,7 @@ public class TimeSheet extends DockLayoutPanel {
 				reloadAndDisplay(clDoc);
 			}
 		});
-
+		timeSheetPanel.addStyleName("timeSheetPanel");
 		createTimeSheet(timeSheetPanel, tsy);
 		add(new ScrollPanel(timeSheetPanel));
 	}
@@ -257,7 +256,7 @@ public class TimeSheet extends DockLayoutPanel {
 		this.person = person;
 	}
 
-	private void createTimeSheet(HorizontalPanel hp, TimeSheetYear tsy) {
+	private void createTimeSheet(final FlexTable hp, final TimeSheetYear tsy) {
 		addStyleName("timeSheet");
 		leaveBalanceLabel.setText("Resturlaub: " + tsy.getAbsenceBalance() + " (" + tsy.getAnnualLeaveDays() + "/" + tsy.getLeaveEntitlement() + ") ");
 		int hb = tsy.getBalance();
@@ -270,22 +269,56 @@ public class TimeSheet extends DockLayoutPanel {
 			hourBalanceLabel.addStyleName("positiveBalance");
 		}
 		List<TimeSheetElement>relevantMonths = new ArrayList<TimeSheetElement>();
+		
+		int col = 0;
+		
 		for (TimeSheetElement tsm:tsy.getChildren()) {
-			VerticalPanel vp = new VerticalPanel();
+//			VerticalPanel vp = new VerticalPanel();
+//			vp.addStyleName("monthColumn");
+//			relevantMonths.add(tsm);
+//			vp.add(createMonthLabel(relevantMonths, tsm, tsy));
+//			vp.add(createMonthTable(tsm));
+//			hp.add(vp);
+
 			relevantMonths.add(tsm);
-			vp.add(createMonthLabel(relevantMonths, tsm));
-			vp.add(createMonthTable(tsm));
-			hp.add(vp);
+			hp.setWidget(0, col, createMonthLabel(relevantMonths, tsm, tsy));
+			addMonthColumn(hp, col, tsm);
+			hp.getColumnFormatter().setWidth(col, Math.round(100 / tsy.getChildren().size()) + "%");
+			col++;
 		}
 		
+		hp.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				event.stopPropagation();
+				Cell cell = hp.getCellForEvent(event);
+				if (cell != null) {
+					int row = cell.getRowIndex();
+					int col = cell.getCellIndex();
+					if (row > 0) {
+						TimeSheetElement day = tsy.getChildren().get(col).getChildren().get(row - 1);
+						
+						if (day.isAbsent()) {
+							removeLeave(day.getAbsence());
+						} else {
+							editDay(hp, row, col, (TimeSheetDay) day);
+						}
+					}
+				}
+			}
+		});
+
 	}
 	
 	
-	private Widget createMonthLabel(List<TimeSheetElement> previousMonths, final TimeSheetElement tsm) {
+	private Widget createMonthLabel(List<TimeSheetElement> previousMonths, final TimeSheetElement tsm, final TimeSheetYear tsy) {
 		VerticalPanel vp = new VerticalPanel();
+		HorizontalPanel hp = new HorizontalPanel();
+		vp.addStyleName("timeSheetCellContent");
+		hp.addStyleName("timeSheetCellContent");
 		DateTimeFormat dtf = DateTimeFormat.getFormat("MMMM");
 		
-		HorizontalPanel hp = new HorizontalPanel();
 		Label monthLabel = new Label(dtf.format(tsm.getDate()));
 		monthLabel.addStyleName("monthLabel");
 		hp.add(monthLabel);
@@ -293,11 +326,13 @@ public class TimeSheet extends DockLayoutPanel {
 		if (tsm.getDate().getTime() < new Date().getTime()) {
 			final Label balanceLabel = new Label();
 			balanceLabel.setText(String.valueOf(getDurationAsString(tsm.getBalance())));
+			
 			if (tsm.getBalance() < 0) {
 				balanceLabel.addStyleName("negativeBalance");
 			} else {
 				balanceLabel.addStyleName("positiveBalance");
 			}
+			
 			hp.add(balanceLabel);
 			
 			class R implements Runnable {
@@ -324,7 +359,7 @@ public class TimeSheet extends DockLayoutPanel {
 		
 		if (clDoc.getSession().isAllowed(new Action("TimeSheet", "EDIT"))) {
 			final WorkPattern workPattern = ((TimeSheetMonth)tsm).getWp();
-			Label wpLabel = new Label(workPattern != null ? workPattern.getName() + "(" + ((TimeSheetMonth) tsm).getLeaveEntitlement(30) + ")" : "---");
+			Label wpLabel = new Label(workPattern != null ? workPattern.getName() + "(" + getLeaveEntitlement(tsy, tsm) + ")" : "---");
 			wpLabel.addStyleName("wpLabel");
 			vp.add(wpLabel);
 			wpLabel.addClickHandler(new ClickHandler() {
@@ -339,6 +374,10 @@ public class TimeSheet extends DockLayoutPanel {
 		return vp;
 	}
 
+
+	private float getLeaveEntitlement(TimeSheetYear tsy, TimeSheetElement tsm) {
+		return Math.round(((TimeSheetMonth) tsm).getLeaveEntitlement(tsy.getLeaveEntitlement()) * 10) / 10;
+	}
 
 	private boolean isOverlapping(Interactor outer) {
 		boolean overlapping = false;
@@ -400,7 +439,7 @@ public class TimeSheet extends DockLayoutPanel {
 
 	private MapListRenderer actListRenderer = null;
 
-	private void editDay(final FlexTable ft, final int row, final TimeSheetDay tsd) {
+	private void editDay(final FlexTable ft, final int row, final int col, final TimeSheetDay tsd) {
 		VerticalPanel vp = new VerticalPanel();
 		actListRenderer = new MapListRenderer(new String[]{"von", "bis", "Bemerkung"}, 
 				new Runnable() {
@@ -492,7 +531,7 @@ public class TimeSheet extends DockLayoutPanel {
 					@Override
 					public void onResult(List<Act> result) {
 						tsd.setActs(asActs(actListRenderer.getActs()));
-						addDayRow(ft, row, tsd);
+						addDayRow(ft, row, col, tsd);
 					}
 				});
 			}
@@ -525,84 +564,109 @@ public class TimeSheet extends DockLayoutPanel {
 	}
 
 
-	private Widget createMonthTable(final TimeSheetElement tsm) {
-		final FlexTable ft = new FlexTable();
-		ft.addStyleName("monthTable");
-		ft.getColumnFormatter().addStyleName(0, "dateColumn");
-		
-		ft.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Cell cell = ft.getCellForEvent(event);
-				if (cell != null) {
-					int index = cell.getRowIndex();
-					TimeSheetElement day = tsm.getChildren().get(index);
-					
-					if (day.isAbsent()) {
-						removeLeave(day.getAbsence());
-					} else {
-						editDay(ft, index, (TimeSheetDay) day);
-					}
-				}
-			}
-		});
-		
-		int row = 0;
+//	private Widget createMonthTable(final TimeSheetElement tsm) {
+//		final FlexTable ft = new FlexTable();
+//		ft.addStyleName("monthTable");
+//		ft.getColumnFormatter().addStyleName(0, "dateColumn");
+//		
+//		ft.addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				Cell cell = ft.getCellForEvent(event);
+//				if (cell != null) {
+//					int index = cell.getRowIndex();
+//					TimeSheetElement day = tsm.getChildren().get(index);
+//					
+//					if (day.isAbsent()) {
+//						removeLeave(day.getAbsence());
+//					} else {
+//						editDay(ft, index, (TimeSheetDay) day);
+//					}
+//				}
+//			}
+//		});
+//		
+//		int row = 0;
+//		for (TimeSheetElement tse:tsm.getChildren()) {
+//			TimeSheetDay tsd = (TimeSheetDay)tse;
+//			addDayRow(ft, row, tsd);
+//			row++;
+//		}
+//		
+//		return ft;
+//	}	
+//	
+
+	private void addMonthColumn(final FlexTable hp, int col, final TimeSheetElement tsm) {
+		int row = 1;
 		for (TimeSheetElement tse:tsm.getChildren()) {
 			TimeSheetDay tsd = (TimeSheetDay)tse;
-			addDayRow(ft, row, tsd);
+			addDayRow(hp, row, col, tsd);
 			row++;
 		}
 		
-		return ft;
 	}	
 	
+
 	private boolean isHoliday(Act act) {
 		return act.actClass.name.equals(LeaveRegistration.ANNUAL_LEAVE_ACT);
 	}
 
-	DateTimeFormat dtfRowHeader = DateTimeFormat.getFormat("dd., E");
+	DateTimeFormat dtfDateHeader = DateTimeFormat.getFormat("d");
+	DateTimeFormat dtfDayHeader = DateTimeFormat.getFormat("EEE");
 
-	private void addDayRow(FlexTable ft, int row, final TimeSheetDay tsd) {
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.addStyleName("timeSheetRow");
-		Label dayLabel = new Label(dtfRowHeader.format(tsd.getDate()));
-		dayLabel.addStyleName("headerDate");
+	private void addDayRow(FlexTable ft, int row, int col, final TimeSheetDay tsd) {
+		ft.getCellFormatter().addStyleName(row, col, "timeSheetCell");
+		HorizontalPanel hpContent = new HorizontalPanel();
+		hpContent.addStyleName("timeSheetCellContent");
 
-		hp.add(dayLabel);
+		HorizontalPanel hpDate = new HorizontalPanel();
 
-		ft.setWidget(row, 0, hp);
+		Label dateLabel = new Label(dtfDateHeader.format(tsd.getDate()));
+		dateLabel.addStyleName("headerDate");
+		Label dateDayLabel = new Label(dtfDayHeader.format(tsd.getDate()));
+		dateDayLabel.addStyleName("headerDay");
+
+		hpDate.add(dateLabel);
+		hpDate.add(dateDayLabel);
+		hpContent.add(hpDate);
+		
+		ft.setWidget(row, col, hpContent);
 		
 		if (tsd.isAbsent()) {
 			if (tsd.isAnnualLeave()) {
-				ft.getRowFormatter().addStyleName(row, tsd.getAbsenceDays() == 1f ? "leaveDay" : "halfLeaveDay");
+				ft.getCellFormatter().addStyleName(row, col, tsd.getAbsenceDays() == 1f ? "leaveDay" : "halfLeaveDay");
 			} else {
-				ft.getRowFormatter().addStyleName(row, tsd.getAbsenceDays() == 1f ? "sickLeaveDay" : "halfSickLeaveDay");
+				ft.getCellFormatter().addStyleName(row, col, tsd.getAbsenceDays() == 1f ? "sickLeaveDay" : "halfSickLeaveDay");
 			}
 
 		} 
 		if (tsd.isPublicHoliday()) {
-			ft.getRowFormatter().addStyleName(row, "weekendCell");
-			dayLabel.addStyleName("weekendDate");
+			ft.getCellFormatter().addStyleName(row, col, "weekendCell");
+			dateLabel.addStyleName("weekendDate");
+			dateDayLabel.addStyleName("weekendDate");
 		}
 		
-		hp.setTitle(getToolTip(tsd));
+		hpContent.setTitle(getToolTip(tsd));
 		
 		if (/*tsd.getDate().getTime() < new Date().getTime() &&*/ !tsd.isAbsent() && (tsd.getQuota() != 0 || tsd.getBalance() != 0)) {
 			Label lbBalance = new Label(String.valueOf(getDurationAsString(tsd.getBalance())));
-			hp.add(lbBalance);
+			hpContent.add(lbBalance);
 			lbBalance.setStyleName(tsd.getBalance() >=  0 ? "positiveBalance" : "negativeBalance"); 
 		}			
 		
-		dayLabel.addClickHandler(new ClickHandler() {
+		ClickHandler clickHandler = new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
 				event.stopPropagation();
 				registerLeave(getPerson(), tsd);
 			}
-		});
+		};
+		
+		dateLabel.addClickHandler(clickHandler);
+		dateDayLabel.addClickHandler(clickHandler);
 		
 	}
 
@@ -624,7 +688,8 @@ public class TimeSheet extends DockLayoutPanel {
 		int hours = duration / 60;
 		int minutes = duration % 60;
 		
-		return nf.format(hours) + ":" + nf.format(minutes);
+		return hours + ":" + nf.format(minutes);
+//		return nf.format(hours) + ":" + nf.format(minutes);
 	}
 
 
@@ -697,37 +762,41 @@ public class TimeSheet extends DockLayoutPanel {
 					new MessageBox(clDoc.getLabel("missingER"), clDoc.getLabel("missingERText"), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_EXCLAMATION).show();
 				} else {
 					final EntityRelation er = result.get(0);
-					final Interactor interactor =  new Interactor();
-					Widget content = WidgetCreator.createWidget("<form><line label=\"Organisation\" name=\"orga\" type=\"Entity\" entityType=\"182\" /> " +
-							"<line name=\"start\" type=\"datebox\" required=\"true\"/>" +
-							"<line name=\"end\" label=\"bis\" type=\"datebox\"/>" +
-							"<line name=\"AnnualLeaveRight\" label=\"Urlaubsanspruch (Tage/Jahr)\" type=\"float\"/>" +
-							"</form>", interactor);
-					final Map<String, Serializable> item = new HashMap<String, Serializable>();
-					item.put("orga", er.object);
-					item.put("start", er.startDate);
-					item.put("end", er.endDate);
 					
-					PopupManager.showModal(clDoc.getLabel("Details: " + person.getFirstName() + " " + person.getLastName()), content, new OnClick<PopupPanel>() {
+					SRV.actService.findByEntity(clDoc.getSession(), ITimeManagementService.TIME_MGMNT_MASTERDATA, person, Participation.PROTAGONIST.id, null, null, new DefaultCallback<List<Act>>(clDoc, "load masterdata") {
 
 						@Override
-						public void onClick(final PopupPanel pp) {
-							interactor.fromDialog(item);
-							er.startDate = (Date)item.get("start");
-							er.endDate = (Date)item.get("end");
-							er.object = (Entity)item.get("orga");
-							SRV.entityService.save(clDoc.getSession(), er, new DefaultCallback<EntityRelation>(clDoc, "save ER") {
+						public void onResult(List<Act> result) {
+							final Interactor interactor =  new Interactor();
+							final Widget content = WidgetCreator.createWidget("<form><line label=\"Organisation\" name=\"orga\" type=\"Entity\" entityType=\"182\" /> " +
+									"<line name=\"start\" type=\"datebox\" required=\"true\"/>" +
+									"<line name=\"end\" label=\"bis\" type=\"datebox\"/>" +
+									"<line name=\"" + ITimeManagementService.ANNUALLEAVERIGHT + "\" label=\"Urlaubsanspruch (Tage/Jahr)\" type=\"float\"/>" +
+									"</form>", interactor);
+							final Act act = result != null && !result.isEmpty() ? result.get(0) : new Act(ITimeManagementService.TIME_MGMNT_MASTERDATA);
+							act.setParticipant(person, Participation.PROTAGONIST);
+							act.put("orga", er.object);
+							act.put("start", er.startDate);
+							act.put("end", er.endDate);
+							PopupManager.showModal(clDoc.getLabel("Details: " + person.getFirstName() + " " + person.getLastName()), content, new OnClick<PopupPanel>() {
 
+								@SuppressWarnings("unchecked")
 								@Override
-								public void onResult(EntityRelation result) {
+								public void onClick(final PopupPanel pp) {
+									interactor.fromDialog(act);
+									er.startDate = act.getDate("start");
+									er.endDate = act.getDate("end");
+									er.object = (Entity)act.get("orga").getValue();
+									SRV.entityService.save(clDoc.getSession(), er, SRV.NOP);
+									SRV.actService.save(clDoc.getSession(), act, SRV.NOP);
 									
+									pp.hide();
 								}
-							});
-							pp.hide();
+							}, null);
+							interactor.toDialog(act);
 						}
-					}, null);
+					});
 					
-					interactor.toDialog(item);
 				}
 			}
 		});

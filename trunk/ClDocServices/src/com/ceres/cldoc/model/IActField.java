@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public interface IActField extends Serializable {
+	final int FT_TRANSIENT = -1;
 	final int FT_STRING = 1;
 	final int FT_INTEGER = 2;
 	final int FT_DATE = 3;

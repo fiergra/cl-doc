@@ -32,6 +32,10 @@ public class Act extends AbstractNamedValueAccessor {
 		this.actClass = actClass;
 	}
 
+	public Act(String actClassName) {
+		this(new ActClass(actClassName));
+	}
+
 	@Override
 	public Date getDate() {
 		return date;

@@ -79,7 +79,7 @@ public class ActField implements IActField {
 
 	@Override
 	public Long getLongValue() {
-		return (Long)value;
+		return value != null ? ((Number)value).longValue() : null;
 	}
 
 	@Override
@@ -173,6 +173,8 @@ public class ActField implements IActField {
 			return FT_STRING;
 		} else if (value instanceof CatalogList) {
 			return FT_LIST;
+		} else if (value instanceof Integer) {
+			return FT_INTEGER;
 		} else if (value instanceof Long) {
 			return FT_INTEGER;
 		} else if (value instanceof Float) {
@@ -184,7 +186,8 @@ public class ActField implements IActField {
 		} else if (value instanceof Catalog) {
 			return FT_CATALOG;
 		} else {
-			throw new RuntimeException("unsupported data type:" + (value != null ? value : "null"));
+			return FT_TRANSIENT;
+//			throw new RuntimeException("unsupported data type:" + (value != null ? value : "null"));
 		}
 		return 0;
 	}

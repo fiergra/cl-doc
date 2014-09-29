@@ -1,8 +1,7 @@
 package com.ceres.cldoc.client;
 
-import com.ceres.cldoc.client.timemanagement.TimeSheet;
+import com.ceres.cldoc.client.timemanagement.TimeSheets;
 import com.ceres.cldoc.client.views.AccessControlConfig;
-import com.ceres.cldoc.client.views.AssignmentsPanel;
 import com.ceres.cldoc.client.views.CatalogConfigurator2;
 import com.ceres.cldoc.client.views.Configurator;
 import com.ceres.cldoc.client.views.DebugPanel;
@@ -35,7 +34,7 @@ public class DynamicLoader {
 		} else if (code.equals("LeaveRegistration")) {
 			result = new LeaveRegistration(clDoc);
 		} else if (code.equals("TimeSheet")) {
-			result = new TimeSheet(clDoc);
+			result = new TimeSheets(clDoc);
 //		} else if (name.equals("Formulare")) {
 //			result = new HistoryView(clDoc, (Entity) model);
 //		} else if (name.equals("Stammdaten")) {

@@ -28,7 +28,9 @@ public class TimeSheetMonth extends SimpleTimeSheetElement {
 		return wp;
 	}
 
-	public float getLeaveEntitlement(int baseEntitlement) {
+	/* http://www.arbeitsrecht.org/arbeitnehmer/urlaub/so-berechnen-sie-ihren-urlaubsanspruch/ */
+	
+	public float getLeaveEntitlement(float baseEntitlement) {
 		if (getWp() != null) {
 			float workigDaysPerWeek = 0f;
 			for (float f : getWp().hours) {
@@ -36,7 +38,8 @@ public class TimeSheetMonth extends SimpleTimeSheetElement {
 					workigDaysPerWeek++;
 				}
 			}
-			return (workigDaysPerWeek / 5 * baseEntitlement) / 12;
+			float entitlement = (workigDaysPerWeek / 5 * baseEntitlement) / 12; 
+			return entitlement;
 		} else {
 			return 0f;
 		}
