@@ -18,6 +18,18 @@ public class Interactor {
 		links.add(link);
 	}
 
+	protected InteractorLink getLink(String name) {
+		InteractorLink result = null;
+		Iterator <InteractorLink> iter = links.iterator(); 
+		while (result == null && iter.hasNext()) {
+			InteractorLink curr = iter.next();
+			if (name.equals(curr.getName())) {
+				result = curr;
+			}
+		}
+		return result;
+	}
+	
 	public void resetLinks() {
 		links.clear();
 	}
