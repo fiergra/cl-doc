@@ -11,19 +11,21 @@ import com.google.gwt.user.client.ui.Widget;
 
 @SuppressWarnings("deprecation")
 public abstract class InteractorWidgetLink extends InteractorLink {
+	private static final String FOCUS = "focus";
+	public static final String REQUIRED = "required";
 	protected final Widget widget;
 	protected final HashMap<String, String> attributes;
 	
 	protected final boolean isRequired;
-	protected final boolean focus;
+	protected final boolean requestFocus;
 
 	public InteractorWidgetLink(Interactor interactor, String name, Widget widget, HashMap<String, String> attributes) {
 		super(interactor, name);
 		this.widget = widget;
 		this.attributes = attributes;
 		
-		isRequired = attributes != null && "true".equals(attributes.get("required")); 
-		focus = attributes != null && "true".equals(attributes.get("focus"));
+		isRequired = attributes != null && "true".equals(attributes.get(REQUIRED)); 
+		requestFocus = attributes != null && "true".equals(attributes.get(FOCUS));
 	}
 
 	protected void hilite(boolean isValid) {
@@ -32,17 +34,17 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		} else {
 			getWidget().removeStyleName("invalidContent");
 		}
-		if (focus) {
+		if (requestFocus) {
 			if (getWidget() instanceof Focusable) {
 				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 					
 					@Override
 					public void execute() {
-						((Focusable)getWidget()).setFocus(focus);
+						((Focusable)getWidget()).setFocus(requestFocus);
 					}
 				});
 			} else if (getWidget() instanceof HasFocus) {
-				((HasFocus)getWidget()).setFocus(focus);
+				((HasFocus)getWidget()).setFocus(requestFocus);
 			}
 		}
 	}
