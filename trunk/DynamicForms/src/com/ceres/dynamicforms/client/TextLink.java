@@ -28,7 +28,8 @@ public class TextLink extends InteractorWidgetLink {
 
 	@Override
 	public void fromDialog(Map<String, Serializable> item) {
-		put(item, name, getWidget().getText());
+		String text = getWidget().getText();
+		put(item, name, text != null && text.length() > 0 ? text : null);
 	}
 
 	@Override

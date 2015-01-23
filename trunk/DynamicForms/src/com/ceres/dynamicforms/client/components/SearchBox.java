@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import com.ceres.dynamicforms.client.ITranslator;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -28,6 +30,15 @@ public class SearchBox<T> extends SuggestBox {
 	public SearchBox(MultiWordSuggestOracle multiWordSuggestOracle, final LabelFunc<T> replacement) {
 		super(multiWordSuggestOracle);
 		this.replacement = replacement;
+		
+		getValueBox().addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				setSelected(null);
+			}
+		});
+		
 		addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			
 			@SuppressWarnings("unchecked")

@@ -6,8 +6,10 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
 
+@SuppressWarnings("deprecation")
 public abstract class InteractorWidgetLink extends InteractorLink {
 	protected final Widget widget;
 	protected final HashMap<String, String> attributes;
@@ -30,14 +32,18 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		} else {
 			getWidget().removeStyleName("invalidContent");
 		}
-		if (focus && getWidget() instanceof Focusable) {
-			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-				
-				@Override
-				public void execute() {
-					((Focusable)getWidget()).setFocus(focus);
-				}
-			});
+		if (focus) {
+			if (getWidget() instanceof Focusable) {
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					
+					@Override
+					public void execute() {
+						((Focusable)getWidget()).setFocus(focus);
+					}
+				});
+			} else if (getWidget() instanceof HasFocus) {
+				((HasFocus)getWidget()).setFocus(focus);
+			}
 		}
 	}
 	
