@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.ceres.dynamicforms.client.Interactor;
+import com.ceres.dynamicforms.client.Interactor.LinkChangeHandler;
+import com.ceres.dynamicforms.client.InteractorLink;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 
@@ -76,10 +78,10 @@ public abstract class MapListRenderer extends FlexTable {
 		final int row = getRowCount();
 		final LineContext lineContext = new LineContext(this, row, newAct);
 
-		lineContext.interactor.addChangeHandler(new Runnable() {
+		lineContext.interactor.addChangeHandler(new LinkChangeHandler() {
 			
 			@Override
-			public void run() {
+			public void onChange(InteractorLink link) {
 				if (setModified != null) {
 					setModified.run();
 				}

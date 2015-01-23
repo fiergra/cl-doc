@@ -300,6 +300,18 @@ public class WidgetCreator {
 			if (widget instanceof HasEnabled && attributes.containsKey("enabled")) {
 				((HasEnabled)widget).setEnabled(asBoolean(attributes.get("enabled")));
 			}
+
+			if (translator != null && attributes.containsKey("objectType")) {
+				String id = attributes.get("objectType");
+				boolean isVisible = translator.isVisible(id);
+				boolean isEnabled = translator.isEnabled(id);
+				
+				widget.setVisible(isVisible);
+				if (widget instanceof HasEnabled) { 
+					((HasEnabled)widget).setEnabled(isEnabled);
+				}
+			}
+
 			
 			if (link != null && link.getName() != null) {
 				interactor.addLink(link);

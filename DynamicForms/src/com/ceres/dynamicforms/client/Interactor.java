@@ -7,10 +7,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.event.dom.client.ChangeHandler;
+
 public class Interactor {
 	
 	private final Collection<InteractorLink> links = new ArrayList<InteractorLink>();
-	private List<Runnable> changeHandlers;
+	private List<LinkChangeHandler> changeHandlers;
 	private boolean isModified;
 	private Boolean isValid = null;
 	
@@ -18,7 +20,7 @@ public class Interactor {
 		links.add(link);
 	}
 
-	protected InteractorLink getLink(String name) {
+	public InteractorLink getLink(String name) {
 		InteractorLink result = null;
 		Iterator <InteractorLink> iter = links.iterator(); 
 		while (result == null && iter.hasNext()) {
@@ -35,6 +37,11 @@ public class Interactor {
 	}
 	
 	public void toDialog(Map<String,Serializable> item) {
+		if (changeHandlers != null) {
+			for (LinkChangeHandler changeHandler:changeHandlers) {
+				changeHandler.toDialog(item);
+			}
+		}
 		for (InteractorLink il:links) {
 			il.toDialog(item);
 			il.hilite(il.isValid());
@@ -43,6 +50,11 @@ public class Interactor {
 	}
 
 	public void fromDialog(Map<String, Serializable> item) {
+		if (changeHandlers != null) {
+			for (LinkChangeHandler changeHandler:changeHandlers) {
+				changeHandler.fromDialog(item);
+			}
+		}
 		for (InteractorLink il:links) {
 			il.fromDialog(item);
 		}
@@ -52,9 +64,15 @@ public class Interactor {
 		return isModified;
 	}
 
-	public void addChangeHandler(Runnable changeHandler) {
+	public static abstract class LinkChangeHandler {
+		protected void toDialog(Map<String,Serializable> item) {}
+		protected void fromDialog(Map<String,Serializable> item) {}
+		protected abstract void onChange(InteractorLink link);
+	}
+	
+	public void addChangeHandler(LinkChangeHandler changeHandler) {
 		if (changeHandlers == null) {
-			changeHandlers = new ArrayList<Runnable>();
+			changeHandlers = new ArrayList<LinkChangeHandler>();
 		}
 		changeHandlers.add(changeHandler);
 	}
@@ -80,8 +98,8 @@ public class Interactor {
 
 		
 		if (changeHandlers != null) {
-			for (Runnable changeHandler:changeHandlers) {
-				changeHandler.run();
+			for (LinkChangeHandler changeHandler:changeHandlers) {
+				changeHandler.onChange(link);
 			}
 		}
 	}

@@ -5,18 +5,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class SimpleFormItem extends Panel  {
+public class SimpleFormItem extends Panel implements HasEnabled  {
 
 	public Widget content;
 	private SimpleForm simpleForm;
 	private int row;
 
 	private final HashMap<String, String> attributes;
+	private boolean visible = true;
+	private boolean enabled = true;
 	
 	public SimpleFormItem(HashMap<String, String> attributes) {
 		this.attributes = attributes;
@@ -25,6 +28,7 @@ public class SimpleFormItem extends Panel  {
 	public void setSimpleForm(SimpleForm simpleForm) {
 		this.simpleForm = simpleForm;
 		this.row = simpleForm.getRowCount();
+		simpleForm.getRowFormatter().setVisible(row, visible);
 	}
 	
 	@Override
@@ -43,8 +47,8 @@ public class SimpleFormItem extends Panel  {
 			}
 		}
 		if (child != null) {
-//			this.content.addStyleName("simpleFormItem");
 			simpleForm.setWidget(row, 1, this.content);
+			setEnabled(enabled);
 		}
 
 	}
@@ -83,6 +87,26 @@ public class SimpleFormItem extends Panel  {
 	public String getAttribute(String key) {
 		return attributes != null ? attributes.get(key) : null;
 	}
-	
-	
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+		if (simpleForm != null) {
+			simpleForm.getRowFormatter().setVisible(row, visible);
+		}
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		if (content instanceof HasEnabled) {
+			((HasEnabled)content).setEnabled(enabled);
+		}
+	}
+
 }
