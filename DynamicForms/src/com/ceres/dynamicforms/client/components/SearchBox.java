@@ -36,6 +36,8 @@ public class SearchBox<T> extends SuggestBox {
 			@Override
 			public void onChange(ChangeEvent event) {
 				setSelected(null);
+				SuggestOracle.Suggestion suggestion = new SearchSuggestion<T>(null, "", "");
+			    SelectionEvent.fire(SearchBox.this, suggestion);
 			}
 		});
 		

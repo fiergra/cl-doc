@@ -85,6 +85,7 @@ public abstract class MapListRenderer extends FlexTable {
 				if (setModified != null) {
 					setModified.run();
 				}
+				
 				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext)) {
 					addEmptyLine();
 				} else if (lineContexts.contains(lineContext) && lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
