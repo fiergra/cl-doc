@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.user.client.ui.Focusable;
 
 public class Interactor {
 	
@@ -128,6 +128,26 @@ public class Interactor {
 	public void enable(boolean enabled) {
 		for (InteractorLink il:links) {
 			il.enable(enabled);
+		}
+	}
+
+	public void setModified(boolean isModified) {
+		this.isModified = isModified;
+	}
+
+	public void setFocus() {
+		Focusable f = null;
+		Iterator<InteractorLink>linkIter = links.iterator();
+		
+		while (f == null && linkIter.hasNext()) {
+			InteractorLink curr = linkIter.next();
+			if (curr instanceof InteractorWidgetLink && ((InteractorWidgetLink)curr).getWidget() instanceof Focusable) {
+				f = (Focusable) ((InteractorWidgetLink)curr).getWidget();
+			}
+		}
+		
+		if (f != null) {
+			f.setFocus(true);
 		}
 	}
 }

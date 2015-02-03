@@ -24,6 +24,7 @@ public abstract class InteractorLink {
 		if (index == -1) {
 			value = item.get(fieldName);
 		} else {
+			@SuppressWarnings("unchecked")
 			Map<String, Serializable> subItem = (Map<String, Serializable>)item.get(fieldName.substring(0, index));
 			value = get(subItem, fieldName.substring(index + 1));
 		}
@@ -36,6 +37,7 @@ public abstract class InteractorLink {
 		if (index == -1) {
 			item.put(fieldName, value);
 		} else {
+			@SuppressWarnings("unchecked")
 			Map<String, Serializable> subItem = (Map<String, Serializable>)item.get(fieldName.substring(0, index));
 			put(subItem, fieldName.substring(index + 1), value);
 		}

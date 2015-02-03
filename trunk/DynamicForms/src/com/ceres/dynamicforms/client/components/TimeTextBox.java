@@ -46,6 +46,7 @@ public class TimeTextBox extends DateTextBox {
 		return isTimeSet(value) ? DateTimeFormat.getFormat("HH:mm").format(value) : null;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Date parseValue() {
 		Date value = super.parseValue();
