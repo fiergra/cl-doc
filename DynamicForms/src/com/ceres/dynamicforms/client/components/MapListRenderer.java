@@ -15,11 +15,11 @@ import com.google.gwt.user.client.ui.Label;
 public abstract class MapListRenderer extends FlexTable {
 	
 	static class LineContext {
-		private final int row;
+//		private final int row;
 		private final MapListRenderer mlr;
-		public LineContext(MapListRenderer mlr, int row, Map<String, Serializable> act) {
+		public LineContext(MapListRenderer mlr, /*int row, */Map<String, Serializable> act) {
 			this.mlr = mlr;
-			this.row = row;
+//			this.row = row;
 			this.act = act;
 		}
 
@@ -28,9 +28,9 @@ public abstract class MapListRenderer extends FlexTable {
 			@Override
 			public void hilite(boolean isValid) {
 				if (!isValid) {
-					mlr.getRowFormatter().addStyleName(row, "invalidContent");
+					mlr.getRowFormatter().addStyleName(mlr.getRow(LineContext.this), "invalidContent");
 				} else {
-					mlr.getRowFormatter().removeStyleName(row, "invalidContent");
+					mlr.getRowFormatter().removeStyleName(mlr.getRow(LineContext.this), "invalidContent");
 				}
 			}
 			
@@ -45,6 +45,7 @@ public abstract class MapListRenderer extends FlexTable {
 	
 	private final String[] labels;
 	private final Runnable setModified;
+	private LineContext lc;
 
 	public MapListRenderer(String[] labels, Runnable setModified) {
 		this.labels = labels;
@@ -52,9 +53,24 @@ public abstract class MapListRenderer extends FlexTable {
 		this.setModified = setModified;
 	}
 
+	protected int getRow(LineContext lineContext) {
+		return lineContexts.indexOf(lineContext) + 1 /* the header is row zero! */;
+	}
+
+	private LineContext emptyLineContext = null;
+	
 	private void addEmptyLine() {
 		final Map<String,Serializable> newAct = newAct();
-		addRow(newAct);
+		emptyLineContext = addRow(newAct);
+	}
+
+	private void removeEmptyLine() {
+		if (emptyLineContext != null) {
+			int row = getRow(emptyLineContext);
+			removeRow(row);
+			lineContexts.remove(emptyLineContext);
+			emptyLineContext = null;
+		}
 	}
 
 	protected abstract Map<String, Serializable> newAct();
@@ -73,10 +89,16 @@ public abstract class MapListRenderer extends FlexTable {
 		}
 		return isModified;
 	}
-	
-	private void addRow(Map<String, Serializable> newAct) {
-		final int row = getRowCount();
-		final LineContext lineContext = new LineContext(this, row, newAct);
+
+	public void addRow(Map<String, Serializable> newAct, boolean isModified) {
+		removeEmptyLine();
+		lc = addRow(newAct);
+		lc.interactor.setModified(isModified);
+		addEmptyLine();
+	}
+
+	private LineContext addRow(Map<String, Serializable> newAct) {
+		final LineContext lineContext = new LineContext(this, newAct);
 
 		lineContext.interactor.addChangeHandler(new LinkChangeHandler() {
 			
@@ -91,11 +113,14 @@ public abstract class MapListRenderer extends FlexTable {
 				} else if (lineContexts.contains(lineContext) && lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
 						lineContext.act.put("isDeleted", true);
+						int row = getRow(lineContext);
 						removeRow(row);
 						lineContexts.remove(lineContext);
 						interactors.remove(lineContext.interactor);
-						
 						deleted.add(lineContext.act);
+						
+						lineContexts.get(row-1).interactor.setFocus();
+						
 					}
 				}
 			}
@@ -104,9 +129,10 @@ public abstract class MapListRenderer extends FlexTable {
 		lineContexts.add(lineContext);
 		interactors.add(lineContext.interactor);
 		
-		createNewRow(row, lineContext.interactor);
+		createNewRow(getRowCount(), lineContext.interactor);
 		lineContext.interactor.toDialog(newAct);
 		
+		return lineContext;
 	}
 
 

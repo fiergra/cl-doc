@@ -43,7 +43,6 @@ public class DateTextBox extends TextBox {
 
 	private final DateTimeFormat[] dateFormats = getDateTimeFormats();
 
-	@SuppressWarnings("deprecation")
 	public Date parseValue() {
 		String sValue = getValue();
 		Date date = null;
