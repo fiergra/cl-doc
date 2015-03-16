@@ -4,6 +4,31 @@ import java.io.Serializable;
 import java.util.Map;
 
 public abstract class InteractorLink {
+
+	public static final InteractorLink DUMMY = new InteractorLink(null, "dummy") {
+		
+		@Override
+		public void toDialog(Map<String, Serializable> item) {
+		}
+		
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
+		
+		@Override
+		protected void hilite(boolean isValid) {
+		}
+		
+		@Override
+		public void fromDialog(Map<String, Serializable> item) {
+		}
+		
+		@Override
+		public void enable(boolean enabled) {
+		}
+	};
+	
 	protected final String name;
 	protected final Interactor interactor;
 
@@ -51,4 +76,18 @@ public abstract class InteractorLink {
 		return name;
 	}
 
+	@Override
+	public int hashCode() {
+		return name != null ? name.hashCode() : super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (name != null && obj instanceof InteractorLink) {
+			return name.equals(((InteractorLink)obj).name);
+		}
+		return super.equals(obj);
+	}
+
+	
 }

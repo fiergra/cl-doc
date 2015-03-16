@@ -44,15 +44,21 @@ public abstract class MapListRenderer extends FlexTable {
 
 	
 	private final String[] labels;
-	private final Runnable setModified;
+	private Runnable changeHandler;
 	private LineContext lc;
 
-	public MapListRenderer(String[] labels, Runnable setModified) {
+	public MapListRenderer(String[] labels, Runnable changeHandler) {
 		this.labels = labels;
 		setStyleName("namedValuesList");
-		this.setModified = setModified;
+		this.changeHandler = changeHandler;
 	}
 
+	public void setChangeHandler(Runnable changeHandler) {
+		this.changeHandler = changeHandler;
+	}
+
+
+	
 	protected int getRow(LineContext lineContext) {
 		return lineContexts.indexOf(lineContext) + 1 /* the header is row zero! */;
 	}
@@ -104,8 +110,8 @@ public abstract class MapListRenderer extends FlexTable {
 			
 			@Override
 			public void onChange(InteractorLink link) {
-				if (setModified != null) {
-					setModified.run();
+				if (changeHandler != null) {
+					changeHandler.run();
 				}
 				
 				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext)) {
@@ -187,6 +193,7 @@ public abstract class MapListRenderer extends FlexTable {
 		getRowFormatter().addStyleName(0, "actsListHeader");
 		for (String labelText:labels) {
 			Label label = new Label(labelText);
+			label.addStyleName("noWrap");
 			setWidget(0, col, label);
 			col+= 1;
 		}
