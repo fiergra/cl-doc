@@ -1,6 +1,8 @@
 package com.ceres.dynamicforms.client;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.FloatTextBox;
@@ -8,13 +10,18 @@ import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -175,17 +182,19 @@ public class WidgetCreator {
 		return createWidgetFromElementName(tagName, asHashMap(element.getAttributes()), interactor, translator);
 	}
 	
-	public static Widget createWidgetFromElementName(String tagName, HashMap<String, String> attributes, Interactor interactor, ITranslator translator) {
+	public static Widget createWidgetFromElementName(String tagName, HashMap<String, String> attributes, final Interactor interactor, ITranslator translator) {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
 		InteractorWidgetLink link = null;
-		String fieldName = null; 
+		final String fieldName; 
 		
 		if (attributes.containsKey("fieldName")) {
 			fieldName = attributes.get("fieldName");
 		} else if (attributes.containsKey("name")) {
 			fieldName = attributes.get("name");
+		} else {
+			fieldName = null;
 		}
 		
 		if ("VBox".equals(localName)) {
@@ -246,9 +255,8 @@ public class WidgetCreator {
 			link = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFromDateField".equals(localName)){
-			fieldName = "dateFrom";
 			DateTextBox db =  new DateTextBox();
-			link = new DateFromLink(interactor, fieldName, db, attributes);
+			link = new DateFromLink(interactor, "dateFrom", db, attributes);
 			widget = db;
 		} else if ("ItemFieldCheckBox".equals(localName)){
 			widget = new CheckBox();
@@ -265,6 +273,53 @@ public class WidgetCreator {
 		} else if ("Label".equals(localName) || "ResourceLabel".equals(localName)){
 			widget = new Label(attributes.get("text"));
 			widget.addStyleName("formLabel");
+		} else if ("Button".equals(localName)){
+			String sLabel = attributes.containsKey("label") ? (translator != null ? translator.getLabel(attributes.get("label")) : attributes.get("label")) : "";
+			final PushButton pb = new PushButton(sLabel);
+			widget = pb;
+			final InteractorLink pblink = new InteractorWidgetLink(interactor, fieldName, pb, attributes) {
+				
+				@Override
+				public void toDialog(Map<String, Serializable> item) {
+				}
+				
+				@Override
+				public boolean isEmpty() {
+					return false;
+				}
+				
+				@Override
+				protected void hilite(boolean isValid) {
+				}
+				
+				@Override
+				public void fromDialog(Map<String, Serializable> item) {
+				}
+				
+				@Override
+				public void enable(boolean enabled) {
+					pb.setEnabled(enabled);
+				}
+			};
+			
+			pb.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					interactor.onChange(pblink);
+				}
+			});
+		} else if ("Link".equals(localName) || "link".equals(localName)){
+			Anchor a = new Anchor(attributes.get("text"));
+			final String uri = attributes.get("uri");
+			a.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					Window.open(uri, "_blank", "");
+				}
+			});
+			widget = a;
 		} else if ("FormHeading".equalsIgnoreCase(localName) || "ResourceFormHeading".equalsIgnoreCase(localName)){
 			HorizontalPanel hp = new HorizontalPanel();
 			Label l = new Label(attributes.get("label"));
@@ -276,11 +331,30 @@ public class WidgetCreator {
 			widget = hp;
 		} else if ("HRule".equals(localName)){
 			widget = new HTML("<hr/>");
+		} else if ("HTML".equals(localName)){
+			final HTML html = new HTML();
+			widget = new ScrollPanel(html);
+			link = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
+				
+				@Override
+				public void toDialog(Map<String, Serializable> item) {
+					html.setHTML((String) item.get(fieldName));
+				}
+				
+				@Override
+				public boolean isEmpty() {
+					return false;
+				}
+				
+				@Override
+				public void fromDialog(Map<String, Serializable> item) {
+				}
+			};
 		} else {
 			ILinkFactory linkFactory = linkFactories.get(localName);
 			if (linkFactory != null) {
 				link = linkFactory.createLink(interactor, fieldName, attributes);
-				widget = link.widget;
+				widget = link != null ? link.widget : null;
 			} else {
 				widget = new Label(localName + " not yet supported!");
 			}
@@ -294,6 +368,11 @@ public class WidgetCreator {
 			if (attributes.containsKey("width")) {
 				widget.setWidth(checkUnit(attributes.get("width")));
 			}
+
+			if (attributes.containsKey("background-color")) {
+				widget.getElement().getStyle().setBackgroundColor(attributes.get("background-color"));
+			}
+			
 			if (attributes.containsKey("height")) {
 				widget.setHeight(checkUnit(attributes.get("height")));
 			}

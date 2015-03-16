@@ -24,6 +24,14 @@ public class SimpleForm extends FlexTable {
 		row++;
 	}
 
+	
+	@Override
+	public void clear() {
+		super.clear();
+		removeAllRows();
+		row = 0;
+	}
+
 	@Override
 	public void add(Widget child) {
 		if (child instanceof SimpleFormItem) {

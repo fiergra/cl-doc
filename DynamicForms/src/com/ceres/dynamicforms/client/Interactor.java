@@ -3,15 +3,17 @@ package com.ceres.dynamicforms.client;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.Widget;
 
 public class Interactor {
 	
-	private final Collection<InteractorLink> links = new ArrayList<InteractorLink>();
+	private final Collection<InteractorLink> links = new HashSet<InteractorLink>();
 	private List<LinkChangeHandler> changeHandlers;
 	private boolean isModified;
 	private Boolean isValid = null;
@@ -150,4 +152,13 @@ public class Interactor {
 			f.setFocus(true);
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Widget> T getWidget(String linkName) {
+		InteractorLink link = getLink(linkName);
+		InteractorWidgetLink widgetLink = (InteractorWidgetLink) link;
+		return (T) widgetLink.getWidget();
+	}
+
+
 }
