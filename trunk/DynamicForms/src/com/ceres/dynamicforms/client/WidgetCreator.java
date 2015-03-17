@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ceres.dynamicforms.client.components.DateTextBox;
+import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
+import com.ceres.dynamicforms.client.components.EnabledVerticalPanel;
 import com.ceres.dynamicforms.client.components.FloatTextBox;
 import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
@@ -26,7 +28,6 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.xml.client.Document;
@@ -198,10 +199,10 @@ public class WidgetCreator {
 		}
 		
 		if ("VBox".equals(localName)) {
-			widget = new VerticalPanel();
+			widget = new EnabledVerticalPanel();
 			widget.setStyleName("VBox");
 		} else if ("HBox".equals(localName)){
-			widget = new HorizontalPanel();
+			widget = new EnabledHorizontalPanel();
 			widget.setStyleName("HBox");
 		} else if ("Tab".equals(localName)){
 			widget = new TabLayoutPanel(3, Unit.EM);
@@ -277,7 +278,7 @@ public class WidgetCreator {
 			String sLabel = attributes.containsKey("label") ? (translator != null ? translator.getLabel(attributes.get("label")) : attributes.get("label")) : "";
 			final PushButton pb = new PushButton(sLabel);
 			widget = pb;
-			final InteractorLink pblink = new InteractorWidgetLink(interactor, fieldName, pb, attributes) {
+			final InteractorWidgetLink pblink = new InteractorWidgetLink(interactor, fieldName, pb, attributes) {
 				
 				@Override
 				public void toDialog(Map<String, Serializable> item) {
@@ -296,10 +297,6 @@ public class WidgetCreator {
 				public void fromDialog(Map<String, Serializable> item) {
 				}
 				
-				@Override
-				public void enable(boolean enabled) {
-					pb.setEnabled(enabled);
-				}
 			};
 			
 			pb.addClickHandler(new ClickHandler() {
@@ -309,6 +306,7 @@ public class WidgetCreator {
 					interactor.onChange(pblink);
 				}
 			});
+			link = pblink;
 		} else if ("Link".equals(localName) || "link".equals(localName)){
 			Anchor a = new Anchor(attributes.get("text"));
 			final String uri = attributes.get("uri");
