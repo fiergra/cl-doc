@@ -10,9 +10,11 @@ import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.Interactor.LinkChangeHandler;
 import com.ceres.dynamicforms.client.InteractorLink;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
-public abstract class MapListRenderer extends FlexTable {
+public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 	
 	static class LineContext {
 //		private final int row;
@@ -64,10 +66,13 @@ public abstract class MapListRenderer extends FlexTable {
 	}
 
 	private LineContext emptyLineContext = null;
+	private boolean enabled = true;
 	
 	private void addEmptyLine() {
-		final Map<String,Serializable> newAct = newAct();
-		emptyLineContext = addRow(newAct);
+		if (enabled) {
+			final Map<String,Serializable> newAct = newAct();
+			emptyLineContext = addRow(newAct);
+		}
 	}
 
 	private void removeEmptyLine() {
@@ -135,12 +140,24 @@ public abstract class MapListRenderer extends FlexTable {
 		lineContexts.add(lineContext);
 		interactors.add(lineContext.interactor);
 		
-		createNewRow(getRowCount(), lineContext.interactor);
+		int row = getRowCount();
+		createNewRow(row, lineContext.interactor);
+		enableRow(row, enabled);
+		
 		lineContext.interactor.toDialog(newAct);
 		
 		return lineContext;
 	}
 
+
+	private void enableRow(int row, boolean enabled) {
+		for (int col = 0; col < getCellCount(row); col++) {
+			Widget w = getWidget(row, col);
+			if (w instanceof HasEnabled) {
+				((HasEnabled)w).setEnabled(enabled);
+			}
+		}
+	}
 
 	protected abstract boolean canRemove(Map<String, Serializable> act);
 
@@ -227,4 +244,31 @@ public abstract class MapListRenderer extends FlexTable {
 
 	}
 
+	@Override
+	public boolean isEnabled() {
+		return this.enabled ;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		if (!enabled) {
+			removeEmptyLine();
+		} else {
+			addEmptyLine();
+		}
+
+		for (int row = 0; row < getRowCount(); row++) {
+			for (int col = 0; col < getCellCount(row); col++) {
+				Widget w = getWidget(row, col);
+				if (w instanceof HasEnabled) {
+					((HasEnabled)w).setEnabled(enabled);
+				}
+			}
+		}
+
+	}
+
+	
+	
 }
