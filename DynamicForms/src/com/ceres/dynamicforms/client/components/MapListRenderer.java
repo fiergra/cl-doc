@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ceres.dynamicforms.client.ITranslator;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.Interactor.LinkChangeHandler;
 import com.ceres.dynamicforms.client.InteractorLink;
@@ -48,11 +49,14 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 	private final String[] labels;
 	private Runnable changeHandler;
 	private LineContext lc;
+	private ITranslator translator;
 
-	public MapListRenderer(String[] labels, Runnable changeHandler) {
+	public MapListRenderer(ITranslator translator, String[] labels, Runnable changeHandler) {
+		this.translator = translator;
 		this.labels = labels;
 		setStyleName("namedValuesList");
 		this.changeHandler = changeHandler;
+		addHeader();
 	}
 
 	public void setChangeHandler(Runnable changeHandler) {
@@ -69,9 +73,20 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 	private boolean enabled = true;
 	
 	private void addEmptyLine() {
-		if (enabled) {
+		if (enabled && emptyLineContext == null) {
 			final Map<String,Serializable> newAct = newAct();
 			emptyLineContext = addRow(newAct);
+		}
+	}
+	
+	
+
+	@Override
+	public void removeRow(int row) {
+		if (row < getRowCount()) {
+			super.removeRow(row);
+		} else {
+			System.out.println(this + " row index out of bounds!");
 		}
 	}
 
@@ -105,6 +120,7 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 		removeEmptyLine();
 		lc = addRow(newAct);
 		lc.interactor.setModified(isModified);
+		emptyLineContext = null;
 		addEmptyLine();
 	}
 
@@ -120,6 +136,7 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 				}
 				
 				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext)) {
+					emptyLineContext = null;
 					addEmptyLine();
 				} else if (lineContexts.contains(lineContext) && lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
@@ -142,9 +159,8 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 		
 		int row = getRowCount();
 		createNewRow(row, lineContext.interactor);
+		lineContext.interactor.toDialog(translator, newAct);
 		enableRow(row, enabled);
-		
-		lineContext.interactor.toDialog(newAct);
 		
 		return lineContext;
 	}
@@ -194,6 +210,7 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 		deleted.clear();
 		
 		clear();
+		removeEmptyLine();
 		removeAllRows();
 		addHeader();
 		
