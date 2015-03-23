@@ -352,6 +352,9 @@ public class WidgetCreator {
 			ILinkFactory linkFactory = linkFactories.get(localName);
 			if (linkFactory != null) {
 				link = linkFactory.createLink(interactor, fieldName, attributes);
+				if (link != null && attributes != null) {
+					link.setObjectType(attributes.get("objectType"));
+				}
 				widget = link != null ? link.widget : null;
 			} else {
 				widget = new Label(localName + " not yet supported!");
@@ -378,16 +381,16 @@ public class WidgetCreator {
 				((HasEnabled)widget).setEnabled(asBoolean(attributes.get("enabled")));
 			}
 
-			if (translator != null && attributes.containsKey("objectType")) {
-				String id = attributes.get("objectType");
-				boolean isVisible = translator.isVisible(id);
-				boolean isEnabled = translator.isEnabled(id);
-				
-				widget.setVisible(isVisible);
-				if (widget instanceof HasEnabled) { 
-					((HasEnabled)widget).setEnabled(isEnabled);
-				}
-			}
+//			if (translator != null) {
+//				String objectType = attributes.get("objectType");
+//				boolean isVisible = translator.isVisible(objectType);
+//				boolean isEnabled = translator.isEnabled(objectType);
+//				
+//				widget.setVisible(isVisible);
+//				if (widget instanceof HasEnabled) { 
+//					((HasEnabled)widget).setEnabled(isEnabled);
+//				}
+//			}
 
 			
 			if (link != null && link.getName() != null) {

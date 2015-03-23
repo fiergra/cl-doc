@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Interactor {
@@ -38,13 +39,26 @@ public class Interactor {
 		links.clear();
 	}
 	
-	public void toDialog(Map<String,Serializable> item) {
+	public void toDialog(ITranslator translator, Map<String,Serializable> item) {
 		if (changeHandlers != null) {
 			for (LinkChangeHandler changeHandler:changeHandlers) {
 				changeHandler.toDialog(item);
 			}
 		}
 		for (InteractorLink il:links) {
+			Widget widget;
+			if (il instanceof InteractorWidgetLink) {
+				widget = ((InteractorWidgetLink) il).getWidget();
+				String objectType = ((InteractorWidgetLink) il).getObjectType();
+				boolean isVisible = translator.isVisible(item, objectType);
+				boolean isEnabled = translator.isEnabled(item, objectType);
+				
+				widget.setVisible(isVisible);
+				if (widget instanceof HasEnabled) { 
+					((HasEnabled)widget).setEnabled(isEnabled);
+				}
+			}
+
 			il.toDialog(item);
 			il.hilite(il.isValid());
 		}

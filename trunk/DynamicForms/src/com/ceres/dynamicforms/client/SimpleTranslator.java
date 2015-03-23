@@ -1,5 +1,8 @@
 package com.ceres.dynamicforms.client;
 
+import java.io.Serializable;
+import java.util.Map;
+
 public class SimpleTranslator implements ITranslator {
 
 	@Override
@@ -8,12 +11,12 @@ public class SimpleTranslator implements ITranslator {
 	}
 
 	@Override
-	public boolean isVisible(String id) {
+	public boolean isVisible(Map<String, Serializable> item, String id) {
 		return true;
 	}
 
 	@Override
-	public boolean isEnabled(String id) {
+	public boolean isEnabled(Map<String, Serializable> item, String id) {
 		return true;
 	}
 

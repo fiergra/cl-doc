@@ -11,13 +11,15 @@ import com.google.gwt.user.client.ui.Widget;
 
 @SuppressWarnings("deprecation")
 public abstract class InteractorWidgetLink extends InteractorLink {
+	private static final String OBJECT_TYPE = "objectType";
 	private static final String FOCUS = "focus";
 	public static final String REQUIRED = "required";
 	protected final Widget widget;
 	protected final HashMap<String, String> attributes;
 	
-	protected final boolean isRequired;
-	protected final boolean requestFocus;
+	private final boolean isRequired;
+	private final boolean requestFocus;
+	private String objectType;
 
 	public InteractorWidgetLink(Interactor interactor, String name, Widget widget, HashMap<String, String> attributes) {
 		super(interactor, name);
@@ -26,8 +28,19 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		
 		isRequired = attributes != null && "true".equals(attributes.get(REQUIRED)); 
 		requestFocus = attributes != null && "true".equals(attributes.get(FOCUS));
+		objectType = attributes.get(OBJECT_TYPE);
 	}
 
+	public void setObjectType(String objectType) {
+		this.objectType = objectType;
+	}
+
+	public String getObjectType() {
+		return objectType;
+	}
+
+
+	
 	protected void hilite(boolean isValid) {
 		if (!isValid) {
 			getWidget().addStyleName("invalidContent");
@@ -64,7 +77,7 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 			((HasEnabled)getWidget()).setEnabled(enabled);
 		}
 	}
-	
+
 	
 
 }
