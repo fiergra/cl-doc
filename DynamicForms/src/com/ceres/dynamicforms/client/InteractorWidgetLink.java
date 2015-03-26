@@ -28,7 +28,7 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		
 		isRequired = attributes != null && "true".equals(attributes.get(REQUIRED)); 
 		requestFocus = attributes != null && "true".equals(attributes.get(FOCUS));
-		objectType = attributes.get(OBJECT_TYPE);
+		objectType = attributes != null ? attributes.get(OBJECT_TYPE) : null;
 	}
 
 	public void setObjectType(String objectType) {

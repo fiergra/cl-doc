@@ -278,35 +278,7 @@ public class WidgetCreator {
 			String sLabel = attributes.containsKey("label") ? (translator != null ? translator.getLabel(attributes.get("label")) : attributes.get("label")) : "";
 			final PushButton pb = new PushButton(sLabel);
 			widget = pb;
-			final InteractorWidgetLink pblink = new InteractorWidgetLink(interactor, fieldName, pb, attributes) {
-				
-				@Override
-				public void toDialog(Map<String, Serializable> item) {
-				}
-				
-				@Override
-				public boolean isEmpty() {
-					return false;
-				}
-				
-				@Override
-				protected void hilite(boolean isValid) {
-				}
-				
-				@Override
-				public void fromDialog(Map<String, Serializable> item) {
-				}
-				
-			};
-			
-			pb.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					interactor.onChange(pblink);
-				}
-			});
-			link = pblink;
+			link = new PushButtonLink(interactor, fieldName, pb, attributes);
 		} else if ("Link".equals(localName) || "link".equals(localName)){
 			Anchor a = new Anchor(attributes.get("text"));
 			final String uri = attributes.get("uri");

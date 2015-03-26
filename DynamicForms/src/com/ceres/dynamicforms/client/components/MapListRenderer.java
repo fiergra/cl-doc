@@ -10,9 +10,12 @@ import com.ceres.dynamicforms.client.ITranslator;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.Interactor.LinkChangeHandler;
 import com.ceres.dynamicforms.client.InteractorLink;
+import com.ceres.dynamicforms.client.PushButtonLink;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class MapListRenderer extends FlexTable implements HasEnabled {
@@ -140,31 +143,52 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 					addEmptyLine();
 				} else if (lineContexts.contains(lineContext) && lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
-						lineContext.act.put("isDeleted", true);
-						int row = getRow(lineContext);
-						removeRow(row);
-						lineContexts.remove(lineContext);
-						interactors.remove(lineContext.interactor);
-						deleted.add(lineContext.act);
-						
-						lineContexts.get(row-1).interactor.setFocus();
-						
+						removeRow(lineContext);
 					}
 				}
 			}
+
 		});
-		
+
+			
 		lineContexts.add(lineContext);
 		interactors.add(lineContext.interactor);
 		
-		int row = getRowCount();
+		final int row = getRowCount();
 		createNewRow(row, lineContext.interactor);
+		Image img = new Image("assets/images/workflow/actions/delete.png");
+		img.setPixelSize(16, 16);
+		
+		PushButton pbDelete = new PushButton(img);
+		pbDelete.setPixelSize(18, 18);
+		pbDelete.setStyleName("mapListDeleteButton");
+		lineContext.interactor.addLink(new PushButtonLink(lineContext.interactor, "$pbDelete", pbDelete, null));
+		lineContext.interactor.addChangeHandler(new LinkChangeHandler() {
+			
+			@Override
+			protected void onChange(InteractorLink link) {
+				removeRow(lineContext);
+			}
+		});
+		setWidget(row, getCellCount(row), pbDelete);
 		lineContext.interactor.toDialog(translator, newAct);
 		enableRow(row, enabled);
 		
 		return lineContext;
 	}
 
+	private void removeRow(LineContext lineContext) {
+		lineContext.act.put("isDeleted", true);
+		int row = getRow(lineContext);
+		removeRow(row);
+		lineContexts.remove(lineContext);
+		interactors.remove(lineContext.interactor);
+		deleted.add(lineContext.act);
+		
+		lineContexts.get(row-1).interactor.setFocus();
+	}
+
+	
 
 	private void enableRow(int row, boolean enabled) {
 		for (int col = 0; col < getCellCount(row); col++) {
