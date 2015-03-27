@@ -1,13 +1,17 @@
 package com.ceres.dynamicforms.client;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
 import com.ceres.dynamicforms.client.components.EnabledVerticalPanel;
 import com.ceres.dynamicforms.client.components.FloatTextBox;
+import com.ceres.dynamicforms.client.components.MapListRenderer;
 import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
@@ -50,6 +54,9 @@ public class WidgetCreator {
 	}	
 	
 	public static Widget createWidget(String xml, Interactor interactor, ITranslator translator) {
+		if (translator == null) {
+			translator = new SimpleTranslator();
+		}
 		Widget result = null;
 		Document document = XMLParser.parse(xml);
 		Element root = document.getDocumentElement();
@@ -69,7 +76,7 @@ public class WidgetCreator {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
-			System.out.println(levelPrefix(level) + element.getNodeName());
+			System.out.println("pc " + level + levelPrefix(level) + element.getNodeName());
 
 			element = preprocess(document, element);
 		
@@ -112,7 +119,33 @@ public class WidgetCreator {
 		if (processor != null) {
 			element = processor.process(document, element);
 		} else {
-			if ("line".equals(nodeName)) {
+			if ("MapList".equals(nodeName)) {
+				StringBuffer labels = new StringBuffer();
+				List<Node> columns = new ArrayList<>();
+				NodeList children = element.getChildNodes();
+				int col = 0;
+				for (int i = 0; i < children.getLength(); i++) {
+					Node child = children.item(i);
+					if (child instanceof Element && ((Element)child).getNodeName().equals("column")) {
+						columns.add(child);
+						String label = ((Element)child).getAttribute("label");
+						labels.append((label == null ? "label" + col : label) + ";");
+						XMLParser.removeWhitespace(child);
+						String colDef = child.getFirstChild().toString();
+						element.setAttribute("colDef" + col, colDef);
+						col++;
+					}
+				}
+
+				Iterator<Node> iter = columns.iterator();
+				while (iter.hasNext()) {
+					element.removeChild(iter.next());
+				}
+
+				element.setAttribute("columns", String.valueOf(col));
+				element.setAttribute("labels", labels.toString());
+				
+			} else if ("line".equals(nodeName)) {
 				if (element.hasAttribute("type")) {
 					if (element.getAttribute("type") != null) {
 						Element newElement = getElementForType(document,
@@ -204,6 +237,42 @@ public class WidgetCreator {
 		} else if ("HBox".equals(localName)){
 			widget = new EnabledHorizontalPanel();
 			widget.setStyleName("HBox");
+		} else if ("MapList".equals(localName)){
+			String sLabels = attributes.get(MapListRenderer.LABELS);
+			String[] labels = sLabels.split(";");
+//			final String className = fieldName;//attributes.get(CLASSNAME);
+			final MapList ml = new MapList(translator, labels, null);
+			setColDefs(ml, attributes);
+			widget = ml;
+			final InteractorWidgetLink mlLink = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
+				
+				@Override
+				public void toDialog(Map<String, Serializable> item) {
+					List<Map<String, Serializable>> acts = (List<Map<String, Serializable>>) item.get(fieldName);
+					ml.toDialog(acts );
+				}
+				
+				@Override
+				public boolean isEmpty() {
+					return false;
+				}
+				
+				@Override
+				public void fromDialog(Map<String, Serializable> item) {
+					List<Map<String, Serializable>> acts = new ArrayList<>();
+					ml.fromDialog(acts );
+					item.put(fieldName, (Serializable) acts);
+				}
+			};
+			link = mlLink;
+			ml.setChangeHandler(new Runnable() {
+				
+				@Override
+				public void run() {
+					interactor.onChange(mlLink);
+				}
+			});
+			
 		} else if ("Tab".equals(localName)){
 			widget = new TabLayoutPanel(3, Unit.EM);
 		} else if ("Form".equals(localName)){
@@ -371,6 +440,16 @@ public class WidgetCreator {
 		}
 		
 		return widget;
+	}
+
+
+	private static void setColDefs(MapList ml,
+			HashMap<String, String> attributes) {
+		int count = Integer.valueOf(attributes.get("columns")); 
+		for (int col = 0; col < count; col++) {
+			String colDef = attributes.get("colDef" + col);
+			ml.addColDef(colDef);
+		}
 	}
 
 

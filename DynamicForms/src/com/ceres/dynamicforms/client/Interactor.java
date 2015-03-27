@@ -40,6 +40,9 @@ public class Interactor {
 	}
 	
 	public void toDialog(ITranslator translator, Map<String,Serializable> item) {
+		if (translator == null) {
+			translator = new SimpleTranslator();
+		}
 		if (changeHandlers != null) {
 			for (LinkChangeHandler changeHandler:changeHandlers) {
 				changeHandler.toDialog(item);

@@ -13,13 +13,19 @@ import com.ceres.dynamicforms.client.InteractorLink;
 import com.ceres.dynamicforms.client.PushButtonLink;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class MapListRenderer extends FlexTable implements HasEnabled {
+
+	public static final String  LABELS = "labels";
+	public static final String  WIDTHS = "widths";
+	public static final String CLASSNAME = "className";
 	
+
 	static class LineContext {
 //		private final int row;
 		private final MapListRenderer mlr;
@@ -156,18 +162,22 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 		
 		final int row = getRowCount();
 		createNewRow(row, lineContext.interactor);
+		getRowFormatter().setVerticalAlign(row, HasVerticalAlignment.ALIGN_TOP);
 		Image img = new Image("assets/images/workflow/actions/delete.png");
 		img.setPixelSize(16, 16);
 		
 		PushButton pbDelete = new PushButton(img);
 		pbDelete.setPixelSize(18, 18);
 		pbDelete.setStyleName("mapListDeleteButton");
-		lineContext.interactor.addLink(new PushButtonLink(lineContext.interactor, "$pbDelete", pbDelete, null));
+		final InteractorLink link = new PushButtonLink(lineContext.interactor, "$pbDelete", pbDelete, null);
+		lineContext.interactor.addLink(link);
 		lineContext.interactor.addChangeHandler(new LinkChangeHandler() {
 			
 			@Override
-			protected void onChange(InteractorLink link) {
-				removeRow(lineContext);
+			protected void onChange(InteractorLink l) {
+				if (l == link) {
+					removeRow(lineContext);
+				}
 			}
 		});
 		setWidget(row, getCellCount(row), pbDelete);
