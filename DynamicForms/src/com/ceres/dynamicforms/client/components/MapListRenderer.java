@@ -175,7 +175,7 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 			
 			@Override
 			protected void onChange(InteractorLink l) {
-				if (l == link) {
+				if (l == link && !isLastLine(lineContext)) {
 					removeRow(lineContext);
 				}
 			}

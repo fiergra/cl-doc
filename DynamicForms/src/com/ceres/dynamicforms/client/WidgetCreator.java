@@ -248,6 +248,7 @@ public class WidgetCreator {
 				
 				@Override
 				public void toDialog(Map<String, Serializable> item) {
+					@SuppressWarnings("unchecked")
 					List<Map<String, Serializable>> acts = (List<Map<String, Serializable>>) item.get(fieldName);
 					ml.toDialog(acts );
 				}
@@ -274,7 +275,7 @@ public class WidgetCreator {
 			});
 			
 		} else if ("Tab".equals(localName)){
-			widget = new TabLayoutPanel(3, Unit.EM);
+			widget = new TabLayoutPanel(42, Unit.PX);
 		} else if ("Form".equals(localName)){
 			widget = new SimpleForm();
 			if (attributes.containsKey("label")) {
