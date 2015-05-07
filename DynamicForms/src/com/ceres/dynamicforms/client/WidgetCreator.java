@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -343,7 +342,7 @@ public class WidgetCreator {
 			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
 		} else if ("Label".equals(localName) || "ResourceLabel".equals(localName)){
 			widget = new Label(attributes.get("text"));
-			widget.addStyleName("formLabel");
+//			widget.addStyleName("formLabel");
 		} else if ("Button".equals(localName)){
 			String sLabel = attributes.containsKey("label") ? (translator != null ? translator.getLabel(attributes.get("label")) : attributes.get("label")) : "";
 			final PushButton pb = new PushButton(sLabel);
@@ -373,7 +372,7 @@ public class WidgetCreator {
 			widget = new HTML("<hr/>");
 		} else if ("HTML".equals(localName)){
 			final HTML html = new HTML();
-			widget = new ScrollPanel(html);
+			widget = html;
 			link = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
 				
 				@Override

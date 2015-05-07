@@ -123,11 +123,13 @@ public class ConnectionEditor extends LayoutPanel {
 	private class Edge {
 		Widget from;
 		Widget to;
+		String label;
 		
-		public Edge(Widget from, Widget to) {
+		public Edge(Widget from, Widget to, String label) {
 			super();
 			this.from = from;
 			this.to = to;
+			this.label = label;
 		}
 		
 		
@@ -137,8 +139,8 @@ public class ConnectionEditor extends LayoutPanel {
 	private final List<Edge> allEdges = new ArrayList<>();
 	private final List<Widget> wrappers = new ArrayList<>();
 	
-	public void addEdge(Widget sFrom, Widget sTo) {
-		Edge e = new Edge(sFrom, sTo);
+	public void addEdge(Widget sFrom, Widget sTo, String label) {
+		Edge e = new Edge(sFrom, sTo, label);
 		
 		allEdges.add(e);
 		addEdge(e.from, e);
@@ -172,7 +174,8 @@ public class ConnectionEditor extends LayoutPanel {
 		if (canvas != null) {
 			Context2d ctx = canvas.getContext2d(); 
 			ctx.setStrokeStyle(color);
-			
+			ctx.setFont("0.7em Arial");
+
 			if (xDiff(e.from, e.to) > e.to.getOffsetWidth()) {
 				lineFromRightToLeft(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
 			} else if (xDiff(e.to, e.from) > e.from.getOffsetWidth()) {
@@ -208,8 +211,8 @@ public class ConnectionEditor extends LayoutPanel {
 		if (canvas != null) {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
-//			ctx.bezierCurveTo(endX, startY, endX, startY, endX, endY);
 			ctx.bezierCurveTo(endX, startY, startX, endY, endX, endY);
+			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
 			ctx.stroke();
 		}
 		arrowHeadRight(endX, endY);
@@ -225,13 +228,14 @@ public class ConnectionEditor extends LayoutPanel {
 		if (canvas != null) {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
-//			ctx.bezierCurveTo(endX, startY, endX, startY, endX, endY);
 			ctx.bezierCurveTo(endX, startY, startX, endY, endX, endY);
+			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
 			ctx.stroke();
 		}
 		arrowHeadLeft(endX, endY);
 	}
 	
+	@SuppressWarnings("unused")
 	private void lineFromBottomToLeft(Context2d ctx, Edge e, int absLeft, int absTop) {
 		int startX = (e.from.getAbsoluteLeft() - absLeft) + e.from.getOffsetWidth() / 2;
 		int startY = (e.from.getAbsoluteTop() - absTop) + e.from.getOffsetHeight() ;
@@ -242,8 +246,8 @@ public class ConnectionEditor extends LayoutPanel {
 		if (canvas != null) {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
-//			ctx.bezierCurveTo(endX, startY, endX, startY, endX, endY);
 			ctx.bezierCurveTo(startX, endY, startX, endY, endX, endY);
+			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
 			ctx.stroke();
 		}
 		arrowHeadRight(endX, endY);
@@ -262,7 +266,7 @@ public class ConnectionEditor extends LayoutPanel {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
 			ctx.bezierCurveTo(endX, startY, endX, startY, endX, endY);
-//			ctx.bezierCurveTo(endX, startY, startX, endY, endX, endY);
+			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
 			ctx.stroke();
 		}
 		arrowHeadDown(endX, endY);
@@ -280,7 +284,7 @@ public class ConnectionEditor extends LayoutPanel {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
 			ctx.bezierCurveTo(endX, startY, endX, startY, endX, endY);
-//			ctx.bezierCurveTo(endX, startY, startX, endY, endX, endY);
+			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
 			ctx.stroke();
 		}
 		arrowHeadUp(endX, endY);

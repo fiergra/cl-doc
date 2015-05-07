@@ -18,13 +18,10 @@ public class SearchBox<T> extends SuggestBox {
 	private LabelFunc<T> replacement;
 	private HashMap<String, T> entriesByLabel;
 	
-	public SearchBox(final ITranslator application, final Collection<T> list, final LabelFunc<T> replacement) {
+	public SearchBox(final ITranslator translator, final Collection<T> list, final LabelFunc<T> replacement) {
 		this(new MultiWordSuggestOracle(), replacement);
 		entriesByLabel = new HashMap<String, T>();
-		MultiWordSuggestOracle oracle = (MultiWordSuggestOracle) getSuggestOracle();
-		for (T r:list) {
-			addEntry(application, oracle, r);
-		}
+		setEntries(translator, list);
 	}
 	
 	public SearchBox(MultiWordSuggestOracle multiWordSuggestOracle, final LabelFunc<T> replacement) {
@@ -56,6 +53,16 @@ public class SearchBox<T> extends SuggestBox {
 		});
 	}
 
+	public void setEntries(ITranslator application, final Collection<T> list) {
+		entriesByLabel.clear();
+		MultiWordSuggestOracle oracle = (MultiWordSuggestOracle) getSuggestOracle();
+		for (T r:list) {
+			addEntry(application, oracle, r);
+		}
+	}
+	
+
+	
 	public T getSelected() {
 		return selected;
 	}

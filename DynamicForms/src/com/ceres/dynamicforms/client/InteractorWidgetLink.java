@@ -14,10 +14,12 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 	private static final String OBJECT_TYPE = "objectType";
 	private static final String FOCUS = "focus";
 	public static final String REQUIRED = "required";
+	public static final String ENABLED = "enabled";
 	protected final Widget widget;
 	protected final HashMap<String, String> attributes;
 	
 	private final boolean isRequired;
+	private final boolean isEnabled;
 	private final boolean requestFocus;
 	private String objectType;
 
@@ -26,6 +28,7 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		this.widget = widget;
 		this.attributes = attributes;
 		
+		isEnabled =  attributes == null || !("false".equals(attributes.get(ENABLED)));
 		isRequired = attributes != null && "true".equals(attributes.get(REQUIRED)); 
 		requestFocus = attributes != null && "true".equals(attributes.get(FOCUS));
 		objectType = attributes != null ? attributes.get(OBJECT_TYPE) : null;
@@ -74,7 +77,7 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 	@Override
 	public void enable(boolean enabled) {
 		if (getWidget() instanceof HasEnabled) {
-			((HasEnabled)getWidget()).setEnabled(enabled);
+			((HasEnabled)getWidget()).setEnabled(isEnabled && enabled);
 		}
 	}
 
