@@ -174,7 +174,7 @@ public class Interactor {
 	public <T extends Widget> T getWidget(String linkName) {
 		InteractorLink link = getLink(linkName);
 		InteractorWidgetLink widgetLink = (InteractorWidgetLink) link;
-		return (T) widgetLink.getWidget();
+		return (T) (widgetLink != null ? widgetLink.getWidget() : null);
 	}
 
 

@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 @SuppressWarnings("deprecation")
 public abstract class InteractorWidgetLink extends InteractorLink {
 	private static final String OBJECT_TYPE = "objectType";
-	private static final String FOCUS = "focus";
+	public static final String FOCUS = "focus";
 	public static final String REQUIRED = "required";
 	public static final String ENABLED = "enabled";
 	protected final Widget widget;

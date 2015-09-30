@@ -21,6 +21,13 @@ public class SimpleForm extends FlexTable {
 		setWidget(row, 0, label);
 		setWidget(row, 1, widget == null ? new Label("empty content") : widget);
 		getRowFormatter().addStyleName(row, "formLine");
+		
+		if (widget != null) {
+			String height = widget.getElement().getStyle().getHeight();
+			if (height != null) {
+				getCellFormatter().setHeight(row, 1, height);
+			}
+		}
 		row++;
 	}
 
@@ -42,6 +49,12 @@ public class SimpleForm extends FlexTable {
 			setWidget(row, 0, child);
 			getFlexCellFormatter().setColSpan(row, 0, 2);
 			getRowFormatter().addStyleName(row, "formLine");
+			if (child != null) {
+				String height = child.getElement().getStyle().getHeight();
+				if (height != null) {
+					getCellFormatter().setHeight(row, 1, height);
+				}
+			}
 			row++;
 		}
 	}

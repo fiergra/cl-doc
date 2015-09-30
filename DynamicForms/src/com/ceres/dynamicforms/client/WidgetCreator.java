@@ -11,7 +11,6 @@ import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
 import com.ceres.dynamicforms.client.components.EnabledVerticalPanel;
 import com.ceres.dynamicforms.client.components.FloatTextBox;
-import com.ceres.dynamicforms.client.components.MapListRenderer;
 import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
@@ -27,6 +26,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -41,6 +41,7 @@ import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
 public class WidgetCreator {
+
 
 	public static boolean isIE() {
 		String ua = Window.Navigator.getUserAgent().toLowerCase();
@@ -236,43 +237,50 @@ public class WidgetCreator {
 		} else if ("HBox".equals(localName)){
 			widget = new EnabledHorizontalPanel();
 			widget.setStyleName("HBox");
+		} else if ("ScrollPanel".equals(localName)){
+			widget = new ScrollPanel();
 		} else if ("MapList".equals(localName)){
-			String sLabels = attributes.get(MapListRenderer.LABELS);
-			String[] labels = sLabels.split(";");
-//			final String className = fieldName;//attributes.get(CLASSNAME);
-			final MapList ml = new MapList(translator, labels, null);
-			setColDefs(ml, attributes);
-			widget = ml;
-			final InteractorWidgetLink mlLink = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
-				
-				@Override
-				public void toDialog(Map<String, Serializable> item) {
-					@SuppressWarnings("unchecked")
-					List<Map<String, Serializable>> acts = (List<Map<String, Serializable>>) item.get(fieldName);
-					ml.toDialog(acts );
-				}
-				
-				@Override
-				public boolean isEmpty() {
-					return false;
-				}
-				
-				@Override
-				public void fromDialog(Map<String, Serializable> item) {
-					List<Map<String, Serializable>> acts = new ArrayList<>();
-					ml.fromDialog(acts );
-					item.put(fieldName, (Serializable) acts);
-				}
-			};
-			link = mlLink;
-			ml.setChangeHandler(new Runnable() {
-				
-				@Override
-				public void run() {
-					interactor.onChange(mlLink);
-				}
-			});
-			
+			MapLinkFactory mlf = new MapLinkFactory(translator);
+			InteractorWidgetLink ml = mlf.createLink(interactor, fieldName, attributes);
+			widget = ml.getWidget();
+// 			
+//			
+//			String sLabels = attributes.get(MapListRenderer.LABELS);
+//			String[] labels = sLabels.split(";");
+////			final String className = fieldName;//attributes.get(CLASSNAME);
+//			final MapList ml = new MapList(translator, labels, null);
+//			setColDefs(ml, attributes);
+//			widget = ml;
+//			final InteractorWidgetLink mlLink = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
+//				
+//				@Override
+//				public void toDialog(Map<String, Serializable> item) {
+//					@SuppressWarnings("unchecked")
+//					List<Map<String, Serializable>> acts = (List<Map<String, Serializable>>) item.get(fieldName);
+//					ml.toDialog(acts );
+//				}
+//				
+//				@Override
+//				public boolean isEmpty() {
+//					return false;
+//				}
+//				
+//				@Override
+//				public void fromDialog(Map<String, Serializable> item) {
+//					List<Map<String, Serializable>> acts = new ArrayList<>();
+//					ml.fromDialog(acts );
+//					item.put(fieldName, (Serializable) acts);
+//				}
+//			};
+//			link = mlLink;
+//			ml.setChangeHandler(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					interactor.onChange(mlLink);
+//				}
+//			});
+//			
 		} else if ("Tab".equals(localName)){
 			widget = new TabLayoutPanel(42, Unit.PX);
 		} else if ("Form".equals(localName)){
@@ -365,8 +373,8 @@ public class WidgetCreator {
 			hp.addStyleName("formHeading");
 			l.addStyleName("formHeadingLabel");
 			hp.add(l);
-			HTML hr = new HTML("<hr/>");
-			hp.add(hr);
+//			HTML hr = new HTML("<hr/>");
+//			hp.add(hr);
 			widget = hp;
 		} else if ("HRule".equals(localName)){
 			widget = new HTML("<hr/>");
@@ -440,16 +448,6 @@ public class WidgetCreator {
 		}
 		
 		return widget;
-	}
-
-
-	private static void setColDefs(MapList ml,
-			HashMap<String, String> attributes) {
-		int count = Integer.valueOf(attributes.get("columns")); 
-		for (int col = 0; col < count; col++) {
-			String colDef = attributes.get("colDef" + col);
-			ml.addColDef(colDef);
-		}
 	}
 
 
