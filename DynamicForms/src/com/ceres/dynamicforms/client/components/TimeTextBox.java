@@ -51,9 +51,9 @@ public class TimeTextBox extends DateTextBox {
 	public Date parseValue() {
 		Date value = super.parseValue();
 		if (datePart != null && value != null) {
-			value.setDate(datePart.getDate());
-			value.setMonth(datePart.getMonth());
 			value.setYear(datePart.getYear());
+			value.setMonth(datePart.getMonth());
+			value.setDate(datePart.getDate());
 		}
 		return value;
 	}
