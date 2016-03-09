@@ -18,8 +18,8 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 	protected final Widget widget;
 	protected final HashMap<String, String> attributes;
 	
-	private final boolean isRequired;
-	private final boolean isEnabled;
+	private boolean isRequired;
+	private boolean isEnabled;
 	private final boolean requestFocus;
 	private String objectType;
 
@@ -69,6 +69,15 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		return widget;
 	}
 
+	public void setRequired(boolean required) {
+		isRequired = required;
+		interactor.onChange(this);
+	}
+
+	public void setEnabled(boolean enabled) {
+		isEnabled = enabled;
+		interactor.onChange(this);
+	}
 
 	public boolean isValid() {
 		return isRequired ? !isEmpty() : true;
