@@ -57,9 +57,10 @@ public class Interactor {
 				boolean isEnabled = translator.isEnabled(item, objectType);
 				
 				widget.setVisible(isVisible);
-				if (widget instanceof HasEnabled) { 
-					((HasEnabled)widget).setEnabled(isEnabled);
-				}
+				il.enable(isEnabled);
+//				if (widget instanceof HasEnabled) { 
+//					((HasEnabled)widget).setEnabled(isEnabled);
+//				}
 			}
 
 			il.toDialog(item);

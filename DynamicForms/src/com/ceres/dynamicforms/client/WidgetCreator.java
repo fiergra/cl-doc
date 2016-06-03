@@ -76,7 +76,7 @@ public class WidgetCreator {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
-			System.out.println("pc " + level + levelPrefix(level) + element.getNodeName());
+//			System.out.println("pc " + level + levelPrefix(level) + element.getNodeName());
 
 			element = preprocess(document, element);
 		
@@ -99,13 +99,13 @@ public class WidgetCreator {
 		return widget;
 	}
 
-	private static String levelPrefix(int level) {
-		String prefix = "";
-		for (int i = 0; i < level; i++) {
-			prefix += "   ";
-		}
-		return prefix;
-	}
+//	private static String levelPrefix(int level) {
+//		String prefix = "";
+//		for (int i = 0; i < level; i++) {
+//			prefix += "   ";
+//		}
+//		return prefix;
+//	}
 	
 	
 
