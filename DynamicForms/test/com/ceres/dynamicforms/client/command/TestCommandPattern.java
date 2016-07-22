@@ -18,12 +18,12 @@ public class TestCommandPattern extends TestCase {
 			}
 
 			@Override
-			public void exec() throws Exception {
+			public void exec() {
 				sum += value;
 			}
 
 			@Override
-			public void undo() throws Exception {
+			public void undo() {
 				sum -= value;
 			}
 			
@@ -45,9 +45,9 @@ public class TestCommandPattern extends TestCase {
 		assertEquals(10, sum);
 		Commando.undo();
 		assertEquals(0, sum);
-		assertFalse(Commando.undo());
+		assertFalse(Commando.canUndo());
 		
-		while (Commando.redo()) {}
+		while (Commando.canRedo()) { Commando.redo(); }
 		assertEquals(20, sum);
 		
 	}
