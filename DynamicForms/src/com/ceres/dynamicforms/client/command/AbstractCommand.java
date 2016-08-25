@@ -20,4 +20,12 @@ public abstract class AbstractCommand implements ICommand {
 		return description;
 	}
 
+
+	@Override
+	public String toString() {
+		return getName() + ": " + getDescription();
+	}
+	
+	
+
 }

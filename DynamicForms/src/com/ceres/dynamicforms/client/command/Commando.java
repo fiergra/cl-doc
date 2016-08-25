@@ -30,6 +30,9 @@ public class Commando {
 	public static void execute(final ICommand command) {
 		logger.info("exec '" + command.getDescription() + "'");
 		command.exec();
+		if (commandIndex < commands.size() - 1) {
+			commands = new ArrayList<>(commands.subList(0, commandIndex + 1));
+		}
 		commandIndex = commands.size();
 		commands.add(command);
 		notifyIndexChangeListeners();
