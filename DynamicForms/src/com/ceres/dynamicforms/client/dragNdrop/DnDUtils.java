@@ -18,6 +18,10 @@ public class DnDUtils {
 
 
 	public static <T> void supportDnD(final UIObject renderer, final T ou, final Acceptor acceptor, boolean drag, boolean drop) {
+		if (!(renderer instanceof HasAllDragAndDropHandlers)) {
+			throw new IllegalArgumentException("renderer needs to implement interface HasAllDragAndDropHandlers");
+		}
+		
 		HasAllDragAndDropHandlers hadndh = (HasAllDragAndDropHandlers) renderer;
 
 		if (drag) {
@@ -58,8 +62,10 @@ public class DnDUtils {
 				
 				@Override
 				public void onDragOver(DragOverEvent event) {
-					event.stopPropagation();
-					event.preventDefault();
+					if (acceptor.accepts(acceptor.getDragged())) {
+						event.stopPropagation();
+						event.preventDefault();
+					}
 				}
 			});
 			
@@ -67,7 +73,9 @@ public class DnDUtils {
 				
 				@Override
 				public void onDragEnter(DragEnterEvent event) {
-					event.preventDefault();
+					if (acceptor.accepts(acceptor.getDragged())) {
+						event.preventDefault();
+					}
 				}
 			});
 	

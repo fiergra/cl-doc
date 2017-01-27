@@ -16,6 +16,7 @@ public class CommandoButtons extends HorizontalPanel {
 	public static void addCommandoButtons(Panel panel, int size) {
 		final PushButton pbUndo = new PushButton(new Image("assets/images/undo.png"));
 		final PushButton pbRedo = new PushButton(new Image("assets/images/redo.png"));
+		
 		Commando.addIndexChangeListener(new Runnable() {
 			
 			@Override

@@ -1,11 +1,19 @@
 package com.ceres.dynamicforms.client.dragNdrop;
 
 public class Acceptor {
-	static Object dragged;
+	static private Object dragged;
 
-	void setDragged(Object dragged) {
+	public void setDragged(Object dragged) {
 		Acceptor.dragged = dragged;
 	};
 	
-	void drop(Object o) {};
+	public Object getDragged() {
+		return Acceptor.dragged;
+	};
+	
+	public void drop(Object o) {}
+
+	public boolean accepts(Object dragged) {
+		return true;
+	};
 }

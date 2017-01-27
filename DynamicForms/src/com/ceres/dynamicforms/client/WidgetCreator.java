@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RequiresResize;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
@@ -85,7 +86,11 @@ public class WidgetCreator {
 				if (panel instanceof Panel){
 					((Panel)panel).add(widget);
 				} else if (panel instanceof TabLayoutPanel) {
-					((TabLayoutPanel)panel).add(widget, widget.getTitle());
+					if (widget instanceof RequiresResize) {
+						((TabLayoutPanel)panel).add(widget, widget.getTitle());
+					} else {
+						((TabLayoutPanel)panel).add(new ScrollPanel(widget), widget.getTitle());
+					}
 				}
 				if (element.hasChildNodes() && 
 						(widget instanceof Panel || widget instanceof TabLayoutPanel)) {
