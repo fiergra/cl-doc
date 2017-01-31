@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ceres.dynamicforms.client.FlexGrid.GridItem;
+import com.ceres.dynamicforms.client.FlexGrid.GridRow;
 import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
 import com.ceres.dynamicforms.client.components.EnabledVerticalPanel;
@@ -14,6 +16,7 @@ import com.ceres.dynamicforms.client.components.FloatTextBox;
 import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -42,6 +45,18 @@ import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
 public class WidgetCreator {
+
+	private static HashMap<String, IPreProcessor> preprocessors = new HashMap<String, IPreProcessor>();
+	private static HashMap<String, ILinkFactory> linkFactories = new HashMap<String, ILinkFactory>();
+
+
+	static {
+		WidgetCreator.addLinkFactory("Grid", new FlexGrid.Factory());
+		WidgetCreator.addLinkFactory("GridRow", new GridRow.Factory());
+		WidgetCreator.addLinkFactory("GridItem", new GridItem.Factory());
+	}
+	
+
 
 
 	public static boolean isIE() {
@@ -77,7 +92,7 @@ public class WidgetCreator {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
-//			System.out.println("pc " + level + levelPrefix(level) + element.getNodeName());
+			GWT.log("pc " + level + levelPrefix(level) + element.getNodeName());
 
 			element = preprocess(document, element);
 		
@@ -104,13 +119,13 @@ public class WidgetCreator {
 		return widget;
 	}
 
-//	private static String levelPrefix(int level) {
-//		String prefix = "";
-//		for (int i = 0; i < level; i++) {
-//			prefix += "   ";
-//		}
-//		return prefix;
-//	}
+	private static String levelPrefix(int level) {
+		String prefix = "";
+		for (int i = 0; i < level; i++) {
+			prefix += "   ";
+		}
+		return prefix;
+	}
 	
 	
 
@@ -204,14 +219,10 @@ public class WidgetCreator {
 		return newElement;
 	}
 
-	private static HashMap<String, IPreProcessor> preprocessors = new HashMap<String, IPreProcessor>();
-
 	public static void addPreProcessor(String localName, IPreProcessor processor) {
 		preprocessors.put(localName, processor);
 	}
 	
-	private static HashMap<String, ILinkFactory> linkFactories = new HashMap<String, ILinkFactory>();
-
 	public static void addLinkFactory(String localName, ILinkFactory factory) {
 		linkFactories.put(localName, factory);
 	}
