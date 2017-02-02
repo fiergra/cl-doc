@@ -257,8 +257,8 @@ public class WidgetCreator {
 			widget = new ScrollPanel();
 		} else if ("MapList".equals(localName)){
 			MapLinkFactory mlf = new MapLinkFactory(translator);
-			InteractorWidgetLink ml = mlf.createLink(interactor, fieldName, attributes);
-			widget = ml.getWidget();
+			link = mlf.createLink(interactor, fieldName, attributes);
+			widget = link.getWidget();
 // 			
 //			
 //			String sLabels = attributes.get(MapListRenderer.LABELS);
@@ -354,6 +354,10 @@ public class WidgetCreator {
 			widget = db;
 		} else if ("ItemFieldCheckBox".equals(localName)){
 			widget = new CheckBox();
+			if (attributes.containsKey("label")) {
+				String label = translator.getLabel(attributes.get("label"));
+				((CheckBox)widget).setText(label);
+			}
 			link = new BooleanLink(interactor, fieldName, (CheckBox) widget, attributes);
 		} else if ("yesno".equals(localName)){
 			widget = new YesNoRadioGroup();
@@ -364,8 +368,8 @@ public class WidgetCreator {
 		} else if ("ItemFieldTextArea".equals(localName)){
 			widget = new TextArea();
 			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
-		} else if ("Label".equals(localName) || "ResourceLabel".equals(localName)){
-			widget = new Label(attributes.get("text"));
+		} else if ("Label".equals(localName) || "ResourceLabel".equals(localName)) {
+			widget = new Label(translator.getLabel(attributes.get("text")));
 //			widget.addStyleName("formLabel");
 		} else if ("Button".equals(localName)){
 			String sLabel = attributes.containsKey("label") ? (translator != null ? translator.getLabel(attributes.get("label")) : attributes.get("label")) : "";

@@ -5,13 +5,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 
-public class SimpleFormItem extends Panel implements HasEnabled  {
+public class SimpleFormItem extends HorizontalPanel implements HasEnabled  {
 
 	public Widget content;
 	private SimpleForm simpleForm;
@@ -47,7 +49,11 @@ public class SimpleFormItem extends Panel implements HasEnabled  {
 			}
 		}
 		if (child != null) {
-			simpleForm.setWidget(row, 1, this.content);
+			if (simpleForm != null) {
+				simpleForm.setWidget(row, 1, this.content);
+			} else {
+				GWT.log("simpleForm not set");
+			}
 			setEnabled(enabled);
 		}
 

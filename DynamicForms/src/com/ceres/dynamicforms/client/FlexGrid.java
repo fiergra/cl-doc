@@ -21,6 +21,10 @@ public class FlexGrid extends FlexTable {
 		
 	}
 	
+	public FlexGrid() {
+		addStyleName("flexGrid");
+		setWidth("100%");
+	}
 
 	
 	public static class GridItem extends EnabledHorizontalPanel {
@@ -39,6 +43,8 @@ public class FlexGrid extends FlexTable {
 
 		public GridItem(String colSpan) {
 			this.colSpan = colSpan != null ? Integer.valueOf(colSpan) : null;
+			addStyleName("gridItem");
+			setWidth("100%");
 		}
 		
 	}
@@ -70,13 +76,13 @@ public class FlexGrid extends FlexTable {
 		
 		@Override
 		public void add(Widget w) {
+			flexGrid.setWidget(row, column, w);
 			if (w instanceof GridItem) {
 				Integer colSpan = ((GridItem)w).colSpan;
 				if (colSpan != null) {
 					flexGrid.getFlexCellFormatter().setColSpan(row, column, colSpan);
 				}
 			}
-			flexGrid.setWidget(row, column, w);
 			
 			column++;
 		}
