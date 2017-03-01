@@ -1,6 +1,5 @@
 package com.ceres.dynamicforms.client.command;
 
-import com.ceres.dynamicforms.client.ITranslator;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -13,16 +12,16 @@ public class CommandoButtons extends HorizontalPanel {
 	private static String UNDO = "undo";
 	private static String REDO = "redo";
 	
-	public static void addCommandoButtons(Panel panel, int size) {
+	public static void addCommandoButtons(final Commando commando, Panel panel, int size) {
 		final PushButton pbUndo = new PushButton(new Image("assets/images/undo.png"));
 		final PushButton pbRedo = new PushButton(new Image("assets/images/redo.png"));
 		
-		Commando.addIndexChangeListener(new Runnable() {
+		commando.addIndexChangeListener(new Runnable() {
 			
 			@Override
 			public void run() {
-				ICommand undo = Commando.getUndoCommand();
-				ICommand redo = Commando.getRedoCommand();
+				ICommand undo = commando.getUndoCommand();
+				ICommand redo = commando.getRedoCommand();
 				
 				if (undo != null) {
 					pbUndo.setEnabled(true);
@@ -40,8 +39,8 @@ public class CommandoButtons extends HorizontalPanel {
 			}
 		});
 		
-		pbUndo.setEnabled(Commando.canUndo());
-		pbRedo.setEnabled(Commando.canRedo());
+		pbUndo.setEnabled(commando.canUndo());
+		pbRedo.setEnabled(commando.canRedo());
 		
 		panel.add(pbUndo);
 		panel.add(pbRedo);
@@ -51,7 +50,7 @@ public class CommandoButtons extends HorizontalPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Commando.undo();
+				commando.undo();
 			}
 		});
 		
@@ -61,15 +60,16 @@ public class CommandoButtons extends HorizontalPanel {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				Commando.redo();
+				commando.redo();
 			}
 		});
 		
 		
 	}
 	
-	public CommandoButtons(ITranslator translator) {
-		addCommandoButtons(this, 24);
+	public CommandoButtons(Commando commando) {
+		setVerticalAlignment(ALIGN_MIDDLE);
+		addCommandoButtons(commando, this, 24);
 	}
 
 }

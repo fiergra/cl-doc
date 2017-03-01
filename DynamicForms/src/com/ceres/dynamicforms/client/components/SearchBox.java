@@ -28,16 +28,16 @@ public class SearchBox<T> extends SuggestBox {
 		super(multiWordSuggestOracle);
 		this.replacement = replacement;
 		
-		getValueBox().addChangeHandler(new ChangeHandler() {
-			
-			@Override
-			public void onChange(ChangeEvent event) {
-				setSelected(null);
-				SuggestOracle.Suggestion suggestion = new SearchSuggestion<T>(null, "", "");
-			    SelectionEvent.fire(SearchBox.this, suggestion);
-			}
-		});
-		
+//		getValueBox().addChangeHandler(new ChangeHandler() {
+//			
+//			@Override
+//			public void onChange(ChangeEvent event) {
+//				setSelected(null);
+//				SuggestOracle.Suggestion suggestion = new SearchSuggestion<T>(null, "", "");
+//			    SelectionEvent.fire(SearchBox.this, suggestion);
+//			}
+//		});
+//		
 		addSelectionHandler(new SelectionHandler<SuggestOracle.Suggestion>() {
 			
 			@SuppressWarnings("unchecked")

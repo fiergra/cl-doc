@@ -7,7 +7,8 @@ public class TestCommandPattern extends TestCase {
 	private int sum = 0;
 	
 	public void testUndoRedo() throws Exception {
-	
+		Commando commando = new Commando();
+		
 		class AddCommand extends AbstractCommand {
 
 			private int value;
@@ -36,42 +37,42 @@ public class TestCommandPattern extends TestCase {
 		}
 		
 		
-		Commando.execute(new AddCommand(1));
+		commando.execute(new AddCommand(1));
 		assertEquals(1, sum);
-		Commando.execute(new AddCommand(2));
+		commando.execute(new AddCommand(2));
 		assertEquals(3, sum);
-		Commando.execute(new AddCommand(3));
+		commando.execute(new AddCommand(3));
 		assertEquals(6, sum);
-		Commando.undo();
+		commando.undo();
 		assertEquals(3, sum);
-		Commando.redo();
+		commando.redo();
 		assertEquals(6, sum);
-		Commando.undo();
-		Commando.undo();
+		commando.undo();
+		commando.undo();
 		assertEquals(1, sum);
-		Commando.undo();
+		commando.undo();
 		assertEquals(0, sum);
-		assertFalse(Commando.canUndo());
+		assertFalse(commando.canUndo());
 		
-		while (Commando.canRedo()) { Commando.redo(); }
+		while (commando.canRedo()) { commando.redo(); }
 		assertEquals(6, sum);
 
-		Commando.execute(new AddCommand(4));
+		commando.execute(new AddCommand(4));
 		assertEquals(10, sum);
-		Commando.undo();
+		commando.undo();
 		assertEquals(6, sum);
-		Commando.execute(new AddCommand(5));
+		commando.execute(new AddCommand(5));
 		assertEquals(11, sum);
-		assertFalse(Commando.canRedo());
+		assertFalse(commando.canRedo());
 
 		System.out.println("undo all");
-		while (Commando.canUndo()) { 
-			Commando.undo(); 
+		while (commando.canUndo()) { 
+			commando.undo(); 
 		}
 		assertEquals(0, sum);
 		System.out.println("redo all");
-		while (Commando.canRedo()) { 
-			Commando.redo(); 
+		while (commando.canRedo()) { 
+			commando.redo(); 
 		}
 		assertEquals(11, sum);
 

@@ -5,29 +5,29 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class Commando {
-	private static List<ICommand> commands = new ArrayList<>();
-	private static int commandIndex = -1;
-	private static Logger logger = Logger.getLogger("Commando");
+	private List<ICommand> commands = new ArrayList<>();
+	private int commandIndex = -1;
+	private Logger logger = Logger.getLogger("Commando");
 	
-	private static List<Runnable> indexChangeListeners = new ArrayList<>();
+	private List<Runnable> indexChangeListeners = new ArrayList<>();
 
 	interface ExecutionListener {
 		void executed(ICommand command);
 	}
 	
-	public static void addIndexChangeListener(Runnable listener) {
+	public void addIndexChangeListener(Runnable listener) {
 		indexChangeListeners.add(listener);
 	}
 
-	private static List<ExecutionListener> executionListeners = new ArrayList<>();
+	private List<ExecutionListener> executionListeners = new ArrayList<>();
 	
-	public static void addExecutionListener(ExecutionListener listener) {
+	public void addExecutionListener(ExecutionListener listener) {
 		executionListeners.add(listener);
 	}
 
 	
 	
-	public static void execute(final ICommand command) {
+	public void execute(final ICommand command) {
 		logger.info("exec '" + command.getDescription() + "'");
 		command.exec();
 		if (commandIndex < commands.size() - 1) {
@@ -39,23 +39,23 @@ public class Commando {
 		notifyExecutionListeners(command);
 	}
 	
-	public static boolean canUndo() {
+	public boolean canUndo() {
 		return getUndoCommand() != null;
 	}
 
-	public static boolean canRedo() {
+	public boolean canRedo() {
 		return getRedoCommand() != null;
 	}
 	
-	public static ICommand getUndoCommand() {
+	public ICommand getUndoCommand() {
 		return commandIndex >= 0 ? commands.get(commandIndex) : null;
 	}
 
-	public static ICommand getRedoCommand() {
+	public ICommand getRedoCommand() {
 		return commandIndex < commands.size() - 1 ? commands.get(commandIndex + 1) : null;
 	}
 	
-	public static void undo() {
+	public void undo() {
 		ICommand command = getUndoCommand();
 		if (command != null) {
 			logger.info("undo '" + command.getDescription() + "'");
@@ -64,7 +64,7 @@ public class Commando {
 		}
 	}
 
-	public static void redo() {
+	public void redo() {
 		ICommand command = getRedoCommand();
 		if (command != null) {
 			logger.info("redo '" + command.getDescription() + "'");
@@ -73,23 +73,23 @@ public class Commando {
 		}
 	}
 	
-	private static void increment() {
+	private void increment() {
 		commandIndex++;
 		notifyIndexChangeListeners();
 	}
 	
-	private static void decrement() {
+	private void decrement() {
 		commandIndex--;
 		notifyIndexChangeListeners();
 	}
 	
-	private static void notifyIndexChangeListeners() {
+	private void notifyIndexChangeListeners() {
 		for (Runnable r:indexChangeListeners) {
 			r.run();
 		}
 	}
 
-	private static void notifyExecutionListeners(ICommand command) {
+	private void notifyExecutionListeners(ICommand command) {
 		for (ExecutionListener r:executionListeners) {
 			r.executed(command);
 		}

@@ -14,6 +14,8 @@ public class TimeTextBox extends DateTextBox {
 		setWidth("3em");
 	}
 
+	private static DateTimeFormat dtfTime24min = DateTimeFormat.getFormat("HHmm");
+	
 	@Override
 	protected DateTimeFormat[] getDateTimeFormats() {
 		return new DateTimeFormat[] {
@@ -33,11 +35,20 @@ public class TimeTextBox extends DateTextBox {
 		}
 	}
 	
+	public int getTime() {
+		return getDate() != null ? Integer.parseInt(dtfTime24min.format(getDate())) : 0;
+	}
+	
 	@Override
 	public void setDate(Date value) {
 		datePart = value;
 		super.setDate(isTimeSet(value) ? value : null);
-//		super.setDate(value);
+	}
+
+
+	public void setDatePart(Date datePart) {
+		this.datePart = datePart;
+		setDate(parseValue());
 	}
 
 
