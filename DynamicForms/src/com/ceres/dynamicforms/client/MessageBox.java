@@ -23,6 +23,12 @@ public class MessageBox {
 	
 	public static enum MESSAGE_ICONS { MB_ICON_OK, MB_ICON_INFO, MB_ICON_QUESTION, MB_ICON_ERROR, MB_ICON_WARNING };
 
+	public static ResultCallback<Integer> NOP = new ResultCallback<Integer>() {
+		
+		@Override
+		public void callback(Integer result) {
+		}
+	};
 	public static void show(String title, String htmlMessage, int flags, MESSAGE_ICONS icon,  final ResultCallback<Integer> callback) {
 		show(title, new HTML(htmlMessage), flags, icon, callback, 400, 150);
 	}
