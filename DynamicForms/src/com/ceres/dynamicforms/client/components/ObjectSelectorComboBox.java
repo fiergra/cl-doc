@@ -68,6 +68,7 @@ public class ObjectSelectorComboBox<T> extends ListBox {
 		
 		int index = 0;
 		
+		entities.clear();
 		entities.addAll(result);
 		
 		Collections.sort(entities, comparator);
@@ -105,8 +106,14 @@ public class ObjectSelectorComboBox<T> extends ListBox {
 		if (index != -1) {
 			selectedEntity = entities.get(index);
 			setSelectedIndex(index);
-		} else if (nullsAllowed){
-			setSelectedIndex(0);
+		} else {
+			entities.add(value);
+			addItem(labelFunc(value));
+
+			setValue(value);
+//			if (nullsAllowed){
+//				setSelectedIndex(0);
+//			}
 		}
 	}
 	

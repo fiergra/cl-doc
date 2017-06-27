@@ -15,13 +15,13 @@ public class YesNoRadioGroup extends HorizontalPanel {
 	private final RadioButton rbYes;
 	private final RadioButton rbNo;
 
-	public YesNoRadioGroup() {
+	public YesNoRadioGroup(String yesLabel, String noLabel) {
 		super();
 		setSpacing(5);
 		synchronized (groupCount) {
 			groupCount++;
-			rbYes = new RadioButton("YesNoGroup" + groupCount, "Ja");
-			rbNo = new RadioButton("YesNoGroup" + groupCount, "Nein");
+			rbYes = new RadioButton("YesNoGroup" + groupCount, yesLabel);
+			rbNo = new RadioButton("YesNoGroup" + groupCount, noLabel);
 		}
 		add(rbYes);
 		add(rbNo);

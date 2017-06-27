@@ -2,6 +2,7 @@ package com.ceres.dynamicforms.client.components;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.ui.TextBox;
 
 public class NumberTextBox extends TextBox {
@@ -51,8 +52,25 @@ public class NumberTextBox extends TextBox {
 
 	public void setNumber(Number value) {
 		this.value = value;
-		
-		setText(value != null ? String.valueOf(value) : null);
+		if (value != null) {
+			setText(format(value));
+		} else {
+			setText(null);
+		}
+	}
+
+	private NumberFormat nf = NumberFormat.getFormat("#,##0.00");
+
+	public NumberFormat getNumberFormat() {
+		return nf;
+	}
+	
+	public void setNumberFormat(NumberFormat nf) {
+		this.nf = nf;
+	}
+	
+	private String format(Number value) {
+		return nf.format(value).replace(".", "#").replace(",", ".").replace("#", ",");
 	}
 
 	@Override

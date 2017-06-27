@@ -360,7 +360,7 @@ public class WidgetCreator {
 			}
 			link = new BooleanLink(interactor, fieldName, (CheckBox) widget, attributes);
 		} else if ("yesno".equals(localName)){
-			widget = new YesNoRadioGroup();
+			widget = new YesNoRadioGroup(translator.getLabel("yes"), translator.getLabel("no"));
 			link = new YesNoLink(interactor, fieldName, (YesNoRadioGroup)widget, attributes);
 		} else if ("ItemFieldTextInput".equals(localName)){
 			widget = new TextBox();
