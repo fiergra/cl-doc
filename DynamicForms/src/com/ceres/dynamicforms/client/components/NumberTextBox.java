@@ -26,19 +26,24 @@ public class NumberTextBox extends TextBox {
 
 	public Number parseValue() {
 		String sValue = getValue();
+
 		try {
-			value = Integer.valueOf(sValue);
-		} catch (NumberFormatException ix) {
+			value = nf.parse(sValue);
+		} catch (NumberFormatException nfx) {
 			try {
-				value = Long.valueOf(sValue);
-			} catch (NumberFormatException lx) {
+				value = Integer.valueOf(sValue);
+			} catch (NumberFormatException ix) {
 				try {
-					value = Float.valueOf(sValue);
-				} catch (NumberFormatException fx) {
+					value = Long.valueOf(sValue);
+				} catch (NumberFormatException lx) {
 					try {
-						value = Double.valueOf(sValue);
-					} catch (NumberFormatException dx) {
-						value = null;
+						value = Float.valueOf(sValue);
+					} catch (NumberFormatException fx) {
+						try {
+							value = Double.valueOf(sValue);
+						} catch (NumberFormatException dx) {
+							value = null;
+						}
 					}
 				}
 			}
