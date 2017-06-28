@@ -52,4 +52,8 @@ public class GroupLayoutPanel extends DockLayoutPanel implements GroupPanel {
 	public void setTitleText(String text) {
 		titleLabel.setText(text);
 	}
+
+	public String getTitleText() {
+		return titleLabel.getText();
+	}
 }

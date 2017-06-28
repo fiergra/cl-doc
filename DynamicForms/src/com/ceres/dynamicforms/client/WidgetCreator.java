@@ -12,7 +12,6 @@ import com.ceres.dynamicforms.client.FlexGrid.GridRow;
 import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
 import com.ceres.dynamicforms.client.components.EnabledVerticalPanel;
-import com.ceres.dynamicforms.client.components.FloatTextBox;
 import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
@@ -20,6 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -336,14 +336,19 @@ public class WidgetCreator {
 			TimeTextBox db = new TimeTextBox();
 			link = new DateLink(interactor, fieldName, db, attributes);
 			widget = db;
-		} else if ("long".equals(localName) || "float".equals(localName)){
+		} else if ("long".equals(localName)){
 			NumberTextBox db = new NumberTextBox();
+			db.setNumberFormat(NumberFormat.getFormat("#"));
 			link = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("float".equals(localName)){
-			FloatTextBox db = new FloatTextBox();
-			link = new FloatLink(interactor, fieldName, db, attributes);
+			NumberTextBox db = new NumberTextBox();
+			link = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
+//		} else if ("float".equals(localName)){
+//			FloatTextBox db = new FloatTextBox();
+//			link = new FloatLink(interactor, fieldName, db, attributes);
+//			widget = db;
 		} else if ("ItemFieldNumberInput".equals(localName)){
 			NumberTextBox db = new NumberTextBox();
 			link = new NumberLink(interactor, fieldName, db, attributes);
