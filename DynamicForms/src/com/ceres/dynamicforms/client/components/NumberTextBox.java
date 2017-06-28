@@ -28,7 +28,7 @@ public class NumberTextBox extends TextBox {
 		String sValue = getValue();
 
 		try {
-			value = nf.parse(sValue);
+			value = nf.parse(sValue.replace(".", "#").replace(",", ".").replace("#", ","));
 		} catch (NumberFormatException nfx) {
 			try {
 				value = Integer.valueOf(sValue);
