@@ -68,6 +68,7 @@ public class ObjectSelectorComboBox<T> extends ListBox {
 		
 		int index = 0;
 		
+		clear();
 		entities.clear();
 		entities.addAll(result);
 		
