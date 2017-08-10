@@ -24,7 +24,15 @@ public class BooleanLink extends InteractorWidgetLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setValue(Boolean.TRUE.equals( get(item, name)));
+		Serializable sValue = get(item, name);
+		boolean bValue;
+		
+		if (sValue instanceof Number) {
+			bValue = ((Number)sValue).intValue() != 0;
+		} else {
+			bValue = Boolean.TRUE.equals(sValue);
+		}
+		getWidget().setValue(bValue);
 	}
 
 	@Override
