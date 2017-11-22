@@ -15,5 +15,11 @@ public class Acceptor {
 
 	public boolean accepts(Object dragged) {
 		return true;
+	}
+
+	public void onLeave() {
+	}
+
+	public void onEnter() {
 	};
 }

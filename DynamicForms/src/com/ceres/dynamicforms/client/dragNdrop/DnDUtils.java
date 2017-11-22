@@ -1,10 +1,13 @@
 package com.ceres.dynamicforms.client.dragNdrop;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.DragEndEvent;
 import com.google.gwt.event.dom.client.DragEndHandler;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
+import com.google.gwt.event.dom.client.DragLeaveEvent;
+import com.google.gwt.event.dom.client.DragLeaveHandler;
 import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
@@ -31,7 +34,8 @@ public class DnDUtils {
 				@Override
 				public void onDragStart(DragStartEvent event) {
 					acceptor.setDragged(ou);
-					System.out.println("drag start: " + ou);
+					event.getDataTransfer().setDragImage(renderer.getElement(), 0, 0);
+					GWT.log("drag start: " + ou);
 				}
 			});
 			
@@ -39,6 +43,7 @@ public class DnDUtils {
 				
 				@Override
 				public void onDragEnd(DragEndEvent event) {
+					GWT.log("on drag end");
 					event.stopPropagation();
 					event.preventDefault();
 				}
@@ -50,8 +55,6 @@ public class DnDUtils {
 				
 				@Override
 				public void onDrop(DropEvent event) {
-//					DataTransfer dt = event.getDataTransfer();
-//					System.out.println(dt);
 					acceptor.drop(ou);
 					event.preventDefault();
 				}
@@ -62,6 +65,7 @@ public class DnDUtils {
 				
 				@Override
 				public void onDragOver(DragOverEvent event) {
+					GWT.log("onDragOver");
 					if (acceptor.accepts(acceptor.getDragged())) {
 						event.stopPropagation();
 						event.preventDefault();
@@ -73,20 +77,23 @@ public class DnDUtils {
 				
 				@Override
 				public void onDragEnter(DragEnterEvent event) {
+					GWT.log("onDragEnter");
 					if (acceptor.accepts(acceptor.getDragged())) {
 						event.preventDefault();
+						acceptor.onEnter();
 					}
 				}
 			});
 	
-	//		renderer.addDragLeaveHandler(new DragLeaveHandler() {
-	//			
-	//			@Override
-	//			public void onDragLeave(DragLeaveEvent event) {
-	//				event.preventDefault();
-	//				System.out.println("drag leave");
-	//			}
-	//		});
+			hadndh.addDragLeaveHandler(new DragLeaveHandler() {
+				
+				@Override
+				public void onDragLeave(DragLeaveEvent event) {
+					GWT.log("onDragLeave");
+					acceptor.onLeave();
+					event.preventDefault();
+				}
+			});
 
 		}
 	}

@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
 
 public class Interactor {
@@ -53,14 +52,12 @@ public class Interactor {
 			if (il instanceof InteractorWidgetLink) {
 				widget = ((InteractorWidgetLink) il).getWidget();
 				String objectType = ((InteractorWidgetLink) il).getObjectType();
-				boolean isVisible = translator.isVisible(item, objectType);
-				boolean isEnabled = translator.isEnabled(item, objectType);
-				
-				widget.setVisible(isVisible);
-				il.enable(isEnabled);
-//				if (widget instanceof HasEnabled) { 
-//					((HasEnabled)widget).setEnabled(isEnabled);
-//				}
+				if (objectType != null) {
+					boolean isVisible = translator.isVisible(item, objectType);
+					boolean isEnabled = translator.isEnabled(item, objectType);
+					widget.setVisible(isVisible);
+					il.enable(isEnabled);
+				}
 			}
 
 			il.toDialog(item);

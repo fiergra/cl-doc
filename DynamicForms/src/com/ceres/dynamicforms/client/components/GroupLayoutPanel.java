@@ -2,6 +2,7 @@ package com.ceres.dynamicforms.client.components;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -11,13 +12,16 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class GroupLayoutPanel extends DockLayoutPanel implements GroupPanel {
 
-	private final HorizontalPanel headerContent = new HorizontalPanel();
+	private final EnabledHorizontalPanel header = new EnabledHorizontalPanel();
+	private final EnabledHorizontalPanel headerContent = new EnabledHorizontalPanel();
 	private final Image busyImage = new Image("assets/images/busyblue.gif");
 	private Label titleLabel;
+	private boolean enabled;
+	private Widget content;
 	
 	public GroupLayoutPanel(String title, Widget content) {
 		super(Unit.PX);
-		HorizontalPanel header = new HorizontalPanel();
+		this.content = content;
 		header.add(headerContent);
 		setStyleName("groupLayoutPanel");
 		header.setStyleName("headerPanel");
@@ -39,6 +43,19 @@ public class GroupLayoutPanel extends DockLayoutPanel implements GroupPanel {
 		header.add(busyPanel);
 	}
 
+	public void removeContent() {
+		if (this.content != null) {
+			remove(this.content);
+		} 
+	}
+	
+
+	public void setContent(Widget content) {
+		removeContent();
+		this.content = content;
+		add(content);
+	}
+	
 	@Override
 	public HorizontalPanel getHeader() {
 		return headerContent;
@@ -55,5 +72,21 @@ public class GroupLayoutPanel extends DockLayoutPanel implements GroupPanel {
 
 	public String getTitleText() {
 		return titleLabel.getText();
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		if (enabled != this.enabled) {
+			header.setEnabled(enabled);
+			if (content instanceof HasEnabled) {
+				((HasEnabled)content).setEnabled(enabled);
+			}
+			this.enabled = enabled;
+		}
 	}
 }

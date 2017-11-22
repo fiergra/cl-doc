@@ -37,8 +37,17 @@ public class LogBook extends FlexTable {
 
 	private void addLine(int row, LogEntry logEntry) {
 		int col = 0;
-		setWidget(row, col++, new Label(logEntry.level.getName()));
-		setWidget(row, col++, new Label(dtf.format(new Date(logEntry.time))));
-		setWidget(row, col++, new Label(logEntry.text));
+		Label l;
+		l = new Label(logEntry.level.getName());
+		l.addStyleName("noWrap");
+		setWidget(row, col++, l);
+
+		l = new Label(dtf.format(new Date(logEntry.time)));
+		l.addStyleName("noWrap");
+		setWidget(row, col++, l);
+
+		l = new Label(logEntry.text);
+		l.addStyleName("noWrap");
+		setWidget(row, col++, l);
 	}
 }

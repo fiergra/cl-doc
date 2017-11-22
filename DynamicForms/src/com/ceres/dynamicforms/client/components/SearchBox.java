@@ -1,7 +1,10 @@
 package com.ceres.dynamicforms.client.components;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import com.ceres.dynamicforms.client.ITranslator;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -82,5 +85,11 @@ public class SearchBox<T> extends SuggestBox {
 		oracle.add(label);
 	}
 	
+	protected List<String> getEntries() {
+		List<String> entries = new ArrayList<>(entriesByLabel.keySet());
+		Collections.sort(entries);
+		return entries;
+	}
+
 	
 }
