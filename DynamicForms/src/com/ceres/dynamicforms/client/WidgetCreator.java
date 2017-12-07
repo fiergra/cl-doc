@@ -357,6 +357,10 @@ public class WidgetCreator {
 			DateTextBox db =  new DateTextBox();
 			link = new DateFromLink(interactor, "dateFrom", db, attributes);
 			widget = db;
+		} else if ("ItemToDateField".equals(localName)){
+			DateTextBox db =  new DateTextBox();
+			link = new DateFromLink(interactor, "dateTo", db, attributes);
+			widget = db;
 		} else if ("ItemFieldCheckBox".equals(localName)){
 			widget = new CheckBox();
 			if (attributes.containsKey("label")) {
