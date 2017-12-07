@@ -13,6 +13,7 @@ import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
 import com.ceres.dynamicforms.client.components.EnabledVerticalPanel;
 import com.ceres.dynamicforms.client.components.NumberTextBox;
+import com.ceres.dynamicforms.client.components.StringComboBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
 import com.google.gwt.core.client.GWT;
@@ -251,7 +252,8 @@ public class WidgetCreator {
 			widget = new EnabledVerticalPanel();
 			widget.setStyleName("VBox");
 		} else if ("HBox".equals(localName)){
-			widget = new EnabledHorizontalPanel();
+			HorizontalPanel hp = new EnabledHorizontalPanel();
+			widget = hp;
 			widget.setStyleName("HBox");
 		} else if ("ScrollPanel".equals(localName)){
 			widget = new ScrollPanel();
@@ -259,44 +261,6 @@ public class WidgetCreator {
 			MapLinkFactory mlf = new MapLinkFactory(translator);
 			link = mlf.createLink(interactor, fieldName, attributes);
 			widget = link.getWidget();
-// 			
-//			
-//			String sLabels = attributes.get(MapListRenderer.LABELS);
-//			String[] labels = sLabels.split(";");
-////			final String className = fieldName;//attributes.get(CLASSNAME);
-//			final MapList ml = new MapList(translator, labels, null);
-//			setColDefs(ml, attributes);
-//			widget = ml;
-//			final InteractorWidgetLink mlLink = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
-//				
-//				@Override
-//				public void toDialog(Map<String, Serializable> item) {
-//					@SuppressWarnings("unchecked")
-//					List<Map<String, Serializable>> acts = (List<Map<String, Serializable>>) item.get(fieldName);
-//					ml.toDialog(acts );
-//				}
-//				
-//				@Override
-//				public boolean isEmpty() {
-//					return false;
-//				}
-//				
-//				@Override
-//				public void fromDialog(Map<String, Serializable> item) {
-//					List<Map<String, Serializable>> acts = new ArrayList<>();
-//					ml.fromDialog(acts );
-//					item.put(fieldName, (Serializable) acts);
-//				}
-//			};
-//			link = mlLink;
-//			ml.setChangeHandler(new Runnable() {
-//				
-//				@Override
-//				public void run() {
-//					interactor.onChange(mlLink);
-//				}
-//			});
-//			
 		} else if ("Tab".equals(localName)){
 			widget = new TabLayoutPanel(42, Unit.PX);
 		} else if ("Form".equals(localName)){
@@ -407,6 +371,10 @@ public class WidgetCreator {
 			widget = hp;
 		} else if ("HRule".equals(localName)){
 			widget = new HTML("<hr/>");
+		} else if ("StringComboBox".equals(localName)) {
+			ILinkFactory lf = new StringComboBox.Factory(translator);
+			link = lf.createLink(interactor, fieldName, attributes);
+			widget = link.getWidget();
 		} else if ("HTML".equals(localName)){
 			final HTML html = new HTML();
 			widget = html;

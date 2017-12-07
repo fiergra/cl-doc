@@ -1,13 +1,11 @@
 package com.ceres.dynamicforms.client.components;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.ITranslator;
 import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorWidgetLink;
@@ -15,10 +13,11 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class StringComboBox extends ListBox {
 	
-	class Factory extends AbstractFactory {
+	public static class Factory extends AbstractFactory {
 		
 		public static final String HAS_NULL = "hasNull";
 		public static final String VALUES = "values";
+		public static final String SELECTED = "selected";
 
 		public Factory(ITranslator tl) {
 			super(tl);
@@ -27,6 +26,11 @@ public class StringComboBox extends ListBox {
 		@Override
 		public InteractorWidgetLink createLink(Interactor interactor, final String fieldName, HashMap<String, String> attributes) {
 			final StringComboBox sBox = new StringComboBox(translator, getStrings(attributes, VALUES), getBoolean(attributes, HAS_NULL));
+			
+			if (attributes.containsKey(SELECTED)) {
+				sBox.setSelected(attributes.get(SELECTED));
+			}
+			
 			InteractorWidgetLink link = new InteractorWidgetLink(interactor, fieldName, sBox, attributes) {
 				
 				@Override
@@ -36,12 +40,12 @@ public class StringComboBox extends ListBox {
 				
 				@Override
 				public boolean isEmpty() {
-					return getSelectedValue() == null || getSelectedValue().length() == 0;
+					return sBox.getSelectedValue() == null || sBox.getSelectedValue().length() == 0;
 				}
 				
 				@Override
 				public void fromDialog(Map<String, Serializable> item) {
-					item.put(fieldName, getSelectedValue());
+					item.put(fieldName, sBox.getSelectedValue());
 				}
 			};
 			return link;
