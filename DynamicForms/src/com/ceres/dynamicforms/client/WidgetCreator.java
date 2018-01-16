@@ -237,7 +237,8 @@ public class WidgetCreator {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
-		InteractorWidgetLink link = null;
+		InteractorWidgetLink wLink = null;
+		InteractorLink iLink = null;
 		final String fieldName; 
 		
 		if (attributes.containsKey("fieldName")) {
@@ -259,8 +260,8 @@ public class WidgetCreator {
 			widget = new ScrollPanel();
 		} else if ("MapList".equals(localName)){
 			MapLinkFactory mlf = new MapLinkFactory(translator);
-			link = mlf.createLink(interactor, fieldName, attributes);
-			widget = link.getWidget();
+			wLink = mlf.createLink(interactor, fieldName, attributes);
+			widget = wLink.getWidget();
 		} else if ("Tab".equals(localName)){
 			widget = new TabLayoutPanel(42, Unit.PX);
 		} else if ("Form".equals(localName)){
@@ -290,24 +291,24 @@ public class WidgetCreator {
 			widget = new SimpleFormItem(attributes);
 		} else if ("datebox".equals(localName)){
 			final DateBox db =  new DateBox();
-			link = new DateBoxLink(interactor, fieldName, db, attributes);
+			wLink = new DateBoxLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFieldDateField".equals(localName) || "date".equals(localName)){
 			DateTextBox db =  new DateTextBox();
-			link = new DateLink(interactor, fieldName, db, attributes);
+			wLink = new DateLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("time".equals(localName)){
 			TimeTextBox db = new TimeTextBox();
-			link = new DateLink(interactor, fieldName, db, attributes);
+			wLink = new DateLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("long".equals(localName)){
 			NumberTextBox db = new NumberTextBox();
 			db.setNumberFormat(NumberFormat.getFormat("#"));
-			link = new NumberLink(interactor, fieldName, db, attributes);
+			wLink = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("float".equals(localName)){
 			NumberTextBox db = new NumberTextBox();
-			link = new NumberLink(interactor, fieldName, db, attributes);
+			wLink = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 //		} else if ("float".equals(localName)){
 //			FloatTextBox db = new FloatTextBox();
@@ -315,15 +316,15 @@ public class WidgetCreator {
 //			widget = db;
 		} else if ("ItemFieldNumberInput".equals(localName)){
 			NumberTextBox db = new NumberTextBox();
-			link = new NumberLink(interactor, fieldName, db, attributes);
+			wLink = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFromDateField".equals(localName)){
 			DateTextBox db =  new DateTextBox();
-			link = new DateFromLink(interactor, "dateFrom", db, attributes);
+			wLink = new DateFromLink(interactor, "dateFrom", db, attributes);
 			widget = db;
 		} else if ("ItemToDateField".equals(localName)){
 			DateTextBox db =  new DateTextBox();
-			link = new DateFromLink(interactor, "dateTo", db, attributes);
+			wLink = new DateFromLink(interactor, "dateTo", db, attributes);
 			widget = db;
 		} else if ("ItemFieldCheckBox".equals(localName)){
 			widget = new CheckBox();
@@ -331,16 +332,16 @@ public class WidgetCreator {
 				String label = translator.getLabel(attributes.get("label"));
 				((CheckBox)widget).setText(label);
 			}
-			link = new BooleanLink(interactor, fieldName, (CheckBox) widget, attributes);
+			wLink = new BooleanLink(interactor, fieldName, (CheckBox) widget, attributes);
 		} else if ("yesno".equals(localName)){
 			widget = new YesNoRadioGroup(translator.getLabel("yes"), translator.getLabel("no"));
-			link = new YesNoLink(interactor, fieldName, (YesNoRadioGroup)widget, attributes);
+			wLink = new YesNoLink(interactor, fieldName, (YesNoRadioGroup)widget, attributes);
 		} else if ("ItemFieldTextInput".equals(localName)){
 			widget = new TextBox();
-			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
+			wLink = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
 		} else if ("ItemFieldTextArea".equals(localName)){
 			widget = new TextArea();
-			link = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
+			wLink = new TextLink(interactor, fieldName, (TextBoxBase) widget, attributes);
 		} else if ("Label".equals(localName) || "ResourceLabel".equals(localName)) {
 			widget = new Label(translator.getLabel(attributes.get("text")));
 //			widget.addStyleName("formLabel");
@@ -348,7 +349,7 @@ public class WidgetCreator {
 			String sLabel = attributes.containsKey("label") ? (translator != null ? translator.getLabel(attributes.get("label")) : attributes.get("label")) : "";
 			final PushButton pb = new PushButton(sLabel);
 			widget = pb;
-			link = new PushButtonLink(interactor, fieldName, pb, attributes);
+			wLink = new PushButtonLink(interactor, fieldName, pb, attributes);
 		} else if ("Link".equals(localName) || "link".equals(localName)){
 			Anchor a = new Anchor(attributes.get("text"));
 			final String uri = attributes.get("uri");
@@ -371,14 +372,16 @@ public class WidgetCreator {
 			widget = hp;
 		} else if ("HRule".equals(localName)){
 			widget = new HTML("<hr/>");
+		} else if ("Validator".equals(localName)) {
+			iLink = new ValidatorLink.Factory(translator).createLink(interactor, fieldName, attributes);
 		} else if ("StringComboBox".equals(localName)) {
-			ILinkFactory lf = new StringComboBox.Factory(translator);
-			link = lf.createLink(interactor, fieldName, attributes);
-			widget = link.getWidget();
+			StringComboBox.Factory lf = new StringComboBox.Factory(translator);
+			wLink = lf.createLink(interactor, fieldName, attributes);
+			widget = wLink.getWidget();
 		} else if ("HTML".equals(localName)){
 			final HTML html = new HTML();
 			widget = html;
-			link = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
+			wLink = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
 				
 				@Override
 				public void toDialog(Map<String, Serializable> item) {
@@ -397,11 +400,14 @@ public class WidgetCreator {
 		} else {
 			ILinkFactory linkFactory = linkFactories.get(localName);
 			if (linkFactory != null) {
-				link = linkFactory.createLink(interactor, fieldName, attributes);
-				if (link != null && attributes != null) {
-					link.setObjectType(attributes.get("objectType"));
+				iLink = linkFactory.createLink(interactor, fieldName, attributes);
+				if (iLink instanceof InteractorWidgetLink) {
+					wLink = (InteractorWidgetLink) iLink;
+					if (wLink != null && attributes != null) {
+						wLink.setObjectType(attributes.get("objectType"));
+					}
+					widget = wLink != null ? wLink.widget : null;
 				}
-				widget = link != null ? link.widget : null;
 			} else {
 				widget = new Label(localName + " not yet supported!");
 			}
@@ -439,8 +445,10 @@ public class WidgetCreator {
 //			}
 
 			
-			if (link != null && link.getName() != null) {
-				interactor.addLink(link);
+			if (wLink != null && wLink.getName() != null) {
+				interactor.addLink(wLink);
+			} else if (iLink != null) {
+				interactor.addLink(iLink);
 			}
 		}
 		

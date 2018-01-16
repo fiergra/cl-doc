@@ -4,6 +4,6 @@ import java.util.HashMap;
 
 public interface ILinkFactory {
 
-	InteractorWidgetLink createLink(Interactor interactor, String fieldName, HashMap<String, String> attributes);
+	InteractorLink createLink(Interactor interactor, String fieldName, HashMap<String, String> attributes);
 
 }

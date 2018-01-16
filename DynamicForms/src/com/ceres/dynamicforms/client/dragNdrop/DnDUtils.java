@@ -26,7 +26,9 @@ public class DnDUtils {
 		}
 		
 		HasAllDragAndDropHandlers hadndh = (HasAllDragAndDropHandlers) renderer;
-
+		
+		try {
+		
 		if (drag) {
 			renderer.getElement().setDraggable(Element.DRAGGABLE_TRUE);
 			hadndh.addDragStartHandler(new DragStartHandler() {
@@ -65,11 +67,11 @@ public class DnDUtils {
 				
 				@Override
 				public void onDragOver(DragOverEvent event) {
-					GWT.log("onDragOver");
-					if (acceptor.accepts(acceptor.getDragged())) {
+//					GWT.log("onDragOver");
+//					if (acceptor.accepts(acceptor.getDragged())) {
 						event.stopPropagation();
 						event.preventDefault();
-					}
+//					}
 				}
 			});
 			
@@ -96,6 +98,9 @@ public class DnDUtils {
 			});
 
 		}
+	} catch (Throwable t) {
+		GWT.log(t.getLocalizedMessage());
+	}
 	}
 
 

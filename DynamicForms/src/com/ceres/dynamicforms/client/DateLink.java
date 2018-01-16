@@ -29,4 +29,11 @@ public class DateLink extends TextLink {
 		return (DateTextBox) super.getWidget();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return getWidget().getDate() == null;
+	}
+	
+	
+
 }
