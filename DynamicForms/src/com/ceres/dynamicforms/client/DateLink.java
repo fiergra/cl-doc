@@ -6,12 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ceres.dynamicforms.client.components.DateTextBox;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-public class DateLink extends TextLink {
+public class DateLink extends InteractorWidgetLink {
 
-	public DateLink(Interactor interactor, String fieldName,
-			DateTextBox widget, HashMap<String, String> attributes) {
+	public DateLink(Interactor interactor, String fieldName, DateTextBox widget, HashMap<String, String> attributes) {
 		super(interactor, fieldName, widget, attributes);
+		widget.addDateChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				interactor.onChange(DateLink.this);
+			}
+		});
 	}
 
 	@Override

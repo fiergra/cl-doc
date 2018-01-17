@@ -28,10 +28,19 @@ public class ValidatorLink extends InteractorLink {
 			final ValidatorLink vLink = new ValidatorLink(interactor, test, attributes.get(LEFT), attributes.get(RIGHT));
 			
 			interactor.addChangeHandler(new LinkChangeHandler() {
+				private boolean wasValid = true;
 				
 				@Override
 				protected void onChange(InteractorLink link) {
-					vLink.hilite(vLink.isValid());
+					if (link != vLink) {
+						boolean isValid = vLink.isValid();
+						vLink.hilite(isValid);
+						
+						if (wasValid != isValid) {
+							wasValid = isValid;
+							interactor.onChange(vLink);
+						}
+					}
 				}
 			});
 			return vLink;
@@ -100,10 +109,10 @@ public class ValidatorLink extends InteractorLink {
 			int result = cLeft.compareTo(cRight);
 			
 			switch (test) {
-			case GT: isValid = result < 0; break; 
-			case GTE: isValid = result <= 0; break; 
-			case LT: isValid = result > 0; break; 
-			case LTE: isValid = result >= 0; break; 
+			case LT: isValid = result < 0; break; 
+			case LTE: isValid = result <= 0; break; 
+			case GT: isValid = result > 0; break; 
+			case GTE: isValid = result >= 0; break; 
 			}
 			
 		}

@@ -13,8 +13,7 @@ import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
 public class DateBoxLink extends InteractorWidgetLink {
 
-	public DateBoxLink(final Interactor interactor, String fieldName,
-			DateBox db, HashMap<String, String> attributes) {
+	public DateBoxLink(final Interactor interactor, String fieldName, DateBox db, HashMap<String, String> attributes) {
 		super(interactor, fieldName, db, attributes);
 		db.setFireNullValues(true);
 		final DateTimeFormat format = DateTimeFormat.getFormat("dd.MM.yyyy");

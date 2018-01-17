@@ -294,7 +294,7 @@ public class WidgetCreator {
 			wLink = new DateBoxLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFieldDateField".equals(localName) || "date".equals(localName)){
-			DateTextBox db =  new DateTextBox();
+			DateTextBox db =  new DateTextBox(Boolean.valueOf(attributes.get(DateTextBox.AMPM)));
 			wLink = new DateLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("time".equals(localName)){
@@ -319,12 +319,12 @@ public class WidgetCreator {
 			wLink = new NumberLink(interactor, fieldName, db, attributes);
 			widget = db;
 		} else if ("ItemFromDateField".equals(localName)){
-			DateTextBox db =  new DateTextBox();
-			wLink = new DateFromLink(interactor, "dateFrom", db, attributes);
+			DateTextBox db =  new DateTextBox(Boolean.valueOf(attributes.get(DateTextBox.AMPM)));
+			wLink = new ItemDateLink(interactor, "dateFrom", db, attributes);
 			widget = db;
 		} else if ("ItemToDateField".equals(localName)){
-			DateTextBox db =  new DateTextBox();
-			wLink = new DateFromLink(interactor, "dateTo", db, attributes);
+			DateTextBox db =  new DateTextBox(Boolean.valueOf(attributes.get(DateTextBox.AMPM)));
+			wLink = new ItemDateLink(interactor, "dateTo", db, attributes);
 			widget = db;
 		} else if ("ItemFieldCheckBox".equals(localName)){
 			widget = new CheckBox();
@@ -388,7 +388,6 @@ public class WidgetCreator {
 					html.setHTML((String) item.get(fieldName));
 				}
 				
-				@Override
 				public boolean isEmpty() {
 					return false;
 				}
