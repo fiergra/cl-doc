@@ -10,7 +10,6 @@ import java.util.Map;
 import com.ceres.dynamicforms.client.FlexGrid.GridItem;
 import com.ceres.dynamicforms.client.FlexGrid.GridRow;
 import com.ceres.dynamicforms.client.components.DateTextBox;
-import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
 import com.ceres.dynamicforms.client.components.EnabledVerticalPanel;
 import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.StringComboBox;
@@ -253,7 +252,7 @@ public class WidgetCreator {
 			widget = new EnabledVerticalPanel();
 			widget.setStyleName("VBox");
 		} else if ("HBox".equals(localName)){
-			HorizontalPanel hp = new EnabledHorizontalPanel();
+			Panel hp = new HGapPanel();
 			widget = hp;
 			widget.setStyleName("HBox");
 		} else if ("ScrollPanel".equals(localName)){
