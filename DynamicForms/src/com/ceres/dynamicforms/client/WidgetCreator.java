@@ -15,7 +15,6 @@ import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.StringComboBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -26,6 +25,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -92,7 +92,7 @@ public class WidgetCreator {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
-			GWT.log("pc " + level + levelPrefix(level) + element.getNodeName());
+//			GWT.log("pc " + level + levelPrefix(level) + element.getNodeName());
 
 			element = preprocess(document, element);
 		
@@ -119,6 +119,7 @@ public class WidgetCreator {
 		return widget;
 	}
 
+	@SuppressWarnings("unused")
 	private static String levelPrefix(int level) {
 		String prefix = "";
 		for (int i = 0; i < level; i++) {
@@ -257,6 +258,9 @@ public class WidgetCreator {
 			widget.setStyleName("HBox");
 		} else if ("ScrollPanel".equals(localName)){
 			widget = new ScrollPanel();
+		} else if ("Image".equals(localName)){
+			String source = attributes.get("source");
+			widget = new Image(source);
 		} else if ("MapList".equals(localName)){
 			MapLinkFactory mlf = new MapLinkFactory(translator);
 			wLink = mlf.createLink(interactor, fieldName, attributes);
@@ -431,23 +435,12 @@ public class WidgetCreator {
 				((HasEnabled)widget).setEnabled(asBoolean(attributes.get("enabled")));
 			}
 
-//			if (translator != null) {
-//				String objectType = attributes.get("objectType");
-//				boolean isVisible = translator.isVisible(objectType);
-//				boolean isEnabled = translator.isEnabled(objectType);
-//				
-//				widget.setVisible(isVisible);
-//				if (widget instanceof HasEnabled) { 
-//					((HasEnabled)widget).setEnabled(isEnabled);
-//				}
-//			}
-
+		}
 			
-			if (wLink != null && wLink.getName() != null) {
-				interactor.addLink(wLink);
-			} else if (iLink != null) {
-				interactor.addLink(iLink);
-			}
+		if (wLink != null && wLink.getName() != null) {
+			interactor.addLink(wLink);
+		} else if (iLink != null) {
+			interactor.addLink(iLink);
 		}
 		
 		return widget;
