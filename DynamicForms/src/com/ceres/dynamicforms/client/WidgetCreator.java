@@ -15,6 +15,7 @@ import com.ceres.dynamicforms.client.components.NumberTextBox;
 import com.ceres.dynamicforms.client.components.StringComboBox;
 import com.ceres.dynamicforms.client.components.TimeTextBox;
 import com.ceres.dynamicforms.client.components.YesNoRadioGroup;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -75,6 +76,7 @@ public class WidgetCreator {
 		}
 		Widget result = null;
 		Document document = XMLParser.parse(xml);
+		XMLParser.removeWhitespace(document);
 		Element root = document.getDocumentElement();
 		
 		if (root != null) {
@@ -92,10 +94,9 @@ public class WidgetCreator {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
-//			GWT.log("pc " + level + levelPrefix(level) + element.getNodeName());
+			GWT.log("pc " + level + levelPrefix(level) + element.getNodeName()+ "(" + element.getNodeType() + "): " + element.getNodeValue());
 
 			element = preprocess(document, element);
-		
 			widget = createWidgetFromElement(element, interactor, translator);
 			if (widget != null) {
 				if (panel instanceof Panel){
@@ -230,10 +231,10 @@ public class WidgetCreator {
 	
 	private static Widget createWidgetFromElement(Element element, Interactor interactor, ITranslator translator) {
 		String tagName = element.getTagName();
-		return createWidgetFromElementName(tagName, asHashMap(element.getAttributes()), interactor, translator);
+		return createWidgetFromElementName(tagName, element.toString(), asHashMap(element.getAttributes()), interactor, translator);
 	}
 	
-	public static Widget createWidgetFromElementName(String tagName, HashMap<String, String> attributes, final Interactor interactor, ITranslator translator) {
+	public static Widget createWidgetFromElementName(String tagName, String nodeValue, HashMap<String, String> attributes, final Interactor interactor, ITranslator translator) {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
@@ -256,6 +257,9 @@ public class WidgetCreator {
 			Panel hp = new HGapPanel();
 			widget = hp;
 			widget.setStyleName("HBox");
+		} else if ("Script".equals(localName)){
+			widget = new Scripter(nodeValue);
+			//			ScriptInjector.fromString();
 		} else if ("ScrollPanel".equals(localName)){
 			widget = new ScrollPanel();
 		} else if ("Image".equals(localName)){
@@ -431,6 +435,12 @@ public class WidgetCreator {
 			if (attributes.containsKey("height")) {
 				widget.setHeight(checkUnit(attributes.get("height")));
 			}
+
+			if (attributes.containsKey("id")) {
+//				widget.ensureDebugId(attributes.get("id"));
+				widget.getElement().setId(attributes.get("id"));
+			}
+			
 			if (widget instanceof HasEnabled && attributes.containsKey("enabled")) {
 				((HasEnabled)widget).setEnabled(asBoolean(attributes.get("enabled")));
 			}

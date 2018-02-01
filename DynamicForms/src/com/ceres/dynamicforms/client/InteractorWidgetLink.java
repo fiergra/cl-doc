@@ -3,13 +3,11 @@ package com.ceres.dynamicforms.client;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
-import com.google.gwt.user.client.ui.HasFocus;
 import com.google.gwt.user.client.ui.Widget;
 
-@SuppressWarnings("deprecation")
 public abstract class InteractorWidgetLink extends InteractorLink {
 	private static final String OBJECT_TYPE = "objectType";
 	public static final String FOCUS = "focus";
@@ -42,26 +40,22 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		return objectType;
 	}
 
-
+	public void requestFocus() {
+		if (requestFocus) {
+			if (getWidget() instanceof FocusWidget) {
+				Scheduler.get().scheduleDeferred(()->((FocusWidget)getWidget()).setFocus(requestFocus));
+			} else  if (getWidget() instanceof Focusable) {
+				Scheduler.get().scheduleDeferred(()->((Focusable)getWidget()).setFocus(requestFocus));
+			}
+		}
+		
+	}
 	
 	protected void hilite(boolean isValid) {
 		if (!isValid) {
 			getWidget().addStyleName("invalidContent");
 		} else {
 			getWidget().removeStyleName("invalidContent");
-		}
-		if (requestFocus) {
-			if (getWidget() instanceof Focusable) {
-				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-					
-					@Override
-					public void execute() {
-						((Focusable)getWidget()).setFocus(requestFocus);
-					}
-				});
-			} else if (getWidget() instanceof HasFocus) {
-				((HasFocus)getWidget()).setFocus(requestFocus);
-			}
 		}
 	}
 	

@@ -9,11 +9,12 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class DateTextBox extends HorizontalPanel {
+public class DateTextBox extends HorizontalPanel implements Focusable {
 	private static final String AM = "am";
 	private static final String PM = "pm";
 	public static final String AMPM = "ampm";
@@ -173,6 +174,26 @@ public class DateTextBox extends HorizontalPanel {
 	
 	public void addDateChangeHandler(ValueChangeHandler<Date> dateChangeHandler) {
 		dateChangeHandlers.add(dateChangeHandler);
+	}
+
+	@Override
+	public int getTabIndex() {
+		return textBox.getTabIndex();
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		textBox.setAccessKey(key);
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		textBox.setFocus(focused);
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		textBox.setTabIndex(index);
 	}
 	
 	

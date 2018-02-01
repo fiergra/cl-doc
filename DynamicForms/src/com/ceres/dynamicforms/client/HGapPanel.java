@@ -10,6 +10,10 @@ public class HGapPanel extends FlexTable implements HasEnabled {
 
 	private boolean isEnabled = true;
 	
+	public HGapPanel() {
+		addStyleName("noBorderSpacing");
+	}
+	
 	@Override
 	public boolean isEnabled() {
 		return isEnabled;

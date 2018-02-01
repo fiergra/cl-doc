@@ -57,6 +57,7 @@ public class Interactor {
 					boolean isEnabled = translator.isEnabled(item, objectType);
 					widget.setVisible(isVisible);
 					il.enable(isEnabled);
+					((InteractorWidgetLink) il).requestFocus();
 				}
 			}
 
@@ -134,7 +135,10 @@ public class Interactor {
 		isValid = true;
 		Iterator<InteractorLink> iter = links.iterator();
 		while (isValid && iter.hasNext()) {
-			isValid = isValid && iter.next().isValid();
+			InteractorLink curr = iter.next();
+//			GWT.log("checking link " + curr.name);
+			isValid = isValid && curr.isValid();
+//			GWT.log(String.valueOf(isValid));
 		}
 	}
 
