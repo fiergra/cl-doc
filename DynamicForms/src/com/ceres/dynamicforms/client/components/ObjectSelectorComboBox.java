@@ -20,11 +20,17 @@ public class ObjectSelectorComboBox<T> extends ListBox {
 	private T selectedEntity = null;
 	private boolean nullsAllowed = true;
 	private Comparator<T> comparator;
+	private LabelFunc<T> labelFunc;
 	
 	public static Logger log = Logger.getLogger(ObjectSelectorComboBox.class.getName());
 
 	public ObjectSelectorComboBox(boolean nullsAllowed) {
+		this(nullsAllowed, null);
+	}
+
+	public ObjectSelectorComboBox(boolean nullsAllowed, LabelFunc<T> labelFunc) {
 		this.nullsAllowed = nullsAllowed;
+		this.labelFunc = labelFunc;
 		setVisibleItemCount(1);
 		comparator = new Comparator<T>() {
 
@@ -97,7 +103,7 @@ public class ObjectSelectorComboBox<T> extends ListBox {
 	}
 	
 	protected String labelFunc(T entity) {
-		return entity != null ? entity.toString() : "<null>";
+		return labelFunc != null ? labelFunc(entity) : entity != null ? entity.toString() : "<null>";
 	}
 	
 	public void setValue(T value) {
