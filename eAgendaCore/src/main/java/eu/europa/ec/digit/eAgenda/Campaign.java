@@ -5,6 +5,7 @@ package eu.europa.ec.digit.eAgenda;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 
@@ -34,5 +35,14 @@ public class Campaign implements Serializable {
 		}
 		patterns.add(workPattern);
 	}
+	
+	public List<WorkPattern> getPatterns(IResource resource) {
+		return patterns.stream().filter(p -> p.resource != null && p.resource.equals(resource)).collect(Collectors.toList());
+	}
+
+	public void removeWorkPattern(WorkPattern workPattern) {
+		patterns.remove(workPattern);
+	}
+
 	
 }

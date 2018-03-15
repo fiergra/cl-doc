@@ -13,6 +13,7 @@ public class WorkPattern implements Serializable {
 	public IResource resource;
 	public Date from;
 	public Date until;
+	public int minuteGrid = 15;
 	
 //	public enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
 	public List<Day> days;
@@ -35,6 +36,20 @@ public class WorkPattern implements Serializable {
 			setDay(i, day);
 		}
 		
+		return day;
+	}
+
+	public boolean applies(Date d) {
+		return (from == null || from.getTime() <= d.getTime()) && (until == null || until.getTime() >= d.getTime()) ;
+	}
+
+	public Day getDay(Date d) {
+		@SuppressWarnings("deprecation")
+		int dDay = d.getDay() - 1;
+		if (dDay == -1) { // sunday overflow 
+			dDay = 6;
+		}
+		Day day = getDay(dDay);
 		return day;
 	}
 	

@@ -12,7 +12,7 @@ public class Appointment implements Serializable {
 	public ObjectId id;
 
 	public IResource host;
-	public Person guest;
+	public User guest;
 	public Room location;
 	
 	public Date from;
@@ -21,10 +21,12 @@ public class Appointment implements Serializable {
 	public AppointmentType type;
 	
 	public HashMap<String, Serializable> fields;
+
+	public String comment;
 	
 	public Appointment() {}
 
-	public Appointment(IResource host, Person guest, Room location, Date from, Date until, AppointmentType type) {
+	public Appointment(IResource host, User guest, Room location, Date from, Date until, AppointmentType type) {
 		this.host = host;
 		this.guest = guest;
 		this.location = location;

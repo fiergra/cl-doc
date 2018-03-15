@@ -8,7 +8,7 @@ public interface EAgendaCoreService {
 
 	List<Campaign> getCampaigns();
 
-	List<Person> findPersons(String filter);
+	List<User> findPersons(String filter);
 
 	Appointment saveAppointment(Appointment a);
 
