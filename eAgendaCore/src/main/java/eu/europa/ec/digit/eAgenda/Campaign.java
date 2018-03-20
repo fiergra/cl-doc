@@ -4,6 +4,8 @@ package eu.europa.ec.digit.eAgenda;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,17 +18,24 @@ public class Campaign implements Serializable {
 	public String name;
 	public String description;
 
+	public AppointmentType appointmentType;
 	public List<WorkPattern> patterns;
 	public ObjectId id;
+
+	public Collection<User> owners;
 
 	public boolean published;
 
 	public Campaign() {}
 	
-	public Campaign(String name, String description) {
+	public Campaign(String name, String description, User owner, AppointmentType appointmentType) {
 		this.name = name;
 		this.description = description;
 		this.patterns = new ArrayList<>();
+		if (owner != null) {
+			addOwner(owner);
+		}
+		this.appointmentType = appointmentType;
 	}
 
 	public void addWorkPattern(WorkPattern workPattern) {
@@ -35,14 +44,46 @@ public class Campaign implements Serializable {
 		}
 		patterns.add(workPattern);
 	}
+
+	public List<IResource> assignedResources() {
+		return patterns != null ? patterns.stream().filter(p->p.resource != null).map(p -> p.resource).distinct().collect(Collectors.toList()) : null;
+	}
 	
-	public List<WorkPattern> getPatterns(IResource resource) {
-		return patterns.stream().filter(p -> p.resource != null && p.resource.equals(resource)).collect(Collectors.toList());
+	public List<WorkPattern> resourcePatterns(IResource resource) {
+		return patterns != null ? patterns.stream().filter(p -> p.resource != null && p.resource.equals(resource)).collect(Collectors.toList()) : null;
 	}
 
 	public void removeWorkPattern(WorkPattern workPattern) {
 		patterns.remove(workPattern);
 	}
 
+	public boolean addOwner(User owner) {
+		boolean added = false;
+		if (owner != null) {
+			if (owners == null) {
+				owners = new HashSet<>();
+			}
+			added = owners.add(owner);
+		}
+		return added;
+	}
 	
+	public boolean removeOwner(User owner) {
+		boolean removed = false; 
+		
+		if (owners != null) {
+			removed = owners.remove(owner);
+		}
+		
+		return removed;
+	}
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(final ObjectId id) {
+        this.id = id;
+    }
+
 }

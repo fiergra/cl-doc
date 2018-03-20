@@ -70,6 +70,10 @@ public class SearchBox<T> extends SuggestBox {
 		return selected;
 	}
 
+	public void setSelected(T selected, boolean fireEvent) {
+		SelectionEvent.fire(this, null);
+	}
+	
 	public void setSelected(T selected) {
 		this.selected = selected;
 		setText(selected != null ? replacement.label(selected) : null);

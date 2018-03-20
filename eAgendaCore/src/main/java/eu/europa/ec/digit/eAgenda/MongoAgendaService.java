@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -17,14 +18,16 @@ import org.bson.types.ObjectId;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
+import com.mongodb.client.model.UpdateOptions;
 
-public class MongoAgendaService implements EAgendaCoreService {
+import eu.europa.ec.digit.client.i18n.StringResource;
+
+public class MongoAgendaService {
 
 	private MongoDatabase db;
 	private MongoClient mongoClient;
@@ -38,10 +41,13 @@ public class MongoAgendaService implements EAgendaCoreService {
 		ClassModel<User> cmUser = ClassModel.builder(User.class).enableDiscriminator(true).build();
 		ClassModel<Person> cmPerson = ClassModel.builder(Person.class).enableDiscriminator(true).build();
 		ClassModel<Room> cmRoom = ClassModel.builder(Room.class).enableDiscriminator(true).build();
+
 		PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).register(cmResource, cmUser, cmPerson, cmRoom).build();
-		CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromProviders(pojoCodecProvider));// PojoCodecProvider.builder().automatic(true).build()));
-		mongoClient = new MongoClient("localhost", MongoClientOptions.builder().writeConcern(new WriteConcern(0).withJournal(true)).codecRegistry(pojoCodecRegistry).build());
+		CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromProviders(pojoCodecProvider));
+		
+		mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
 		db = mongoClient.getDatabase("mydb");
+		
 	}
 
 	public void close() {
@@ -56,6 +62,26 @@ public class MongoAgendaService implements EAgendaCoreService {
 	}
 
 	
+	private MongoCollection<Appointment> appointments() {
+		return getDb().getCollection("appointments", Appointment.class);
+	}
+
+	private MongoCollection<IResource> resources() {
+		return getDb().getCollection("resources", IResource.class);
+	}
+
+	private MongoCollection<Campaign> campaigns() {
+		return getDb().getCollection("campaigns", Campaign.class);
+	}
+
+	private MongoCollection<StringResource> stringResources() {
+		return getDb().getCollection("stringResources", StringResource.class);
+	}
+
+
+	
+	
+	
 	public Campaign findCampaign(String idOrName) {
 		ObjectId oid = ObjectId.isValid(idOrName) ? new ObjectId(idOrName) : null;
 		
@@ -69,39 +95,24 @@ public class MongoAgendaService implements EAgendaCoreService {
 		return c;
 	}
 	
-	@Override
-	public List<Campaign> getCampaigns() {
+	public List<Campaign> getCampaigns(User owner) {
 		List<Campaign> result = new ArrayList<>();
-		campaigns().find().forEach((Block<Campaign>) c -> result.add(c));
 
+		campaigns().find(Filters.in("owners", owner)).forEach((Block<Campaign>) c -> result.add(c));
+		
 		return result;
 	}
 
-	private MongoCollection<Appointment> appointments() {
-		return getDb().getCollection("appointments", Appointment.class);
-	}
-
-	private MongoCollection<IResource> resources() {
-		return getDb().getCollection("resources", IResource.class);
-	}
-
-	private MongoCollection<Campaign> campaigns() {
-		return getDb().getCollection("campaigns", Campaign.class).withWriteConcern(new WriteConcern(1).withJournal(true));
-	}
-
-	@Override
 	public void saveCampaign(Campaign c) {
 		if (c.id == null) {
 			campaigns().insertOne(c);
 			// todo find out how to make this more efficient...
 			c.id = campaigns().find(Filters.eq("name", c.name)).first().id;
-			
 		} else {
-			campaigns().replaceOne(Filters.eq("_id", c.id), c);
+			campaigns().replaceOne(Filters.eq("_id", c.id), c, new UpdateOptions().upsert(true));
 		}
 	}
 
-	@Override
 	public void deleteCampaign(Campaign c) {
 		if (c.id != null) {
 			campaigns().deleteOne(Filters.eq("_id", c.id));
@@ -109,24 +120,21 @@ public class MongoAgendaService implements EAgendaCoreService {
 		}
 	}
 
-	@Override
 	public Appointment saveAppointment(Appointment a) {
 		if (a.id == null) {
 			appointments().insertOne(a);
 		} else {
-			appointments().replaceOne(Filters.eq("_id", a.id), a);
+			appointments().replaceOne(Filters.eq("_id", a.id), a, new UpdateOptions().upsert(true));
 		}
 		return a;
 	}
 
 	public Appointment deleteAppointment(Appointment a) {
 		appointments().deleteOne(Filters.eq("_id", a.id));
-		a.id = null;
 		return a;
 	}
 
 
-	@Override
 	public List<User> findPersons(String filter) {
 		List<User> persons = new ArrayList<>();
 		List<IResource> resources = findResources(filter);
@@ -168,6 +176,30 @@ public class MongoAgendaService implements EAgendaCoreService {
 		}
 		return result;
 	}
+
+	public User getUser(String userName) {
+		return (User) resources().find(Filters.eq("userId", userName)).first();
+	}
+
+	public void saveStringResource(StringResource sr) {
+		stringResources().replaceOne(Filters.eq("key", sr.key), sr, new UpdateOptions().upsert(true));
+	}
 	
+	public HashMap<String, StringResource> getStringResources() {
+		HashMap<String, StringResource> stringMap = new HashMap<>();
+		stringResources().find().forEach((Consumer<StringResource>)s -> stringMap.put(s.key, s));
+		
+		return stringMap;
+	}
+
+	
+	public static void main(String[] args) {
+		MongoAgendaService mas = new MongoAgendaService();
+		Campaign c = new Campaign();
+		mas.campaigns().insertOne(c);
+		System.out.println(c.id);
+		
+		
+	}
 
 }
