@@ -105,9 +105,8 @@ public class MongoAgendaService {
 
 	public void saveCampaign(Campaign c) {
 		if (c.id == null) {
+			c.id = new ObjectId();
 			campaigns().insertOne(c);
-			// todo find out how to make this more efficient...
-			c.id = campaigns().find(Filters.eq("name", c.name)).first().id;
 		} else {
 			campaigns().replaceOne(Filters.eq("_id", c.id), c, new UpdateOptions().upsert(true));
 		}
@@ -122,6 +121,7 @@ public class MongoAgendaService {
 
 	public Appointment saveAppointment(Appointment a) {
 		if (a.id == null) {
+			a.id = new ObjectId();
 			appointments().insertOne(a);
 		} else {
 			appointments().replaceOne(Filters.eq("_id", a.id), a, new UpdateOptions().upsert(true));
