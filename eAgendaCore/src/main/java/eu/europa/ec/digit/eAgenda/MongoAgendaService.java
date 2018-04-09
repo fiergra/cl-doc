@@ -148,25 +148,45 @@ public class MongoAgendaService {
 		return persons;
 	}
 
+	public List<Room> findRooms(String filter) {
+		List<Room> rooms = new ArrayList<>();
+		List<IResource> resources = findResources(filter);
+		
+		resources.forEach( p -> {
+			if (p instanceof Room) {
+				rooms.add((Room) p);
+			}
+		});
+		
+		return rooms;
+	}
+
 	public List<IResource> findResources(String filter) {
 		List<IResource> resources = new ArrayList<>();
 		resources().find(Filters.text(filter)).projection(Projections.metaTextScore("score")).sort(Sorts.metaTextScore("score")).limit(25).forEach((Block <IResource>) p -> resources.add(p));
 		return resources;
 	}
 
-	public List<Appointment> getAppointments(Date d, IResource host) {
+	public List<Appointment> getAppointments(Date d, Date until, IResource host, IResource guest) {
 		List<Appointment> result = new ArrayList<>();
 		
 		DateFormat df = DateFormat.getDateInstance();
 		try {
 			Date trunc = df.parse(df.format(d));
-			Date nextDay = new Date(trunc.getTime() + 24 * 60 * 60 * 1000);
+			if (until == null) {
+				until = new Date(trunc.getTime() + 24 * 60 * 60 * 1000);
+			}
 
-			Bson filters = null;
+			Bson filters = Filters.and(Filters.gte("from", trunc), Filters.lt("from", until));
+			
 			if (host instanceof User) {
-				filters = Filters.and(Filters.gte("from", trunc), Filters.lt("from", nextDay), Filters.eq("host.userId", ((User)host).userId));
+				filters = Filters.and(filters, Filters.eq("host.userId", ((User)host).userId));
 			} else if (host instanceof Room) {
-				filters = Filters.and(Filters.gte("from", trunc), Filters.lt("from", nextDay), Filters.eq("host.name", ((Room)host).name));
+				filters = Filters.and(filters, Filters.eq("host.name", ((Room)host).name));
+			}
+
+			if (guest instanceof User) {
+				filters = Filters.and(filters, Filters.eq("guest.userId", ((User)guest).userId));
 			}
 			
 			appointments().find(filters).forEach((Consumer<Appointment>) a -> { result.add(a);});

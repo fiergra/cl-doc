@@ -20,6 +20,7 @@ public class Campaign implements Serializable {
 
 	public AppointmentType appointmentType;
 	public List<WorkPattern> patterns;
+//	public String id;
 	public ObjectId id;
 
 	public Collection<User> owners;
@@ -78,12 +79,12 @@ public class Campaign implements Serializable {
 		return removed;
 	}
 
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(final ObjectId id) {
-        this.id = id;
-    }
-
+//    public ObjectId getId() {
+//        return id;
+//    }
+//
+//    public void setId(final ObjectId id) {
+//        this.id = id;
+//    }
+//
 }

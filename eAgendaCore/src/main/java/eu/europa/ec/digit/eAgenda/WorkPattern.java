@@ -11,12 +11,15 @@ public class WorkPattern implements Serializable {
 	private static final long serialVersionUID = -5577328425239811358L;
 	
 	public IResource resource;
+	public Room location;
+
 	public Date from;
 	public Date until;
 	public int minuteGrid = 15;
 	
 //	public enum WeekDay {MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY};
 	public List<Day> days;
+
 	
 	public WorkPattern() {}
 	
