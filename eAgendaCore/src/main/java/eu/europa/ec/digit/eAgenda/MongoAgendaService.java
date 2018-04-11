@@ -170,30 +170,20 @@ public class MongoAgendaService {
 	public List<Appointment> getAppointments(Date d, Date until, IResource host, IResource guest) {
 		List<Appointment> result = new ArrayList<>();
 		
-		DateFormat df = DateFormat.getDateInstance();
-		try {
-			Date trunc = df.parse(df.format(d));
-			if (until == null) {
-				until = new Date(trunc.getTime() + 24 * 60 * 60 * 1000);
-			}
-
-			Bson filters = Filters.and(Filters.gte("from", trunc), Filters.lt("from", until));
-			
-			if (host instanceof User) {
-				filters = Filters.and(filters, Filters.eq("host.userId", ((User)host).userId));
-			} else if (host instanceof Room) {
-				filters = Filters.and(filters, Filters.eq("host.name", ((Room)host).name));
-			}
-
-			if (guest instanceof User) {
-				filters = Filters.and(filters, Filters.eq("guest.userId", ((User)guest).userId));
-			}
-			
-			appointments().find(filters).forEach((Consumer<Appointment>) a -> { result.add(a);});
+		Bson filters = Filters.and(Filters.gte("from", d), Filters.lt("from", until));
 		
-		} catch (ParseException e) {
-			e.printStackTrace();
+		if (host instanceof User) {
+			filters = Filters.and(filters, Filters.eq("host.userId", ((User)host).userId));
+		} else if (host instanceof Room) {
+			filters = Filters.and(filters, Filters.eq("host.name", ((Room)host).name));
 		}
+
+		if (guest instanceof User) {
+			filters = Filters.and(filters, Filters.eq("guest.userId", ((User)guest).userId));
+		}
+		
+		appointments().find(filters).forEach((Consumer<Appointment>) a -> { result.add(a);});
+	
 		return result;
 	}
 

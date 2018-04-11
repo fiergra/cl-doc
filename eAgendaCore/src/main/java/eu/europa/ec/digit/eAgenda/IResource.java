@@ -6,4 +6,6 @@ public interface IResource extends Serializable {
 
 	String getDisplayName();
 
+	String getEMailAddress();
+
 }

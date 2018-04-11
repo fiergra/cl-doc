@@ -5,14 +5,17 @@ public class User implements IResource {
 	private static final long serialVersionUID = 21549982441754892L;
 
 	public String userId;
+	public String emailAddress;
 	public Person person;
 	
 	public String searchString;
 
+
 	protected User() {}
 
-	public User(String userId, Person person) {
+	public User(String userId, String emailAddress, Person person) {
 		this.userId = userId;
+		this.emailAddress = emailAddress;
 		this.person = person;
 		searchString = userId + " " + (person != null ? person.searchString : "");
 	}
@@ -20,6 +23,12 @@ public class User implements IResource {
 	@Override
 	public String getDisplayName() {
 		return userId + " " + (person != null ? person.getDisplayName() : "");
+	}
+
+
+	@Override
+	public String getEMailAddress() {
+		return emailAddress;
 	}
 
 	@Override

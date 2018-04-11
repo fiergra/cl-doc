@@ -46,6 +46,19 @@ public class WorkPattern implements Serializable {
 		return (from == null || from.getTime() <= d.getTime()) && (until == null || until.getTime() >= d.getTime()) ;
 	}
 
+	public Long duration() {
+		long duration;
+
+		if (from == null && until == null) {
+			duration = Long.MAX_VALUE;
+		} else if (from == null || until == null) {
+			duration = Long.MAX_VALUE - 1L;
+		} else {
+			duration = until.getTime() - from.getTime();
+		}
+		return duration;
+	}
+
 	public Day getDay(Date d) {
 		@SuppressWarnings("deprecation")
 		int dDay = d.getDay() - 1;

@@ -7,6 +7,7 @@ public class Room implements IResource {
 	public String name;
 	public City city;
 	public String searchString;
+	public String emailAddress;
 	
 	protected Room() {}
 	
@@ -18,6 +19,11 @@ public class Room implements IResource {
 		searchString = name + " " + city.code;
 	}
 
+
+	@Override
+	public String getEMailAddress() {
+		return emailAddress;
+	}
 
 
 	@Override

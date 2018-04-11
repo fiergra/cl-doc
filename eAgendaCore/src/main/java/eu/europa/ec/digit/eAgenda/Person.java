@@ -12,7 +12,7 @@ public class Person implements IResource {
 	public String lastName;
 	public String gender;
 	public Date dateOfBirth;
-	
+	public String emailAddress;
 	public String searchString;
 
 	protected Person() {}
@@ -54,6 +54,11 @@ public class Person implements IResource {
 		if (perId != other.perId)
 			return false;
 		return true;
+	}
+
+	@Override
+	public String getEMailAddress() {
+		return emailAddress;
 	}
 	
 	

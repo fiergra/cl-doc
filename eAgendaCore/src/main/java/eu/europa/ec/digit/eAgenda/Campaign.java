@@ -51,7 +51,7 @@ public class Campaign implements Serializable {
 	}
 	
 	public List<WorkPattern> resourcePatterns(IResource resource) {
-		return patterns != null ? patterns.stream().filter(p -> p.resource != null && p.resource.equals(resource)).collect(Collectors.toList()) : null;
+		return patterns != null ? patterns.stream().filter(p -> p.resource != null && p.resource.equals(resource)).sorted((w1, w2) -> w1.duration().compareTo(w2.duration())).collect(Collectors.toList()) : null;
 	}
 
 	public void removeWorkPattern(WorkPattern workPattern) {

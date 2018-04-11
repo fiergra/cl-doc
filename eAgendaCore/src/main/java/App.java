@@ -1,3 +1,25 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.ClassModel;
+import org.bson.codecs.pojo.PojoCodecProvider;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import eu.europa.ec.digit.eAgenda.IResource;
+import eu.europa.ec.digit.eAgenda.Person;
+import eu.europa.ec.digit.eAgenda.Room;
+import eu.europa.ec.digit.eAgenda.User;
+import eu.europa.ec.digit.simpletx.ITransactional;
+import eu.europa.ec.digit.simpletx.JDBC;
+import eu.europa.ec.digit.simpletx.SimpleSession;
+
 /**
  * Hello world!
  *
@@ -7,26 +29,26 @@ public class App {
 	static int counter = 0;
 
 	public static void main(String[] args) {
-//		
-//		ClassModel<IResource> cmResource = ClassModel.builder(IResource.class).enableDiscriminator(true).build();
-//		ClassModel<User> cmUser = ClassModel.builder(User.class).enableDiscriminator(true).build();
-//		ClassModel<Person> cmPerson = ClassModel.builder(Person.class).enableDiscriminator(true).build();
-//		ClassModel<Room> cmRoom = ClassModel.builder(Room.class).enableDiscriminator(true).build();
-//
-//		PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).register(cmResource, cmUser, cmPerson, cmRoom).build();
-//
-//		
-//		CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), 
-//				CodecRegistries.fromProviders(pojoCodecProvider));//PojoCodecProvider.builder().automatic(true).build()));
-//		MongoClient mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
-//		MongoDatabase db = mongoClient.getDatabase("mydb");
+		
+		ClassModel<IResource> cmResource = ClassModel.builder(IResource.class).enableDiscriminator(true).build();
+		ClassModel<User> cmUser = ClassModel.builder(User.class).enableDiscriminator(true).build();
+		ClassModel<Person> cmPerson = ClassModel.builder(Person.class).enableDiscriminator(true).build();
+		ClassModel<Room> cmRoom = ClassModel.builder(Room.class).enableDiscriminator(true).build();
+
+		PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).register(cmResource, cmUser, cmPerson, cmRoom).build();
+
+		
+		CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), 
+				CodecRegistries.fromProviders(pojoCodecProvider));//PojoCodecProvider.builder().automatic(true).build()));
+		MongoClient mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+		MongoDatabase db = mongoClient.getDatabase("mydb");
 //		MongoCollection<Campaign> campaigns = db.getCollection("campaigns", Campaign.class);
 //		campaigns.drop();
 ////
 ////		MongoCollection<Person> persons = db.getCollection("persons", Person.class);
 ////		persons.drop();
 //		
-//		MongoCollection<IResource> resources = db.getCollection("resources", IResource.class);
+		MongoCollection<IResource> resources = db.getCollection("resources", IResource.class);
 //
 ////		Campaign c = new Campaign();
 ////		c.name = "TestCampaign";
@@ -50,26 +72,29 @@ public class App {
 //		
 //		resources.drop();
 //		
-//		JDBC.execute(new SimpleSession(), new ITransactional<Void>() {
-//
-//			@Override
-//			public Void execute(Connection con) throws Exception {
-//				PreparedStatement s = con.prepareStatement("SELECT * FROM CRF4SMED_HIST_USERIDS_V u " + 
-//						"INNER JOIN SMD_PERSONS p ON p.PER_ID = u.per_id " + 
-//						"WHERE dt_fin > SYSDATE");
-//				ResultSet rs = s.executeQuery();
-//				while (rs.next()) {
-//					Person p = new Person(rs.getLong("per_id"), rs.getString("no_sysper"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("gender"), rs.getDate("birth_date"));
-//					User u = new User(rs.getString("userid"), p);
-//					resources.insertOne(u);
-//					if (++counter % 1000 == 0) {
-//						System.out.println(counter + " inserted.");
-//					}
-//				}
-//				s.close();
-//				return null;
-//			}
-//		}, 123456L);
+		JDBC.execute(new SimpleSession(), new ITransactional<Void>() {
+
+			@Override
+			public Void execute(Connection con) throws Exception {
+				PreparedStatement s = con.prepareStatement("SELECT distinct email, per_id, no_sysper, firstName, lastName, gender, birth_date, userid "
+						+ " FROM CRF4SMED_HIST_USERIDS_V u " + 
+						" INNER JOIN CRF4SMED_HIST_EMAILS_V e ON e.per_id = u.per_id AND e.dt_fin > SYSDATE AND e.CTX_CD = 'PROF' AND e.SRC_ID = 10" + 
+ 						" INNER JOIN SMD_PERSONS p ON p.PER_ID = u.per_id " + 
+						" WHERE u.dt_fin > SYSDATE");
+				ResultSet rs = s.executeQuery();
+				while (rs.next()) {
+					String email = rs.getString("email");
+					Person p = new Person(rs.getLong("per_id"), rs.getString("no_sysper"), rs.getString("firstName"), rs.getString("lastName"), rs.getString("gender"), rs.getDate("birth_date"));
+					User u = new User(rs.getString("userid"), email, p);
+					resources.insertOne(u);
+					if (++counter % 1000 == 0) {
+						System.out.println(counter + " inserted.");
+					}
+				}
+				s.close();
+				return null;
+			}
+		}, 123456L);
 //		
 //
 //		JDBC.execute(new SimpleSession(), new ITransactional<Void>() {
@@ -97,7 +122,7 @@ public class App {
 //		
 //
 //		
-//		mongoClient.close();
+		mongoClient.close();
 	}
 }
 
