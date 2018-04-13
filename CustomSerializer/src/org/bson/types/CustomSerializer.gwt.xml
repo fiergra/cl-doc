@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="CustomSerializer">
+  <source path="">
+  </source>
+  
+<!--    <inherits name="eu.europa.ec.digit.SimpleTX"/>
+  <inherits name="eu.europa.ec.digit.athena.Athena"/>
+  <inherits name="eu.europa.ec.digit.athena.Workflow"/>-->
+</module>
