@@ -1,7 +1,5 @@
 package eu.europa.ec.digit.eAgenda;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -204,12 +202,37 @@ public class MongoAgendaService {
 
 	
 	public static void main(String[] args) {
-		MongoAgendaService mas = new MongoAgendaService();
-		Campaign c = new Campaign();
-		mas.campaigns().insertOne(c);
-		System.out.println(c.id);
-		
-		
+//		MongoAgendaService mas = new MongoAgendaService();
+//
+////		final TypeToken<List<Request>> requestListTypeToken = new TypeToken<List<Request>>() {
+////        };
+////
+//        final RuntimeTypeAdapterFactory<IResource> typeFactory = RuntimeTypeAdapterFactory
+//                .of(IResource.class, "type")
+//                .registerSubtype(User.class)
+//                .registerSubtype(Person.class)
+//                .registerSubtype(Room.class);
+//
+//        final Gson gson = new GsonBuilder().registerTypeAdapterFactory(typeFactory).create();		
+//		MongoCollection<Document> collection = mas.db.getCollection("plainJSON");
+//		collection.drop();
+//		Campaign c = mas.campaigns().find().first();
+//		String json = gson.toJson(c);
+//		Document doc = Document.parse(json);
+//		collection.insertOne(doc);
+//		doc = collection.find().first();
+//		c = gson.fromJson(doc.toJson(), Campaign.class);
+//		
+//		JsonTest jt = new JsonTest("asdf", 42l);
+//
+//		collection = mas.db.getCollection("jsonTest");
+//		collection.drop();
+//		doc = Document.parse(gson.toJson(jt));
+//		collection.insertOne(doc);
+//		doc = collection.find().first();
+//		jt = gson.fromJson(doc.toJson(), JsonTest.class);
+//		
+//		
 	}
 
 }
