@@ -20,9 +20,10 @@ public class Campaign implements Serializable {
 
 	public AppointmentType appointmentType;
 	public List<WorkPattern> patterns;
-//	public String id;
 	public ObjectId id;
 
+	public EmailSettings emailSettings;
+	
 	public Collection<User> owners;
 
 	public boolean published;

@@ -12,13 +12,11 @@
 	<classpathentry kind="var" path="M2_REPO/com/microsoft/ews-java-api/ews-java-api/2.0/ews-java-api-2.0.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpclient/4.4.1/httpclient-4.4.1.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.4.1/httpcore-4.4.1.jar"/>
-	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
+	<classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.2/commons-logging-1.2-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar" sourcepath="M2_REPO/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/joda-time/joda-time/2.8/joda-time-2.8.jar"/>
 	<classpathentry kind="var" path="M2_REPO/org/jasypt/jasypt/1.9.2/jasypt-1.9.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/com/google/code/gson/gson/2.8.2/gson-2.8.2.jar"/>
-	<classpathentry kind="var" path="M2_REPO/org/danilopianini/gson-extras/0.2.1/gson-extras-0.2.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SimpleTX"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
