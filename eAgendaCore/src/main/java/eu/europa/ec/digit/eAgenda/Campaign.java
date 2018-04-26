@@ -22,9 +22,11 @@ public class Campaign implements Serializable {
 	public List<WorkPattern> patterns;
 	public ObjectId id;
 
-	public EmailSettings emailSettings;
+	public EmailSettings emailSettings = new EmailSettings();
 	
 	public Collection<User> owners;
+
+	public boolean allowDelegation;
 
 	public boolean published;
 

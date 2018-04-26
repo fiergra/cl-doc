@@ -7,9 +7,9 @@ import eu.europa.ec.digit.eAgenda.Appointment;
 import eu.europa.ec.digit.eAgenda.IResource;
 
 public interface EmailCalendarService {
-	void removeAppointmentFromOutlookCalendar(final String id) throws Exception;
+	void removeAppointmentFromCalendar(final String id) throws Exception;
 
-	boolean addAppointmentIntoOutlookCalendar(String subject, String message, Appointment appointment) throws Exception;
+	boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, Appointment appointment) throws Exception;
 
 	void sendMessage(String requesterEmail, String[] recipients, String[] cc, String[] bcc, String subject, String bodyContent, String attachmentName, byte[] content) throws Exception;
 

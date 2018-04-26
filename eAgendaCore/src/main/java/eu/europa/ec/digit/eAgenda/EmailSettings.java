@@ -6,8 +6,8 @@ public class EmailSettings implements Serializable {
 
 	private static final long serialVersionUID = -7846088387873533162L;
 	
-	public String subject;
-	public String body;
+	public String subject = "subject";
+	public String body = "body";
 	public boolean includeHost;
 	
 	protected EmailSettings() {}

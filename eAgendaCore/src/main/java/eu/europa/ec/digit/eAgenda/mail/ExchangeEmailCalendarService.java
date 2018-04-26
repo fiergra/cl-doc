@@ -119,10 +119,12 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 	}
 
 	@Override
-	public synchronized void removeAppointmentFromOutlookCalendar(final String id) throws Exception {
+	public synchronized void removeAppointmentFromCalendar(final String id) throws Exception {
 
 		Appointment ooApt = getExistingOutlookAppointment(id);
 		if (ooApt != null) {
+			ooApt.getBody().setText("!!!asdf!!!");
+			ooApt.update(ConflictResolutionMode.AlwaysOverwrite);
 			ooApt.delete(DeleteMode.MoveToDeletedItems, SendCancellationsMode.SendOnlyToAll);
 		}
 	}
@@ -168,12 +170,11 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 	}
 
 	@Override
-	public boolean addAppointmentIntoOutlookCalendar(String subject, String message, eu.europa.ec.digit.eAgenda.Appointment outlookAppointment) throws Exception {
+	public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, eu.europa.ec.digit.eAgenda.Appointment outlookAppointment) throws Exception {
 		boolean createdNew = false;
 
 		synchronized (service) {
 			String appointmentId = outlookAppointment.id.toHexString();
-			String[] recipients = new String[] { "ralph.fiergolla@ec.europa.eu" };
 			Date dateFrom = outlookAppointment.from;
 			Date dateTo = outlookAppointment.until;
 			String place = outlookAppointment.location != null ? outlookAppointment.location.getDisplayName() : null;
@@ -202,12 +203,12 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 				// if (fileContent != null) {
 				// calAppointment.getAttachments().addFileAttachment(fileName, fileContent);
 				// }
-				calAppointment.save(fid1, SendInvitationsMode.SendToNone);
 
 				for (String email : recipients) {
 					calAppointment.getRequiredAttendees().add(email);
 				}
-				calAppointment.update(ConflictResolutionMode.AutoResolve, SendInvitationsOrCancellationsMode.SendToChangedAndSaveCopy);
+				calAppointment.save(fid1, SendInvitationsMode.SendOnlyToAll);
+//				calAppointment.update(ConflictResolutionMode.AutoResolve, SendInvitationsOrCancellationsMode.SendToChangedAndSaveCopy);
 				createdNew = true;
 			} else {
 
