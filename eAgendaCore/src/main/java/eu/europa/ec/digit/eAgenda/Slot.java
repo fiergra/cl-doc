@@ -21,6 +21,10 @@ public class Slot implements Serializable {
 		this(h, m, d, null);
 	}
 
+	public Slot(Slot s) {
+		this(s.h, s.m, s.durationInMinutes, s.capacity);
+	}
+	
 	public Slot(int h, int m, int d, Integer capacity) {
 		this.h = h;
 		this.m = m;
@@ -45,7 +49,18 @@ public class Slot implements Serializable {
 		d = getFrom(d);
 		return new Date(d.getTime() + durationInMinutes * 60 * 1000);
 	}
-	
+
+	public boolean isAdjacent(Slot slot) {
+		Date d = new Date();
+		return getUntil(d).getTime() == slot.getFrom(d).getTime();
+	}
+
+	public void combineWith(Slot slot) {
+		durationInMinutes += slot.durationInMinutes;
+		if ((capacity == null && slot.capacity != null) || (capacity != null && slot.capacity != null && slot.capacity < capacity)) {
+			capacity = slot.capacity;
+		}
+	}
 
 	
 }

@@ -30,6 +30,8 @@ public class Campaign implements Serializable {
 
 	public boolean published;
 
+	public int startDelayInH = 24;
+
 	public Campaign() {}
 	
 	public Campaign(String name, String description, User owner, AppointmentType appointmentType) {
