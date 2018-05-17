@@ -27,7 +27,6 @@
     </properties>
  
    <modules>
-        <module>DynamicForms</module>
 	<module>eAgendaCore</module>
 	<module>eAgendaUI</module>
    </modules>
@@ -50,11 +49,6 @@
 		<dependency>
 			<groupId>eu.europa.ec.digit</groupId>
 			<artifactId>eAgendaCore</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ceres.dynamicforms</groupId>
-			<artifactId>dynamicForms</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -90,7 +84,14 @@
 			<artifactId>CustomSerializer.jar</artifactId>
 			<version>1.0</version>
 	 		<scope>system</scope>
-        		<systemPath>${user.dir}/eAgendaUI/src/main/webapp/WEB-INF/lib/CustomSerializer.jar</systemPath>
+        		<systemPath>${user.dir}/eAgendaSharedLibs/CustomSerializer.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>com.ceres.dynamicforms</groupId>
+			<artifactId>dynamicForms</artifactId>
+			<version>${project.version}</version>
+			<scope>system</scope>
+        		<systemPath>${user.dir}/eAgendaSharedLibs/dynamicForms-1.0-SNAPSHOT.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>microsoft.exchange</groupId>
