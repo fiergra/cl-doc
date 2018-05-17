@@ -79,30 +79,6 @@
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 
 		<plugins>
-			<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-install-plugin</artifactId>
-			<version>2.5.1</version>
-	   		<executions>
-      				
-				<execution>
-         				<id>external-CustomSerializer-install-jar-lib</id>
-         				<goals>
-            					<goal>install-file</goal>
-         				</goals>
-         				<phase>initialize</phase>
-					<configuration>
-						<groupId>eAgenda.external.deps</groupId>
-						<artifactId>CustomSerializer.jar</artifactId>
-						<version>1.0</version>
-						<packaging>jar</packaging>
-						<file>${basedir}/sharedlibs/CustomSerializer.jar</file>
-						<generatePom>true</generatePom>
-					</configuration>
-      				</execution>
-			</executions>
-			</plugin>
-
 			<!-- GWT Maven Plugin -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
