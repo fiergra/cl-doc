@@ -32,6 +32,7 @@
 	<module>eAgendaUI</module>
    </modules>
    <build>
+
 	<sourceDirectory>src</sourceDirectory>
 	
 
@@ -89,7 +90,7 @@
 			<artifactId>CustomSerializer.jar</artifactId>
 			<version>1.0</version>
 	 		<scope>system</scope>
-        		<systemPath>${basedir}/../eAgendaUI/src/main/webapp/WEB-INF/lib/CustomSerializer.jar</systemPath>
+        		<systemPath>${user.dir}/eAgendaUI/src/main/webapp/WEB-INF/lib/CustomSerializer.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>microsoft.exchange</groupId>
