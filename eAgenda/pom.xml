@@ -1,0 +1,202 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+ 
+    <groupId>eu.europa.ec.digit</groupId>
+    <artifactId>eAgenda</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+ 
+    <name>eAgenda</name>
+    <url>http://maven.apache.org</url>
+    <scm>
+	<connection>scm:svn:https://github.com/fiergra/cl-doc/trunk</connection>
+	<url>https://github.com/fiergra/cl-doc/trunk/</url>
+    </scm>
+
+    <properties>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+
+	<maven.compiler.source>1.8</maven.compiler.source>
+	<maven.compiler.target>1.8</maven.compiler.target>
+
+	<junit.version>4.11</junit.version>
+	<gwt.version>2.8.2</gwt.version>
+
+    </properties>
+ 
+   <modules>
+        <module>DynamicForms</module>
+	<module>eAgendaCore</module>
+	<module>eAgendaUI</module>
+   </modules>
+   <build>
+	<sourceDirectory>src</sourceDirectory>
+	
+
+	<pluginManagement> 
+	</pluginManagement>
+
+	<plugins>
+		
+	</plugins>
+   </build>
+
+   <dependencyManagement>
+	<dependencies>
+
+		<dependency>
+			<groupId>eu.europa.ec.digit</groupId>
+			<artifactId>eAgendaCore</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ceres.dynamicforms</groupId>
+			<artifactId>dynamicForms</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<!-- ensure all GWT deps use the same version (unless overridden) -->
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt</artifactId>
+			<version>${gwt.version}</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency>
+ 		<dependency>
+            		<groupId>junit</groupId>
+		        <artifactId>junit</artifactId>
+            		<version>${junit.version}</version>
+            		<scope>provided</scope>
+        	</dependency>
+       		<dependency>
+	    		<groupId>org.mongodb</groupId>
+	    		<artifactId>mongodb-driver</artifactId>
+	    		<version>3.5.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
+		<!--
+		<dependency>
+    			<groupId>org.mongodb</groupId>
+    			<artifactId>bson</artifactId>
+    			<version>3.5.0</version>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>eAgenda.external.deps</groupId>
+			<artifactId>CustomSerializer.jar</artifactId>
+			<version>1.0</version>
+	 		<scope>system</scope>
+        		<systemPath>${basedir}/../eAgendaUI/src/main/webapp/WEB-INF/lib/CustomSerializer.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>microsoft.exchange</groupId>
+			<artifactId>ews.jar</artifactId>
+			<version>1.1.5</version>
+	    	</dependency> 
+
+		<!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
+		<dependency>
+	    		<groupId>com.sun.mail</groupId>
+	    		<artifactId>javax.mail</artifactId>
+	    		<version>1.6.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.microsoft.ews-java-api/ews-java-api -->
+		<dependency>
+	    		<groupId>com.microsoft.ews-java-api</groupId>
+	    		<artifactId>ews-java-api</artifactId>
+	    		<version>2.0</version>
+		</dependency>
+		<dependency>
+	    		<groupId>org.jasypt</groupId>
+	    		<artifactId>jasypt</artifactId>
+	    		<version>1.9.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>${gwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+			<version>${gwt.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+			<version>${gwt.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.websocket/javax.websocket-api -->
+		<dependency>
+    			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+    			<version>1.0-rc4</version>
+    			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-server-impl -->
+		<dependency>
+    			<groupId>org.eclipse.jetty.websocket</groupId>
+    			<artifactId>javax-websocket-server-impl</artifactId>
+    			<version>9.1.0.M0</version>
+		</dependency>
+	</dependencies>
+    </dependencyManagement>
+   
+    <profiles>
+
+	<profile>
+		<id>local</id>
+		<activation>
+			<activeByDefault>true</activeByDefault>
+		</activation>
+		<build>
+			<plugins>
+          			<plugin>
+            				<groupId>org.apache.maven.plugins</groupId>
+            				<artifactId>maven-source-plugin</artifactId>
+            				<version>3.0.1</version>
+            				<executions>
+              					<execution>
+                					<id>attach-sources</id>
+                					<goals>
+                  						<goal>jar-no-fork</goal>
+                					</goals>
+              					</execution>
+            				</executions>
+          			</plugin>
+				<!--
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.5.1</version>
+	   				<executions>
+      				
+						<execution>
+         						<id>external-CustomSerializer-install-jar-lib</id>
+         						<goals>
+            							<goal>install-file</goal>
+         						</goals>
+         						<phase>initialize</phase>
+							<configuration>
+								<groupId>eAgenda.external.deps</groupId>
+								<artifactId>CustomSerializer.jar</artifactId>
+								<version>1.0</version>
+								<packaging>jar</packaging>
+								<file>${basedir}/eSharedLibs/CustomSerializer.jar</file>
+								<generatePom>true</generatePom>
+							</configuration>
+      						</execution>
+					</executions>
+				</plugin>
+				-->
+        		</plugins>
+		</build>
+	</profile>
+    </profiles>
+</project>
