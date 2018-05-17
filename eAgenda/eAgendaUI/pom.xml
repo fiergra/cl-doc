@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+        	<groupId>eu.europa.ec.digit</groupId>
+        	<version>1.0-SNAPSHOT</version>
+        	<artifactId>eAgenda</artifactId>
+	</parent>
+
+	<groupId>eu.europa.ec.digit</groupId>
+	<artifactId>eAgendaUI</artifactId>
+	<packaging>war</packaging>
+	<version>1.0-SNAPSHOT</version>
+	<name>eAgendaUI</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.ceres.dynamicforms</groupId>
+			<artifactId>dynamicForms</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.digit</groupId>
+			<artifactId>eAgendaCore</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-user</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-dev</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+
+		<dependency>
+    			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+		</dependency>
+		<dependency>
+    			<groupId>org.eclipse.jetty.websocket</groupId>
+    			<artifactId>javax-websocket-server-impl</artifactId>
+		</dependency>
+		<!--
+		<dependency>
+    			<groupId>org.mongodb</groupId>
+    			<artifactId>bson</artifactId>
+		</dependency>
+		-->
+		<dependency>
+    			<groupId>eAgenda.external.deps</groupId>
+			<artifactId>CustomSerializer.jar</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<resources>
+    			<resource>
+        			<directory>src/main/java</directory>
+        			<includes>
+          				<include>**/*.xml</include>
+          				<include>**/*.java</include>
+        			</includes>
+  			</resource>        
+		</resources>    
+		
+		<!-- Output classes directly into the webapp, so that IDEs and "mvn process-classes" 
+			update them in DevMode -->
+		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+
+		<plugins>
+			<!-- GWT Maven Plugin -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<version>${gwt.version}</version>
+				<configuration>
+					<compileSourcesArtifacts>
+						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaCore</compileSourcesArtifact>
+						<compileSourcesArtifact>com.ceres.dynamicforms:dynamicForms</compileSourcesArtifact>
+						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaUI</compileSourcesArtifact>
+					</compileSourcesArtifacts>
+					<servicePattern>**/client/**/*Service.java</servicePattern>
+					<noServer>false</noServer>
+					<modules>
+						<module>eu.europa.ec.digit.eAgendaUI</module>
+					</modules>
+					<port>7001</port>
+					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
+					<runTarget>eAgendaUI.html</runTarget>
+					<warSourceDirectory>${project.build.directory}/${project.build.finalName}</warSourceDirectory>
+					<webappDirectory>${basedir}/src/main/webapp</webappDirectory>
+					<logLevel>INFO</logLevel>
+					<style>DETAILED</style>
+					<bindAddress>${COMPUTERNAME}.net1.cec.eu.int</bindAddress>
+					<noServer>false</noServer>
+					<extraJvmArgs>-Xmx512m</extraJvmArgs>
+					<gwtVersion>${gwt.version}</gwtVersion>
+					<generateDirectory>${project.build.directory}/${project.build.finalName}</generateDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>clean</goal>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+
+			<!-- Skip normal test execution, we use gwt:test instead -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.17</version>
+				<configuration>
+					<compileSourcesArtifacts>
+						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaCore</compileSourcesArtifact>
+					</compileSourcesArtifacts>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<!--
+    			<plugin>
+            			<groupId>org.eclipse.jetty</groupId>
+            			<artifactId>jetty-maven-plugin</artifactId>
+            			<version>8.1.7.v20120910</version>
+				<configuration>
+                			<httpConnector>
+                    				<port>9999</port>
+                			</httpConnector>
+            			</configuration>
+          		</plugin>
+			-->
+		</plugins>
+	</build>
+</project>
