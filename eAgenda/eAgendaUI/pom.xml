@@ -87,7 +87,6 @@
 				<configuration>
 					<compileSourcesArtifacts>
 						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaCore</compileSourcesArtifact>
-						<compileSourcesArtifact>com.ceres.dynamicforms:dynamicForms</compileSourcesArtifact>
 						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaUI</compileSourcesArtifact>
 					</compileSourcesArtifacts>
 					<servicePattern>**/client/**/*Service.java</servicePattern>
