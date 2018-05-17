@@ -27,9 +27,9 @@
     </properties>
  
    <modules>
-        <module>../DynamicForms</module>
-	<module>../eAgendaCore</module>
-	<module>../eAgendaUI</module>
+        <module>DynamicForms</module>
+	<module>eAgendaCore</module>
+	<module>eAgendaUI</module>
    </modules>
    <build>
 	<sourceDirectory>src</sourceDirectory>
@@ -88,6 +88,8 @@
 			<groupId>eAgenda.external.deps</groupId>
 			<artifactId>CustomSerializer.jar</artifactId>
 			<version>1.0</version>
+	 		<scope>system</scope>
+        		<systemPath>${basedir}/../eAgendaUI/src/main/webapp/WEB-INF/lib/CustomSerializer.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>microsoft.exchange</groupId>
@@ -168,6 +170,31 @@
               					</execution>
             				</executions>
           			</plugin>
+				<!--
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.5.1</version>
+	   				<executions>
+      				
+						<execution>
+         						<id>external-CustomSerializer-install-jar-lib</id>
+         						<goals>
+            							<goal>install-file</goal>
+         						</goals>
+         						<phase>initialize</phase>
+							<configuration>
+								<groupId>eAgenda.external.deps</groupId>
+								<artifactId>CustomSerializer.jar</artifactId>
+								<version>1.0</version>
+								<packaging>jar</packaging>
+								<file>${basedir}/eSharedLibs/CustomSerializer.jar</file>
+								<generatePom>true</generatePom>
+							</configuration>
+      						</execution>
+					</executions>
+				</plugin>
+				-->
         		</plugins>
 		</build>
 	</profile>
