@@ -32,8 +32,8 @@
    </modules>
    <build>
 
-	<sourceDirectory>src</sourceDirectory>
-	
+	<sourceDirectory>src/main/java</sourceDirectory>
+	<outputDirectory>target/classes</outputDirectory>
 
 	<pluginManagement> 
 	</pluginManagement>
@@ -58,7 +58,7 @@
 			<artifactId>gwt</artifactId>
 			<version>${gwt.version}</version>
 			<type>pom</type>
-			<scope>import</scope>
+			<scope>import</scope>	
 		</dependency>
  		<dependency>
             		<groupId>junit</groupId>
@@ -133,7 +133,38 @@
 			<artifactId>gwt-dev</artifactId>
 			<version>${gwt.version}</version>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-webapp</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-servlets</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-annotations</artifactId>
+				</exclusion>
+			</exclusions>		
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-webapp -->
+		<dependency>
+		    <groupId>org.eclipse.jetty</groupId>
+		    <artifactId>jetty-webapp</artifactId>
+		    <version>9.4.10.v20180503</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-annotations -->
+		<dependency>
+    			<groupId>org.eclipse.jetty</groupId>
+    			<artifactId>jetty-annotations</artifactId>
+    			<version>8.1.17.v20150415</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/javax.websocket/javax.websocket-api -->
 		<dependency>
     			<groupId>javax.websocket</groupId>
@@ -146,6 +177,24 @@
     			<groupId>org.eclipse.jetty.websocket</groupId>
     			<artifactId>javax-websocket-server-impl</artifactId>
     			<version>9.1.0.M0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-webapp</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-servlets</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-annotations</artifactId>
+				</exclusion>
+			</exclusions>		
 		</dependency>
 	</dependencies>
     </dependencyManagement>
