@@ -98,7 +98,6 @@
 					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
 					<runTarget>eAgendaUI.html</runTarget>
 					<warSourceDirectory>${project.build.directory}/${project.build.finalName}</warSourceDirectory>
-					<webappDirectory>${basedir}/src/main/webapp</webappDirectory>
 					<logLevel>INFO</logLevel>
 					<style>DETAILED</style>
 					<bindAddress>${COMPUTERNAME}.net1.cec.eu.int</bindAddress>
