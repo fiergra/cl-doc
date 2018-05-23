@@ -256,7 +256,9 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 				if (i == MessageBox.MB_YES) {
 					
 					Date d = dateBox.getValue();
-					Appointment a = new Appointment(host, guest, null, slot.getFrom(d), slot.getUntil(d), campaign.appointmentType);
+					Date from = slot.getFrom(d);
+					Date until = new Date(from.getTime() + campaign.appointmentType.duration * 60 * 1000L);
+					Appointment a = new Appointment(host, guest, null, from, until, campaign.appointmentType);
 					a.comment = txtComment.getText();
 					eAgendaUI.service.saveAppointment(campaign, a, new RPCCallback<Appointment>() {
 	

@@ -34,7 +34,6 @@ public class UpdateWebSocketClient {
 		String url = GWT.getHostPageBaseURL();
 		int index = url.indexOf("://");
 		url = "ws" + url.substring(index) + "appointments";
-		// "ws://localhost:8888/appointments"
 		socket = new WebSocket(url);
 
 		socket.onmessage = (evt) -> {
@@ -82,6 +81,8 @@ public class UpdateWebSocketClient {
 				}
 				break;
 			case subscribe:
+				break;
+			case keepAlive:
 				break;
 			default:
 				break;

@@ -115,7 +115,6 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 				}
 			});
 			
-			
 			datePicker.addValueChangeHandler(e->setSelectedDate(datePicker.getValue()));
 			
 			ObjectSelectorComboBox<IResource> cmbResources = new ObjectSelectorComboBox<IResource>(resources.size() > 1) {
