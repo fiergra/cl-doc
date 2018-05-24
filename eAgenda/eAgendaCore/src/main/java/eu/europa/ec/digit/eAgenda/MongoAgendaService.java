@@ -52,13 +52,16 @@ public class MongoAgendaService {
 		mongoClient.close();
 	}
 
-	private MongoDatabase getDb() {
+	public MongoDatabase getDb() {
 		if (db == null) {
 			init();
 		}
 		return db;
 	}
 
+	public MongoClient getClient() {
+		return mongoClient;
+	}
 	
 	private MongoCollection<Appointment> appointments() {
 		return getDb().getCollection("appointments", Appointment.class);
@@ -233,6 +236,10 @@ public class MongoAgendaService {
 //		jt = gson.fromJson(doc.toJson(), JsonTest.class);
 //		
 //		
+	}
+
+	public MongoDatabase getDatabase() {
+		return null;
 	}
 
 }
