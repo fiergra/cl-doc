@@ -4,12 +4,13 @@ html, html a {
 }
 
 body, table td, select, button {
-	font-family: 'Roboto', sans-serif;
-/*	
+/*	font-family: 'Roboto', sans-serif;*/
+
+	font-family: 'Calibri', sans-serif;
 	font-smooth: always;
 	font-size: medium;
 	-webkit-font-smoothing: antialiased;
-	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004); */
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004); 
 }
 
 .applicationHeader {
@@ -359,6 +360,14 @@ body, table td, select, button {
 }
 
 .gwt-TextBox {
+    padding: 0px;
+    border: none;
+    font-size: inherit;
+    font-family: inherit;
+    height: 2em;
+}
+
+.gwt-PasswordTextBox {
     padding: 0px;
     border: none;
     font-size: inherit;

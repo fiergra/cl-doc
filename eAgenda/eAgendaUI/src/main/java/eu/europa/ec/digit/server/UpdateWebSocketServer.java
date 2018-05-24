@@ -11,6 +11,7 @@ import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
+import javax.websocket.RemoteEndpoint.Async;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
@@ -125,11 +126,12 @@ public class UpdateWebSocketServer {
 
 	
 	private static void sendText(Session session, String text) {
-//		if (s instanceof JsrSession) {
-//			JsrAsyncRemote ar = (JsrAsyncRemote) s.getAsyncRemote();
+//		if (session instanceof JsrSession) {
+//			JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
 //			ar.sendText(text);
 //		} else {
-			session.getAsyncRemote().sendText(text);
+			Async ar = session.getAsyncRemote();
+			ar.sendText(text);
 //		}
 	}
 

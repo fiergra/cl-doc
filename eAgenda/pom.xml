@@ -173,6 +173,7 @@
     			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-server-impl -->
+		<!--
 		<dependency>
     			<groupId>org.eclipse.jetty.websocket</groupId>
     			<artifactId>javax-websocket-server-impl</artifactId>
@@ -196,7 +197,8 @@
 				</exclusion>
 			</exclusions>		
 		</dependency>
-	</dependencies>
+-->
+		</dependencies>
     </dependencyManagement>
    
     <profiles>

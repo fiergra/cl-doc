@@ -123,8 +123,8 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 
 		Appointment ooApt = getExistingOutlookAppointment(id);
 		if (ooApt != null) {
-			ooApt.getBody().setText("!!!asdf!!!");
-			ooApt.update(ConflictResolutionMode.AlwaysOverwrite);
+//			ooApt.getBody().setText("!!!asdf!!!");
+//			ooApt.update(ConflictResolutionMode.AlwaysOverwrite);
 			ooApt.delete(DeleteMode.MoveToDeletedItems, SendCancellationsMode.SendOnlyToAll);
 		}
 	}
@@ -379,6 +379,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		return a;
 	}
 	
+	@SuppressWarnings({ "unused", "resource" })
 	private void monitorInbox() throws Exception {
 		Set<FolderId> folderIds = new HashSet<>();
 		folderIds.add(new FolderId(WellKnownFolderName.Calendar, mailBox));

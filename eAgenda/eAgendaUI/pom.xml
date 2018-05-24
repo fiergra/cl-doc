@@ -47,11 +47,11 @@
     			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
 		</dependency>
+		<!--
 		<dependency>
     			<groupId>org.eclipse.jetty.websocket</groupId>
     			<artifactId>javax-websocket-server-impl</artifactId>
 		</dependency>
-		<!--
 		<dependency>
     			<groupId>org.mongodb</groupId>
     			<artifactId>bson</artifactId>
@@ -85,6 +85,7 @@
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwt.version}</version>
 				<configuration>
+					<productionMode>true</productionMode>
 					<compileSourcesArtifacts>
 						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaCore</compileSourcesArtifact>
 						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaUI</compileSourcesArtifact>
