@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.bson.types.ObjectId;
-
 public class Appointment implements Serializable {
 	private static final long serialVersionUID = -2665822851932873724L;
 
-	public ObjectId id;
+//	public ObjectId id;
+	public String objectId;
 
 	public IResource host;
 	public User guest;
@@ -46,7 +45,7 @@ public class Appointment implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((objectId == null) ? 0 : objectId.hashCode());
 		return result;
 	}
 
@@ -59,10 +58,10 @@ public class Appointment implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Appointment other = (Appointment) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (objectId == null) {
+			if (other.objectId != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!objectId.equals(other.objectId))
 			return false;
 		return true;
 	}

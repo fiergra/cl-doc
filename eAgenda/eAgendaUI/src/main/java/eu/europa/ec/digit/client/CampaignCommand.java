@@ -29,7 +29,7 @@ public abstract class CampaignCommand implements ICommand {
 
 			@Override
 			protected void onResult(Campaign result) {
-				campaign.id = result.id;
+				campaign.objectId = result.objectId;
 			}
 		});
 	}
@@ -40,7 +40,7 @@ public abstract class CampaignCommand implements ICommand {
 
 			@Override
 			protected void onResult(Campaign result) {
-				campaign.id = null;
+				campaign.objectId = null;
 			}
 		});
 	}

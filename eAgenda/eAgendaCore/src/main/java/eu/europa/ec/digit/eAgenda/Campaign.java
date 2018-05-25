@@ -9,8 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.bson.types.ObjectId;
-
 public class Campaign implements Serializable {
 	
 	private static final long serialVersionUID = -969364133924117581L;
@@ -20,7 +18,8 @@ public class Campaign implements Serializable {
 
 	public AppointmentType appointmentType;
 	public List<WorkPattern> patterns;
-	public ObjectId id;
+//	public ObjectId id;
+	public String objectId;
 
 	public EmailSettings emailSettings = new EmailSettings();
 	

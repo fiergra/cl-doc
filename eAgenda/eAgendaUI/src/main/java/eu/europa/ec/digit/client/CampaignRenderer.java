@@ -722,7 +722,7 @@ public class CampaignRenderer extends SplitLayoutPanel {
 
 	void updateURL() {
 		String baseUrl = GWT.getHostPageBaseURL();
-		String url = baseUrl + "?" + (campaign.published ? "campaign=" + URL.encode(campaign.name) : "id=" + campaign.id);
+		String url = baseUrl + "?" + (campaign.published ? "campaign=" + URL.encode(campaign.name) : "id=" + campaign.objectId);
 		lbURL.setText(url);
 	}
 

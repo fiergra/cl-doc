@@ -77,7 +77,6 @@ public class LightMSExchangeServiceImpl implements ILightMSExchangeService {
 
 	private Mailbox mailBox;
 
-	
 	private synchronized void setExchangeService(String keyUser, String keyPass, String fmb) throws Exception {
 		service = new ExchangeService(ExchangeVersion.Exchange2007_SP1);
 		service.setExchange2007CompatibilityMode(true);
@@ -102,8 +101,6 @@ public class LightMSExchangeServiceImpl implements ILightMSExchangeService {
 			setExchangeService(keyUser, keyPass, fmb);
 		}
 	}
-
-	
 
 	@Override
 	public synchronized void removeAppointmentFromOutlookCalendar(final String id) throws Exception {
@@ -159,56 +156,57 @@ public class LightMSExchangeServiceImpl implements ILightMSExchangeService {
 		boolean createdNew = false;
 
 		synchronized (service) {
-				String appointmentId = outlookAppointment.id.toHexString();
-				Date dateFrom = outlookAppointment.from;
-				Date dateTo = outlookAppointment.until;
-				String place = outlookAppointment.location != null ? outlookAppointment.location.getDisplayName() : null;
-				FolderId fid1 = new FolderId(WellKnownFolderName.Calendar, mailBox);
+			// String appointmentId = outlookAppointment.objectId.toHexString();
+			String appointmentId = outlookAppointment.objectId;
+			Date dateFrom = outlookAppointment.from;
+			Date dateTo = outlookAppointment.until;
+			String place = outlookAppointment.location != null ? outlookAppointment.location.getDisplayName() : null;
+			FolderId fid1 = new FolderId(WellKnownFolderName.Calendar, mailBox);
 
-				Appointment existingAppointment = getExistingOutlookAppointment(appointmentId);
-//				byte[] fileContent = outlookAppointment.getAttachment();
-//				String fileName = outlookAppointment.getAttachmentFileName();
+			Appointment existingAppointment = getExistingOutlookAppointment(appointmentId);
+			// byte[] fileContent = outlookAppointment.getAttachment();
+			// String fileName = outlookAppointment.getAttachmentFileName();
 
-				if (existingAppointment == null) {
-					Appointment calAppointment = new Appointment(service);
-					ExtendedPropertyDefinition extPropDef = new ExtendedPropertyDefinition(_UUID, _CUSTOM_PROPERTY_GEN_ITEM, MapiPropertyType.String);
-					calAppointment.setExtendedProperty(extPropDef, appointmentId);
-					calAppointment.setInReplyTo(appointmentId.toString());
-					calAppointment.setAllowNewTimeProposal(false);
-					calAppointment.setIsResponseRequested(true);
-					calAppointment.setSubject(subject);
-					calAppointment.setBody(MessageBody.getMessageBodyFromText(message));
-					calAppointment.setImportance(Importance.High);
-					calAppointment.setStart(dateFrom);
-					calAppointment.setEnd(dateTo);
-					calAppointment.setIsReminderSet(true);
-					calAppointment.setLocation(place);
-					calAppointment.setReminderMinutesBeforeStart(30);
-					calAppointment.setSensitivity(Sensitivity.Private);
-//					if (fileContent != null) {
-//						calAppointment.getAttachments().addFileAttachment(fileName, fileContent);
-//					}
-					calAppointment.save(fid1, SendInvitationsMode.SendToNone);
+			if (existingAppointment == null) {
+				Appointment calAppointment = new Appointment(service);
+				ExtendedPropertyDefinition extPropDef = new ExtendedPropertyDefinition(_UUID, _CUSTOM_PROPERTY_GEN_ITEM, MapiPropertyType.String);
+				calAppointment.setExtendedProperty(extPropDef, appointmentId);
+				calAppointment.setInReplyTo(appointmentId.toString());
+				calAppointment.setAllowNewTimeProposal(false);
+				calAppointment.setIsResponseRequested(true);
+				calAppointment.setSubject(subject);
+				calAppointment.setBody(MessageBody.getMessageBodyFromText(message));
+				calAppointment.setImportance(Importance.High);
+				calAppointment.setStart(dateFrom);
+				calAppointment.setEnd(dateTo);
+				calAppointment.setIsReminderSet(true);
+				calAppointment.setLocation(place);
+				calAppointment.setReminderMinutesBeforeStart(30);
+				calAppointment.setSensitivity(Sensitivity.Private);
+				// if (fileContent != null) {
+				// calAppointment.getAttachments().addFileAttachment(fileName, fileContent);
+				// }
+				calAppointment.save(fid1, SendInvitationsMode.SendToNone);
 
-					for (String email : recipients) {
-						calAppointment.getRequiredAttendees().add(email);
-					}
-					calAppointment.update(ConflictResolutionMode.AutoResolve, SendInvitationsOrCancellationsMode.SendToChangedAndSaveCopy);
-					createdNew = true;
-				} else {
-
-					if (anyChange(existingAppointment, subject, dateFrom, dateTo, place, message, recipients)) {
-						existingAppointment.setSubject(subject);
-						existingAppointment.setStart(dateFrom);
-						existingAppointment.setEnd(dateTo);
-						existingAppointment.setLocation(place);
-						existingAppointment.setBody(MessageBody.getMessageBodyFromText(message));
-						for (String email : recipients) {
-							existingAppointment.getRequiredAttendees().add(email);
-						}
-						existingAppointment.update(ConflictResolutionMode.AlwaysOverwrite, SendInvitationsOrCancellationsMode.SendToAllAndSaveCopy);
-					}
+				for (String email : recipients) {
+					calAppointment.getRequiredAttendees().add(email);
 				}
+				calAppointment.update(ConflictResolutionMode.AutoResolve, SendInvitationsOrCancellationsMode.SendToChangedAndSaveCopy);
+				createdNew = true;
+			} else {
+
+				if (anyChange(existingAppointment, subject, dateFrom, dateTo, place, message, recipients)) {
+					existingAppointment.setSubject(subject);
+					existingAppointment.setStart(dateFrom);
+					existingAppointment.setEnd(dateTo);
+					existingAppointment.setLocation(place);
+					existingAppointment.setBody(MessageBody.getMessageBodyFromText(message));
+					for (String email : recipients) {
+						existingAppointment.getRequiredAttendees().add(email);
+					}
+					existingAppointment.update(ConflictResolutionMode.AlwaysOverwrite, SendInvitationsOrCancellationsMode.SendToAllAndSaveCopy);
+				}
+			}
 		}
 		return createdNew;
 	}
@@ -252,36 +250,36 @@ public class LightMSExchangeServiceImpl implements ILightMSExchangeService {
 	@Override
 	public void sendMessage(String requesterEmail, String[] recipients, String[] cc, String[] bcc, String subject, String bodyContent, String attachmentName, byte[] content) throws Exception {
 		synchronized (service) {
-				FolderId fid1 = new FolderId(WellKnownFolderName.SentItems, mailBox);
-				EmailMessage mail = new EmailMessage(service);
+			FolderId fid1 = new FolderId(WellKnownFolderName.SentItems, mailBox);
+			EmailMessage mail = new EmailMessage(service);
 
-				mail.setFrom(new EmailAddress(fmb));
-				for (String smtpAddress : recipients) {
-					mail.getToRecipients().add(new EmailAddress(smtpAddress));
-				}
+			mail.setFrom(new EmailAddress(fmb));
+			for (String smtpAddress : recipients) {
+				mail.getToRecipients().add(new EmailAddress(smtpAddress));
+			}
 
-				if (cc != null && cc.length != 0) {
-					for (String crecip : cc) {
-						mail.getCcRecipients().add(new EmailAddress(crecip));
-					}
+			if (cc != null && cc.length != 0) {
+				for (String crecip : cc) {
+					mail.getCcRecipients().add(new EmailAddress(crecip));
 				}
+			}
 
-				if (bcc != null && bcc.length != 0) {
-					for (String crecip : bcc) {
-						mail.getBccRecipients().add(new EmailAddress(crecip));
-					}
+			if (bcc != null && bcc.length != 0) {
+				for (String crecip : bcc) {
+					mail.getBccRecipients().add(new EmailAddress(crecip));
 				}
+			}
 
-				mail.getBccRecipients().add(mail.getFrom());
-				mail.setSubject(subject);
-				mail.setImportance(Importance.High);
-				mail.setBody(MessageBody.getMessageBodyFromText(bodyContent));
-				if (content != null) {
-					FileAttachment fileAtt = mail.getAttachments().addFileAttachment(attachmentName, new ByteArrayInputStream(content));
-					fileAtt.setContentType("application/pdf");
-				}
-				mail.save(fid1);
-				mail.send();
+			mail.getBccRecipients().add(mail.getFrom());
+			mail.setSubject(subject);
+			mail.setImportance(Importance.High);
+			mail.setBody(MessageBody.getMessageBodyFromText(bodyContent));
+			if (content != null) {
+				FileAttachment fileAtt = mail.getAttachments().addFileAttachment(attachmentName, new ByteArrayInputStream(content));
+				fileAtt.setContentType("application/pdf");
+			}
+			mail.save(fid1);
+			mail.send();
 		}
 	}
 
@@ -302,10 +300,10 @@ public class LightMSExchangeServiceImpl implements ILightMSExchangeService {
 		synchronized (service) {
 			// Create a collection of attendees.
 			List<AttendeeInfo> attendees = new ArrayList<AttendeeInfo>();
-			for (String a:addresses) {
+			for (String a : addresses) {
 				attendees.add(AttendeeInfo.getAttendeeInfoFromString(a));
 			}
-	
+
 			// Specify options to request free/busy information and suggested meeting times.
 			AvailabilityOptions availabilityOptions = new AvailabilityOptions();
 			availabilityOptions.setGoodSuggestionThreshold(49);
@@ -317,11 +315,11 @@ public class LightMSExchangeServiceImpl implements ILightMSExchangeService {
 			availabilityOptions.setMinimumSuggestionQuality(SuggestionQuality.Good);
 			availabilityOptions.setDetailedSuggestionsWindow(new TimeWindow(startDate, endDate));
 			availabilityOptions.setRequestedFreeBusyView(FreeBusyViewType.Detailed);
-	
+
 			// Return free/busy information and a set of suggested meeting times.
 			// This method results in a GetUserAvailabilityRequest call to EWS.
 			GetUserAvailabilityResults results = service.getUserAvailability(attendees, availabilityOptions.getDetailedSuggestionsWindow(), AvailabilityData.FreeBusy, availabilityOptions);
-			List <AttendeeAvailability> availabilities = new ArrayList<>();
+			List<AttendeeAvailability> availabilities = new ArrayList<>();
 			for (AttendeeAvailability availability : results.getAttendeesAvailability()) {
 				availabilities.add(availability);
 			}

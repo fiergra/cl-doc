@@ -84,14 +84,15 @@ public class MongoAgendaService {
 	
 	
 	public Campaign findCampaign(String idOrName) {
-		ObjectId oid = ObjectId.isValid(idOrName) ? new ObjectId(idOrName) : null;
+//		ObjectId oid = ObjectId.isValid(idOrName) ? new ObjectId(idOrName) : null;
 		
 		Bson filter;
-		if (oid != null) {
-			filter = Filters.eq("_id", oid);
-		} else {
-			filter = Filters.eq("name", idOrName);
-		}
+//		if (oid != null) {
+//			filter = Filters.eq("_id", oid);
+//		} else {
+//			filter = Filters.eq("name", idOrName);
+//		}
+		filter = Filters.or(Filters.eq("objectId", idOrName), Filters.eq("name", idOrName));
 		Campaign c = campaigns().find(filter).first();
 		return c;
 	}
@@ -105,33 +106,37 @@ public class MongoAgendaService {
 	}
 
 	public void saveCampaign(Campaign c) {
-		if (c.id == null) {
-			c.id = new ObjectId();
+		if (c.objectId == null) {
+			c.objectId = new ObjectId().toHexString();
 			campaigns().insertOne(c);
 		} else {
-			campaigns().replaceOne(Filters.eq("_id", c.id), c, new UpdateOptions().upsert(true));
+//			campaigns().replaceOne(Filters.eq("_id", c.objectId), c, new UpdateOptions().upsert(true));
+			campaigns().replaceOne(Filters.eq("objectId", c.objectId), c, new UpdateOptions().upsert(true));
 		}
 	}
 
 	public void deleteCampaign(Campaign c) {
-		if (c.id != null) {
-			campaigns().deleteOne(Filters.eq("_id", c.id));
-			c.id = null;
+		if (c.objectId != null) {
+//			campaigns().deleteOne(Filters.eq("_id", c.objectId));
+			campaigns().deleteOne(Filters.eq("objectId", c.objectId));
+			c.objectId = null;
 		}
 	}
 
 	public Appointment saveAppointment(Appointment a) {
-		if (a.id == null) {
-			a.id = new ObjectId();
+		if (a.objectId == null) {
+			a.objectId = new ObjectId().toHexString();
 			appointments().insertOne(a);
 		} else {
-			appointments().replaceOne(Filters.eq("_id", a.id), a, new UpdateOptions().upsert(true));
+			appointments().replaceOne(Filters.eq("objectId", a.objectId), a, new UpdateOptions().upsert(true));
+//			appointments().replaceOne(Filters.eq("_id", a.objectId), a, new UpdateOptions().upsert(true));
 		}
 		return a;
 	}
 
 	public Appointment deleteAppointment(Appointment a) {
-		appointments().deleteOne(Filters.eq("_id", a.id));
+		appointments().deleteOne(Filters.eq("objectId", a.objectId));
+//		appointments().deleteOne(Filters.eq("_id", a.objectId));
 		return a;
 	}
 

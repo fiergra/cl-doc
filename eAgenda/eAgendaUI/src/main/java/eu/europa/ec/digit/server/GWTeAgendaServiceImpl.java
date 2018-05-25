@@ -41,11 +41,39 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	private EmailCalendarService ecs;
 	
 	private EmailCalendarService getEmailCalendarService() {
-		if (ecs == null) {
-			try {
-				ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
-			} catch (Exception e) {
-				e.printStackTrace();
+		synchronized (ecs) {
+			if (ecs == null) {
+				try {
+					ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
+				} catch (Exception e) {
+					ecs = new EmailCalendarService() {
+						
+						@Override
+						public void sendMessage(String requesterEmail, String[] recipients, String[] cc, String[] bcc, String subject, String bodyContent, String attachmentName, byte[] content) throws Exception {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void removeAppointmentFromCalendar(String id) throws Exception {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public List<Appointment> getFreeBusyInfo(IResource host, Date startDate) throws Exception {
+							// TODO Auto-generated method stub
+							return null;
+						}
+						
+						@Override
+						public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, Appointment appointment) throws Exception {
+							// TODO Auto-generated method stub
+							return false;
+						}
+					};
+					e.printStackTrace();
+				}
 			}
 		}
 		return ecs;
@@ -92,7 +120,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 
 	@Override
 	public Appointment saveAppointment(Campaign c, Appointment a) {
-		ActionType actionType = a.id != null ? ActionType.update : ActionType.insert;
+		ActionType actionType = a.objectId != null ? ActionType.update : ActionType.insert;
 		getMc().saveAppointment(a);
 		UpdateWebSocketServer.notifyAll(actionType, a);
 		
@@ -121,7 +149,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		getMc().deleteAppointment(a);
 		UpdateWebSocketServer.notifyAll(ActionType.delete, a);
 		try {
-			getEmailCalendarService().removeAppointmentFromCalendar(a.id.toHexString());
+			getEmailCalendarService().removeAppointmentFromCalendar(a.objectId);//.toHexString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

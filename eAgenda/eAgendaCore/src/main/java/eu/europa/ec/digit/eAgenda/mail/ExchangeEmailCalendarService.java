@@ -174,7 +174,8 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		boolean createdNew = false;
 
 		synchronized (service) {
-			String appointmentId = outlookAppointment.id.toHexString();
+//			String appointmentId = outlookAppointment.objectId.toHexString();
+			String appointmentId = outlookAppointment.objectId;
 			Date dateFrom = outlookAppointment.from;
 			Date dateTo = outlookAppointment.until;
 			String place = outlookAppointment.location != null ? outlookAppointment.location.getDisplayName() : null;
@@ -361,7 +362,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 			// set dummy ID to avoid adding the same calendar event multiple times
 //			String sId = ce.toString() + ce.getStartTime() + ce.getEndTime();
 			a = new eu.europa.ec.digit.eAgenda.Appointment(host, null, null, ce.getStartTime(), ce.getEndTime(), new AppointmentType(itemClass, 0, "yellow"));
-			a.id = new ObjectId();
+			a.objectId = ce.toString();//new ObjectId();
 			String comment = "";
 			CalendarEventDetails details = ce.getDetails();
 			if (details != null) {
