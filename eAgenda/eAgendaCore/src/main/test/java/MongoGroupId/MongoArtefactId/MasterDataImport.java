@@ -1,3 +1,5 @@
+package MongoGroupId.MongoArtefactId;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,8 +34,8 @@ public class MasterDataImport {
 		
 		MongoAgendaService mas = new MongoAgendaService();
 		MongoDatabase db = mas.getDb();
+		MongoCollection<IResource> newResources = db.getCollection("resources", IResource.class);
 		
-		MongoCollection<IResource> newResources = db.getCollection("tempResources", IResource.class);
 		newResources.drop();
 
 		JDBC.execute(new SimpleSession(), new ITransactional<Void>() {
@@ -83,9 +85,9 @@ public class MasterDataImport {
 		newResources.createIndex(new BasicDBObject("searchString", "text"));
 		newResources.find(Filters.text("ralph")).forEach((Block<IResource>)r->System.out.println(r.getDisplayName()));
 		
-		MongoCollection<IResource> oldResources = db.getCollection("resources", IResource.class);
-		oldResources.renameCollection(new MongoNamespace("mydb.oldResources"), new RenameCollectionOptions().dropTarget(true));
-		newResources.renameCollection(new MongoNamespace("mydb.resources"), new RenameCollectionOptions().dropTarget(true));
+		//MongoCollection<IResource> oldResources = db.getCollection("resources", IResource.class);
+		//oldResources.renameCollection(new MongoNamespace("mydb.tempResources"), new RenameCollectionOptions().dropTarget(true));
+		//newResources.renameCollection(new MongoNamespace("mydb.resources"), new RenameCollectionOptions().dropTarget(true));
 
 		mas.close();
 	}

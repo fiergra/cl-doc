@@ -1,4 +1,4 @@
-
+package MongoGroupId.MongoArtefactId;
 
 public class Pojo {
 
