@@ -12,8 +12,6 @@ import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
-import org.bson.types.ObjectId;
-
 import eu.europa.ec.digit.eAgenda.AppointmentType;
 import eu.europa.ec.digit.eAgenda.IResource;
 import microsoft.exchange.webservices.data.core.ExchangeService;
