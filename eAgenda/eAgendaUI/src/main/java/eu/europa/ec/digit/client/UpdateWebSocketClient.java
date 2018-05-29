@@ -28,7 +28,7 @@ public class UpdateWebSocketClient {
 
 	private List<Appointment> appointments = new ArrayList<>();
 	private IResource host;
-	private Date date;
+//	private Date date;
 	
 	public UpdateWebSocketClient() {
 		String url = GWT.getHostPageBaseURL();
@@ -94,7 +94,7 @@ public class UpdateWebSocketClient {
 	public void subscribe(IResource host, Date d, IAppointmentAction iAction) {
 		if (socketOpened) {
 			this.host = host;
-			this.date = d;
+//			this.date = d;
 			this.callback = iAction;
 			Appointment a = new Appointment(host, null, null, d, null, null);
 			WebSocketNotification wsn = new WebSocketNotification(ActionType.subscribe, a);

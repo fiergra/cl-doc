@@ -1,9 +1,6 @@
 package eu.europa.ec.digit.server;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -82,26 +79,26 @@ public class UpdateWebSocketServer {
 
 	}
 
-	private HashMap<String, HashMap<Date, Collection<Subscription>>> byHost = new HashMap<>();
+//	private HashMap<String, HashMap<Date, Collection<Subscription>>> byHost = new HashMap<>();
 
-	private Subscription addListener(Session session, String host, Date date) {
-		HashMap<Date, Collection<Subscription>> bh = byHost.get(host);
-
-		if (bh == null) {
-			bh = new HashMap<>();
-			byHost.put(host, bh);
-		}
-
-		Collection<Subscription> bd = bh.get(date);
-		if (bd == null) {
-			bd = new HashSet<>();
-			bh.put(date, bd);
-		}
-
-		Subscription subscription = new Subscription(session);
-		bd.add(subscription);
-		return subscription;
-	}
+//	private Subscription addListener(Session session, String host, Date date) {
+//		HashMap<Date, Collection<Subscription>> bh = byHost.get(host);
+//
+//		if (bh == null) {
+//			bh = new HashMap<>();
+//			byHost.put(host, bh);
+//		}
+//
+//		Collection<Subscription> bd = bh.get(date);
+//		if (bd == null) {
+//			bd = new HashSet<>();
+//			bh.put(date, bd);
+//		}
+//
+//		Subscription subscription = new Subscription(session);
+//		bd.add(subscription);
+//		return subscription;
+//	}
 
 	@OnClose
 	public void onClose(CloseReason reason, Session session) {
@@ -145,7 +142,7 @@ public class UpdateWebSocketServer {
 		return result;
 	}
 
-	private static WebSocketNotification dummy = new WebSocketNotification(null, null);
+//	private static WebSocketNotification dummy = new WebSocketNotification(null, null);
 	
 	private static <T> T deserialize(String data) throws SerializationException {
 		ServerSerializationStreamReader streamReader = new ServerSerializationStreamReader(WebSocketNotification.class.getClassLoader(), new CustomSerializationPolicyProvider());
@@ -153,6 +150,7 @@ public class UpdateWebSocketServer {
 		// Filling stream reader with data
 		streamReader.prepareToRead(data);
 		// Reading deserialized object from the stream
+		@SuppressWarnings("unchecked")
 		final T a = (T) streamReader.readObject();
 		return a;
 	}

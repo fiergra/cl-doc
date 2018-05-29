@@ -21,7 +21,6 @@
 	<!-- Other module inherits -->
 	<inherits name='eu.europa.ec.digit.eAgendaCore' />
 	<inherits name="com.ceres.dynamicforms.DynamicForms" />
-	<inherits name='org.bson.types.CustomSerializer' />
 	<!-- Specify the app entry point class. -->
 	<entry-point class='eu.europa.ec.digit.client.eAgendaUI' />
 
