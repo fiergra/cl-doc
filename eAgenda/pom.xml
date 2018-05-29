@@ -17,7 +17,7 @@
     <properties>
 	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-
+	<isProd>false</isProd>
 	<maven.compiler.source>1.8</maven.compiler.source>
 	<maven.compiler.target>1.8</maven.compiler.target>
 
@@ -39,7 +39,44 @@
 	</pluginManagement>
 
 	<plugins>
-		
+		<plugin>
+            		<groupId>org.apache.maven.plugins</groupId>
+            		<artifactId>maven-source-plugin</artifactId>
+            		<version>3.0.1</version>
+            				<executions>
+              					<execution>
+                					<id>attach-sources</id>
+                					<goals>
+                  						<goal>jar-no-fork</goal>
+                					</goals>
+              					</execution>
+            				</executions>
+          			</plugin>
+				<!--
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.5.1</version>
+	   				<executions>
+      				
+						<execution>
+         						<id>external-CustomSerializer-install-jar-lib</id>
+         						<goals>
+            							<goal>install-file</goal>
+         						</goals>
+         						<phase>initialize</phase>
+							<configuration>
+								<groupId>eAgenda.external.deps</groupId>
+								<artifactId>CustomSerializer.jar</artifactId>
+								<version>1.0</version>
+								<packaging>jar</packaging>
+								<file>${basedir}/eSharedLibs/CustomSerializer.jar</file>
+								<generatePom>true</generatePom>
+							</configuration>
+      						</execution>
+					</executions>
+				</plugin>
+				-->
 	</plugins>
    </build>
 
@@ -66,6 +103,11 @@
             		<version>${junit.version}</version>
             		<scope>provided</scope>
         	</dependency>
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>1.0.0.GA</version>
+		</dependency>
        		<dependency>
 	    		<groupId>org.mongodb</groupId>
 	    		<artifactId>mongodb-driver</artifactId>
@@ -93,6 +135,7 @@
 			<scope>system</scope>
         		<systemPath>${user.dir}/eAgendaSharedLibs/dynamicForms-1.0-SNAPSHOT.jar</systemPath>
 		</dependency>
+
 		<dependency>
 			<groupId>microsoft.exchange</groupId>
 			<artifactId>ews.jar</artifactId>
@@ -178,6 +221,7 @@
     			<groupId>org.eclipse.jetty.websocket</groupId>
     			<artifactId>javax-websocket-server-impl</artifactId>
     			<version>9.1.0.M0</version>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>org.eclipse.jetty</groupId>
@@ -209,46 +253,14 @@
 			<activeByDefault>true</activeByDefault>
 		</activation>
 		<build>
-			<plugins>
-          			<plugin>
-            				<groupId>org.apache.maven.plugins</groupId>
-            				<artifactId>maven-source-plugin</artifactId>
-            				<version>3.0.1</version>
-            				<executions>
-              					<execution>
-                					<id>attach-sources</id>
-                					<goals>
-                  						<goal>jar-no-fork</goal>
-                					</goals>
-              					</execution>
-            				</executions>
-          			</plugin>
-				<!--
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-install-plugin</artifactId>
-					<version>2.5.1</version>
-	   				<executions>
-      				
-						<execution>
-         						<id>external-CustomSerializer-install-jar-lib</id>
-         						<goals>
-            							<goal>install-file</goal>
-         						</goals>
-         						<phase>initialize</phase>
-							<configuration>
-								<groupId>eAgenda.external.deps</groupId>
-								<artifactId>CustomSerializer.jar</artifactId>
-								<version>1.0</version>
-								<packaging>jar</packaging>
-								<file>${basedir}/eSharedLibs/CustomSerializer.jar</file>
-								<generatePom>true</generatePom>
-							</configuration>
-      						</execution>
-					</executions>
-				</plugin>
-				-->
-        		</plugins>
+		</build>
+	</profile>
+	<profile>
+		<id>tomcat</id>
+		<properties>
+			
+		</properties>
+		<build>
 		</build>
 	</profile>
     </profiles>
