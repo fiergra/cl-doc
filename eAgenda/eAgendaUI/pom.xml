@@ -47,11 +47,12 @@
     			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
 		</dependency>
-		<!--
+
 		<dependency>
     			<groupId>org.eclipse.jetty.websocket</groupId>
     			<artifactId>javax-websocket-server-impl</artifactId>
 		</dependency>
+		<!-- 
 		<dependency>
     			<groupId>org.mongodb</groupId>
     			<artifactId>bson</artifactId>
@@ -60,6 +61,11 @@
 		<dependency>
     			<groupId>eAgenda.external.deps</groupId>
 			<artifactId>CustomSerializer.jar</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -79,13 +85,32 @@
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 
 		<plugins>
+			<plugin>
+    			<artifactId>maven-clean-plugin</artifactId>
+    			<version>3.1.0</version>
+    			<configuration>
+    			<followSymlinks>false</followSymlinks>
+      			<filesets>
+        			<fileset>
+          				<directory>${basedir}/src/main</directory>
+          				<includes>
+          					<include>**/eagendaui/**</include>
+          					<include>**/gwt-unitCache/**</include>
+          				</includes>
+        			</fileset>
+        			<fileset>
+          				<directory>${basedir}/src/main/webapp/eagendaui</directory>
+        			</fileset>
+        			
+      			</filesets>
+    			</configuration>
+  			</plugin>
 			<!-- GWT Maven Plugin -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
 				<version>${gwt.version}</version>
 				<configuration>
-					<productionMode>true</productionMode>
 					<compileSourcesArtifacts>
 						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaCore</compileSourcesArtifact>
 						<compileSourcesArtifact>eu.europa.ec.digit:eAgendaUI</compileSourcesArtifact>
@@ -95,7 +120,6 @@
 					<modules>
 						<module>eu.europa.ec.digit.eAgendaUI</module>
 					</modules>
-					<port>7001</port>
 					<hostedWebapp>${project.build.directory}/${project.build.finalName}</hostedWebapp>
 					<runTarget>eAgendaUI.html</runTarget>
 					<warSourceDirectory>${project.build.directory}/${project.build.finalName}</warSourceDirectory>
@@ -115,8 +139,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			
+			</plugin>			
 
 			<!-- Skip normal test execution, we use gwt:test instead -->
 			<plugin>
