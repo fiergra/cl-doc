@@ -168,9 +168,11 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 		appointmentPanels.forEach(p -> p.clear());
 		if (day != null && day.slots != null) {
 			for (int index = 0; index < day.slots.size(); index++) {
-				Panel panel = appointmentPanels.get(index);
-				List<Appointment> appointmentsInSlot = wpHelper.getAppointmentsInSlot(wsClient.getAppointments(), d, day.slots.get(index));
-				appointmentsInSlot.forEach(a -> panel.add(createAppointmentRenderer(a, panel)));
+				if (index < appointmentPanels.size()) {
+					Panel panel = appointmentPanels.get(index);
+					List<Appointment> appointmentsInSlot = wpHelper.getAppointmentsInSlot(wsClient.getAppointments(), d, day.slots.get(index));
+					appointmentsInSlot.forEach(a -> panel.add(createAppointmentRenderer(a, panel)));
+				}
 			};
 		}		
 	}

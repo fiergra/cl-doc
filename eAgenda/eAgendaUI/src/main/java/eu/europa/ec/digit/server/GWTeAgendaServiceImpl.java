@@ -40,40 +40,38 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	
 	private EmailCalendarService ecs;
 	
-	private EmailCalendarService getEmailCalendarService() {
-		synchronized (ecs) {
-			if (ecs == null) {
-				try {
-					ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
-				} catch (Exception e) {
-					ecs = new EmailCalendarService() {
+	private synchronized EmailCalendarService getEmailCalendarService() {
+		if (ecs == null) {
+			try {
+				ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
+			} catch (Exception e) {
+				ecs = new EmailCalendarService() {
+					
+					@Override
+					public void sendMessage(String requesterEmail, String[] recipients, String[] cc, String[] bcc, String subject, String bodyContent, String attachmentName, byte[] content) throws Exception {
+						// TODO Auto-generated method stub
 						
-						@Override
-						public void sendMessage(String requesterEmail, String[] recipients, String[] cc, String[] bcc, String subject, String bodyContent, String attachmentName, byte[] content) throws Exception {
-							// TODO Auto-generated method stub
-							
-						}
+					}
+					
+					@Override
+					public void removeAppointmentFromCalendar(String id) throws Exception {
+						// TODO Auto-generated method stub
 						
-						@Override
-						public void removeAppointmentFromCalendar(String id) throws Exception {
-							// TODO Auto-generated method stub
-							
-						}
-						
-						@Override
-						public List<Appointment> getFreeBusyInfo(IResource host, Date startDate) throws Exception {
-							// TODO Auto-generated method stub
-							return null;
-						}
-						
-						@Override
-						public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, Appointment appointment) throws Exception {
-							// TODO Auto-generated method stub
-							return false;
-						}
-					};
-					e.printStackTrace();
-				}
+					}
+					
+					@Override
+					public List<Appointment> getFreeBusyInfo(IResource host, Date startDate) throws Exception {
+						// TODO Auto-generated method stub
+						return null;
+					}
+					
+					@Override
+					public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, Appointment appointment) throws Exception {
+						// TODO Auto-generated method stub
+						return false;
+					}
+				};
+				e.printStackTrace();
 			}
 		}
 		return ecs;
