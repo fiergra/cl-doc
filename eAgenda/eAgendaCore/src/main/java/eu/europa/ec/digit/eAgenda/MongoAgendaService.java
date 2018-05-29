@@ -16,6 +16,8 @@ import org.bson.types.ObjectId;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -43,8 +45,20 @@ public class MongoAgendaService {
 		PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).register(cmResource, cmUser, cmPerson, cmRoom).build();
 		CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromProviders(pojoCodecProvider));
 		
-		mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
-		db = mongoClient.getDatabase("mydb");
+		List<ServerAddress> seeds = new ArrayList<ServerAddress>();
+		seeds.add( new ServerAddress( "dpetlab0.cc.cec.eu.int"));
+		
+		List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+		credentials.add(
+		    MongoCredential.createCredential(
+		        "eagenda",
+		        "eagenda",
+		        "eagenda".toCharArray()
+		    )
+		);
+		
+		mongoClient = new MongoClient(seeds, credentials, MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+		db = mongoClient.getDatabase("eagenda");
 		
 	}
 
