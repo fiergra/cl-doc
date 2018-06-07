@@ -17,6 +17,7 @@
 
 	<name>dynamicForms</name>
 	<build>
+		<sourceDirectory>src</sourceDirectory>
 		<resources>
     		<resource>
         		<directory>src</directory>
