@@ -66,6 +66,7 @@ public class CampaignRenderer extends SplitLayoutPanel {
 	private ListBox lbCityRestriction = new ListBox();
 	private ListBox lbOrgaRestriction = new ListBox();
 	private DropDownSearchBox<IResource> sbResources;
+	private final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
 
 	private TextBox txtType = new TextBox();
 	private Integer[] durations = new Integer[] { 10, 15, 30, 45, 60, 90 };
@@ -194,11 +195,12 @@ public class CampaignRenderer extends SplitLayoutPanel {
 		slotAppointmentsView = new SlotAppointmentsView(campaign);
 		tabMain.add(tabPatterns, "Patterns");
 
-		final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
 		pbAdd.setStyleName("blankButton");
 		pbAdd.setPixelSize(24, 24);
 		pbAdd.addClickHandler(e -> addWpForResource(sbResources.getSelected()));
-
+		pbAdd.setVisible(false);
+		
+		
 		tabPatterns.addWidget(pbAdd);
 
 		tabMain.add(slotAppointmentsView, "Appointments");
@@ -557,6 +559,7 @@ public class CampaignRenderer extends SplitLayoutPanel {
 	}
 
 	private void setSelectedResource(IResource resource) {
+		pbAdd.setVisible(resource != null);
 		doDisplayPatterns(resource);
 		doDisplayAppointments(resource);
 	}

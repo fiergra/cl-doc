@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class DateTextBox extends HorizontalPanel implements Focusable {
+public class DateTextBox extends EnabledHorizontalPanel implements Focusable {
 	private static final String AM = "am";
 	private static final String PM = "pm";
 	public static final String AMPM = "ampm";
@@ -196,6 +196,9 @@ public class DateTextBox extends HorizontalPanel implements Focusable {
 		textBox.setTabIndex(index);
 	}
 	
-	
+	@SuppressWarnings("deprecation")
+	public Boolean isAm() {
+		return getDate() != null ? getDate().getHours() < 12 : null;
+	}
 	
 }

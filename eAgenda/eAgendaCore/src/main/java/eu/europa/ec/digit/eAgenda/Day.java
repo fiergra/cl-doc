@@ -9,8 +9,11 @@ import java.util.List;
 public class Day implements Serializable {
 	private static final long serialVersionUID = -2367081828485697944L;
 	public List<Slot> slots;
+	private int index;
 	
-	public Day() {}
+	public Day(int index) {
+		this.index = index;
+	}
 	
 	public void addSlot(Slot slot) {
 		if (slots == null) {

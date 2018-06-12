@@ -6,6 +6,8 @@ import com.ceres.dynamicforms.client.command.CommandoButtons;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -114,12 +116,12 @@ public class HomeScreen extends DockLayoutPanel {
 		tbName.setText(c.name);
 		tbName.addChangeHandler(e -> eAgendaUI.commando.execute(new ChangeNameCommand(c, tbName.getText(), tbName, campaignRenderer)));
 		
-//		Image imgDelete = new Image("assets/images/16x16/minus.png");
-//		PushButton pbDelete = new PushButton(imgDelete);
+		Image imgDelete = new Image("assets/images/16x16/minus.png");
+		PushButton pbDelete = new PushButton(imgDelete);
 		
-		FAIcon pbDelete = new FAIcon("minus-square", 1);
-//		pbDelete.setStyleName("blankButton");
-//		pbDelete.setPixelSize(24, 24);
+//		FAIcon pbDelete = new FAIcon("minus-square", 1);
+		pbDelete.setStyleName("blankButton");
+		pbDelete.setPixelSize(24, 24);
 
 		pbDelete.addClickHandler(e -> eAgendaUI.commando.execute(new DeleteCampaignCommand(c, tabPanel, campaignRenderer, hpTab)));
 		
@@ -163,9 +165,9 @@ public class HomeScreen extends DockLayoutPanel {
 		ApplicationHeader ah = new ApplicationHeader(userContext, "eAgenda");
 
 		
-//		final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
-		FAIcon pbAdd = new FAIcon("plus-square", 2);
-//		pbAdd.setPixelSize(24, 24);
+		final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
+//		FAIcon pbAdd = new FAIcon("plus-square", 2);
+		pbAdd.setPixelSize(24, 24);
 		pbAdd.addClickHandler(e -> { 
 			Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
 			eAgendaUI.commando.execute(new AddCampaignCommand(newCampaign, tabPanel));

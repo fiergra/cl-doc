@@ -38,6 +38,10 @@ public class Interactor {
 		links.clear();
 	}
 	
+	public void resetChangeHandlers() {
+		changeHandlers.clear();
+	}
+	
 	public void toDialog(ITranslator translator, Map<String,Serializable> item) {
 		if (translator == null) {
 			translator = new SimpleTranslator();
@@ -103,6 +107,21 @@ public class Interactor {
 	}
 
 	
+
+	public void revalidate() {
+		boolean wasValid = isValid();
+		validateAll();
+		
+		if (wasValid != isValid) {
+			if (changeHandlers != null) {
+				links.forEach(l -> l.hilite(l.isValid()));
+			}
+			if (changeHandlers != null) {
+				changeHandlers.forEach(h -> h.onChange(InteractorLink.DUMMY));
+			}
+		}
+	}
+
 	public void onChange(InteractorLink link) {
 		isModified = true;
 		link.hilite(link.isValid());
@@ -114,7 +133,6 @@ public class Interactor {
 			}
 		}
 
-		
 		if (changeHandlers != null) {
 			for (LinkChangeHandler changeHandler:changeHandlers) {
 				changeHandler.onChange(link);

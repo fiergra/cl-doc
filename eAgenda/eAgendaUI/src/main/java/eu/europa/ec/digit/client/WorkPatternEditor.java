@@ -54,7 +54,7 @@ public class WorkPatternEditor extends DockLayoutPanel {
 	
 	private String[] sGrids = new String[] {"10", "15", "30"};
 	
-	private int defaultCapacity = 5;
+	private int defaultCapacity = 1;
 	final Campaign campaign;
 	
 	public WorkPatternEditor(Campaign campaign, WorkPattern pattern) {
@@ -118,15 +118,18 @@ public class WorkPatternEditor extends DockLayoutPanel {
 
 		private int newGrid;
 		private int initialGrid;
+		private List<Day> initialDays;
 
 		public SetGridCommand(Campaign campaign, WorkPattern pattern, int newGrid) {
 			super(campaign, "set minute grid to " + newGrid);
 			this.newGrid = newGrid;
 			this.initialGrid = pattern.minuteGrid;
+			this.initialDays = pattern.days;
 		}
 
 		@Override
 		public void exec() {
+			pattern.days = null;
 			pattern.minuteGrid = newGrid;
 			saveCampaign();
 			updateDisplay();
@@ -134,6 +137,7 @@ public class WorkPatternEditor extends DockLayoutPanel {
 
 		@Override
 		public void undo() {
+			pattern.days = initialDays;
 			pattern.minuteGrid = initialGrid;
 			saveCampaign();
 			updateDisplay();
@@ -247,7 +251,7 @@ public class WorkPatternEditor extends DockLayoutPanel {
 		}
 
 		cmbGrid.addChangeHandler(e -> {
-			MessageBox.show("Sure?", "Sure...?", MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION, i -> { 
+			MessageBox.show("Change slot duration", "Changing the default duration of the grid will remove all previously defined slots. Do you want to continue?", MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION, i -> { 
 				if (i == MessageBox.MB_YES) {
 					eAgendaUI.commando.execute(new SetGridCommand(campaign, pattern, Integer.valueOf(cmbGrid.getSelectedValue())));
 				} else {
@@ -262,20 +266,25 @@ public class WorkPatternEditor extends DockLayoutPanel {
 		defaultCapacityBox.addChangeHandler(e -> defaultCapacity = defaultCapacityBox.getValue());
 
 
+
+		hpHeader.add(new I18NLabel("valid from"));
 		hpHeader.add(dpFrom);
+		hpHeader.add(new I18NLabel("until"));
 		hpHeader.add(dpUntil);
+		hpHeader.add(new I18NLabel("slot duration"));
+		hpHeader.add(cmbGrid);
+		hpHeader.add(new I18NLabel("capacity"));
+		hpHeader.add(defaultCapacityBox);
 		
 		if (pattern.resource instanceof User) {
 			RemoteSearchBox<Room> cmbLocations = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, r-> r != null ? r.getDisplayName() : "---", r-> r != null ? r.getDisplayName() : "---");
+			hpHeader.add(new I18NLabel("location"));
 			hpHeader.add(cmbLocations);
 			cmbLocations.setSelected(pattern.location);
 			cmbLocations.addSelectionHandler(e -> {
 				eAgendaUI.commando.execute(new SetLocationCommand(campaign, pattern, cmbLocations.getSelected(), cmbLocations));
 			});
 		}
-		hpHeader.add(cmbGrid);
-		hpHeader.add(defaultCapacityBox);
-		
 		
 		return hpHeader;
 	}

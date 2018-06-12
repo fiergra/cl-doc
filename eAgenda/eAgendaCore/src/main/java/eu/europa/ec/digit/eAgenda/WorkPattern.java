@@ -24,18 +24,18 @@ public class WorkPattern implements Serializable {
 	public WorkPattern() {}
 	
 	public void setDay(int i, Day day) {
-		if (days == null) {
+		if (days == null || days.size() == 0) {
 			days = new ArrayList<>(7);
-			for (int d = 0; d < 7; d++) { days.add(new Day());}
+			for (int d = 0; d < 7; d++) { days.add(new Day(d));}
 		}
 		days.add(i, day);
 	}
 	
 	public Day getDay(int i) {
-		Day day = days == null ? null : days.get(i);
+		Day day = (days == null || days.size() == 0) ? null : days.get(i);
 		
 		if (day == null) {
-			day = new Day();
+			day = new Day(i);
 			setDay(i, day);
 		}
 		
