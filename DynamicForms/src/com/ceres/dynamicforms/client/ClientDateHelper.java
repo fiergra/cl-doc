@@ -134,5 +134,20 @@ public class ClientDateHelper {
 	public static void setYear(Date date, int year) {
 		date.setYear(year);
 	}
-	
+
+	@SuppressWarnings("deprecation")
+	public static boolean sameYear(Date date1, Date date2) {
+		return date1.getYear() == date2.getYear();
+	}
+
+	@SuppressWarnings("deprecation")
+	public static boolean sameMonth(Date date1, Date date2) {
+		return date1.getMonth() == date2.getMonth();
+	}
+
+	public static boolean sameDay(Date date1, Date date2) {
+		return ClientDateHelper.trunc(date1).equals(ClientDateHelper.trunc(date2));
+	}
+
+
 }
