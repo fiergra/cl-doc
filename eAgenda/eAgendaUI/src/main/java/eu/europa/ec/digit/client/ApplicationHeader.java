@@ -17,7 +17,7 @@ public class ApplicationHeader extends HorizontalPanel {
 	public final HorizontalPanel hpRight = new HorizontalPanel();
 	
 	public final HTML imgUser = new FAIcon("user-circle", 2);
-	public final HTML imgHelp = new FAIcon("question-circle", 2);
+//	public final HTML imgHelp = new FAIcon("question-circle", 2);
 
 	public ApplicationHeader(UserContext userContext, String applicationTitle) {
 		setStyleName("applicationHeader");
@@ -27,6 +27,7 @@ public class ApplicationHeader extends HorizontalPanel {
 		
 		hpLeft.setHeight("100%");
 		hpLeft.setVerticalAlignment(ALIGN_MIDDLE);
+		hpLeft.setSpacing(2);
 
 		HorizontalPanel hpRightWrapper = new HorizontalPanel();
 		hpRightWrapper.setSize("100%", "100%");
@@ -34,7 +35,7 @@ public class ApplicationHeader extends HorizontalPanel {
 		hpRightWrapper.setHorizontalAlignment(ALIGN_RIGHT);
 
 		hpRight.setHeight("100%");
-		hpRight.setVerticalAlignment(ALIGN_MIDDLE);
+		hpRight.setVerticalAlignment(ALIGN_BOTTOM);
 		hpRight.setHorizontalAlignment(ALIGN_RIGHT);
 		hpRight.setSpacing(5);
 		
@@ -49,22 +50,33 @@ public class ApplicationHeader extends HorizontalPanel {
 	private void setup(UserContext userContext, String applicationTitle) {
 		Image institutionLogo = new Image("assets/images/logos/com." + StringResources.language + ".png");
 		hpLeft.add(institutionLogo);
-
+//		institutionLogo.setHeight("90%");
+		
 		Label lbApplicationTitle = new Label(applicationTitle);
 		lbApplicationTitle.setStyleName("applicationTitle");
 		hpLeft.add(lbApplicationTitle);
 
-		imgUser.setTitle(userContext.user.userId);
-		hpRight.add(imgUser);
-		hpRight.add(imgHelp);
+		String sUser;
+		if (userContext.user.person != null) {
+			sUser = userContext.user.person.firstName + " " + userContext.user.person.lastName;
+		} else {
+			sUser = userContext.user.userId;
+		}
 		
-		imgHelp.addClickHandler(e -> setHeight());
+		Label lbUserName = new Label(sUser);
+		hpRight.add(lbUserName);
+		
+//		imgUser.setTitle(userContext.user.userId);
+//		hpRight.add(imgUser);
+//		hpRight.add(imgHelp);
+		
+//		imgHelp.addClickHandler(e -> setHeight());
 	}
 
-	private boolean large; 
-	private void setHeight() {
-		getElement().getParentElement().getStyle().setHeight(large ? 46 : 150, Unit.PX);
-		large = !large;
+//	private boolean large; 
+
+	public void shrink() {
+		getElement().getParentElement().getStyle().setHeight(46, Unit.PX);
 	}
 
 	public HandlerRegistration addUserClickHandler(ClickHandler ch) {

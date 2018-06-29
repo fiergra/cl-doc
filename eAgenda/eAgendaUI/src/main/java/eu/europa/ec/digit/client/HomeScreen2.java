@@ -3,35 +3,29 @@ package eu.europa.ec.digit.client;
 import java.util.List;
 
 import com.ceres.dynamicforms.client.command.CommandoButtons;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import eu.europa.ec.digit.eAgenda.AppointmentType;
 import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.shared.UserContext;
 
-public class HomeScreen extends DockLayoutPanel {
+public class HomeScreen2 extends DockLayoutPanel {
 
 	private TabbedLayoutPanel tabPanel = new TabbedLayoutPanel(42, Unit.PX);
-	private SimpleLayoutPanel contentPanel = new SimpleLayoutPanel();
-	
-	private EditableComboBox<Campaign> cmbCampaigns;
 
-
-	public HomeScreen(UserContext userContext) {
+	public HomeScreen2(UserContext userContext) {
 		super(Unit.PX);
 
 		ApplicationHeader header = createHeader(userContext);
-		addNorth(header, 54);
-		addWest(createMenu(), 500);
+		addNorth(header, 46);
 		
 //		Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
 //			
@@ -42,7 +36,7 @@ public class HomeScreen extends DockLayoutPanel {
 //			}
 //		}, 1000);
 		
-		add(contentPanel);
+		add(tabPanel);
 //		getWidgetContainerElement(header).addClassName("vExpandable");
 //		addStyleName("tExpandable");
 //		getElement().addClassName("tExpandable");
@@ -53,7 +47,6 @@ public class HomeScreen extends DockLayoutPanel {
 			protected void onResult(List<Campaign> result) {
 				if (result != null) {
 					result.forEach(c -> {
-						cmbCampaigns.addItem(c);
 						CampaignRenderer campaignRenderer = new CampaignRenderer(c);
 						tabPanel.add(campaignRenderer, createTab(c, campaignRenderer));
 					});
@@ -67,40 +60,6 @@ public class HomeScreen extends DockLayoutPanel {
 	}
 
 	
-	private Widget createMenu() {
-		VerticalPanel vpMenu = new VerticalPanel();
-		vpMenu.addStyleName("menuPanel");
-		
-		VerticalPanel vpMenuItems = new VerticalPanel();
-		
-		cmbCampaigns = new EditableComboBox<Campaign>();
-		cmbCampaigns.setFormatter(c -> c.name);
-		cmbCampaigns.setChangeHandler((c0, c1) -> displayCampaign(c0, c1));
-		FlexTable hpMainItem = new FlexTable();
-		hpMainItem.setWidth("100%");
-		Image image = new Image("assets/images/64x64/calendar.white.png");
-		hpMainItem.setWidget(0, 0, image);
-		hpMainItem.setWidget(0, 1, cmbCampaigns);
-		PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.white.png"));
-		pbAdd.setStyleName("flatButton");
-		hpMainItem.setWidget(0, 2, pbAdd);
-		cmbCampaigns.getTextBox().setStyleName("mainMenuItemTextBox");
-		hpMainItem.getFlexCellFormatter().setWidth(0, 1, "100%");
-		
-		vpMenu.add(hpMainItem);
-		vpMenu.add(vpMenuItems);
-		
-		return vpMenu;
-	}
-
-
-	private void displayCampaign(Campaign c0, Campaign c1) {
-		CampaignRenderer cr = new CampaignRenderer(c1);
-		contentPanel.clear();
-		contentPanel.add(cr);
-	}
-
-
 	class ChangeNameCommand extends CampaignCommand {
 
 		private TextBox textBox;
