@@ -422,3 +422,57 @@ body, table td, select, button {
 	background-color: #004494;
 	color: white;
 }
+
+.menuItemHeader {
+	background-color: inherit;
+	color: white;
+	font-size: xx-large;
+	font-style: italic;
+	padding: 3px;	
+}
+
+.menuItem {
+	background-color: inherit;
+	color: white;
+	border-left: 5px solid transparent;
+	font-size: x-large;
+	padding: 5px;	
+}
+
+.menuItem:focus {
+	outline: none;
+}
+ 
+.menuItem:hover {
+	border-left: 5px solid #FBC02D;
+}
+
+.menuItem-selected {
+	border-left: 5px solid #FBC02D;
+	font-weight: bold;
+}
+
+.campaignSettingsHeader {
+	color: #004494;
+	font-size: x-large;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.menuResourceSearchBox {
+	background-color: inherit;
+	color: white;
+	font-size: large;
+	border: none;
+}
+
+.menuResourceSearchBox-empty {
+	background-color: inherit;
+	color: #DDD;
+	font-style: italic;
+}
+
+.menuResourceSearchBox:focus {
+	background-color: white;
+	color: black;
+}

@@ -73,7 +73,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			lbTopSecret.setStyleName("notPublished");
 			ah.hpLeft.add(lbTopSecret);
 		}
-		addNorth(ah, 42 + 4);
+		addNorth(ah, 54);
 		
 		HorizontalPanel hpMain = new HorizontalPanel();
 		VerticalPanel vpMain = new VerticalPanel();

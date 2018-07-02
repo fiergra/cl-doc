@@ -35,6 +35,8 @@ public class MongoAgendaService {
 	public MongoAgendaService() {
 		init();
 	}
+	
+	private final boolean useLocal = true;
 
 	private void init() {
 		ClassModel<IResource> cmResource = ClassModel.builder(IResource.class).enableDiscriminator(true).build();
@@ -45,20 +47,25 @@ public class MongoAgendaService {
 		PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).register(cmResource, cmUser, cmPerson, cmRoom).build();
 		CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromProviders(pojoCodecProvider));
 		
-		List<ServerAddress> seeds = new ArrayList<ServerAddress>();
-		seeds.add( new ServerAddress( "dpetlab0.cc.cec.eu.int"));
-		
-		List<MongoCredential> credentials = new ArrayList<MongoCredential>();
-		credentials.add(
-		    MongoCredential.createCredential(
-		        "eagenda",
-		        "eagenda",
-		        "eagenda".toCharArray()
-		    )
-		);
-		
-		mongoClient = new MongoClient(seeds, credentials, MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
-		db = mongoClient.getDatabase("eagenda");
+		if (useLocal) {
+			mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+			db = mongoClient.getDatabase("mydb");
+		} else {
+			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
+			seeds.add( new ServerAddress( "dpetlab0.cc.cec.eu.int"));
+			
+			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+			credentials.add(
+			    MongoCredential.createCredential(
+			        "eagenda",
+			        "eagenda",
+			        "eagenda".toCharArray()
+			    )
+			);
+			
+			mongoClient = new MongoClient(seeds, credentials, MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+			db = mongoClient.getDatabase("eagenda");
+		}
 		
 	}
 

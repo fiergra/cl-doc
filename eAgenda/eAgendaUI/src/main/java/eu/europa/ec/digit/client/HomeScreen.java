@@ -1,29 +1,48 @@
 package eu.europa.ec.digit.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.ceres.dynamicforms.client.SimpleTranslator;
 import com.ceres.dynamicforms.client.command.CommandoButtons;
+import com.ceres.dynamicforms.client.components.LabelFunc;
+import com.ceres.dynamicforms.client.components.RemoteSearchBox;
+import com.ceres.dynamicforms.client.components.RunSearch;
+import com.ceres.dynamicforms.client.components.SearchSuggestion;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SuggestOracle;
+import com.google.gwt.user.client.ui.SuggestOracle.Callback;
+import com.google.gwt.user.client.ui.SuggestOracle.Request;
+import com.google.gwt.user.client.ui.SuggestOracle.Response;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import eu.europa.ec.digit.client.i18n.I18NLabel;
+import eu.europa.ec.digit.client.i18n.StringResources;
 import eu.europa.ec.digit.eAgenda.AppointmentType;
 import eu.europa.ec.digit.eAgenda.Campaign;
+import eu.europa.ec.digit.eAgenda.IResource;
+import eu.europa.ec.digit.eAgenda.User;
+import eu.europa.ec.digit.eAgenda.WorkPattern;
 import eu.europa.ec.digit.shared.UserContext;
 
 public class HomeScreen extends DockLayoutPanel {
 
-	private TabbedLayoutPanel tabPanel = new TabbedLayoutPanel(42, Unit.PX);
+//	private TabbedLayoutPanel tabPanel = new TabbedLayoutPanel(42, Unit.PX);
 	private SimpleLayoutPanel contentPanel = new SimpleLayoutPanel();
 	
-	private EditableComboBox<Campaign> cmbCampaigns;
+	private EditableComboBox<CampaignSettings> cmbCampaigns = new EditableComboBox<>();
 
 
 	public HomeScreen(UserContext userContext) {
@@ -33,87 +52,252 @@ public class HomeScreen extends DockLayoutPanel {
 		addNorth(header, 54);
 		addWest(createMenu(), 500);
 		
-//		Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
-//			
-//			@Override
-//			public boolean execute() {
-//				setWidgetSize(header, 46);
-//				return false;
-//			}
-//		}, 1000);
-		
 		add(contentPanel);
-//		getWidgetContainerElement(header).addClassName("vExpandable");
-//		addStyleName("tExpandable");
-//		getElement().addClassName("tExpandable");
 		
 		eAgendaUI.service.listCampaigns(new RPCCallback<List<Campaign>>() {
 
 			@Override
 			protected void onResult(List<Campaign> result) {
-				if (result != null) {
+				if (result != null && !result.isEmpty()) {
 					result.forEach(c -> {
-						cmbCampaigns.addItem(c);
-						CampaignRenderer campaignRenderer = new CampaignRenderer(c);
-						tabPanel.add(campaignRenderer, createTab(c, campaignRenderer));
+						cmbCampaigns.addItem(new CampaignSettings(c));
 					});
+					cmbCampaigns.setSelectedItem(0, true);
+				} else {
+					Campaign campaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
+					eAgendaUI.service.saveCampaign(campaign, new RPCCallback<Campaign>() {
+
+						@Override
+						protected void onResult(Campaign result) {
+							campaign.objectId = result.objectId;
+							cmbCampaigns.addItem(new CampaignSettings(campaign));
+							cmbCampaigns.setSelectedItem(0, true);
+						}
+					});
+
 				}
-			}
+ 			}
 
 		});
-		
-		
 		
 	}
 
 	
+	private RunSearch<IResource> runSearch = new RunSearch<IResource>() {
+
+		@Override
+		public void run(Request request, Callback callback, LabelFunc<IResource> replacement, LabelFunc<IResource> display) {
+			eAgendaUI.service.findResources(request.getQuery(), new RPCCallback<List<IResource>>() {
+
+				@Override
+				protected void onResult(List<IResource> resources) {
+					Collection<Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
+					for (IResource p : resources) {
+						MultiWordSuggestion suggestion = new SearchSuggestion<IResource>(p, replacement.label(p), display.label(p));
+						suggestions.add(suggestion);
+					}
+					Response response = new Response(suggestions);
+					callback.onSuggestionsReady(request, response);
+
+				}
+			});
+		}
+	};
+
+	private SingleSelectionMenu menu = new SingleSelectionMenu();
+	private VerticalPanel vpResourceMenuItems = new VerticalPanel();
+
+	
+	
 	private Widget createMenu() {
 		VerticalPanel vpMenu = new VerticalPanel();
 		vpMenu.addStyleName("menuPanel");
+		vpMenu.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 		
 		VerticalPanel vpMenuItems = new VerticalPanel();
+		vpMenuItems.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		vpMenuItems.setSpacing(5);
 		
-		cmbCampaigns = new EditableComboBox<Campaign>();
-		cmbCampaigns.setFormatter(c -> c.name);
-		cmbCampaigns.setChangeHandler((c0, c1) -> displayCampaign(c0, c1));
+		cmbCampaigns.getTextBox().addChangeHandler(e -> eAgendaUI.commando.execute(new ChangeNameCommand(cmbCampaigns.getSelectedItem(), cmbCampaigns.getTextBox().getText(), cmbCampaigns.getTextBox())));
+		cmbCampaigns.setFormatter(c -> c.campaign.name);
+		cmbCampaigns.setChangeHandler(selectedCampaign -> setSelectedCampaign(selectedCampaign.campaign));
 		FlexTable hpMainItem = new FlexTable();
 		hpMainItem.setWidth("100%");
 		Image image = new Image("assets/images/64x64/calendar.white.png");
 		hpMainItem.setWidget(0, 0, image);
 		hpMainItem.setWidget(0, 1, cmbCampaigns);
+
 		PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.white.png"));
 		pbAdd.setStyleName("flatButton");
+		pbAdd.addClickHandler(e -> { 
+			Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", eAgendaUI.userContext.user, new AppointmentType("default",  15, "white"));
+			if (eAgendaUI.commando != null) {
+				eAgendaUI.commando.execute(new AddCampaignCommand(new CampaignSettings(newCampaign), cmbCampaigns));
+			}
+		});
+
 		hpMainItem.setWidget(0, 2, pbAdd);
+		pbAdd.setTitle(StringResources.getLabel("add new campaign"));
+		
+		PushButton pbRemove = new PushButton(new Image("assets/images/24x24/remove.white.png"));
+		pbRemove.setStyleName("flatButton");
+		hpMainItem.setWidget(0, 3, pbRemove);
+		pbRemove.setTitle(StringResources.getLabel("remove current campaign"));
+		pbRemove.addClickHandler(e -> eAgendaUI.commando.execute(new DeleteCampaignCommand(cmbCampaigns.getSelectedItem(), cmbCampaigns)));
+
+		
 		cmbCampaigns.getTextBox().setStyleName("mainMenuItemTextBox");
 		hpMainItem.getFlexCellFormatter().setWidth(0, 1, "100%");
 		
-		vpMenu.add(hpMainItem);
 		vpMenu.add(vpMenuItems);
+
+		vpMenuItems.add(hpMainItem);
+		menu.addItem(vpMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", () -> {
+			contentPanel.clear();
+			if (cmbCampaigns.getSelectedItem() != null) {
+				contentPanel.add(cmbCampaigns.getSelectedItem());
+			}
+		});
+		
+		HorizontalPanel hpResources = new HorizontalPanel();
+		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hpResources.setWidth("100%");
+		I18NLabel lbResourcesHeader = new I18NLabel("Resources");
+		lbResourcesHeader.setStyleName("menuItemHeader");
+		
+		RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
+		sbResources.setStyleName("menuResourceSearchBox");
+		sbResources.addStyleName("empty");
+		sbResources.setWidth("100%");
+		sbResources.setText(StringResources.getLabel("type here to search and add"));
+		sbResources.addSelectionHandler(s -> {
+			IResource r = sbResources.getSelected();
+
+			if (r == null) {
+				sbResources.setText(StringResources.getLabel("type here to search and add"));
+				sbResources.addStyleDependentName("empty");
+			} else {
+				sbResources.removeStyleDependentName("empty");
+			}
+			
+			if (cmbCampaigns.getSelectedItem() != null) {
+				Campaign campaign = cmbCampaigns.getSelectedItem().campaign; 
+				List<WorkPattern> patterns = campaign.resourcePatterns(r);
+				if (patterns.isEmpty()) {
+					addResource(campaign, r);
+					sbResources.setSelected(null);
+				} else {
+// TODO select menu item
+				}
+			}
+			
+		});
+		
+		sbResources.getValueBox().addFocusHandler(e -> { 
+			sbResources.removeStyleDependentName("empty");
+			sbResources.setText(null); 
+		});
+		sbResources.getValueBox().addBlurHandler(e -> {
+			sbResources.addStyleDependentName("empty");
+			sbResources.setText(StringResources.getLabel("type here to search and add"));
+		});
+		hpResources.add(lbResourcesHeader);
+		hpResources.add(sbResources);
+		vpMenuItems.add(hpResources);
+		
+		vpResourceMenuItems.setSpacing(5);
+		vpMenuItems.add(vpResourceMenuItems);
 		
 		return vpMenu;
 	}
 
+	class AddDeleteResourceCommand extends CampaignCommand {
 
-	private void displayCampaign(Campaign c0, Campaign c1) {
-		CampaignRenderer cr = new CampaignRenderer(c1);
-		contentPanel.clear();
-		contentPanel.add(cr);
+		private WorkPattern workPattern;
+		private boolean delete;
+
+		public AddDeleteResourceCommand(Campaign campaign, WorkPattern workPattern, boolean delete) {
+			super(campaign, (delete ? "delete " : "add ") + workPattern.resource.getDisplayName());
+
+			this.workPattern = workPattern;
+			this.delete = delete;
+		}
+
+		private void addWp() {
+			campaign.addWorkPattern(workPattern);
+			saveCampaign();
+			
+			MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(workPattern.resource), workPattern.resource.getDisplayName(), () -> displayResource(campaign, workPattern.resource));
+			menu.selectItem(mItem);
+		}
+
+		private void removeWp() {
+			campaign.removeWorkPattern(workPattern);
+			saveCampaign();
+			menu.removeItem(vpResourceMenuItems, workPattern.resource.getDisplayName());
+		}
+
+		@Override
+		public void exec() {
+			if (delete) {
+				removeWp();
+			} else {
+				addWp();
+			}
+		}
+
+		@Override
+		public void undo() {
+			if (delete) {
+				addWp();
+			} else {
+				removeWp();
+			}
+		}
+
 	}
 
+
+	private void addResource(Campaign campaign, IResource resource) {
+		WorkPattern wp = new WorkPattern();
+		wp.resource = resource;
+		eAgendaUI.commando.execute(new AddDeleteResourceCommand(campaign, wp, false));
+	}
+
+	private void setSelectedCampaign(Campaign campaign) {
+		populateResourcesMenu(campaign);
+		menu.selectItem(0);
+	}
+
+
+	private void populateResourcesMenu(Campaign campaign) {
+		vpResourceMenuItems.clear();
+		if (campaign.assignedResources() != null) {
+			campaign.assignedResources().forEach(r -> {
+				menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), () -> displayResource(campaign, r));
+			});
+		}
+	}
+
+
+	private void displayResource(Campaign campaign, IResource r) {
+		contentPanel.clear();
+		contentPanel.add(new PatternsAndAppointments(campaign, r));
+	}
 
 	class ChangeNameCommand extends CampaignCommand {
 
 		private TextBox textBox;
 		private String initialName;
 		private String newName;
-		private CampaignRenderer campaignRenderer;
+		private CampaignSettings campaignSettings;
 
-		public ChangeNameCommand(Campaign campaign, String name, TextBox textBox, CampaignRenderer campaignRenderer) {
-			super(campaign, "set name to " + name);
+		public ChangeNameCommand(CampaignSettings campaignSettings, String name, TextBox textBox) {
+			super(campaignSettings.campaign, "set name to " + name);
 			this.textBox = textBox;
-			this.initialName = campaign.name;
+			this.initialName = campaignSettings.campaign.name;
 			this.newName = name;
-			this.campaignRenderer = campaignRenderer;
+			this.campaignSettings = campaignSettings;
 		}
 
 		@Override
@@ -122,7 +306,7 @@ public class HomeScreen extends DockLayoutPanel {
 			saveCampaign();
 
 			textBox.setText(newName);
-			campaignRenderer.updateURL();
+			campaignSettings.updateURL();
 		}
 
 		@Override
@@ -131,109 +315,85 @@ public class HomeScreen extends DockLayoutPanel {
 			saveCampaign();
 
 			textBox.setText(initialName);
-			campaignRenderer.updateURL();
+			campaignSettings.updateURL();
 		}
 		
 	}
 	
 	class DeleteCampaignCommand extends CampaignCommand {
 
-		private TabbedLayoutPanel tabPanel;
-		private HorizontalPanel hpTab;
-		private CampaignRenderer campaignRenderer;
+		private EditableComboBox<CampaignSettings> cmbCampaigns;
+		private CampaignSettings campaignSettings;
 
-		public DeleteCampaignCommand(Campaign campaign, TabbedLayoutPanel tabPanel, CampaignRenderer campaignRenderer, HorizontalPanel hpTab) {
-			super(campaign, "delete campaign " + campaign.name);
-			this.campaignRenderer = campaignRenderer;
-			this.tabPanel = tabPanel;
-			this.hpTab = hpTab;
+		public DeleteCampaignCommand(CampaignSettings campaignSettings, EditableComboBox<CampaignSettings> cmbCampaigns) {
+			super(campaignSettings.campaign, "delete campaign " + campaignSettings.campaign.name);
+			this.campaignSettings = campaignSettings;
+			this.cmbCampaigns = cmbCampaigns;
 		}
 
 		@Override
 		public void exec() {
 			deleteCampaign();
-			tabPanel.removeTab(campaignRenderer);
+			cmbCampaigns.removeItem(campaignSettings);
 		}
 
 		@Override
 		public void undo() {
 			saveCampaign();
-			tabPanel.add(campaignRenderer, hpTab);
-			tabPanel.selectTab(campaignRenderer);
+			cmbCampaigns.addItem(campaignSettings);
+			cmbCampaigns.setSelectedItem(campaignSettings, true);
 		}
 		
 	}
-	
-	private Widget createTab(Campaign c, CampaignRenderer campaignRenderer) {
-		HorizontalPanel hpTab = new HorizontalPanel();
-		TextBox tbName = new TextBox();
-		tbName.setStyleName("tabTextLabel");
-		tbName.setText(c.name);
-		tbName.addChangeHandler(e -> eAgendaUI.commando.execute(new ChangeNameCommand(c, tbName.getText(), tbName, campaignRenderer)));
-		
-		Image imgDelete = new Image("assets/images/16x16/minus.png");
-		PushButton pbDelete = new PushButton(imgDelete);
-		
-//		FAIcon pbDelete = new FAIcon("minus-square", 1);
-		pbDelete.setStyleName("blankButton");
-		pbDelete.setPixelSize(24, 24);
-
-		pbDelete.addClickHandler(e -> eAgendaUI.commando.execute(new DeleteCampaignCommand(c, tabPanel, campaignRenderer, hpTab)));
-		
-		hpTab.add(tbName);
-		hpTab.add(pbDelete);
-		
-		return hpTab;
-		
-	}
-
 	class AddCampaignCommand extends CampaignCommand {
 
-		private CampaignRenderer campaignRenderer;
-		private TabbedLayoutPanel tabPanel;
-		private Widget w;
+		private EditableComboBox<CampaignSettings> tabPanel;
+		private CampaignSettings campaignSettings;
 
-		public AddCampaignCommand(Campaign campaign, TabbedLayoutPanel tabPanel) {
-			super(campaign, "add new campaign");
+		public AddCampaignCommand(CampaignSettings campaignSettings, EditableComboBox<CampaignSettings> tabPanel) {
+			super(campaignSettings.campaign, "add new campaign");
+			this.campaignSettings = campaignSettings;
 			this.tabPanel = tabPanel;
 		}
 
 		@Override
 		public void exec() {
 			saveCampaign();
-			if (campaignRenderer == null) {
-				this.campaignRenderer = new CampaignRenderer(campaign);
-				this.w = createTab(campaign, campaignRenderer);
-			}
-			tabPanel.add(campaignRenderer, w);
-			tabPanel.selectTab(campaignRenderer);
+			tabPanel.addItem(campaignSettings);
+			tabPanel.setSelectedItem(campaignSettings, true);
 		}
 
 		@Override
 		public void undo() {
 			deleteCampaign();
-			tabPanel.remove(campaignRenderer);
+			tabPanel.removeItem(campaignSettings);
 		}
 		
 	}
 	private ApplicationHeader createHeader(UserContext userContext) {
 		ApplicationHeader ah = new ApplicationHeader(userContext, "eAgenda");
-
-		
-		final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
-//		FAIcon pbAdd = new FAIcon("plus-square", 2);
-		pbAdd.setPixelSize(24, 24);
-		pbAdd.addClickHandler(e -> { 
-			Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
-			eAgendaUI.commando.execute(new AddCampaignCommand(newCampaign, tabPanel));
-		
-		});
+//
+//		
+//		final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
+////		FAIcon pbAdd = new FAIcon("plus-square", 2);
+//		pbAdd.setPixelSize(24, 24);
+//		pbAdd.addClickHandler(e -> { 
+//			Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
+//			eAgendaUI.commando.execute(new AddCampaignCommand(newCampaign, tabPanel));
+//		
+//		});
 //		ah.hpButtons.add(pbAdd);
-		tabPanel.addWidget(pbAdd);
+//		tabPanel.addWidget(pbAdd);
 		CommandoButtons cb = new CommandoButtons(eAgendaUI.commando);
+		ah.hpLeft.add(cb);
 //		ah.hpButtons.add(cb);
-		tabPanel.addWidget(cb);
+//		tabPanel.addWidget(cb);
 		return ah;
 	}
+
+	private Image getImage(IResource resource) {
+		return resource instanceof User ? new Image("assets/images/24x24/user.white.png") : new Image("assets/images/24x24/room.white.png");
+	}
+
 
 }

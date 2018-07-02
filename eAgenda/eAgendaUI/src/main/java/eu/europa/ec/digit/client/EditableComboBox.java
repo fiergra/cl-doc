@@ -18,7 +18,7 @@ public class EditableComboBox<T> extends FlexTable {
 	}
 
 	public interface ItemChangeHandler<T> {
-		void beforeChange(T oldSelection, T newSelection);
+		void onChange(T newSelection);
 	}
 
 	private final TextBox textBox = new TextBox();
@@ -64,17 +64,21 @@ public class EditableComboBox<T> extends FlexTable {
 		}
 	}
 
-	private void setSelectedItem(T i, boolean b) {
+	public void setSelectedItem(T i, boolean b) {
+		selectedItem = i;
 		if (b) {
 			notifyChangeHandler(i);
 		}
-		selectedItem = i;
-		textBox.setText(formatter != null ? formatter.format(i) : String.valueOf(i));
+		if (i != null) {
+			textBox.setText(formatter != null ? formatter.format(i) : String.valueOf(i));
+		} else {
+			textBox.setText(null);
+		}
 	}
 
 	private void notifyChangeHandler(T i) {
 		if (changeHandler != null) {
-			changeHandler.beforeChange(selectedItem, i);
+			changeHandler.onChange(i);
 		}
 	}
 
@@ -94,5 +98,25 @@ public class EditableComboBox<T> extends FlexTable {
 		this.changeHandler = changeHandler;
 	}
 	
+	public T getSelectedItem() {
+		return selectedItem;
+	}
+
+	public void removeItem(T item) {
+		items.remove(item);
+		if (selectedItem == item) {
+			if (items.isEmpty()) {
+				setSelectedItem(null, true);
+			} else {
+				setSelectedItem(items.get(0), true);
+			}
+		}
+		
+	}
+
+	public void setSelectedItem(int i, boolean b) {
+		T item = items.get(i);
+		setSelectedItem(item, b);
+	}
 	
 }
