@@ -437,6 +437,7 @@ body, table td, select, button {
 	border-left: 5px solid transparent;
 	font-size: x-large;
 	padding: 5px;	
+	width: 100%;
 }
 
 .menuItem:focus {
@@ -475,4 +476,11 @@ body, table td, select, button {
 .menuResourceSearchBox:focus {
 	background-color: white;
 	color: black;
+}
+
+.menuItemDeleteButton {
+	width: 5em;
+	height: 100%;
+	background-color: red;
+	color: white;
 }

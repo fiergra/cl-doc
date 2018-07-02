@@ -274,7 +274,14 @@ public class HomeScreen extends DockLayoutPanel {
 		vpResourceMenuItems.clear();
 		if (campaign.assignedResources() != null) {
 			campaign.assignedResources().forEach(r -> {
-				menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), () -> displayResource(campaign, r));
+				MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), () -> displayResource(campaign, r));
+				PushButton pbDelete = new PushButton(StringResources.getLabel("delete"));
+				pbDelete.setStyleName("menuItemDeleteButton");
+				pbDelete.setVisible(false);
+				mItem.hpRight.add(pbDelete);
+				
+				mItem.addMouseOverHandler(e -> pbDelete.setVisible(true));
+				mItem.addMouseOutHandler(e -> pbDelete.setVisible(false));
 			});
 		}
 	}
