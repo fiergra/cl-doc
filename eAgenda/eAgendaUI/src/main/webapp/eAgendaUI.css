@@ -459,6 +459,7 @@ body, table td, select, button {
 }
 
 .campaignSettingsHeader {
+	padding: 0.5em;
 	color: #004494;
 	font-size: x-large;
 	font-style: italic;
