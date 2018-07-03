@@ -15,16 +15,24 @@ public class MenuItem extends FocusPanel {
 	
 	public MenuItem(Image image, String string, Runnable onClick) {
 		setWidth("100%");
+
 		HorizontalPanel hp = new HorizontalPanel();
+		hp.setSize("100%", "100%");
+		hp.setStyleName("menuItemContent");
+
 		HorizontalPanel hpLeft = new HorizontalPanel();
 		hpLeft.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hpLeft.setSpacing(5);
+		hpLeft.setStyleName("menuItemLeft");
+
 		label = new Label(string);
 		hpLeft.add(image);
 		hpLeft.add(label);
 
+		hpRight.setWidth("100%");
 		hpRight.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		hpRight.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hpRight.setStyleName("menuItemRight");
 
 		hp.add(hpLeft);
 		hp.add(hpRight);

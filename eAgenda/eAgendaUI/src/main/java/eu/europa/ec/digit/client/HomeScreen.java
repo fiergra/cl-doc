@@ -2,6 +2,7 @@ package eu.europa.ec.digit.client;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import com.ceres.dynamicforms.client.SimpleTranslator;
@@ -14,7 +15,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PushButton;
@@ -105,9 +105,8 @@ public class HomeScreen extends DockLayoutPanel {
 	};
 
 	private SingleSelectionMenu menu = new SingleSelectionMenu();
+	private VerticalPanel vpTopMenuItems = new VerticalPanel();
 	private VerticalPanel vpResourceMenuItems = new VerticalPanel();
-
-	
 	
 	private Widget createMenu() {
 		VerticalPanel vpMenu = new VerticalPanel();
@@ -122,6 +121,7 @@ public class HomeScreen extends DockLayoutPanel {
 		cmbCampaigns.setFormatter(c -> c.campaign.name);
 		cmbCampaigns.setChangeHandler(selectedCampaign -> setSelectedCampaign(selectedCampaign.campaign));
 		FlexTable hpMainItem = new FlexTable();
+		hpMainItem.setStyleName("mainItem");
 		hpMainItem.setWidth("100%");
 		Image image = new Image("assets/images/64x64/calendar.white.png");
 		hpMainItem.setWidget(0, 0, image);
@@ -152,29 +152,31 @@ public class HomeScreen extends DockLayoutPanel {
 		vpMenu.add(vpMenuItems);
 
 		vpMenuItems.add(hpMainItem);
-		menu.addItem(vpMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", () -> {
+		vpMenuItems.add(vpTopMenuItems);
+		vpTopMenuItems.setSpacing(5);
+		menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", () -> {
 			contentPanel.clear();
 			if (cmbCampaigns.getSelectedItem() != null) {
 				contentPanel.add(cmbCampaigns.getSelectedItem());
 			}
 		});
 		
-		HorizontalPanel hpResources = new HorizontalPanel();
-		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		FlexTable hpResources = new FlexTable();
+//		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hpResources.setWidth("100%");
 		I18NLabel lbResourcesHeader = new I18NLabel("Resources");
 		lbResourcesHeader.setStyleName("menuItemHeader");
 		
 		RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
 		sbResources.setStyleName("menuResourceSearchBox");
-		sbResources.addStyleName("empty");
+		sbResources.addStyleDependentName("empty");
 		sbResources.setWidth("100%");
-		sbResources.setText(StringResources.getLabel("type here to search and add"));
+		sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
 		sbResources.addSelectionHandler(s -> {
 			IResource r = sbResources.getSelected();
 
 			if (r == null) {
-				sbResources.setText(StringResources.getLabel("type here to search and add"));
+				sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
 				sbResources.addStyleDependentName("empty");
 			} else {
 				sbResources.removeStyleDependentName("empty");
@@ -199,42 +201,46 @@ public class HomeScreen extends DockLayoutPanel {
 		});
 		sbResources.getValueBox().addBlurHandler(e -> {
 			sbResources.addStyleDependentName("empty");
-			sbResources.setText(StringResources.getLabel("type here to search and add"));
+			sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
 		});
-		hpResources.add(lbResourcesHeader);
-		hpResources.add(sbResources);
+		hpResources.setWidget(0, 0, lbResourcesHeader);
+		hpResources.setWidget(0, 1, sbResources);
+		hpResources.getFlexCellFormatter().setWidth(0, 1, "100%");
+//		hpResources.add(lbResourcesHeader);
+//		hpResources.add(sbResources);
 		vpMenuItems.add(hpResources);
 		
 		vpResourceMenuItems.setSpacing(5);
+		vpResourceMenuItems.setWidth("100%");
 		vpMenuItems.add(vpResourceMenuItems);
 		
 		return vpMenu;
 	}
 
-	class AddDeleteResourceCommand extends CampaignCommand {
+	class AddRemoveResourceCommand extends CampaignCommand {
 
-		private WorkPattern workPattern;
+		private List<WorkPattern> workPattern;
 		private boolean delete;
+		private IResource resource;
 
-		public AddDeleteResourceCommand(Campaign campaign, WorkPattern workPattern, boolean delete) {
-			super(campaign, (delete ? "delete " : "add ") + workPattern.resource.getDisplayName());
-
-			this.workPattern = workPattern;
+		public AddRemoveResourceCommand(Campaign campaign, List<WorkPattern> patterns, boolean delete) {
+			super(campaign, (delete ? "delete " : "add ") + patterns.get(0).resource.getDisplayName());
+			this.resource = patterns.get(0).resource;
+			this.workPattern = patterns;
 			this.delete = delete;
 		}
 
 		private void addWp() {
-			campaign.addWorkPattern(workPattern);
+			workPattern.forEach(workPattern -> campaign.addWorkPattern(workPattern));
 			saveCampaign();
-			
-			MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(workPattern.resource), workPattern.resource.getDisplayName(), () -> displayResource(campaign, workPattern.resource));
+			MenuItem mItem = addResourceMenuItem(campaign, resource);
 			menu.selectItem(mItem);
 		}
 
 		private void removeWp() {
-			campaign.removeWorkPattern(workPattern);
+			workPattern.forEach(workPattern -> campaign.removeWorkPattern(workPattern));
 			saveCampaign();
-			menu.removeItem(vpResourceMenuItems, workPattern.resource.getDisplayName());
+			menu.removeItem(vpResourceMenuItems, resource.getDisplayName());
 		}
 
 		@Override
@@ -261,7 +267,15 @@ public class HomeScreen extends DockLayoutPanel {
 	private void addResource(Campaign campaign, IResource resource) {
 		WorkPattern wp = new WorkPattern();
 		wp.resource = resource;
-		eAgendaUI.commando.execute(new AddDeleteResourceCommand(campaign, wp, false));
+		wp.from = new Date();
+		List<WorkPattern> list = new ArrayList<>(1);
+		list.add(wp);
+		eAgendaUI.commando.execute(new AddRemoveResourceCommand(campaign, list, false));
+	}
+
+	private void removeResource(Campaign campaign, IResource resource) {
+		List<WorkPattern> patterns = campaign.resourcePatterns(resource);
+		eAgendaUI.commando.execute(new AddRemoveResourceCommand(campaign, patterns, true));
 	}
 
 	private void setSelectedCampaign(Campaign campaign) {
@@ -274,18 +288,30 @@ public class HomeScreen extends DockLayoutPanel {
 		vpResourceMenuItems.clear();
 		if (campaign.assignedResources() != null) {
 			campaign.assignedResources().forEach(r -> {
-				MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), () -> displayResource(campaign, r));
-				PushButton pbDelete = new PushButton(StringResources.getLabel("delete"));
-				pbDelete.setStyleName("menuItemDeleteButton");
-				pbDelete.setVisible(false);
-				mItem.hpRight.add(pbDelete);
-				
-				mItem.addMouseOverHandler(e -> pbDelete.setVisible(true));
-				mItem.addMouseOutHandler(e -> pbDelete.setVisible(false));
+				addResourceMenuItem(campaign, r);
 			});
 		}
 	}
 
+
+	private MenuItem addResourceMenuItem(Campaign campaign, IResource r) {
+		MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), () -> displayResource(campaign, r));
+
+		PushButton pbDelete = new PushButton(StringResources.getLabel("delete"));
+		pbDelete.setStyleName("menuItemDeleteButton");
+		pbDelete.setVisible(false);
+		pbDelete.addClickHandler(e -> {
+			e.stopPropagation();
+			removeResource(campaign, r);
+		});
+		
+		mItem.hpRight.add(pbDelete);
+		
+		mItem.addMouseOverHandler(e -> pbDelete.setVisible(true));
+		mItem.addMouseOutHandler(e -> pbDelete.setVisible(false));
+		
+		return mItem;
+	}
 
 	private void displayResource(Campaign campaign, IResource r) {
 		contentPanel.clear();

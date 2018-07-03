@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gwt.aria.client.OrientationValue;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -13,6 +14,8 @@ import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 import eu.europa.ec.digit.client.i18n.I18NLabel;
+import eu.europa.ec.digit.client.i18n.StringResource;
+import eu.europa.ec.digit.client.i18n.StringResources;
 import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.IResource;
 import eu.europa.ec.digit.eAgenda.User;
@@ -64,16 +67,21 @@ public class PatternsAndAppointments extends DockLayoutPanel {
 
 		add(tabMain);
 
-		slotAppointmentsView = new SlotAppointmentsView(campaign);
-		tabMain.add(tabPatterns, "Patterns");
-
 		pbAdd.setStyleName("blankButton");
 		pbAdd.setPixelSize(24, 24);
 		pbAdd.addClickHandler(e -> addWpForResource(resource));
 		pbAdd.setVisible(false);
+		pbAdd.setTitle(StringResources.getLabel("add new working pattern for") +  " " + resource.getDisplayName());
+
+		slotAppointmentsView = new SlotAppointmentsView(campaign);
+		HorizontalPanel hpPatternsLabel = new HorizontalPanel();
+		Label lbPatterns = new I18NLabel("Patterns");
+		lbPatterns.setStyleName("tabTextLabelSize");
+		hpPatternsLabel.add(lbPatterns);
+		hpPatternsLabel.add(pbAdd);
+		tabMain.add(tabPatterns, hpPatternsLabel);
 		
-		
-		tabPatterns.addWidget(pbAdd);
+//		tabPatterns.addWidget(pbAdd);
 
 		tabMain.add(slotAppointmentsView, "Appointments");
 
@@ -217,20 +225,14 @@ public class PatternsAndAppointments extends DockLayoutPanel {
 		pbDelete.setStyleName("blankButton");
 		pbDelete.setPixelSize(24, 24);
 		pbDelete.addClickHandler(e -> eAgendaUI.commando.execute(new AddDeletePatternCommand(campaign, wp, workPatternEditor, hpTab, true)));
-
-		// tbName.setWidth("100%");
-
-		// HorizontalPanel hpButtonWrapper = new HorizontalPanel();
-		// hpButtonWrapper.setStyleName("buttonWrapper");
-		// hpButtonWrapper.add(pbDelete);
-		// hpButtonWrapper.setWidth("100%");
-		// hpButtonWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-
-		// hpTab.add(tbName);
-		// hpTab.add(hpButtonWrapper);
-
+		pbDelete.setTitle(StringResources.getLabel("remove working pattern"));
+		
 		hpTab.add(tbName);
-		hpTab.add(pbDelete);
+		HorizontalPanel hpRight = new HorizontalPanel();
+		hpRight.setWidth("100%");
+		hpRight.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+		hpRight.add(pbDelete);
+		hpTab.add(hpRight);
 
 		workPatternEditor.setChangeHandler(() -> tbName.setText(getWpName(wp)));
 

@@ -219,7 +219,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 				personalAppointmentRenderers.add(piar);
 				piar.setCancelHandler(e -> cancelAppointment(a));
 				rlp.add(piar);
-				rlp.setWidgetTopHeight(piar, 10 + offset, Unit.PX, 300, Unit.PX);
+				rlp.setWidgetTopHeight(piar, 40 + offset, Unit.PX, 300, Unit.PX);
 				rlp.setWidgetRightWidth(piar, startX - offset, Unit.PX, 300, Unit.PX);
 				offset += 20;
 			}
@@ -250,10 +250,10 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 						placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
 						
 						String content = "";
-						if (containsMyAppointment(appointmentsInSlot)) {
-							Date sd = slot.getFrom(d);
-							content = "</img src=\"assets/images/add.png\">" + ClientDateFormatter.dtfMonth.format(sd) + " " + ClientDateFormatter.dtfTime.format(sd) + "@" + host.getDisplayName();
-						}
+//						if (containsMyAppointment(appointmentsInSlot)) {
+//							Date sd = slot.getFrom(d);
+//							content = "</img src=\"assets/images/add.png\">" + ClientDateFormatter.dtfMonth.format(sd) + " " + ClientDateFormatter.dtfTime.format(sd) + "@" + host.getDisplayName();
+//						}
 
 						slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot, placesAvailable, content);
 						slotRenderer.setStyleName(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE);
@@ -309,9 +309,9 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		return vpHeader;
 	}
 
-	private boolean containsMyAppointment(List<Appointment> appointmentsInSlot) {
-		return appointmentsInSlot.stream().anyMatch(a -> a.guest != null && a.guest.equals(guest));
-	}
+//	private boolean containsMyAppointment(List<Appointment> appointmentsInSlot) {
+//		return appointmentsInSlot.stream().anyMatch(a -> a.guest != null && a.guest.equals(guest));
+//	}
 
 	private Panel createSlotRenderer(boolean sameHour, WorkPattern pattern, Slot slot, boolean enabled, String content) {
 		HorizontalPanel hpSlot = new HorizontalPanel();
