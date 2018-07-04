@@ -154,12 +154,7 @@ public class HomeScreen extends DockLayoutPanel {
 		vpMenuItems.add(hpMainItem);
 		vpMenuItems.add(vpTopMenuItems);
 		vpTopMenuItems.setSpacing(5);
-		menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", () -> {
-			contentPanel.clear();
-			if (cmbCampaigns.getSelectedItem() != null) {
-				contentPanel.add(cmbCampaigns.getSelectedItem());
-			}
-		});
+		menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", null, (m) -> displayWidget(cmbCampaigns.getSelectedItem()));
 		
 		FlexTable hpResources = new FlexTable();
 //		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -295,7 +290,7 @@ public class HomeScreen extends DockLayoutPanel {
 
 
 	private MenuItem addResourceMenuItem(Campaign campaign, IResource r) {
-		MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), () -> displayResource(campaign, r));
+		MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), new PatternsAndAppointments(campaign, r), (i) -> displayWidget(i.widget));
 
 		PushButton pbDelete = new PushButton(StringResources.getLabel("delete"));
 		pbDelete.setStyleName("menuItemDeleteButton");
@@ -313,9 +308,11 @@ public class HomeScreen extends DockLayoutPanel {
 		return mItem;
 	}
 
-	private void displayResource(Campaign campaign, IResource r) {
+	private void displayWidget(Widget widget) {
 		contentPanel.clear();
-		contentPanel.add(new PatternsAndAppointments(campaign, r));
+		if (widget != null) {
+			contentPanel.add(widget);
+		}
 	}
 
 	class ChangeNameCommand extends CampaignCommand {

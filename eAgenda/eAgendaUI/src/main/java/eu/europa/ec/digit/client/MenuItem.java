@@ -6,14 +6,21 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MenuItem extends FocusPanel {
+	
+	public interface OnClick {
+		void onClick(MenuItem menuItem);
+	}
 
-	public final Runnable onClick;
+	public final Widget widget;
+	public final OnClick onClick;
 	public final Label label;
 	public final HorizontalPanel hpRight = new HorizontalPanel();
 	
-	public MenuItem(Image image, String string, Runnable onClick) {
+	public MenuItem(Image image, String string, Widget widget, OnClick onClick) {
+		this.widget = widget;
 		setWidth("100%");
 
 		HorizontalPanel hp = new HorizontalPanel();
@@ -43,7 +50,7 @@ public class MenuItem extends FocusPanel {
 	}
 
 	public void onClick() {
-		onClick.run();
+		onClick.onClick(this);
 	}
 
 	public String getText() {

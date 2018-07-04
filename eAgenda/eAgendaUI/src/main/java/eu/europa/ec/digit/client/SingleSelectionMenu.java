@@ -5,14 +5,17 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
+
+import eu.europa.ec.digit.client.MenuItem.OnClick;
 
 public class SingleSelectionMenu {
 	
 	private List<MenuItem> menuItems = new ArrayList<>();
 	private MenuItem selectedMenuItem = null;
 	
-	public MenuItem addItem(Panel vpMenuItems, Image image, String label, Runnable onClick) {
-		MenuItem mItem = new MenuItem(image, label, onClick);
+	public MenuItem addItem(Panel vpMenuItems, Image image, String label, Widget widget, OnClick onClick) {
+		MenuItem mItem = new MenuItem(image, label, widget, onClick);
 		menuItems.add(mItem);
 		mItem.addClickHandler(e -> {
 			selectItem(mItem);
