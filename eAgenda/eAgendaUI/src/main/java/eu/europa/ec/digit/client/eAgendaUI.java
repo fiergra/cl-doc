@@ -1,5 +1,7 @@
 package eu.europa.ec.digit.client;
 
+import com.ceres.dynamicforms.client.MessageBox;
+import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;
 import com.ceres.dynamicforms.client.SimpleForm;
 import com.ceres.dynamicforms.client.command.Commando;
 import com.google.gwt.core.client.EntryPoint;
@@ -162,6 +164,7 @@ public class eAgendaUI implements EntryPoint {
 
 	public static void onFailure(Throwable caught) {
 		stopBusy();
+		MessageBox.show(StringResources.getLabel("Error"), caught.getMessage(), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_ERROR, MessageBox.NOP);
 	}
 
 

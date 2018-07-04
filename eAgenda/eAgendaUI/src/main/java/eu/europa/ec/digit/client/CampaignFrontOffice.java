@@ -3,8 +3,11 @@ package eu.europa.ec.digit.client;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.ceres.dynamicforms.client.ClientDateHelper;
+import com.ceres.dynamicforms.client.MessageBox;
+import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;
 import com.ceres.dynamicforms.client.components.ObjectSelectorComboBox;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -83,6 +86,12 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		
 		if (campaign.patterns != null) {
 			List<IResource> resources = campaign.assignedResources();
+			
+			resources = resources.stream().filter(r -> {
+				List<WorkPattern> resourcePatterns = campaign.resourcePatterns(r);
+				return resourcePatterns != null && resourcePatterns.stream().anyMatch(p -> (p.days != null && p.days.stream().anyMatch(d -> d.slots != null && !d.slots.isEmpty())));
+			}).collect(Collectors.toList());
+			
 			datePicker.addShowRangeHandlerAndFire(e -> {
 				Date now = ClientDateHelper.trunc(new Date());
 				Date minDate = wpHelper.getMinDate();
@@ -121,7 +130,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 				@Override
 				protected String labelFunc(IResource r) {
-					return r != null ? r.getDisplayName() : "---";
+					return r != null ? r.getDisplayName() : StringResources.getLabel("<select your host>");
 				}
 				
 			};
@@ -342,17 +351,17 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 	private void saveAppointment(WorkPattern pattern, Slot slot) {
 	
-//		if (personalAppointments != null && !personalAppointments.isEmpty()) {
-//			MessageBox.show("Replace existing appointments", "Do you want to replace the upcoming appointments?", MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION, r -> { 
-//				if (r.equals(MessageBox.MB_YES)) {
-//					personalAppointments.forEach(a -> cancelAppointment(a));
-//					personalAppointments.clear();
-//					doSaveAppointment(pattern, slot);
-//				} 
-//			});
-//		} else {
+		if (personalAppointments != null && !personalAppointments.isEmpty()) {
+			MessageBox.show(StringResources.getLabel("Replace existing appointments"), StringResources.getLabel("Do you want to replace the upcoming appointments?"), MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION, r -> { 
+				if (r.equals(MessageBox.MB_YES)) {
+					personalAppointments.forEach(a -> cancelAppointment(a));
+					personalAppointments.clear();
+					doSaveAppointment(pattern, slot);
+				} 
+			});
+		} else {
 			doSaveAppointment(pattern, slot);
-//		}
+		}
 	}
 	
 	private void cancelAppointment(Appointment a) {
@@ -379,37 +388,39 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 	private void setSelectedResource(Campaign campaign, DatePicker datePicker, IResource iResource) {
 		host = iResource;
-		wpHelper.setPatterns(campaign.startDelayInH, campaign.resourcePatterns(iResource));
-		Date preferredDate = wpHelper.getPreferredDate(datePicker.getValue()); 
-
-		datePicker.setValue(preferredDate);
-		datePicker.setCurrentMonth(preferredDate);
-		
-		wsClient.unsubscribe();
-		wsClient.subscribe(host, null, (t, a) -> {
-			switch (t) {
-			case update:break;
-			case insert:
-				if (a.guest.equals(guest)) {
-					personalAppointments.add(a);
-					displayPersonalAppointments();
-				}
-				checkAvailability();
-				setSelectedDate(datePicker.getValue());
-				break;
-			case delete:
-				checkAvailability();
-				setSelectedDate(datePicker.getValue());
-				if (personalAppointments.remove(a)) {
-					displayPersonalAppointments();
-				}
-				break;
-			default: loadAppointmentsAndCheckAvailability(iResource); 
-			}
+		if (iResource == null) {
+			vpSlots.clear();
+		} else {
+			wpHelper.setPatterns(campaign.startDelayInH, campaign.resourcePatterns(iResource));
+			Date preferredDate = wpHelper.getPreferredDate(datePicker.getValue()); 
+	
+			datePicker.setValue(preferredDate);
+			datePicker.setCurrentMonth(preferredDate);
 			
-		});
-
-		if (iResource != null) {
+			wsClient.unsubscribe();
+			wsClient.subscribe(host, null, (t, a) -> {
+				switch (t) {
+				case update:break;
+				case insert:
+					if (a.guest.equals(guest)) {
+						personalAppointments.add(a);
+						displayPersonalAppointments();
+					}
+					checkAvailability();
+					setSelectedDate(datePicker.getValue());
+					break;
+				case delete:
+					checkAvailability();
+					setSelectedDate(datePicker.getValue());
+					if (personalAppointments.remove(a)) {
+						displayPersonalAppointments();
+					}
+					break;
+				default: loadAppointmentsAndCheckAvailability(iResource); 
+				}
+				
+			});
+	
 			loadAppointmentsAndCheckAvailability(iResource);
 		}
 	}
