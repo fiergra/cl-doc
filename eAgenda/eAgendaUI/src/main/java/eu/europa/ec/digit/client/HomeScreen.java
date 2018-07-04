@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
@@ -50,9 +51,11 @@ public class HomeScreen extends DockLayoutPanel {
 
 		ApplicationHeader header = createHeader(userContext);
 		addNorth(header, 54);
-		addWest(createMenu(), 500);
 		
-		add(contentPanel);
+		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
+		splitPanel.addWest(createMenu(), 500);
+		splitPanel.add(contentPanel);
+		add(splitPanel);
 		
 		eAgendaUI.service.listCampaigns(new RPCCallback<List<Campaign>>() {
 
@@ -156,9 +159,8 @@ public class HomeScreen extends DockLayoutPanel {
 		vpTopMenuItems.setSpacing(5);
 		menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", null, (m) -> displayWidget(cmbCampaigns.getSelectedItem()));
 		
-		FlexTable hpResources = new FlexTable();
-//		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		hpResources.setWidth("100%");
+//		FlexTable hpResources = new FlexTable();
+//		hpResources.setWidth("100%");
 		I18NLabel lbResourcesHeader = new I18NLabel("Resources");
 		lbResourcesHeader.setStyleName("menuItemHeader");
 		
@@ -198,13 +200,14 @@ public class HomeScreen extends DockLayoutPanel {
 			sbResources.addStyleDependentName("empty");
 			sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
 		});
-		hpResources.setWidget(0, 0, lbResourcesHeader);
-		hpResources.setWidget(0, 1, sbResources);
-		hpResources.getFlexCellFormatter().setWidth(0, 1, "100%");
-//		hpResources.add(lbResourcesHeader);
-//		hpResources.add(sbResources);
-		vpMenuItems.add(hpResources);
-		
+//		hpResources.setWidget(0, 0, lbResourcesHeader);
+//		hpResources.setWidget(1, 0, sbResources);
+//		hpResources.getFlexCellFormatter().setWidth(0, 1, "100%");
+//		vpMenuItems.add(hpResources);
+
+		vpMenuItems.add(lbResourcesHeader);
+		vpMenuItems.add(sbResources);
+
 		vpResourceMenuItems.setSpacing(5);
 		vpResourceMenuItems.setWidth("100%");
 		vpMenuItems.add(vpResourceMenuItems);

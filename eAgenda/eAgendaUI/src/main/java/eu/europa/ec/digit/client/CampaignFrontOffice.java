@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -78,11 +79,11 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		}
 		addNorth(ah, 54);
 		
-		HorizontalPanel hpMain = new HorizontalPanel();
+		FlexTable ftMain = new FlexTable();
 		VerticalPanel vpMain = new VerticalPanel();
-		hpMain.add(vpMain);
+		ftMain.setWidget(0, 0, vpMain);
 		vpMain.setSpacing(3);
-		add(hpMain);
+		add(ftMain);
 		
 		if (campaign.patterns != null) {
 			List<IResource> resources = campaign.assignedResources();
@@ -142,8 +143,12 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			
 			vpMain.setWidth("20%");
 			vpSlots.setWidth("100%");
-			hpMain.add(vpSlots);
-			
+//			hpMain.add(vpSlots);
+			ftMain.setWidget(0, 1, vpSlots);
+			ftMain.getFlexCellFormatter().setWidth(0, 1, "100%");
+			ftMain.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
+			ftMain.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
+
 			if (resources.size() == 1) {
 				setSelectedResource(campaign, datePicker, resources.get(0));
 			}
