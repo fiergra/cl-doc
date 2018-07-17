@@ -231,8 +231,10 @@ public class HomeScreen extends DockLayoutPanel {
 		private void addWp() {
 			workPattern.forEach(workPattern -> campaign.addWorkPattern(workPattern));
 			saveCampaign();
-			MenuItem mItem = addResourceMenuItem(campaign, resource);
-			menu.selectItem(mItem);
+			if (cmbCampaigns.getSelectedItem().campaign.equals(campaign)) {
+				MenuItem mItem = addResourceMenuItem(campaign, resource);
+				menu.selectItem(mItem);
+			}
 		}
 
 		private void removeWp() {
