@@ -38,4 +38,5 @@ public interface GWTeAgendaService extends RemoteService {
 
 	void saveStringResource(StringResource sr);
 	HashMap<String, StringResource> getStringResources();
+	UserContext login();
 }

@@ -18,6 +18,7 @@ import eu.europa.ec.digit.shared.UserContext;
  * The async counterpart of <code>GreetingService</code>.
  */
 public interface GWTeAgendaServiceAsync {
+	void login(AsyncCallback<UserContext> callback);
 	void login(String userId, AsyncCallback<UserContext> callback);
 	void saveStringResource(StringResource sr, AsyncCallback<Void> callback);
 	void getStringResources(AsyncCallback<HashMap<String, StringResource>> callback);

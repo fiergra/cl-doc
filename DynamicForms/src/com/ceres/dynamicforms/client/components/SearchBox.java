@@ -58,6 +58,7 @@ public class SearchBox<T> extends SuggestBox {
 		entriesByLabel.clear();
 		if (list != null) {
 			MultiWordSuggestOracle oracle = (MultiWordSuggestOracle) getSuggestOracle();
+			oracle.clear();
 			for (T r:list) {
 				addEntry(application, oracle, r);
 			}

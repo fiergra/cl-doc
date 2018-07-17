@@ -35,50 +35,65 @@ public class eAgendaUI implements EntryPoint {
 	public static UserContext userContext;
 	
 	public void onModuleLoad() {
-		StringResources.init(commando, ()->{
+		StringResources.init(commando, ()-> {
 			RootPanel.get("bootstrapping").getElement().setInnerHTML("");
 	
-			HorizontalPanel hpWrapper = new HorizontalPanel();
-			hpWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			hpWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-			hpWrapper.setSize("100%", "100%");
-			SimpleForm login = new SimpleForm();
-			hpWrapper.add(login);
-
-			TextBox txtUser = new TextBox();
-			txtUser.setWidth("250px");
-			PasswordTextBox txtPassword = new PasswordTextBox();
-			txtPassword.setWidth("250px");
-			
-			login.addLine("user", txtUser);
-			txtUser.setText("fiergra");
-			login.addLine("password", txtPassword);
-			
-			PushButton pbLogin = new PushButton("Login...");
-			pbLogin.setWidth("100px");
-			login.addLine("", pbLogin);
-	
-	//		pbLogin.setEnabled(false);
-			txtUser.addKeyPressHandler(e -> pbLogin.setEnabled(txtUser.getText() != null && txtUser.getText().length() > 0));
-			pbLogin.addClickHandler(e -> service.login(txtUser.getText(), new RPCCallback<UserContext>() {
-	
+			service.login(new RPCCallback<UserContext>() {
+				
 				@Override
 				protected void onResult(UserContext userContext) {
 					if (userContext != null) {
-						RootLayoutPanel.get().remove(hpWrapper);
-						eAgendaUI.userContext = userContext;
-						setup();
+						setup(userContext);
 					} else {
-						txtUser.setText(null);
-						txtUser.setFocus(true);
+						showLoginScreen();
 					}
 				}
-			}));
+			});
 			
-			centerWidget(hpWrapper);
-			txtUser.setFocus(true);
+			
 		});
 	}		
+
+	private void showLoginScreen() {
+		HorizontalPanel hpWrapper = new HorizontalPanel();
+		hpWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		hpWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		hpWrapper.setSize("100%", "100%");
+		
+		SimpleForm login = new SimpleForm();
+		hpWrapper.add(login);
+
+		TextBox txtUser = new TextBox();
+		txtUser.setWidth("250px");
+		PasswordTextBox txtPassword = new PasswordTextBox();
+		txtPassword.setWidth("250px");
+		
+		login.addLine("user", txtUser);
+		txtUser.setText("fiergra");
+		login.addLine("password", txtPassword);
+		
+		PushButton pbLogin = new PushButton("Login...");
+		pbLogin.setWidth("100px");
+		login.addLine("", pbLogin);
+
+		txtUser.addKeyPressHandler(e -> pbLogin.setEnabled(txtUser.getText() != null && txtUser.getText().length() > 0));
+		pbLogin.addClickHandler(e -> service.login(txtUser.getText(), new RPCCallback<UserContext>() {
+
+			@Override
+			protected void onResult(UserContext userContext) {
+				if (userContext != null) {
+					RootLayoutPanel.get().remove(hpWrapper);
+					setup(userContext);
+				} else {
+					txtUser.setText(null);
+					txtUser.setFocus(true);
+				}
+			}
+		}));
+		
+		centerWidget(hpWrapper);
+		txtUser.setFocus(true);
+	}
 
 	private void centerWidget(Widget widget) {
 //		FlexTable ft = new FlexTable();
@@ -94,7 +109,8 @@ public class eAgendaUI implements EntryPoint {
 	}
 	
 		
-	public void setup() {
+	public void setup(UserContext userContext) {
+		eAgendaUI.userContext = userContext;
 		if (userContext.isAdmin()) {
 			
 		}

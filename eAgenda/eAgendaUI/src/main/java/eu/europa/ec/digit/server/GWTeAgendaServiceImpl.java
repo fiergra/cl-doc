@@ -1,5 +1,6 @@
 package eu.europa.ec.digit.server;
 
+import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.websocket.server.ServerEndpointConfig;
 
@@ -205,7 +207,13 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		return getMc().findCampaign(idOrName);
 	}
 
-	
+	@Override
+	public UserContext login() {
+		HttpServletRequest request = getThreadLocalRequest(); 		
+		Principal principal = request != null ? request.getUserPrincipal() : null;
+		
+		return principal != null ? login(principal.getName()) : null;
+	}
 	
 	@Override
 	public UserContext login(String userName) {
