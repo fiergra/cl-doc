@@ -12,9 +12,6 @@ import javax.websocket.RemoteEndpoint.Async;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-import org.eclipse.jetty.websocket.jsr356.JsrAsyncRemote;
-import org.eclipse.jetty.websocket.jsr356.JsrSession;
-
 //import org.eclipse.jetty.websocket.jsr356.JsrAsyncRemote;
 //import org.eclipse.jetty.websocket.jsr356.JsrSession;
 
@@ -119,23 +116,18 @@ public class UpdateWebSocketServer {
 			} catch (SerializationException e) {
 				e.printStackTrace();
 			}
-			
-//			TypeAdapter<WebSocketNotification> adapter = gson.getAdapter(WebSocketNotification.class);
-//			String json = adapter.toJson(n);
-
-
 		});
 	}
 
 	
 	private static void sendText(Session session, String text) {
-		if (session instanceof JsrSession) {
-			JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
-			ar.sendText(text);
-		} else {
+//		if (session instanceof JsrSession) {
+//			JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
+//			ar.sendText(text);
+//		} else {
 			Async ar = session.getAsyncRemote();
 			ar.sendText(text);
-		}
+//		}
 	}
 
 	private static <T> String serialize(final T a) throws SerializationException {
