@@ -73,6 +73,13 @@
           				<include>**/*.java</include>
         			</includes>
   			</resource>        
+			<resource>
+        			<directory>src/main/resources</directory>
+        			<includes>
+          				<include>**/*.xml</include>
+          				<include>**/*.properties</include>
+        			</includes>
+  			</resource>     
 		</resources>    
 		
 		<!-- Output classes directly into the webapp, so that IDEs and "mvn process-classes" 
