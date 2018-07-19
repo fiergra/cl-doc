@@ -1,0 +1,10 @@
+<Context path="eAgenda"
+         sessionCookiePath="/eAgenda"
+         useHttpOnly="true"
+         useRelativeRedirects="true"
+         validateClientProvidedNewSessionId="true"
+         xmlBlockExternal="true"
+         copyXML="true">
+    <!-- This is the ECAS Valve/Authenticator -->
+    <Valve className="eu.cec.digit.ecas.client.j2ee.tomcat.EcasAuthenticator" requestCharacterEncoding="UTF-8" />
+</Context>
