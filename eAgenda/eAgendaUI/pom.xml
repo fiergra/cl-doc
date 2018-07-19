@@ -47,6 +47,10 @@
     			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
 		</dependency>
+		<dependency>
+    			<groupId>eu.europa.ec.digit.iam.ecas.client</groupId>
+			<artifactId>ecas-tomcat-8.0</artifactId>
+		</dependency>
 		<!-- 
 		<dependency>
     			<groupId>org.eclipse.jetty.websocket</groupId>
