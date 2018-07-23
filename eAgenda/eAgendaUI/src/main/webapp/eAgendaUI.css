@@ -467,7 +467,7 @@ body, table td, select, button {
 }
 
 .menuResourceSearchBox {
-	background-color: inherit;
+	background-color: #004494;
 	color: white;
 	font-size: large;
 	border: none;

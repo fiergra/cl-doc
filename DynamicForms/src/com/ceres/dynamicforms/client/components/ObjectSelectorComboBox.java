@@ -149,5 +149,15 @@ public class ObjectSelectorComboBox<T> extends ListBox {
 	public void setComparator(Comparator<T> comparator) {
 		this.comparator = comparator;
 	}
+
+	public void removeItem(T value) {
+		int index = entities.indexOf(value);
+		if (index != -1) {
+			removeItem(index);
+			entities.remove(index);
+			setValue(null);
+			setSelectedIndex(0);
+		}
+	}
 	
 }

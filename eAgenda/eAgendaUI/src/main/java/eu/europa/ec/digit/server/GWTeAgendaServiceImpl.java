@@ -187,8 +187,10 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		if (host != null) {
 		try {
 			List<Appointment> freeBusy = getEmailCalendarService().getFreeBusyInfo(host, from);
-			freeBusy = freeBusy.parallelStream().filter(a -> a.from.getTime() < until.getTime() && a.until.getTime() >= from.getTime()).collect(Collectors.toList());
-			appointments.addAll(freeBusy);
+			if (freeBusy != null) {
+				freeBusy = freeBusy.parallelStream().filter(a -> a.from.getTime() < until.getTime() && a.until.getTime() >= from.getTime()).collect(Collectors.toList());
+				appointments.addAll(freeBusy);
+			} 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -78,38 +78,42 @@ public class ConnectionEditor extends LayoutPanel {
 					}
 				});
 	
-				canvas.addMouseDownHandler(new MouseDownHandler() {
-					
-					@Override
-					public void onMouseDown(MouseDownEvent event) {
-						System.out.println(event);
-					}
-				});
-	
-				canvas.addMouseUpHandler(new MouseUpHandler() {
-					
-					@Override
-					public void onMouseUp(MouseUpEvent event) {
-						std = null;
-					}
-				});
+//				canvas.addMouseDownHandler(new MouseDownHandler() {
+//					
+//					@Override
+//					public void onMouseDown(MouseDownEvent event) {
+//						System.out.println(event);
+//					}
+//				});
+//	
+//				canvas.addMouseUpHandler(new MouseUpHandler() {
+//					
+//					@Override
+//					public void onMouseUp(MouseUpEvent event) {
+//						std = null;
+//					}
+//				});
 			} else {
 				add(new Label("insufficient HTML5 support..."));
 			}
 		}
 
-		System.out.println(canvas.getOffsetHeight());
-		if (canvas != null) {
-				int w = getOffsetWidth();
-				int h = getOffsetHeight();
-				canvas.setPixelSize(w, h);
-				setWidgetLeftRight(canvas, 0, Unit.PX, 0, Unit.PX);
-				setWidgetTopBottom(canvas, 0, Unit.PX, 0, Unit.PX);
-				canvas.setCoordinateSpaceHeight(h);
-				canvas.setCoordinateSpaceWidth(w);
-		}
+		updateCanvasSize();
 	}
 
+	private void updateCanvasSize() {
+		if (canvas != null) {
+			int w = getOffsetWidth();
+			int h = getOffsetHeight();
+			canvas.setPixelSize(w, h);
+			setWidgetLeftRight(canvas, 0, Unit.PX, 0, Unit.PX);
+			setWidgetTopBottom(canvas, 0, Unit.PX, 0, Unit.PX);
+			canvas.setCoordinateSpaceHeight(h);
+			canvas.setCoordinateSpaceWidth(w);
+		}
+		
+	}
+	
 	private void drawEdges(String color) {
 			for (Edge e : allEdges) {
 				drawEdge(e, color);
@@ -382,5 +386,13 @@ public class ConnectionEditor extends LayoutPanel {
 		return sr;
 	}
 
+	@Override
+	public void onResize() {
+		super.onResize();
+		updateCanvasSize();
+	}
+
+	
+	
 
 }

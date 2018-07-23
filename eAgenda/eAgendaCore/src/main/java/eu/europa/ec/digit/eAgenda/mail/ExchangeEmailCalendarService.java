@@ -4,12 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 import eu.europa.ec.digit.eAgenda.AppointmentType;
@@ -19,7 +16,7 @@ import microsoft.exchange.webservices.data.core.PropertySet;
 import microsoft.exchange.webservices.data.core.enumeration.availability.AvailabilityData;
 import microsoft.exchange.webservices.data.core.enumeration.availability.FreeBusyViewType;
 import microsoft.exchange.webservices.data.core.enumeration.availability.SuggestionQuality;
-import microsoft.exchange.webservices.data.core.enumeration.notification.EventType;
+import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
 import microsoft.exchange.webservices.data.core.enumeration.property.BasePropertySet;
 import microsoft.exchange.webservices.data.core.enumeration.property.Importance;
 import microsoft.exchange.webservices.data.core.enumeration.property.LegacyFreeBusyStatus;
@@ -38,18 +35,10 @@ import microsoft.exchange.webservices.data.core.service.item.Item;
 import microsoft.exchange.webservices.data.core.service.schema.AppointmentSchema;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
-import microsoft.exchange.webservices.data.misc.AsyncCallback;
-import microsoft.exchange.webservices.data.misc.AsyncCallbackImplementation;
 import microsoft.exchange.webservices.data.misc.availability.AttendeeInfo;
 import microsoft.exchange.webservices.data.misc.availability.AvailabilityOptions;
 import microsoft.exchange.webservices.data.misc.availability.GetUserAvailabilityResults;
 import microsoft.exchange.webservices.data.misc.availability.TimeWindow;
-import microsoft.exchange.webservices.data.notification.FolderEvent;
-import microsoft.exchange.webservices.data.notification.ItemEvent;
-import microsoft.exchange.webservices.data.notification.NotificationEvent;
-import microsoft.exchange.webservices.data.notification.NotificationEventArgs;
-import microsoft.exchange.webservices.data.notification.StreamingSubscription;
-import microsoft.exchange.webservices.data.notification.StreamingSubscriptionConnection;
 import microsoft.exchange.webservices.data.property.complex.Attendee;
 import microsoft.exchange.webservices.data.property.complex.AttendeeCollection;
 import microsoft.exchange.webservices.data.property.complex.EmailAddress;
@@ -94,7 +83,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 	private ExchangeService service;
 
 	private synchronized void setExchangeService(String keyUser, String keyPass, String emailAddress) throws Exception {
-		service = new ExchangeService();//ExchangeVersion.Exchange2007_SP1);
+		service = new ExchangeService(ExchangeVersion.Exchange2007_SP1);
 		service.setExchange2007CompatibilityMode(true);
 		ExchangeCredentials credentials = new WebCredentials(keyUser, keyPass);
 		service.setCredentials(credentials);
@@ -378,40 +367,39 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		return a;
 	}
 	
-	@SuppressWarnings({ "unused", "resource" })
 	private void monitorInbox() throws Exception {
-		Set<FolderId> folderIds = new HashSet<>();
-		folderIds.add(new FolderId(WellKnownFolderName.Calendar, mailBox));
-		StreamingSubscription subscription = service.subscribeToStreamingNotifications(folderIds, EventType.Modified);
-		
-		AsyncCallback callback = new AsyncCallbackImplementation() {
-
-			@Override
-			public Object processMe(Future<?> task) {
-				try {
-					System.out.println(task.get());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				return null;
-			}};
-			
-		StreamingSubscriptionConnection con = new StreamingSubscriptionConnection(service, 30);
-		con.addSubscription(subscription);
-		con.addOnNotificationEvent(new StreamingSubscriptionConnection.INotificationEventDelegate() {
-            @Override
-            public void notificationEventDelegate(Object sender, NotificationEventArgs args) {
-				System.out.println("notification");
-                for (NotificationEvent event : args.getEvents()) {
-                    if (event instanceof FolderEvent) {
-                        FolderEvent folderEvent = (FolderEvent) event;
-                    } else if (event instanceof ItemEvent) {                        
-                        ItemEvent itemEvent = (ItemEvent) event;
-                    } else {
-                    }
-                }
-            }
-        });
+//		Set<FolderId> folderIds = new HashSet<>();
+//		folderIds.add(new FolderId(WellKnownFolderName.Calendar, mailBox));
+//		StreamingSubscription subscription = service.subscribeToStreamingNotifications(folderIds, EventType.Modified);
+//		
+//		AsyncCallback callback = new AsyncCallbackImplementation() {
+//
+//			@Override
+//			public Object processMe(Future<?> task) {
+//				try {
+//					System.out.println(task.get());
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				return null;
+//			}};
+//			
+//		StreamingSubscriptionConnection con = new StreamingSubscriptionConnection(service, 30);
+//		con.addSubscription(subscription);
+//		con.addOnNotificationEvent(new StreamingSubscriptionConnection.INotificationEventDelegate() {
+//            @Override
+//            public void notificationEventDelegate(Object sender, NotificationEventArgs args) {
+//				System.out.println("notification");
+//                for (NotificationEvent event : args.getEvents()) {
+//                    if (event instanceof FolderEvent) {
+//                        FolderEvent folderEvent = (FolderEvent) event;
+//                    } else if (event instanceof ItemEvent) {                        
+//                        ItemEvent itemEvent = (ItemEvent) event;
+//                    } else {
+//                    }
+//                }
+//            }
+//        });
 	}
 
 }

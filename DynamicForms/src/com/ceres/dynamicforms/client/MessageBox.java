@@ -134,16 +134,16 @@ public class MessageBox {
 		button.setWidth("80px");
 		buttonsPanel.add(button);
 		
-		if (focus) {
-			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-				
-				@Override
-				public void execute() {
-					button.setFocus(true);
-				}
-			});
-
-		}
+//		if (focus) {
+//			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+//				
+//				@Override
+//				public void execute() {
+//					button.setFocus(true);
+//				}
+//			});
+//
+//		}
 	}
 
 	private static void hide(DialogBox dlg, int result, ResultCallback<Integer> callback) {
