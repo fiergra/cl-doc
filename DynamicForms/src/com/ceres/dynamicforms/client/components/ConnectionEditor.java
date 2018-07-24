@@ -3,7 +3,9 @@ package com.ceres.dynamicforms.client.components;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.ceres.dynamicforms.client.ResultCallback;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Style.Unit;
@@ -20,6 +22,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ConnectionEditor extends LayoutPanel {
 
+	private final HashMap<Widget, Widget> wrappers = new HashMap<>();
+	private final List<Edge> allEdges = new ArrayList<>();
+//	private final List<Widget> wrappers = new ArrayList<>();
+
+
 	private Canvas canvas;
 
 	// drag stuff
@@ -27,9 +34,18 @@ public class ConnectionEditor extends LayoutPanel {
 	private int offsetX;
 	private int offsetY;
 	
+	private ResultCallback<Edge> onClickEdge;
+	
 	public ConnectionEditor() {
 	}
 	
+	
+	
+	public void setOnClickEdge(ResultCallback<Edge> onClickEdge) {
+		this.onClickEdge = onClickEdge;
+	}
+
+
 	private void startDrag(FocusPanel sr, int relativeX, int relativeY) {
 		offsetX = relativeX - sr.getAbsoluteLeft() ;
 		offsetY = relativeY - sr.getAbsoluteTop();
@@ -44,7 +60,7 @@ public class ConnectionEditor extends LayoutPanel {
 
 	
 	public void clear() {
-		wrappers.forEach(w -> remove(w));
+		wrappers.values().forEach(w -> remove(w));
 		wrappers.clear();
 		allEdges.forEach(e -> remove(e.l));
 		allEdges.clear();
@@ -123,54 +139,96 @@ public class ConnectionEditor extends LayoutPanel {
 		drawEdges("black");
 	}
 
-	private class Edge {
-		Widget from;
-		Widget to;
-		Label l;
+	public class Edge {
+		public final Widget from;
+		public final Widget to;
+		public final Label l;
+		public final Object payLoad;
 		
-		public Edge(Widget from, Widget to, String text) {
+		public Edge(Widget from, Widget to, String text, Object payLoad) {
 			super();
+			this.payLoad = payLoad;
 			this.from = from;
 			this.to = to;
 			this.l = new Label(text);
+			this.l.addClickHandler(e -> {
+				e.stopPropagation();
+				if (onClickEdge != null) {
+					onClickEdge.callback(this);
+				}
+			});
+			
+			this.l.addMouseOverHandler(e -> drawEdge(this, "red", 3D));
+			this.l.addMouseOutHandler(e -> {
+				refresh();
+			});
 			this.l.setStyleName("workflowActionLabel");
 		}
 		
 		
 	}
 	
-	private final HashMap<Widget, List<Edge>> directedEdges = new HashMap<>();
-	private final List<Edge> allEdges = new ArrayList<>();
-	private final List<Widget> wrappers = new ArrayList<>();
-	
 	public void addEdge(Widget sFrom, Widget sTo, String label) {
-		Edge e = new Edge(sFrom, sTo, label);
+		addEdge(sFrom, sTo, label, null);
+	}
+
+	public void refresh() {
+		eraseCanvas();
+		drawEdges();
+	}
+
+
+	public void removeWidget(Widget w) {
+		remove(wrappers.get(w));
+		List<Edge> filtered = allEdges.stream().filter(e -> e.from == w || e.to == w).collect(Collectors.toList());
+		filtered.forEach(e -> removeEdge(e));
+	}
+
+
+	public void removeEdge(Edge e) {
+		remove(e.l);
+		allEdges.remove(e);
+	}
+	
+	public void addEdge(Widget sFrom, Widget sTo, String label, Object payLoad) {
+		Edge e = new Edge(sFrom, sTo, label, payLoad);
 		
 		add(e.l);
 		setWidgetLeftWidth(e.l, 0, Unit.PX, 0, Unit.PX);
 		
 		allEdges.add(e);
-		addEdge(e.from, e);
-		addEdge(e.to, e);
+//		addEdge(e.from, e);
+//		addEdge(e.to, e);
 		
 		drawEdge(e, "black");
 	}
 
-	private void addEdge(Widget w, Edge e) {
-		List<Edge> es = directedEdges.get(w);
-		if (es == null) {
-			es = new ArrayList<>();
-			directedEdges.put(w, es);
-		}
-		es.add(e);
-	}
+//	private void addEdge(Widget w, Edge e) {
+//		List<Edge> es = directedEdges.get(w);
+//		if (es == null) {
+//			es = new ArrayList<>();
+//			directedEdges.put(w, es);
+//		}
+//		es.add(e);
+//	}
 
-	
 	private void drawEdge(Edge e, String color) {
+		drawEdge(e, color, null);
+	}
+	
+	private void drawEdge(Edge e, String color, Double width) {
 
 		if (canvas != null) {
 			Context2d ctx = canvas.getContext2d(); 
+			
 			ctx.setStrokeStyle(color);
+			ctx.setFillStyle(color);
+			
+			if (width != null) {
+				ctx.setLineWidth(width);
+			} else {
+				ctx.setLineWidth(1);
+			}
 			ctx.setFont("0.7em Arial");
 			int absLeft = getAbsoluteLeft();
 			int absTop = getAbsoluteTop();
@@ -209,13 +267,14 @@ public class ConnectionEditor extends LayoutPanel {
 	}
 
 	private void selfReference(Context2d ctx, Edge e, int absLeft, int absTop) {
-		int cornerX = e.from.getAbsoluteLeft() + absLeft;
-		int cornerY = e.from.getAbsoluteTop() + absTop;
+		int cornerX = e.from.getAbsoluteLeft() - absLeft;
+		int cornerY = e.from.getAbsoluteTop() - absTop;
 		
 		ctx.beginPath();
 		ctx.arc(cornerX, cornerY, 20, 0.5 * Math.PI, 2 * Math.PI);
 		ctx.stroke();	
 		arrowHeadDown(cornerX + 20, cornerY);
+		moveLabel(e.l, cornerX + 20, cornerY - 30, cornerX + 20, cornerY - 30);
 	}
 
 	private boolean isAbove(Widget from, Widget to) {
@@ -458,9 +517,10 @@ public class ConnectionEditor extends LayoutPanel {
 		forceLayout();
 	}
 
+	
 	private Widget createWrapper(Widget widget, int w, int h) {
 		final FocusPanel sr = new FocusPanel();
-		wrappers.add(sr);
+		wrappers.put(widget, sr);
 		sr.add(widget);
 		sr.addMouseDownHandler(new MouseDownHandler() {
 			
@@ -492,6 +552,7 @@ public class ConnectionEditor extends LayoutPanel {
 	public void onResize() {
 		super.onResize();
 		updateCanvasSize();
+		drawEdges();
 	}
 
 	
