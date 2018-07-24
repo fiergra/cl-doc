@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.PushButton;
 
 public class EditableObjectSelectorComboBox<T> extends HorizontalPanel {
 	
+	/**/
+	
 	private final ObjectSelectorComboBox<T> cmb;
 	private final PushButton pbAdd = new PushButton(new Image("assets/images/add16.png"));
 	private final PushButton pbDelete = new PushButton(new Image("assets/images/delete-icon.16.png"));

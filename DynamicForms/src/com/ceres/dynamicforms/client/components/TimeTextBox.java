@@ -11,7 +11,7 @@ public class TimeTextBox extends DateTextBox {
 
 	public TimeTextBox() {
 		super();
-		setWidth("3em");
+		getTextBox().setWidth("3em");
 	}
 
 	private static DateTimeFormat dtfTime24min = DateTimeFormat.getFormat("HHmm");

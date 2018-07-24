@@ -44,10 +44,9 @@ public class ConnectionEditor extends LayoutPanel {
 
 	
 	public void clear() {
-		for (Widget w:wrappers) {
-			remove(w);
-		}
+		wrappers.forEach(w -> remove(w));
 		wrappers.clear();
+		allEdges.forEach(e -> remove(e.l));
 		allEdges.clear();
 	}
 	
@@ -127,13 +126,14 @@ public class ConnectionEditor extends LayoutPanel {
 	private class Edge {
 		Widget from;
 		Widget to;
-		String label;
+		Label l;
 		
-		public Edge(Widget from, Widget to, String label) {
+		public Edge(Widget from, Widget to, String text) {
 			super();
 			this.from = from;
 			this.to = to;
-			this.label = label;
+			this.l = new Label(text);
+			this.l.setStyleName("workflowActionLabel");
 		}
 		
 		
@@ -145,6 +145,9 @@ public class ConnectionEditor extends LayoutPanel {
 	
 	public void addEdge(Widget sFrom, Widget sTo, String label) {
 		Edge e = new Edge(sFrom, sTo, label);
+		
+		add(e.l);
+		setWidgetLeftWidth(e.l, 0, Unit.PX, 0, Unit.PX);
 		
 		allEdges.add(e);
 		addEdge(e.from, e);
@@ -163,46 +166,80 @@ public class ConnectionEditor extends LayoutPanel {
 	}
 
 	
-	private int xDiff(Widget w1, Widget w2) {
-		int xdiff = ((w2.getAbsoluteLeft() + w2.getOffsetWidth()) / 2) - ((w1.getAbsoluteLeft() + w1.getOffsetWidth()) / 2);
-		System.out.println("xdiff:" + xdiff);
-		return xdiff;
-	}
-	
-	private int yDiff(Widget w1, Widget w2) {
-		return ((w2.getAbsoluteTop() + w2.getOffsetHeight()) / 2) - ((w1.getAbsoluteTop() + w1.getOffsetHeight()) / 2);
-	}
-	
 	private void drawEdge(Edge e, String color) {
 
 		if (canvas != null) {
 			Context2d ctx = canvas.getContext2d(); 
 			ctx.setStrokeStyle(color);
 			ctx.setFont("0.7em Arial");
-
-			if (xDiff(e.from, e.to) > e.to.getOffsetWidth()) {
-				lineFromRightToLeft(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
-			} else if (xDiff(e.to, e.from) > e.from.getOffsetWidth()) {
-				lineFromLeftToRight(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
+			int absLeft = getAbsoluteLeft();
+			int absTop = getAbsoluteTop();
+			
+			if (e.from == e.to) {
+				selfReference(ctx, e, absLeft, absTop);
+			} else if (isLeftOf(e.from, e.to) ) {
+				lineFromRightToLeft(ctx, e, absLeft, absTop);
+			} else if (isRightOf(e.from, e.to)) {
+				lineFromLeftToRight(ctx, e, absLeft, absTop);
+			} else if (isHalfLeftOf(e.from, e.to)) {
+				if (isAbove(e.from, e.to)) {
+					lineFromBottomToLeft(ctx, e, absLeft, absTop);
+				} else if (isBelow(e.from, e.to)) {
+					lineFromTopToLeft(ctx, e, absLeft, absTop);
+				} else {
+					lineFromRightToLeft(ctx, e, absLeft, absTop);
+				}
+			} else if (isHalfRightOf(e.from, e.to)) {
+				if (isAbove(e.from, e.to)) {
+					lineFromBottomToRight(ctx, e, absLeft, absTop);
+				} else if (isBelow(e.from, e.to)) {
+					lineFromTopToRight(ctx, e, absLeft, absTop);
+				} else {
+					lineFromLeftToRight(ctx, e, absLeft, absTop);
+				}
 			} else {
-				if (yDiff(e.from, e.to) > 10) {
-					lineFromRightToTop(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
-				} else if (yDiff(e.to, e.from) > 10) {
-					lineFromRightToBottom(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
+				if (isAbove(e.from, e.to)) {
+					lineFromBottomToTop(ctx, e, absLeft, absTop);
+				} else if (isBelow(e.from, e.to)) {
+					lineFromTopToBottom(ctx, e, absLeft, absTop);
 				}
 			}
-//			
-//			if (e.to.getAbsoluteLeft() - 100 > (e.from.getAbsoluteLeft() + e.from.getOffsetWidth())) {
-//				if ((e.from.getAbsoluteTop() + e.from.getOffsetHeight()) < e.to.getAbsoluteTop() - 100) {
-//					lineFromRightToLeft(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
-//				} else {
-//					lineFromBottomToLeft(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
-//				}
-//			} else {
-//				lineFromRightToTop(ctx, e, getAbsoluteLeft(), getAbsoluteTop());
-//			}
 		}
 
+	}
+
+	private void selfReference(Context2d ctx, Edge e, int absLeft, int absTop) {
+		int cornerX = e.from.getAbsoluteLeft() + absLeft;
+		int cornerY = e.from.getAbsoluteTop() + absTop;
+		
+		ctx.beginPath();
+		ctx.arc(cornerX, cornerY, 20, 0.5 * Math.PI, 2 * Math.PI);
+		ctx.stroke();	
+		arrowHeadDown(cornerX + 20, cornerY);
+	}
+
+	private boolean isAbove(Widget from, Widget to) {
+		return from.getAbsoluteTop() + from.getOffsetHeight() < to.getAbsoluteTop();
+	}
+
+	private boolean isBelow(Widget from, Widget to) {
+		return from.getAbsoluteTop() > to.getAbsoluteTop() + to.getOffsetHeight();
+	}
+
+	private boolean isRightOf(Widget from, Widget to) {
+		return from.getAbsoluteLeft() - from.getOffsetWidth() / 2 > to.getAbsoluteLeft() + to.getOffsetWidth();
+	}
+
+	private boolean isHalfRightOf(Widget from, Widget to) {
+		return from.getAbsoluteLeft() > (to.getAbsoluteLeft() + to.getOffsetWidth());
+	}
+
+	private boolean isLeftOf(Widget from, Widget to) {
+		return from.getAbsoluteLeft() + from.getOffsetWidth() < to.getAbsoluteLeft() - to.getOffsetWidth() / 2;
+	}
+
+	private boolean isHalfLeftOf(Widget from, Widget to) {
+		return from.getAbsoluteLeft() + from.getOffsetWidth() < to.getAbsoluteLeft();
 	}
 
 	private void lineFromRightToLeft(Context2d ctx, Edge e, int absLeft, int absTop) {
@@ -215,13 +252,23 @@ public class ConnectionEditor extends LayoutPanel {
 		if (canvas != null) {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
-			ctx.bezierCurveTo(endX, startY, startX, endY, endX, endY);
-			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
+			ctx.bezierCurveTo((startX + endX) / 2, startY, (startX + endX) / 2, endY, endX, endY);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY);
 			ctx.stroke();
 		}
 		arrowHeadRight(endX, endY);
 	}
 	
+	private void moveLabel(Label l, int startX, int startY, int endX, int endY) {
+//		int x = (startX + endX) / 2;
+//		int y = (startY + endY) / 2;
+		int x = startX + (endX - startX) / 4;
+		int y = startY + (endY - startY) / 4;
+		setWidgetLeftWidth(l, x, Unit.PX, 3, Unit.EM);
+		setWidgetTopHeight(l, y, Unit.PX, 1.5, Unit.EM);
+	}
+
 	private void lineFromLeftToRight(Context2d ctx, Edge e, int absLeft, int absTop) {
 		int startX = (e.from.getAbsoluteLeft() - absLeft);
 		int startY = (e.from.getAbsoluteTop() - absTop) + e.from.getOffsetHeight() / 2;
@@ -232,17 +279,17 @@ public class ConnectionEditor extends LayoutPanel {
 		if (canvas != null) {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
-			ctx.bezierCurveTo(endX, startY, startX, endY, endX, endY);
-			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
+			ctx.bezierCurveTo((startX + endX) / 2, startY, (startX + endX) / 2, endY, endX, endY);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY); 			
 			ctx.stroke();
 		}
 		arrowHeadLeft(endX, endY);
 	}
 	
-	@SuppressWarnings("unused")
-	private void lineFromBottomToLeft(Context2d ctx, Edge e, int absLeft, int absTop) {
+	private void lineFromTopToLeft(Context2d ctx, Edge e, int absLeft, int absTop) {
 		int startX = (e.from.getAbsoluteLeft() - absLeft) + e.from.getOffsetWidth() / 2;
-		int startY = (e.from.getAbsoluteTop() - absTop) + e.from.getOffsetHeight() ;
+		int startY = (e.from.getAbsoluteTop() - absTop);
 		
 		int endX = e.to.getAbsoluteLeft() - absLeft;
 		int endY = e.to.getAbsoluteTop() - absTop + e.to.getOffsetHeight() / 2;
@@ -251,48 +298,103 @@ public class ConnectionEditor extends LayoutPanel {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
 			ctx.bezierCurveTo(startX, endY, startX, endY, endX, endY);
-			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY); 			
 			ctx.stroke();
 		}
 		arrowHeadRight(endX, endY);
 	}
 	
-
-	
-	private void lineFromRightToTop(Context2d ctx, Edge e, int absLeft, int absTop) {
-		int startX = (e.from.getAbsoluteLeft() + e.from.getOffsetWidth()) - absLeft;
-		int startY = (e.from.getAbsoluteTop() - absTop) + e.from.getOffsetHeight() / 2 ;
+	private void lineFromBottomToTop(Context2d ctx, Edge e, int absLeft, int absTop) {
+		int startX = (e.from.getAbsoluteLeft() - absLeft) + e.from.getOffsetWidth() / 2;
+		int startY = (e.from.getAbsoluteTop() - absTop + e.from.getOffsetHeight());
 		
-		int endX = (e.to.getAbsoluteLeft() + e.to.getOffsetWidth() / 2) - absLeft;
+		int endX = e.to.getAbsoluteLeft() - absLeft + e.to.getOffsetWidth() / 2;
 		int endY = e.to.getAbsoluteTop() - absTop;
 
 		if (canvas != null) {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
-			ctx.bezierCurveTo(endX, startY, endX, startY, endX, endY);
-			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
+			ctx.bezierCurveTo(startX, (startY + endY) / 2, endX, (startY + endY) / 2, endX, endY);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY); 			
 			ctx.stroke();
 		}
 		arrowHeadDown(endX, endY);
 	}
 	
-	
-	private void lineFromRightToBottom(Context2d ctx, Edge e, int absLeft, int absTop) {
-		int startX = (e.from.getAbsoluteLeft() + e.from.getOffsetWidth()) - absLeft;
-		int startY = (e.from.getAbsoluteTop() - absTop) + e.from.getOffsetHeight() / 2 ;
+	private void lineFromTopToBottom(Context2d ctx, Edge e, int absLeft, int absTop) {
+		int startX = (e.from.getAbsoluteLeft() - absLeft) + e.from.getOffsetWidth() / 2;
+		int startY = (e.from.getAbsoluteTop() - absTop);
 		
-		int endX = (e.to.getAbsoluteLeft() + e.to.getOffsetWidth() / 2) - absLeft;
+		int endX = e.to.getAbsoluteLeft() - absLeft + e.to.getOffsetWidth() / 2;
 		int endY = e.to.getAbsoluteTop() - absTop + e.to.getOffsetHeight();
 
 		if (canvas != null) {
 			ctx.beginPath();
 			ctx.moveTo(startX, startY);
-			ctx.bezierCurveTo(endX, startY, endX, startY, endX, endY);
-			ctx.fillText(e.label, (startX + endX) / 2, (startY + endY) / 2);
+			ctx.bezierCurveTo(startX, (startY + endY) / 2, endX, (startY + endY) / 2, endX, endY);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY); 			
 			ctx.stroke();
 		}
 		arrowHeadUp(endX, endY);
 	}
+	
+	private void lineFromTopToRight(Context2d ctx, Edge e, int absLeft, int absTop) {
+		int startX = (e.from.getAbsoluteLeft() - absLeft) + e.from.getOffsetWidth() / 2;
+		int startY = (e.from.getAbsoluteTop() - absTop);
+		
+		int endX = e.to.getAbsoluteLeft() + e.to.getOffsetWidth()- absLeft;
+		int endY = e.to.getAbsoluteTop() - absTop + e.to.getOffsetHeight() / 2;
+
+		if (canvas != null) {
+			ctx.beginPath();
+			ctx.moveTo(startX, startY);
+			ctx.bezierCurveTo(startX, endY, startX, endY, endX, endY);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY); 			
+			ctx.stroke();
+		}
+		arrowHeadLeft(endX, endY);
+	}
+	
+	private void lineFromBottomToLeft(Context2d ctx, Edge e, int absLeft, int absTop) {
+		int startX = (e.from.getAbsoluteLeft() - absLeft) + e.from.getOffsetWidth() / 2;
+		int startY = (e.from.getAbsoluteTop() + e.from.getOffsetHeight() - absTop);
+		
+		int endX = e.to.getAbsoluteLeft() - absLeft;
+		int endY = e.to.getAbsoluteTop() - absTop + e.to.getOffsetHeight() / 2;
+
+		if (canvas != null) {
+			ctx.beginPath();
+			ctx.moveTo(startX, startY);
+			ctx.bezierCurveTo(startX, endY, startX, endY, endX, endY);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY); 			
+			ctx.stroke();
+		}
+		arrowHeadRight(endX, endY);
+	}
+	
+	private void lineFromBottomToRight(Context2d ctx, Edge e, int absLeft, int absTop) {
+		int startX = (e.from.getAbsoluteLeft() - absLeft) + e.from.getOffsetWidth() / 2;
+		int startY = (e.from.getAbsoluteTop() + e.from.getOffsetHeight() - absTop);
+		
+		int endX = e.to.getAbsoluteLeft() + e.to.getOffsetWidth() - absLeft;
+		int endY = e.to.getAbsoluteTop() - absTop + e.to.getOffsetHeight() / 2;
+
+		if (canvas != null) {
+			ctx.beginPath();
+			ctx.moveTo(startX, startY);
+			ctx.bezierCurveTo(startX, endY, startX, endY, endX, endY);
+//			ctx.fillText(e.text, (startX + endX) / 2, (startY + endY) / 2);
+			moveLabel(e.l, startX, startY, endX, endY); 			
+			ctx.stroke();
+		}
+		arrowHeadLeft(endX, endY);
+	}
+	
 	
 	private void arrowHeadRight(int x, int y) {
 		Context2d ctx = canvas.getContext2d(); 

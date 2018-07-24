@@ -200,5 +200,11 @@ public class DateTextBox extends EnabledHorizontalPanel implements Focusable {
 	public Boolean isAm() {
 		return getDate() != null ? getDate().getHours() < 12 : null;
 	}
+
+	public TextBox getTextBox() {
+		return textBox;
+	}
+
+	
 	
 }
