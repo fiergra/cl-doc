@@ -215,6 +215,11 @@
     			<version>1.0-rc4</version>
     			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>eu.europa.ec.digit.iam.ecas.client</groupId>
+			<artifactId>ecas-tomcat-8.0</artifactId>
+			<version>4.26.3</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-server-impl -->
 		<!--
 		<dependency>
