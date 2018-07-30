@@ -60,6 +60,10 @@
 
     <!-- 2) define all the loggers -->
 
+	<logger name="eu.cec.digit.ecas" additivity="true">
+        <level value="trace"/>
+    </logger>
+
     <logger name="eu.cec" additivity="true">
         <level value="debug"/>
     </logger>
