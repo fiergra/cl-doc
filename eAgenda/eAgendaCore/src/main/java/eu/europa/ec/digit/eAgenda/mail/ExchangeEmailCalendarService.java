@@ -89,8 +89,8 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		service.setCredentials(credentials);
 		//service.setEnableScpLookup(true);
 		service.setTraceEnabled(true);
-		//service.autodiscoverUrl(emailAddress);
-		service.setUrl(new java.net.URI("https://webmail.ec.europa.eu/EWS/Exchange.asmx"));
+		service.autodiscoverUrl(emailAddress);
+		//service.setUrl(new java.net.URI("https://webmail.ec.europa.eu/EWS/Exchange.asmx"));
 		mailBox = new Mailbox(emailAddress);
 		this.emailAddress = emailAddress;
 		initialized = true;
