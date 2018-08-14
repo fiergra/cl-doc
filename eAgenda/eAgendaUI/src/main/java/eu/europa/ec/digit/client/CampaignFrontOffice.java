@@ -139,6 +139,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			cmbResources.populate(resources);
 			cmbResources.addChangeHandler(e -> setSelectedResource(campaign, datePicker, cmbResources.getValue()));
 			vpMain.add(cmbResources);
+			datePicker.setVisible(false);
 			vpMain.add(datePicker);
 			
 			vpMain.setWidth("20%");
@@ -199,8 +200,13 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			setSelectedDate(datePicker.getValue());
 		}
 		
-		ah.hiliteUser(!guest.equals(eAgendaUI.userContext.user));
-		ah.imgUser.setTitle(StringResources.getLabel("connected as '") + eAgendaUI.userContext.user.userId + StringResources.getLabel("' but impersonating '") + guest.userId + "'");
+		if (guest.equals(eAgendaUI.userContext.user)) {
+			ah.hiliteUser(false);
+			ah.lbUserName.setTitle(StringResources.getLabel("connected as '") + eAgendaUI.userContext.user.userId);
+		} else {
+			ah.hiliteUser(true);
+			ah.lbUserName.setTitle(StringResources.getLabel("connected as '") + eAgendaUI.userContext.user.userId + StringResources.getLabel("' but impersonating '") + guest.userId + "'");
+		}
 	}
 
 
@@ -394,8 +400,10 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 	private void setSelectedResource(Campaign campaign, DatePicker datePicker, IResource iResource) {
 		host = iResource;
 		if (iResource == null) {
+			datePicker.setVisible(false);
 			vpSlots.clear();
 		} else {
+			datePicker.setVisible(true);
 			wpHelper.setPatterns(campaign.startDelayInH, campaign.resourcePatterns(iResource));
 			Date preferredDate = wpHelper.getPreferredDate(datePicker.getValue()); 
 	
@@ -403,7 +411,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			datePicker.setCurrentMonth(preferredDate);
 			
 			wsClient.unsubscribe();
-			wsClient.subscribe(host, null, (t, a) -> {
+			wsClient.subscribe(eAgendaUI.userContext.user, host, null, (t, a) -> {
 				switch (t) {
 				case update:break;
 				case insert:
