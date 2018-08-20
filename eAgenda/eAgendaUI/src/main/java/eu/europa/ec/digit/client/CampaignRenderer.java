@@ -12,6 +12,7 @@ import com.ceres.dynamicforms.client.components.RemoteSearchBox;
 import com.ceres.dynamicforms.client.components.RunSearch;
 import com.ceres.dynamicforms.client.components.SearchBox;
 import com.ceres.dynamicforms.client.components.SearchSuggestion;
+import com.ceres.dynamicforms.client.components.TabbedLayoutPanel;
 import com.google.gwt.aria.client.OrientationValue;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;

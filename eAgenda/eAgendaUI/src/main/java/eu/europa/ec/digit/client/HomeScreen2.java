@@ -3,8 +3,7 @@ package eu.europa.ec.digit.client;
 import java.util.List;
 
 import com.ceres.dynamicforms.client.command.CommandoButtons;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.ceres.dynamicforms.client.components.TabbedLayoutPanel;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;

@@ -28,6 +28,7 @@ public class UpdateWebSocketClient {
 
 	private List<Appointment> appointments = new ArrayList<>();
 	private IResource host;
+	private IResource guest;
 //	private Date date;
 	
 	public UpdateWebSocketClient() {
@@ -61,7 +62,7 @@ public class UpdateWebSocketClient {
 
 	private void processMessage(String data) {
 		WebSocketNotification n = deserialize(data);
-		GWT.log(n.actionType.name());
+//		GWT.log(n.actionType.name());
 		
 		if (n.actionType.equals(ActionType.subscribe)) {
 		} else {
@@ -70,7 +71,7 @@ public class UpdateWebSocketClient {
 			switch (n.actionType) {
 			case update:break;
 			case insert:
-				if (a.host.equals(host)) {
+				if (a.guest.equals(guest) || a.host.equals(host)) {
 					appointments.add(a);
 					callback.action(n.actionType, a);
 				}
@@ -91,8 +92,9 @@ public class UpdateWebSocketClient {
 
 	}
 
-	public void subscribe(IResource host, Date d, IAppointmentAction iAction) {
+	public void subscribe(IResource guest, IResource host, Date d, IAppointmentAction iAction) {
 		if (socketOpened) {
+			this.guest = guest;
 			this.host = host;
 //			this.date = d;
 			this.callback = iAction;
@@ -105,7 +107,7 @@ public class UpdateWebSocketClient {
 
 				@Override
 				public boolean execute() {
-					subscribe(host, d, iAction);
+					subscribe(guest, host, d, iAction);
 					return !socketOpened;
 				}
 			}, 250);

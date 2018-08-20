@@ -123,7 +123,7 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 		showPatternAndAppointments(d);
 		
 		wsClient.unsubscribe();
-		wsClient.subscribe(host, d, (t, id) -> { 
+		wsClient.subscribe(eAgendaUI.userContext.user, host, d, (t, id) -> { 
 //			showPatternAndAppointments(dateBox.getValue());
 			Date date = dateBox.getValue();
 			WorkPattern pattern = wpHelper.getPatternForDay(date);

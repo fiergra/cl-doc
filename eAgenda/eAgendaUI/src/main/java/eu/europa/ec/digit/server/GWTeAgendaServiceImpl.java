@@ -16,7 +16,6 @@ import javax.websocket.server.ServerEndpointConfig;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import eu.cec.digit.ecas.client.jaas.DetailedUser;
 import eu.europa.ec.digit.client.GWTeAgendaService;
 import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.eAgenda.Appointment;
@@ -214,7 +213,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	public UserContext login() {
 		HttpServletRequest request = getThreadLocalRequest(); 		
 		Principal principal = request != null ? request.getUserPrincipal() : null;
-		String email = ((DetailedUser) principal).getEmail();
+//		String email = ((DetailedUser) principal).getEmail();
 		return principal != null ? login(principal.getName()) : null;
 	}
 	

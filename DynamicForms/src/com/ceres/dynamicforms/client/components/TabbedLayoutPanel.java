@@ -1,4 +1,4 @@
-package eu.europa.ec.digit.client;
+package com.ceres.dynamicforms.client.components;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import eu.europa.ec.digit.client.i18n.I18NLabel;
 
 public class TabbedLayoutPanel extends DockLayoutPanel {
 
@@ -83,7 +81,7 @@ public class TabbedLayoutPanel extends DockLayoutPanel {
 
 
 	public void add(Widget tabContent, String tabLabel) {
-		Label tl = new I18NLabel(tabLabel);
+		Label tl = new Label(tabLabel);
 		tl.setHeight("100%");
 		tl.setStyleName("tabTextLabel");
 		add(tabContent, tl);

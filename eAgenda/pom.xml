@@ -113,20 +113,10 @@
 	    		<artifactId>mongodb-driver</artifactId>
 	    		<version>3.5.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
-		<!--
 		<dependency>
     			<groupId>org.mongodb</groupId>
     			<artifactId>bson</artifactId>
     			<version>3.5.0</version>
-		</dependency>
-		-->
-		<dependency>
-			<groupId>eAgenda.external.deps</groupId>
-			<artifactId>CustomSerializer.jar</artifactId>
-			<version>1.0</version>
-	 		<scope>system</scope>
-        		<systemPath>${user.dir}/eAgendaSharedLibs/CustomSerializer.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.ceres.dynamicforms</groupId>

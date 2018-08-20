@@ -3,7 +3,6 @@ package eu.europa.ec.digit.client;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -16,7 +15,8 @@ public class ApplicationHeader extends HorizontalPanel {
 	public final HorizontalPanel hpLeft = new HorizontalPanel();
 	public final HorizontalPanel hpRight = new HorizontalPanel();
 	
-	public final HTML imgUser = new FAIcon("user-circle", 2);
+	public final Label lbUserName = new Label();
+//	public final HTML imgUser = new FAIcon("user-circle", 2);
 //	public final HTML imgHelp = new FAIcon("question-circle", 2);
 
 	public ApplicationHeader(UserContext userContext, String applicationTitle) {
@@ -63,11 +63,10 @@ public class ApplicationHeader extends HorizontalPanel {
 			sUser = userContext.user.userId;
 		}
 		
-		Label lbUserName = new Label(sUser);
-		hpRight.add(lbUserName);
-		
 //		imgUser.setTitle(userContext.user.userId);
 //		hpRight.add(imgUser);
+		lbUserName.setText(sUser);
+		hpRight.add(lbUserName);
 //		hpRight.add(imgHelp);
 		
 //		imgHelp.addClickHandler(e -> setHeight());
@@ -80,14 +79,16 @@ public class ApplicationHeader extends HorizontalPanel {
 	}
 
 	public HandlerRegistration addUserClickHandler(ClickHandler ch) {
-		return imgUser.addClickHandler(ch);
+		lbUserName.addStyleName("hyperLink");
+		return lbUserName.addClickHandler(ch);
+//		return imgUser.addClickHandler(ch);
 	}
 
 	public void hiliteUser(boolean b) {
 		if (b) {
-			imgUser.addStyleName("hilite");
+			lbUserName.addStyleName("hilite");
 		} else {
-			imgUser.removeStyleName("hilite");
+			lbUserName.removeStyleName("hilite");
 		}
 	}
 

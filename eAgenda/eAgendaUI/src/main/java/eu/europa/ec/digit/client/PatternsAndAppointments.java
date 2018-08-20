@@ -2,6 +2,7 @@ package eu.europa.ec.digit.client;
 
 import java.util.List;
 
+import com.ceres.dynamicforms.client.components.TabbedLayoutPanel;
 import com.google.gwt.aria.client.OrientationValue;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
@@ -14,7 +15,6 @@ import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 import eu.europa.ec.digit.client.i18n.I18NLabel;
-import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.client.i18n.StringResources;
 import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.IResource;
