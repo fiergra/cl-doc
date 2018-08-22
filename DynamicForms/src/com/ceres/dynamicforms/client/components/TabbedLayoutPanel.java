@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.ceres.dynamicforms.client.ResultCallback;
 import com.google.gwt.aria.client.OrientationValue;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.CellPanel;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -80,6 +82,14 @@ public class TabbedLayoutPanel extends DockLayoutPanel {
 	}
 
 
+	public void add(Widget tabContent, String tabLabel, boolean asHtml) {
+		HTML tl = new HTML();
+		tl.setHTML(tabLabel);
+		tl.setHeight("100%");
+		tl.setStyleName("tabTextLabel");
+		add(tabContent, tl);
+	}
+
 	public void add(Widget tabContent, String tabLabel) {
 		Label tl = new Label(tabLabel);
 		tl.setHeight("100%");
@@ -99,7 +109,10 @@ public class TabbedLayoutPanel extends DockLayoutPanel {
 			tabsPanel.add(cat.separator);
 		}
 		tabsPanel.add(fp);
-		fp.addClickHandler(e -> setSelected(cat));
+		fp.addClickHandler(e -> { 
+			setSelected(cat);
+			notifySelectionHandlers(tabs.indexOf(cat));
+		});
 		
 		if (tabs.size() == 1) {
 			setSelected(cat);
@@ -134,6 +147,12 @@ public class TabbedLayoutPanel extends DockLayoutPanel {
 		}
 	}
 
+	public void selectTab(int index) {
+		if (index > -1 && index < tabs.size()) {
+			setSelected(tabs.get(index));
+		}
+	}
+
 	public void clear() {
 		setSelected(null);
 		tabs.clear();
@@ -162,5 +181,22 @@ public class TabbedLayoutPanel extends DockLayoutPanel {
 			}
 		} 
 		return removed;
+	}
+
+	private void notifySelectionHandlers(int indexOf) {
+		if (selectionHandlers != null) {
+			selectionHandlers.forEach(h -> h.callback(indexOf));
+		}
+	}
+
+
+	private List<ResultCallback<Integer>> selectionHandlers;
+	
+	public HandlerRegistration addSelectionHandler(ResultCallback<Integer> selectionHandler) {
+		if (selectionHandlers == null) {
+			selectionHandlers = new ArrayList<>();
+		}
+		selectionHandlers.add(selectionHandler);
+		return null;
 	}
 }

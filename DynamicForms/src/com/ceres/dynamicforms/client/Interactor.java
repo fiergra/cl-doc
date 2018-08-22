@@ -17,9 +17,15 @@ public class Interactor {
 	private List<LinkChangeHandler> changeHandlers;
 	private boolean isModified;
 	private Boolean isValid = null;
+	private Map<String, Serializable> displayedItem;
 	
 	public void addLink(InteractorLink link) {
 		links.add(link);
+	}
+
+	
+	public Map<String, Serializable> getDisplayedItem() {
+		return displayedItem;
 	}
 
 	public InteractorLink getLink(String name) {
@@ -43,6 +49,9 @@ public class Interactor {
 	}
 	
 	public void toDialog(ITranslator translator, Map<String,Serializable> item) {
+		
+		this.displayedItem = item;
+		
 		if (translator == null) {
 			translator = new SimpleTranslator();
 		}
