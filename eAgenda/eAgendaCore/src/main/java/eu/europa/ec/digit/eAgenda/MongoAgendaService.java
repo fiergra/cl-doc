@@ -18,6 +18,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -29,6 +30,11 @@ import eu.europa.ec.digit.client.i18n.StringResource;
 
 public class MongoAgendaService {
 
+	public static final String STRING_RESOURCES = "stringResources";
+	public static final String CAMPAIGNS = "campaigns";
+	public static final String RESOURCES = "resources";
+	public static final String APPOINTMENTS = "appointments";
+	public static final String HOLIDAYS = "holidays";
 	private MongoDatabase db;
 	private MongoClient mongoClient;
 
@@ -73,7 +79,7 @@ public class MongoAgendaService {
 		mongoClient.close();
 	}
 
-	public MongoDatabase getDb() {
+	private MongoDatabase getDb() {
 		if (db == null) {
 			init();
 		}
@@ -84,20 +90,24 @@ public class MongoAgendaService {
 		return mongoClient;
 	}
 	
-	private MongoCollection<Appointment> appointments() {
-		return getDb().getCollection("appointments", Appointment.class);
+	public MongoCollection<Holiday> holidays() {
+		return getDb().getCollection(HOLIDAYS, Holiday.class);
 	}
 
-	private MongoCollection<IResource> resources() {
-		return getDb().getCollection("resources", IResource.class);
+	private MongoCollection<Appointment> appointments() {
+		return getDb().getCollection(APPOINTMENTS, Appointment.class);
+	}
+
+	public MongoCollection<IResource> resources() {
+		return getDb().getCollection(RESOURCES, IResource.class);
 	}
 
 	private MongoCollection<Campaign> campaigns() {
-		return getDb().getCollection("campaigns", Campaign.class);
+		return getDb().getCollection(CAMPAIGNS, Campaign.class);
 	}
 
 	private MongoCollection<StringResource> stringResources() {
-		return getDb().getCollection("stringResources", StringResource.class);
+		return getDb().getCollection(STRING_RESOURCES, StringResource.class);
 	}
 
 
@@ -214,6 +224,21 @@ public class MongoAgendaService {
 		return result;
 	}
 
+	public List<Holiday> loadHolidays(String cityCode) {
+		List<Holiday> result = new ArrayList<>();
+		FindIterable<Holiday> resultSet; 
+		
+		if (cityCode != null) {
+			resultSet = holidays().find();
+		} else {
+			resultSet = holidays().find(Filters.eq("cityCode", cityCode));
+		}
+		resultSet.forEach((Block<Holiday>)h -> result.add(h));
+		
+		return result;
+	}
+
+	
 	public User getUser(String userName) {
 		return (User) resources().find(Filters.eq("userId", userName)).first();
 	}
@@ -267,5 +292,6 @@ public class MongoAgendaService {
 	public MongoDatabase getDatabase() {
 		return null;
 	}
+
 
 }

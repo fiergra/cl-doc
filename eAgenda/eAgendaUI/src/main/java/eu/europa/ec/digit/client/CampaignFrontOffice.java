@@ -57,11 +57,13 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 	private Campaign campaign;
 
 	private UpdateWebSocketClient wsClient = new UpdateWebSocketClient();
+	private List<String> holidays;
 	
-	public CampaignFrontOffice(Campaign campaign) {
+	public CampaignFrontOffice(Campaign campaign, List<String> holidays) {
 		super(Unit.PX);
 		ah = new ApplicationHeader(eAgendaUI.userContext, campaign.name);
 		this.campaign = campaign;
+		this.holidays = holidays;
 		
 		Window.setTitle("eAgenda: " + campaign.name);
 		
@@ -458,28 +460,39 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		
 		while (curr < end) {
 			Date d = new Date(curr);
-			WorkPattern pattern = wpHelper.getPatternForDay(d);
-			if (pattern != null) {
-				Day day = pattern.getDay(d);
-				boolean placesAvailable = false;
-				if (day != null && day.slots != null) {
-					for (Slot slot:day.slots) {
-						if (slot.capacity == null || slot.capacity == 0) {
-							// disabled
-						} else { 
-							List<Appointment> appointmentsInSlot =  wpHelper.getAppointmentsInSlot(wsClient.getAppointments(), d, slot);//.parallelStream().filter(a -> inSlot(a, d, slot)).collect(Collectors.toList());
-							placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
+			
+			if (isHoliday(d)) {
+				datePicker.addStyleToDates(STYLE_COMPLETE, d);
+			} else {
+				WorkPattern pattern = wpHelper.getPatternForDay(d);
+				if (pattern != null) {
+					Day day = pattern.getDay(d);
+					boolean placesAvailable = false;
+					if (day != null && day.slots != null) {
+						for (Slot slot:day.slots) {
+							if (slot.capacity == null || slot.capacity == 0) {
+								// disabled
+							} else { 
+								List<Appointment> appointmentsInSlot =  wpHelper.getAppointmentsInSlot(wsClient.getAppointments(), d, slot);//.parallelStream().filter(a -> inSlot(a, d, slot)).collect(Collectors.toList());
+								placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
+							}
 						}
-					}
-					if (datePicker.isDateEnabled(d)) {
-						datePicker.removeStyleFromDates(STYLE_COMPLETE, d);
-						datePicker.removeStyleFromDates(STYLE_PLACES_AVAILABLE, d);
-						datePicker.addTransientStyleToDates(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE, d);
+						if (datePicker.isDateEnabled(d)) {
+							datePicker.removeStyleFromDates(STYLE_COMPLETE, d);
+							datePicker.removeStyleFromDates(STYLE_PLACES_AVAILABLE, d);
+							datePicker.addTransientStyleToDates(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE, d);
+						}
 					}
 				}
 			}
 			curr += ClientDateHelper.DAY_MS;
 		}
+	}
+
+
+
+	private boolean isHoliday(Date d) {
+		return holidays.contains(ClientDateHelper.df.format(d));
 	}
 
 	

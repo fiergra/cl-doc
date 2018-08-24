@@ -34,6 +34,8 @@ public interface GWTeAgendaService extends RemoteService {
 	List<Appointment> getAppointments(Date d, IResource host, IResource guest);
 	List<Appointment> getAppointments(Date d, Date until, IResource host, IResource guest);
 	
+	List<String> loadHolidays(String cityCode);
+	
 	UserContext login(String userName);
 
 	void saveStringResource(StringResource sr);

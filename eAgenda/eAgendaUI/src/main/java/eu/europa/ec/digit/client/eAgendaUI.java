@@ -1,5 +1,8 @@
 package eu.europa.ec.digit.client;
 
+import java.util.Date;
+import java.util.List;
+
 import com.ceres.dynamicforms.client.MessageBox;
 import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;
 import com.ceres.dynamicforms.client.SimpleForm;
@@ -124,19 +127,26 @@ public class eAgendaUI implements EntryPoint {
 		if (idOrName == null) {
 			setMainWidget(new HomeScreen(userContext));
 		} else {
-			service.findCampaign(idOrName, new RPCCallback<Campaign>() {
+			
+			service.loadHolidays(null, new RPCCallback<List<String>>() {
 
 				@Override
-				protected void onResult(Campaign campaign) {
-					if (campaign != null) {
-						if (name != null && !campaign.published) {
-							setMainWidget(new I18NLabel("specified campaign is not yet published"));
-						} else {
-							setMainWidget(new CampaignFrontOffice(campaign));
+				protected void onResult(List<String> holidays) {
+					service.findCampaign(idOrName, new RPCCallback<Campaign>() {
+
+						@Override
+						protected void onResult(Campaign campaign) {
+							if (campaign != null) {
+								if (name != null && !campaign.published) {
+									setMainWidget(new I18NLabel("specified campaign is not yet published"));
+								} else {
+									setMainWidget(new CampaignFrontOffice(campaign, holidays));
+								}
+							} else {
+								setMainWidget(new I18NLabel("specified campaign cannot be loaded"));
+							}
 						}
-					} else {
-						setMainWidget(new I18NLabel("specified campaign cannot be loaded"));
-					}
+					});
 				}
 			});
 			
