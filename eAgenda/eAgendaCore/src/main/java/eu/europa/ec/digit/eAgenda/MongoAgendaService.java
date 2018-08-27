@@ -228,8 +228,8 @@ public class MongoAgendaService {
 		List<Holiday> result = new ArrayList<>();
 		FindIterable<Holiday> resultSet; 
 		
-		if (cityCode != null) {
-			resultSet = holidays().find();
+		if (cityCode == null) {
+			resultSet = holidays().find(Filters.eq("cityCode", "BRU"));
 		} else {
 			resultSet = holidays().find(Filters.eq("cityCode", cityCode));
 		}

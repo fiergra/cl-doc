@@ -1,6 +1,7 @@
 package eu.europa.ec.digit.client;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import com.ceres.dynamicforms.client.ClientDateHelper;
 import com.ceres.dynamicforms.client.MessageBox;
 import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;
 import com.ceres.dynamicforms.client.components.ObjectSelectorComboBox;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -57,9 +59,9 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 	private Campaign campaign;
 
 	private UpdateWebSocketClient wsClient = new UpdateWebSocketClient();
-	private List<String> holidays;
+	private Collection<Date> holidays;
 	
-	public CampaignFrontOffice(Campaign campaign, List<String> holidays) {
+	public CampaignFrontOffice(Campaign campaign, Collection<Date> holidays) {
 		super(Unit.PX);
 		ah = new ApplicationHeader(eAgendaUI.userContext, campaign.name);
 		this.campaign = campaign;
@@ -82,6 +84,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		addNorth(ah, 54);
 		
 		FlexTable ftMain = new FlexTable();
+		ftMain.setStyleName("ftMain");
 		VerticalPanel vpMain = new VerticalPanel();
 		ftMain.setWidget(0, 0, vpMain);
 		vpMain.setSpacing(3);
@@ -96,33 +99,35 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			}).collect(Collectors.toList());
 			
 			datePicker.addShowRangeHandlerAndFire(e -> {
-				Date now = ClientDateHelper.trunc(new Date());
-				Date minDate = wpHelper.getMinDate();
-				
-				if (minDate == null || minDate.getTime() < now.getTime()) {
-					minDate = now;
-				}
-				
-				long curr = ClientDateHelper.trunc(e.getStart()).getTime();
-				while (curr < minDate.getTime() && curr <= e.getEnd().getTime()) {
-					datePicker.setTransientEnabledOnDates(false, new Date(curr));
-					curr += ClientDateHelper.DAY_MS;
-				}
-				
-				if (wpHelper.getMaxDate() != null) {
-					curr = wpHelper.getMaxDate().getTime() + ClientDateHelper.DAY_MS;
+				if (host == null) {
+					disableDatePicker();
+				} else {	
+					Date now = ClientDateHelper.trunc(new Date());
+					Date minDate = wpHelper.getMinDate();
 					
-					if (curr <= e.getStart().getTime()) {
-						curr = e.getStart().getTime();
+					if (minDate == null || minDate.getTime() < now.getTime()) {
+						minDate = now;
 					}
 					
-					while (curr < e.getEnd().getTime()) {
+					long curr = ClientDateHelper.trunc(e.getStart()).getTime();
+					while (curr < minDate.getTime() && curr <= e.getEnd().getTime()) {
 						datePicker.setTransientEnabledOnDates(false, new Date(curr));
 						curr += ClientDateHelper.DAY_MS;
 					}
-				}
+					
+					if (wpHelper.getMaxDate() != null) {
+						curr = wpHelper.getMaxDate().getTime() + ClientDateHelper.DAY_MS;
+						
+						if (curr <= e.getStart().getTime()) {
+							curr = e.getStart().getTime();
+						}
+						
+						while (curr < e.getEnd().getTime()) {
+							datePicker.setTransientEnabledOnDates(false, new Date(curr));
+							curr += ClientDateHelper.DAY_MS;
+						}
+					}
 				
-				if (host != null) {
 					loadAppointmentsAndCheckAvailability(host);
 				}
 			});
@@ -141,12 +146,11 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			cmbResources.populate(resources);
 			cmbResources.addChangeHandler(e -> setSelectedResource(campaign, datePicker, cmbResources.getValue()));
 			vpMain.add(cmbResources);
-			datePicker.setVisible(false);
+//			datePicker.setVisible(false);
 			vpMain.add(datePicker);
 			
 			vpMain.setWidth("20%");
 			vpSlots.setWidth("100%");
-//			hpMain.add(vpSlots);
 			ftMain.setWidget(0, 1, vpSlots);
 			ftMain.getFlexCellFormatter().setWidth(0, 1, "100%");
 			ftMain.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
@@ -163,6 +167,18 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 	
 	
+	private void disableDatePicker() {
+		Date date = datePicker.getFirstDate();
+		while (date.getTime() <= datePicker.getLastDate().getTime()) {
+			datePicker.removeStyleFromDates(STYLE_PLACES_AVAILABLE, date);
+			datePicker.removeStyleFromDates(STYLE_COMPLETE, date);
+			datePicker.setTransientEnabledOnDates(false, date);
+			date = ClientDateHelper.addDays(date, 1);
+		}
+	}
+
+
+
 	private void impersonate() {
 		HorizontalPanel hpImpersonate = new HorizontalPanel();
 		hpImpersonate.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -402,7 +418,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 	private void setSelectedResource(Campaign campaign, DatePicker datePicker, IResource iResource) {
 		host = iResource;
 		if (iResource == null) {
-			datePicker.setVisible(false);
+			disableDatePicker();
 			vpSlots.clear();
 		} else {
 			datePicker.setVisible(true);
@@ -463,6 +479,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			
 			if (isHoliday(d)) {
 				datePicker.addStyleToDates(STYLE_COMPLETE, d);
+				datePicker.setTransientEnabledOnDates(false, d);
 			} else {
 				WorkPattern pattern = wpHelper.getPatternForDay(d);
 				if (pattern != null) {
@@ -492,7 +509,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 
 	private boolean isHoliday(Date d) {
-		return holidays.contains(ClientDateHelper.df.format(d));
+		return holidays.contains(ClientDateHelper.trunc(d));
 	}
 
 	

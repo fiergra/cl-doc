@@ -1,5 +1,6 @@
 package eu.europa.ec.digit.client;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,7 +35,7 @@ public interface GWTeAgendaService extends RemoteService {
 	List<Appointment> getAppointments(Date d, IResource host, IResource guest);
 	List<Appointment> getAppointments(Date d, Date until, IResource host, IResource guest);
 	
-	List<String> loadHolidays(String cityCode);
+	Collection<Date> loadHolidays(String cityCode);
 	
 	UserContext login(String userName);
 

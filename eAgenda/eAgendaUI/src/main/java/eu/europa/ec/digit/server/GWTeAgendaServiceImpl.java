@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,6 @@ import org.apache.http.client.utils.DateUtils;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-import eu.cec.digit.ecas.client.jaas.DetailedUser;
-import eu.cec.digit.ecas.client.jaas.ExtendedUserDetails;
 import eu.europa.ec.digit.client.GWTeAgendaService;
 import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.eAgenda.Appointment;
@@ -219,12 +218,12 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		HttpServletRequest request = getThreadLocalRequest(); 		
 		Principal principal = request != null ? request.getUserPrincipal() : null;
 		
-		if (principal instanceof DetailedUser) {
-			DetailedUser du = (DetailedUser) principal; 
-			String email = du.getEmail();
-			ExtendedUserDetails userDetails = du.getExtendedUserDetails();
-			System.out.print(userDetails);
-		}
+//		if (principal instanceof DetailedUser) {
+//			DetailedUser du = (DetailedUser) principal; 
+//			String email = du.getEmail();
+//			ExtendedUserDetails userDetails = du.getExtendedUserDetails();
+//			System.out.print(userDetails);
+//		}
 		
 		return principal != null ? login(principal.getName()) : null;
 	}
@@ -270,8 +269,10 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	}
 
 	@Override
-	public List<String> loadHolidays(String cityCode) {
+	public Collection<Date> loadHolidays(String cityCode) {
 		List<Holiday> holidays = getMc().loadHolidays(cityCode);
-		return holidays.stream().map(h -> DateUtils.formatDate(h.date, "dd/MM/yyyy")).distinct().collect(Collectors.toList());
+		HashSet<Date> sHolidays = new HashSet<>();
+		holidays.forEach(h -> sHolidays.add(h.date));
+		return sHolidays;
 	}
 }

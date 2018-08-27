@@ -1,5 +1,6 @@
 package eu.europa.ec.digit.client;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -128,10 +129,10 @@ public class eAgendaUI implements EntryPoint {
 			setMainWidget(new HomeScreen(userContext));
 		} else {
 			
-			service.loadHolidays(null, new RPCCallback<List<String>>() {
+			service.loadHolidays(null, new RPCCallback<Collection<Date>>() {
 
 				@Override
-				protected void onResult(List<String> holidays) {
+				protected void onResult(Collection<Date> holidays) {
 					service.findCampaign(idOrName, new RPCCallback<Campaign>() {
 
 						@Override

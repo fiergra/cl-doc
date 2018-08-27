@@ -15,4 +15,11 @@ public class Holiday implements Serializable {
 		this.date = date;
 		this.cityCode = cityCode;
 	}
+
+	@Override
+	public String toString() {
+		return "Holiday [date=" + date + ", cityCode=" + cityCode + "]";
+	}
+	
+	
 }

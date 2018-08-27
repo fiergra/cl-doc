@@ -1,5 +1,6 @@
 package eu.europa.ec.digit.client;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,6 @@ public interface GWTeAgendaServiceAsync {
 	void getAppointments(Date d, IResource host, IResource guest, AsyncCallback<List<Appointment>> callback);
 	void cancelAppointment(Appointment a, AsyncCallback<Appointment> rpcCallback);
 	
-	void loadHolidays(String cityCode, AsyncCallback<List<String>> callback);
+	void loadHolidays(String cityCode, AsyncCallback<Collection<Date>> callback);
 	
 }
