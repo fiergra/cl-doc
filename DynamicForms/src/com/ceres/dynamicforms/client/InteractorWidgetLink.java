@@ -13,6 +13,8 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 	public static final String FOCUS = "focus";
 	public static final String REQUIRED = "required";
 	public static final String ENABLED = "enabled";
+	public static final String DEFAULT = "default";
+	
 	protected final Widget widget;
 	protected final HashMap<String, String> attributes;
 	
@@ -20,6 +22,7 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 	private boolean isEnabled;
 	private final boolean requestFocus;
 	private String objectType;
+	private String sDefault;
 
 	public InteractorWidgetLink(Interactor interactor, String name, Widget widget, HashMap<String, String> attributes) {
 		super(interactor, name);
@@ -30,6 +33,7 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		isRequired = attributes != null && "true".equals(attributes.get(REQUIRED)); 
 		requestFocus = attributes != null && "true".equals(attributes.get(FOCUS));
 		objectType = attributes != null ? attributes.get(OBJECT_TYPE) : null;
+		sDefault = attributes != null ? attributes.get(DEFAULT) : null;
 	}
 
 	public void setObjectType(String objectType) {
@@ -38,6 +42,10 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 
 	public String getObjectType() {
 		return objectType;
+	}
+
+	public String getDefault() {
+		return sDefault;
 	}
 
 	public void requestFocus() {
@@ -51,7 +59,7 @@ public abstract class InteractorWidgetLink extends InteractorLink {
 		
 	}
 	
-	protected void hilite(boolean isValid) {
+	public void hilite(boolean isValid) {
 		if (!isValid) {
 			getWidget().addStyleName("invalidContent");
 		} else {

@@ -15,10 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.websocket.server.ServerEndpointConfig;
 
-import org.apache.http.client.utils.DateUtils;
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import eu.cec.digit.ecas.client.jaas.DetailedUser;
 import eu.europa.ec.digit.client.GWTeAgendaService;
 import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.eAgenda.Appointment;
@@ -129,7 +128,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		UpdateWebSocketServer.notifyAll(actionType, a);
 		
 		try {
-			String[] recipients = new String[] { "ralph.fiergolla@ec.europa.eu" };
+			String[] recipients = new String[] { getUserEmail() };
 			
 			String messageBody;
 			
@@ -213,19 +212,23 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		return getMc().findCampaign(idOrName);
 	}
 
-	@Override
-	public UserContext login() {
+	private DetailedUser getDetailedUser() {
 		HttpServletRequest request = getThreadLocalRequest(); 		
 		Principal principal = request != null ? request.getUserPrincipal() : null;
 		
-//		if (principal instanceof DetailedUser) {
-//			DetailedUser du = (DetailedUser) principal; 
-//			String email = du.getEmail();
-//			ExtendedUserDetails userDetails = du.getExtendedUserDetails();
-//			System.out.print(userDetails);
-//		}
+		return principal instanceof DetailedUser ? (DetailedUser)principal : null;
+	}
+	
+	@Override
+	public UserContext login() {
+		DetailedUser du = getDetailedUser();
 		
-		return principal != null ? login(principal.getName()) : null;
+		return du != null ? login(du.getName()) : null;
+	}
+	
+	private String getUserEmail() {
+		DetailedUser du = getDetailedUser();
+		return du != null ? du.getEmail() : "ralph.fiergolla@ec.europa.eu";
 	}
 	
 	@Override

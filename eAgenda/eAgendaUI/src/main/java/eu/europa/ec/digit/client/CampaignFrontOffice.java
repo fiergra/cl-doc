@@ -10,7 +10,6 @@ import com.ceres.dynamicforms.client.ClientDateHelper;
 import com.ceres.dynamicforms.client.MessageBox;
 import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;
 import com.ceres.dynamicforms.client.components.ObjectSelectorComboBox;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -399,7 +398,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 	
 	private void doSaveAppointment(WorkPattern pattern, Slot slot) {
-		Date from = slot.getFrom(datePicker.getValue());
+		Date from = slot.getFrom(ClientDateHelper.trunc(datePicker.getValue()));
 		Date until = campaign.appointmentType.duration > 0 ? new Date(from.getTime() + campaign.appointmentType.duration * 60L * 1000L) : slot.getUntil(datePicker.getValue());
 		Appointment a = new Appointment(host, guest, pattern.location, from, until, campaign.appointmentType);
 		eAgendaUI.service.saveAppointment(campaign, a, new RPCCallback<Appointment>() {

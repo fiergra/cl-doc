@@ -104,17 +104,19 @@ public class ValidatorLink extends InteractorLink {
 		if (isValid && (!left.isEmpty() || right.isEmpty())) {
 			Comparable cLeft = getComparable(left);
 			Comparable cRight = getComparable(right);
-			
-			@SuppressWarnings("unchecked")
-			int result = cLeft.compareTo(cRight);
-			
-			switch (test) {
-			case LT: isValid = result < 0; break; 
-			case LTE: isValid = result <= 0; break; 
-			case GT: isValid = result > 0; break; 
-			case GTE: isValid = result >= 0; break; 
-			}
-			
+
+			if (cLeft != null && cRight != null) {
+				
+				@SuppressWarnings("unchecked")
+				int result = cLeft.compareTo(cRight);
+				
+				switch (test) {
+				case LT: isValid = result < 0; break; 
+				case LTE: isValid = result <= 0; break; 
+				case GT: isValid = result > 0; break; 
+				case GTE: isValid = result >= 0; break; 
+				}
+			}			
 		}
 				
 		return isValid;

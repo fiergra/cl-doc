@@ -10,9 +10,12 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Focusable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.datepicker.client.DatePicker;
 
 public class DateTextBox extends EnabledHorizontalPanel implements Focusable {
 	private static final String AM = "am";
@@ -21,6 +24,7 @@ public class DateTextBox extends EnabledHorizontalPanel implements Focusable {
 
 	private Date dateValue = null;
 	private TextBox textBox = new TextBox();
+	private PushButton pbDatePicker;
 	private int h = -1;
 	private int m = -1;
 
@@ -30,10 +34,28 @@ public class DateTextBox extends EnabledHorizontalPanel implements Focusable {
 	
 	public DateTextBox(boolean showAmPm) {
 		super();
+		textBox.setWidth("5em");
 		add(textBox);
 		if (showAmPm) {
 			add(createAmPmBox());
 		}
+		Image imgCalendar = new Image("assets/images/calendar.png");
+//		imgCalendar.setPixelSize(16, 16);
+		pbDatePicker = new PushButton(imgCalendar);
+		pbDatePicker.setStyleName("flatButton");
+		add(pbDatePicker);
+		
+		pbDatePicker.addClickHandler(e -> showDatePicker());
+		textBox.addKeyPressHandler(e -> {
+			if (e.getCharCode() == '+') {
+				textBox.cancelKey();
+				increment();
+			} else if (e.getCharCode() == '-') {
+				textBox.cancelKey();
+				decrement();
+			}
+		});
+		
 		textBox.addChangeHandler(new ChangeHandler() {
 			
 			@Override
@@ -59,12 +81,64 @@ public class DateTextBox extends EnabledHorizontalPanel implements Focusable {
 				
 				if (value != dateValue || (value != null && !value.equals(dateValue))) {
 					setDate(value);
-					notifyDateChangeHandlers(value);
+					notifyDateChangeHandlers();
 				}
 			}
 		});
 	}
 	
+	@SuppressWarnings("deprecation")
+	private void showDatePicker() {
+		DatePicker datePicker = new DatePicker();
+		
+		Date d = getDate();
+		if (d != null) {
+			datePicker.setValue(getDate());
+			datePicker.setCurrentMonth(getDate());
+		}
+		PopupPanel popUp = new PopupPanel(true, true);
+		popUp.setStyleName("plainVanilla");
+		popUp.add(datePicker);
+		popUp.showRelativeTo(textBox);
+		
+		datePicker.addValueChangeHandler(e -> { 
+			Date value = getDate();
+			if (value != null) {
+				Date newValue = e.getValue();
+				newValue.setHours(value.getHours());
+				newValue.setMinutes(value.getMinutes());
+				newValue.setSeconds(value.getSeconds());
+				setDate(newValue);
+				
+			} else {
+				setDate(e.getValue());
+			}
+			
+			notifyDateChangeHandlers();
+			popUp.hide();
+		});
+	}
+
+	private void increment(int value) {
+		Date date = getDate();
+		
+		if (date == null) {
+			date = new Date();
+		}
+		
+		setDate(ClientDateHelper.addDays(date, value));
+		notifyDateChangeHandlers();
+
+	}
+
+	private void increment() {
+		increment(1);
+	}
+
+	private void decrement() {
+		increment(-1);
+	}
+
 	private ListBox amPmBox;
 
 	private ListBox createAmPmBox() {
@@ -83,14 +157,14 @@ public class DateTextBox extends EnabledHorizontalPanel implements Focusable {
 					setDate(date);
 				}
 
-				notifyDateChangeHandlers(getDate());
+				notifyDateChangeHandlers();
 			}
 		});
 
 		return amPmBox;
 	}
 
-	protected void notifyDateChangeHandlers(Date value) {
+	private void notifyDateChangeHandlers() {
 		for (ValueChangeHandler<Date> h:dateChangeHandlers) {
 			h.onValueChange(null);
 		}

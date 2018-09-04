@@ -24,7 +24,23 @@ public class DateLink extends InteractorWidgetLink {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setDate((Date) get(item, name));
+		Date date = (Date) get(item, name);
+		
+		if (date == null && getDefault() != null) {
+			date = getDefaultDate();
+		}
+		getWidget().setDate(date);
+	}
+
+	private Date getDefaultDate() {
+		switch (getDefault()) {
+		case "NOW":
+		case "TODAY":
+			return new Date();
+		default:
+			logger.warning("unsupported date default: " + getDefault());
+			return new Date();
+		}
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.ceres.dynamicforms.client;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public abstract class InteractorLink {
 
@@ -31,6 +32,7 @@ public abstract class InteractorLink {
 	
 	protected final String name;
 	protected final Interactor interactor;
+	protected static Logger logger = Logger.getLogger("InteractorLink");
 
 	public InteractorLink(Interactor interactor, String name) {
 		this.interactor = interactor;

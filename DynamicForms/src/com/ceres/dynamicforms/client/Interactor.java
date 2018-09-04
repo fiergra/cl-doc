@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -57,7 +58,7 @@ public class Interactor {
 		}
 		if (changeHandlers != null) {
 			for (LinkChangeHandler changeHandler:changeHandlers) {
-				changeHandler.toDialog(item);
+				changeHandler.beforeToDialog(item);
 			}
 		}
 		for (InteractorLink il:links) {
@@ -75,9 +76,19 @@ public class Interactor {
 			}
 
 			il.toDialog(item);
-			il.hilite(il.isValid());
+			boolean linkIsValid = il.isValid();
+			il.hilite(linkIsValid);
+			
+			isValid = isValid == null ? linkIsValid : linkIsValid && isValid;
 		}
 		isModified = false;
+		
+		if (changeHandlers != null) {
+			for (LinkChangeHandler changeHandler:changeHandlers) {
+				changeHandler.afterToDialog(item);
+			}
+		}
+
 	}
 
 	public void fromDialog(Map<String, Serializable> item) {
@@ -96,7 +107,11 @@ public class Interactor {
 	}
 
 	public static abstract class LinkChangeHandler {
-		protected void toDialog(Map<String,Serializable> item) {}
+		protected void afterToDialog(Map<String,Serializable> item) {}
+		public void beforeToDialog(Map<String, Serializable> item) {
+			// TODO Auto-generated method stub
+			
+		}
 		protected void fromDialog(Map<String,Serializable> item) {}
 		protected abstract void onChange(InteractorLink link);
 	}
@@ -163,9 +178,9 @@ public class Interactor {
 		Iterator<InteractorLink> iter = links.iterator();
 		while (isValid && iter.hasNext()) {
 			InteractorLink curr = iter.next();
-//			GWT.log("checking link " + curr.name);
+			GWT.log("checking link " + curr.name);
 			isValid = isValid && curr.isValid();
-//			GWT.log(String.valueOf(isValid));
+			GWT.log(String.valueOf(isValid));
 		}
 	}
 

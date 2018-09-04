@@ -6,8 +6,6 @@
 <module rename-to='eagendaui'>
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
-	<inherits name="eu.europa.ec.digit.eAgendaCore" />
-
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->
 	<!-- any one of the following lines. -->
@@ -19,8 +17,8 @@
 	<inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
 	<!-- Other module inherits -->
-	<inherits name='eu.europa.ec.digit.eAgendaCore' />
 	<inherits name="com.ceres.dynamicforms.DynamicForms" />
+	<inherits name='eu.europa.ec.digit.eAgendaCore' />
 	<!-- Specify the app entry point class. -->
 	<entry-point class='eu.europa.ec.digit.client.eAgendaUI' />
 

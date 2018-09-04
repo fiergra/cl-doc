@@ -1,5 +1,6 @@
 package com.ceres.dynamicforms.client;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasEnabled;
@@ -45,7 +46,14 @@ public class HGapPanel extends FlexTable implements HasEnabled {
 		int column = getRowCount() > 0 ? getCellCount(0) : 0; 
 		setWidget(0, column, child);
 		getFlexCellFormatter().setStyleName(0, column, "noPadding");
-		child.asWidget().getElement().getStyle().setPaddingRight(3, Unit.PX);
+		
+		Style style = child.asWidget().getElement().getStyle(); 
+		style.setPaddingRight(3, Unit.PX);
+
+		String width = style.getWidth();
+		if (width != null) {
+			getColumnFormatter().setWidth(column, width);
+		}
 	}
 	
 	
