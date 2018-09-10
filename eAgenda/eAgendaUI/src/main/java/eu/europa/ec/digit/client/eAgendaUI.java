@@ -2,7 +2,6 @@ package eu.europa.ec.digit.client;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import com.ceres.dynamicforms.client.MessageBox;
 import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;

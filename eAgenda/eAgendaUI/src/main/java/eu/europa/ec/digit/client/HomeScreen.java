@@ -67,17 +67,7 @@ public class HomeScreen extends DockLayoutPanel {
 					});
 					cmbCampaigns.setSelectedItem(0, true);
 				} else {
-					Campaign campaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
-					eAgendaUI.service.saveCampaign(campaign, new RPCCallback<Campaign>() {
-
-						@Override
-						protected void onResult(Campaign result) {
-							campaign.objectId = result.objectId;
-							cmbCampaigns.addItem(new CampaignSettings(campaign));
-							cmbCampaigns.setSelectedItem(0, true);
-						}
-					});
-
+					createEmptyCampaign(userContext);
 				}
  			}
 
@@ -86,6 +76,20 @@ public class HomeScreen extends DockLayoutPanel {
 	}
 
 	
+	private void createEmptyCampaign(UserContext userContext) {
+		Campaign campaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
+		eAgendaUI.service.saveCampaign(campaign, new RPCCallback<Campaign>() {
+
+			@Override
+			protected void onResult(Campaign result) {
+				campaign.objectId = result.objectId;
+				cmbCampaigns.addItem(new CampaignSettings(campaign));
+				cmbCampaigns.setSelectedItem(0, true);
+			}
+		});
+	}
+
+
 	private RunSearch<IResource> runSearch = new RunSearch<IResource>() {
 
 		@Override
@@ -122,7 +126,13 @@ public class HomeScreen extends DockLayoutPanel {
 		
 		cmbCampaigns.getTextBox().addChangeHandler(e -> eAgendaUI.commando.execute(new ChangeNameCommand(cmbCampaigns.getSelectedItem(), cmbCampaigns.getTextBox().getText(), cmbCampaigns.getTextBox())));
 		cmbCampaigns.setFormatter(c -> c.campaign.name);
-		cmbCampaigns.setChangeHandler(selectedCampaign -> setSelectedCampaign(selectedCampaign.campaign));
+		cmbCampaigns.setChangeHandler(selectedCampaign -> { 
+			if (selectedCampaign != null) {
+				setSelectedCampaign(selectedCampaign.campaign);
+			} else {
+				createEmptyCampaign(eAgendaUI.userContext);
+			}
+		});
 		FlexTable hpMainItem = new FlexTable();
 		hpMainItem.setStyleName("mainItem");
 		hpMainItem.setWidth("100%");

@@ -128,7 +128,8 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		UpdateWebSocketServer.notifyAll(actionType, a);
 		
 		try {
-			String[] recipients = new String[] { getUserEmail() };
+			
+			String[] recipients = new String[] { a.guest.emailAddress != null ? a.guest.emailAddress : getConnectedUserEmail() };
 			
 			String messageBody;
 			
@@ -226,7 +227,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		return du != null ? login(du.getName()) : null;
 	}
 	
-	private String getUserEmail() {
+	private String getConnectedUserEmail() {
 		DetailedUser du = getDetailedUser();
 		return du != null ? du.getEmail() : "ralph.fiergolla@ec.europa.eu";
 	}
