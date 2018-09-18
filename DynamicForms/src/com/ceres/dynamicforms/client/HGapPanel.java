@@ -4,6 +4,8 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment.VerticalAlignmentConstant;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -53,6 +55,7 @@ public class HGapPanel extends FlexTable implements HasEnabled {
 		String width = style.getWidth();
 		if (width != null) {
 			getColumnFormatter().setWidth(column, width);
+			getCellFormatter().setVerticalAlignment(0, column, HasVerticalAlignment.ALIGN_TOP);
 		}
 	}
 	

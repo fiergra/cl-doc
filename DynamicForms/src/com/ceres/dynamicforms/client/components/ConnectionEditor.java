@@ -35,11 +35,16 @@ public class ConnectionEditor extends LayoutPanel {
 	private int offsetY;
 	
 	private ResultCallback<Edge> onClickEdge;
+	private Runnable onClickCanvas;
 	
 	public ConnectionEditor() {
 	}
 	
 	
+	
+	public void setOnClickCanvas(Runnable onClickCanvas) {
+		this.onClickCanvas = onClickCanvas;
+	}
 	
 	public void setOnClickEdge(ResultCallback<Edge> onClickEdge) {
 		this.onClickEdge = onClickEdge;
@@ -77,6 +82,11 @@ public class ConnectionEditor extends LayoutPanel {
 			canvas = Canvas.createIfSupported();
 			if (canvas != null) {
 				add(canvas);
+				
+				if (onClickCanvas != null) {
+					canvas.addClickHandler(e -> onClickCanvas.run());
+				}
+
 				canvas.addMouseMoveHandler(new MouseMoveHandler() {
 					
 					@Override

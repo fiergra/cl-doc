@@ -21,17 +21,24 @@ public class GroupLayoutPanel extends DockLayoutPanel implements GroupPanel {
 	
 	public GroupLayoutPanel(String title, Widget content) {
 		super(Unit.PX);
-		this.content = content;
-		header.add(headerContent);
 		setStyleName("groupLayoutPanel");
+		this.content = content;
+
+		titleLabel = new Label(title);
+		titleLabel.setStyleName("headerPanelTitle");
+		header.add(titleLabel);
+		header.add(headerContent);
+
 		header.setStyleName("headerPanel");
 		header.setSize("100%", "42px");
 		header.setSpacing(5);
 		header.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+
+		headerContent.setSize("100%", "100%");
+		headerContent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		headerContent.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		titleLabel = new Label(title);
-		titleLabel.setStyleName("headerPanelTitle");
-		headerContent.add(titleLabel);
+
+		
 		addNorth(header, 42);
 		add(content);
 		
