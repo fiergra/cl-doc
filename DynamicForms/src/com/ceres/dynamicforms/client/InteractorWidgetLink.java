@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class InteractorWidgetLink extends InteractorLink {
+public abstract class InteractorWidgetLink<T> extends InteractorLink<T> {
 	private static final String OBJECT_TYPE = "objectType";
 	public static final String FOCUS = "focus";
 	public static final String REQUIRED = "required";

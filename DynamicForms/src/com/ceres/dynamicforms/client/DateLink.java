@@ -9,7 +9,7 @@ import com.ceres.dynamicforms.client.components.DateTextBox;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-public class DateLink extends InteractorWidgetLink {
+public class DateLink extends InteractorWidgetLink<Map<String, Serializable>> {
 
 	public DateLink(Interactor interactor, String fieldName, DateTextBox widget, HashMap<String, String> attributes) {
 		super(interactor, fieldName, widget, attributes);

@@ -11,7 +11,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
-public class DateBoxLink extends InteractorWidgetLink {
+public class DateBoxLink extends InteractorWidgetLink<Map<String, Serializable>> {
 
 	public DateBoxLink(final Interactor interactor, String fieldName, DateBox db, HashMap<String, String> attributes) {
 		super(interactor, fieldName, db, attributes);

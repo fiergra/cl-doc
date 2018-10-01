@@ -28,8 +28,6 @@ public class LogBook extends FlexTable {
 
 	private DateTimeFormat dtf = DateTimeFormat.getFormat("dd/MM HH:mm:ss");
 	
-	private DateTimeFormat tf = DateTimeFormat.getFormat("HH:mm:ss");
-	
 	private void insertLine(LogEntry logEntry) {
 		insertRow(0);
 		addLine(0, logEntry);

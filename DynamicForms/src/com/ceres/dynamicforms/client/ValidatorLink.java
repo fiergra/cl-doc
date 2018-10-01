@@ -7,7 +7,7 @@ import java.util.Map;
 import com.ceres.dynamicforms.client.Interactor.LinkChangeHandler;
 import com.ceres.dynamicforms.client.components.AbstractFactory;
 
-public class ValidatorLink extends InteractorLink {
+public class ValidatorLink extends InteractorLink<Map<String, Serializable>> {
 	
 	public enum Test {GT, GTE, LT, LTE};
 	
@@ -15,23 +15,23 @@ public class ValidatorLink extends InteractorLink {
 	public static final String LEFT = "left";
 	public static final String RIGHT = "right";
 	
-	public static class Factory extends AbstractFactory {
+	public static class Factory extends AbstractFactory<Map<String, Serializable>> {
 
-		public Factory(ITranslator translator) {
+		public Factory(ITranslator<Map<String, Serializable>> translator) {
 			super(translator);
 		}
 
 		@Override
-		public InteractorLink createLink(final Interactor interactor, String fieldName, HashMap<String, String> attributes) {
+		public InteractorLink<Map<String, Serializable>> createLink(final Interactor<Map<String, Serializable>> interactor, String fieldName, HashMap<String, String> attributes) {
 			String sTest = attributes.get(TEST);
 			Test test = Test.valueOf(sTest);
 			final ValidatorLink vLink = new ValidatorLink(interactor, test, attributes.get(LEFT), attributes.get(RIGHT));
 			
-			interactor.addChangeHandler(new LinkChangeHandler() {
+			interactor.addChangeHandler(new LinkChangeHandler<Map<String, Serializable>>() {
 				private boolean wasValid = true;
 				
 				@Override
-				protected void onChange(InteractorLink link) {
+				protected void onChange(InteractorLink<Map<String, Serializable>> link) {
 					if (link != vLink) {
 						boolean isValid = vLink.isValid();
 						vLink.hilite(isValid);
@@ -53,7 +53,7 @@ public class ValidatorLink extends InteractorLink {
 	private String rightName;
 	private Test test;
 	
-	public ValidatorLink(Interactor interactor, Test test, String leftName, String rightName) {
+	public ValidatorLink(Interactor<Map<String, Serializable>> interactor, Test test, String leftName, String rightName) {
 		super(interactor, "validator#" + instanceCounter++);
 		this.test = test; 
 		this.leftName = leftName; 
@@ -74,8 +74,8 @@ public class ValidatorLink extends InteractorLink {
 
 	@Override
 	protected void hilite(boolean isValid) {
-		InteractorLink left = interactor.getLink(leftName);
-		InteractorLink right = interactor.getLink(rightName);
+		InteractorLink<Map<String, Serializable>> left = interactor.getLink(leftName);
+		InteractorLink<Map<String, Serializable>> right = interactor.getLink(rightName);
 		
 		left.hilite(isValid);
 		right.hilite(isValid);
@@ -87,7 +87,7 @@ public class ValidatorLink extends InteractorLink {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private Comparable getComparable(InteractorLink link) {
+	private Comparable getComparable(InteractorLink<Map<String, Serializable>> link) {
 		Map<String, Serializable> item = new HashMap<>();
 		link.fromDialog(item);
 		Serializable value = item.get(link.name);
@@ -97,8 +97,8 @@ public class ValidatorLink extends InteractorLink {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean isValid() {
-		InteractorLink left = interactor.getLink(leftName);
-		InteractorLink right = interactor.getLink(rightName);
+		InteractorLink<Map<String, Serializable>> left = interactor.getLink(leftName);
+		InteractorLink<Map<String, Serializable>> right = interactor.getLink(rightName);
 		boolean isValid = left.isValid() && right.isValid();
 		
 		if (isValid && (!left.isEmpty() || right.isEmpty())) {

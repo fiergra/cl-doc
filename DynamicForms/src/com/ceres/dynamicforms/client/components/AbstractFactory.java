@@ -5,11 +5,11 @@ import java.util.HashMap;
 import com.ceres.dynamicforms.client.ILinkFactory;
 import com.ceres.dynamicforms.client.ITranslator;
 
-public abstract class AbstractFactory implements ILinkFactory {
+public abstract class AbstractFactory<T> implements ILinkFactory<T> {
 
-	protected final ITranslator translator;
+	protected final ITranslator<T> translator;
 	
-	public AbstractFactory(ITranslator translator) {
+	public AbstractFactory(ITranslator<T> translator) {
 		this.translator = translator;
 	}
 	

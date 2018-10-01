@@ -66,13 +66,13 @@ public class WidgetCreator {
 	}
 
 
-	public static Widget createWidget(String xml, Interactor interactor) {
+	public static Widget createWidget(String xml, Interactor<Map<String, Serializable>> interactor) {
 		return createWidget(xml, interactor, null);
 	}	
 	
-	public static Widget createWidget(String xml, Interactor interactor, ITranslator translator) {
+	public static Widget createWidget(String xml, Interactor<Map<String, Serializable>> interactor, ITranslator<Map<String, Serializable>> translator) {
 		if (translator == null) {
-			translator = new SimpleTranslator();
+			translator = new SimpleTranslator<Map<String, Serializable>>();
 		}
 		Widget result = null;
 		Document document = XMLParser.parse(xml);
@@ -89,7 +89,7 @@ public class WidgetCreator {
 		return result;
 	}
 
-	private static Widget processChild(Document document, Node item, Widget panel, Interactor interactor, int level, ITranslator translator) {
+	private static Widget processChild(Document document, Node item, Widget panel, Interactor<Map<String, Serializable>> interactor, int level, ITranslator<Map<String, Serializable>> translator) {
 		Widget widget = null;
 		if (item instanceof Element) {
 			Element element = (Element)item;
@@ -120,7 +120,6 @@ public class WidgetCreator {
 		return widget;
 	}
 
-	@SuppressWarnings("unused")
 	private static String levelPrefix(int level) {
 		String prefix = "";
 		for (int i = 0; i < level; i++) {
@@ -229,17 +228,17 @@ public class WidgetCreator {
 		linkFactories.put(localName, factory);
 	}
 	
-	private static Widget createWidgetFromElement(Element element, Interactor interactor, ITranslator translator) {
+	private static Widget createWidgetFromElement(Element element, Interactor<Map<String, Serializable>> interactor, ITranslator<Map<String, Serializable>> translator) {
 		String tagName = element.getTagName();
 		return createWidgetFromElementName(tagName, element.toString(), asHashMap(element.getAttributes()), interactor, translator);
 	}
 	
-	public static Widget createWidgetFromElementName(String tagName, String nodeValue, HashMap<String, String> attributes, final Interactor interactor, ITranslator translator) {
+	public static Widget createWidgetFromElementName(String tagName, String nodeValue, HashMap<String, String> attributes, final Interactor<Map<String, Serializable>> interactor, ITranslator<Map<String, Serializable>> translator) {
 		int index = tagName.indexOf(":");
 		String localName = tagName.substring(index > 0 ? index + 1 : 0);
 		Widget widget = null;
-		InteractorWidgetLink wLink = null;
-		InteractorLink iLink = null;
+		InteractorWidgetLink<Map<String, Serializable>> wLink = null;
+		InteractorLink<Map<String, Serializable>> iLink = null;
 		final String fieldName; 
 		
 		if (attributes.containsKey("fieldName")) {
@@ -388,7 +387,7 @@ public class WidgetCreator {
 		} else if ("HTML".equals(localName)){
 			final HTML html = new HTML();
 			widget = html;
-			wLink = new InteractorWidgetLink(interactor, fieldName, widget, attributes) {
+			wLink = new InteractorWidgetLink<Map<String, Serializable>>(interactor, fieldName, widget, attributes) {
 				
 				@Override
 				public void toDialog(Map<String, Serializable> item) {
@@ -404,11 +403,11 @@ public class WidgetCreator {
 				}
 			};
 		} else {
-			ILinkFactory linkFactory = linkFactories.get(localName);
+			ILinkFactory<Map<String, Serializable>> linkFactory = linkFactories.get(localName);
 			if (linkFactory != null) {
 				iLink = linkFactory.createLink(interactor, fieldName, attributes);
 				if (iLink instanceof InteractorWidgetLink) {
-					wLink = (InteractorWidgetLink) iLink;
+					wLink = (InteractorWidgetLink<Map<String, Serializable>>) iLink;
 					if (wLink != null && attributes != null) {
 						wLink.setObjectType(attributes.get("objectType"));
 					}

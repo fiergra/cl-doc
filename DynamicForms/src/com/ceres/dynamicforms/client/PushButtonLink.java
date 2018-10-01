@@ -8,7 +8,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.PushButton;
 
-public class PushButtonLink extends InteractorWidgetLink {
+public class PushButtonLink extends InteractorWidgetLink<Map<String, Serializable>> {
 
 	public PushButtonLink(final Interactor interactor, String name, PushButton widget, HashMap<String, String> attributes) {
 		super(interactor, name, widget, attributes);

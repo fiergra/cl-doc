@@ -8,9 +8,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.TextBoxBase;
 
-public class TextLink extends InteractorWidgetLink {
+public class TextLink extends InteractorWidgetLink<Map<String, Serializable>> {
 
-	public TextLink(final Interactor interactor, String fieldName, TextBoxBase widget, HashMap<String, String> attributes) {
+	public TextLink(final Interactor<Map<String, Serializable>> interactor, String fieldName, TextBoxBase widget, HashMap<String, String> attributes) {
 		super(interactor, fieldName, widget, attributes);
 		widget.addChangeHandler(new ChangeHandler() {
 			

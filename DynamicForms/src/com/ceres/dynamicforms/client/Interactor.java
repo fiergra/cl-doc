@@ -1,39 +1,37 @@
 package com.ceres.dynamicforms.client;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Widget;
 
-public class Interactor {
+public class Interactor<T> {
 	
-	private final Collection<InteractorLink> links = new HashSet<InteractorLink>();
-	private List<LinkChangeHandler> changeHandlers;
+	private final Collection<InteractorLink<T>> links = new HashSet<InteractorLink<T>>();
+	private List<LinkChangeHandler<T>> changeHandlers;
 	private boolean isModified;
 	private Boolean isValid = null;
-	private Map<String, Serializable> displayedItem;
+	private T displayedItem;
 	
-	public void addLink(InteractorLink link) {
+	public void addLink(InteractorLink<T> link) {
 		links.add(link);
 	}
 
 	
-	public Map<String, Serializable> getDisplayedItem() {
+	public T getDisplayedItem() {
 		return displayedItem;
 	}
 
-	public InteractorLink getLink(String name) {
-		InteractorLink result = null;
-		Iterator <InteractorLink> iter = links.iterator(); 
+	public InteractorLink<T> getLink(String name) {
+		InteractorLink<T> result = null;
+		Iterator <InteractorLink<T>> iter = links.iterator(); 
 		while (result == null && iter.hasNext()) {
-			InteractorLink curr = iter.next();
+			InteractorLink<T> curr = iter.next();
 			if (name.equals(curr.getName())) {
 				result = curr;
 			}
@@ -49,29 +47,29 @@ public class Interactor {
 		changeHandlers.clear();
 	}
 	
-	public void toDialog(ITranslator translator, Map<String,Serializable> item) {
+	public void toDialog(ITranslator<T> translator, T item) {
 		
 		this.displayedItem = item;
 		
 		if (translator == null) {
-			translator = new SimpleTranslator();
+			translator = new SimpleTranslator<T>();
 		}
 		if (changeHandlers != null) {
-			for (LinkChangeHandler changeHandler:changeHandlers) {
+			for (LinkChangeHandler<T> changeHandler:changeHandlers) {
 				changeHandler.beforeToDialog(item);
 			}
 		}
-		for (InteractorLink il:links) {
+		for (InteractorLink<T> il:links) {
 			Widget widget;
 			if (il instanceof InteractorWidgetLink) {
-				widget = ((InteractorWidgetLink) il).getWidget();
-				String objectType = ((InteractorWidgetLink) il).getObjectType();
+				widget = ((InteractorWidgetLink<T>) il).getWidget();
+				String objectType = ((InteractorWidgetLink<T>) il).getObjectType();
 				if (objectType != null) {
 					boolean isVisible = translator.isVisible(item, objectType);
 					boolean isEnabled = translator.isEnabled(item, objectType);
 					widget.setVisible(isVisible);
 					il.enable(isEnabled);
-					((InteractorWidgetLink) il).requestFocus();
+					((InteractorWidgetLink<T>) il).requestFocus();
 				}
 			}
 
@@ -84,20 +82,20 @@ public class Interactor {
 		isModified = false;
 		
 		if (changeHandlers != null) {
-			for (LinkChangeHandler changeHandler:changeHandlers) {
+			for (LinkChangeHandler<T> changeHandler:changeHandlers) {
 				changeHandler.afterToDialog(item);
 			}
 		}
 
 	}
 
-	public void fromDialog(Map<String, Serializable> item) {
+	public void fromDialog(T item) {
 		if (changeHandlers != null) {
-			for (LinkChangeHandler changeHandler:changeHandlers) {
+			for (LinkChangeHandler<T> changeHandler:changeHandlers) {
 				changeHandler.fromDialog(item);
 			}
 		}
-		for (InteractorLink il:links) {
+		for (InteractorLink<T> il:links) {
 			il.fromDialog(item);
 		}
 	}
@@ -106,19 +104,19 @@ public class Interactor {
 		return isModified;
 	}
 
-	public static abstract class LinkChangeHandler {
-		protected void afterToDialog(Map<String,Serializable> item) {}
-		public void beforeToDialog(Map<String, Serializable> item) {
+	public static abstract class LinkChangeHandler<T> {
+		protected void afterToDialog(T item) {}
+		public void beforeToDialog(T item) {
 			// TODO Auto-generated method stub
 			
 		}
-		protected void fromDialog(Map<String,Serializable> item) {}
-		protected abstract void onChange(InteractorLink link);
+		protected void fromDialog(T item) {}
+		protected abstract void onChange(InteractorLink<T> link);
 	}
 	
-	public void addChangeHandler(LinkChangeHandler changeHandler) {
+	public void addChangeHandler(LinkChangeHandler<T> changeHandler) {
 		if (changeHandlers == null) {
-			changeHandlers = new ArrayList<LinkChangeHandler>();
+			changeHandlers = new ArrayList<LinkChangeHandler<T>>();
 		}
 		changeHandlers.add(changeHandler);
 	}
@@ -132,6 +130,7 @@ public class Interactor {
 
 	
 
+	@SuppressWarnings("unchecked")
 	public void revalidate() {
 		boolean wasValid = isValid();
 		validateAll();
@@ -141,12 +140,12 @@ public class Interactor {
 				links.forEach(l -> l.hilite(l.isValid()));
 			}
 			if (changeHandlers != null) {
-				changeHandlers.forEach(h -> h.onChange(InteractorLink.DUMMY));
+				changeHandlers.forEach(h -> h.onChange((InteractorLink<T>) InteractorLink.DUMMY));
 			}
 		}
 	}
 
-	public void onChange(InteractorLink link) {
+	public void onChange(InteractorLink<T> link) {
 		isModified = true;
 		link.hilite(link.isValid());
 		if (!link.isValid()) {
@@ -158,7 +157,7 @@ public class Interactor {
 		}
 
 		if (changeHandlers != null) {
-			for (LinkChangeHandler changeHandler:changeHandlers) {
+			for (LinkChangeHandler<T> changeHandler:changeHandlers) {
 				changeHandler.onChange(link);
 			}
 		}
@@ -166,7 +165,7 @@ public class Interactor {
 
 	public boolean isEmpty() {
 		boolean isEmpty = true;
-		Iterator<InteractorLink> iter = links.iterator();
+		Iterator<InteractorLink<T>> iter = links.iterator();
 		while (isEmpty && iter.hasNext()) {
 			isEmpty = isEmpty && iter.next().isEmpty();
 		}
@@ -175,9 +174,9 @@ public class Interactor {
 
 	private void validateAll() {
 		isValid = true;
-		Iterator<InteractorLink> iter = links.iterator();
+		Iterator<InteractorLink<T>> iter = links.iterator();
 		while (isValid && iter.hasNext()) {
-			InteractorLink curr = iter.next();
+			InteractorLink<T> curr = iter.next();
 			GWT.log("checking link " + curr.name);
 			isValid = isValid && curr.isValid();
 			GWT.log(String.valueOf(isValid));
@@ -189,7 +188,7 @@ public class Interactor {
 	}
 
 	public void enable(boolean enabled) {
-		for (InteractorLink il:links) {
+		for (InteractorLink<T> il:links) {
 			il.enable(enabled);
 		}
 	}
@@ -200,12 +199,12 @@ public class Interactor {
 
 	public void setFocus() {
 		Focusable f = null;
-		Iterator<InteractorLink>linkIter = links.iterator();
+		Iterator<InteractorLink<T>>linkIter = links.iterator();
 		
 		while (f == null && linkIter.hasNext()) {
-			InteractorLink curr = linkIter.next();
-			if (curr instanceof InteractorWidgetLink && ((InteractorWidgetLink)curr).getWidget() instanceof Focusable) {
-				f = (Focusable) ((InteractorWidgetLink)curr).getWidget();
+			InteractorLink<T> curr = linkIter.next();
+			if (curr instanceof InteractorWidgetLink && ((InteractorWidgetLink<T>)curr).getWidget() instanceof Focusable) {
+				f = (Focusable) ((InteractorWidgetLink<T>)curr).getWidget();
 			}
 		}
 		
@@ -215,10 +214,10 @@ public class Interactor {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Widget> T getWidget(String linkName) {
-		InteractorLink link = getLink(linkName);
-		InteractorWidgetLink widgetLink = (InteractorWidgetLink) link;
-		return (T) (widgetLink != null ? widgetLink.getWidget() : null);
+	public <V extends Widget> V getWidget(String linkName) {
+		InteractorLink<T> link = getLink(linkName);
+		InteractorWidgetLink<T> widgetLink = (InteractorWidgetLink<T>) link;
+		return (V) (widgetLink != null ? widgetLink.getWidget() : null);
 	}
 
 

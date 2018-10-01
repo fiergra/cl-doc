@@ -8,11 +8,11 @@ import java.util.Map;
 
 import com.ceres.dynamicforms.client.components.MapListRenderer;
 
-public class MapLinkFactory implements ILinkFactory {
+public class MapLinkFactory implements ILinkFactory<Map<String, Serializable>> {
 
-	protected final  ITranslator translator;
+	protected final  ITranslator<Map<String, Serializable>> translator;
 
-	public MapLinkFactory(ITranslator translator) {
+	public MapLinkFactory(ITranslator<Map<String, Serializable>> translator) {
 		this.translator = translator;
 	}
 	
@@ -21,13 +21,13 @@ public class MapLinkFactory implements ILinkFactory {
 	}
 	
 	@Override
-	public InteractorWidgetLink createLink(final Interactor interactor, final String fieldName, HashMap<String, String> attributes) {
+	public InteractorWidgetLink<Map<String, Serializable>> createLink(final Interactor<Map<String, Serializable>> interactor, final String fieldName, HashMap<String, String> attributes) {
 		String sLabels = attributes.get(MapListRenderer.LABELS);
 		String[] labels = sLabels.split(";");
 //		final String className = fieldName;//attributes.get(CLASSNAME);
 		final MapList ml = createWidget(labels, attributes);
 		setColDefs(ml, attributes);
-		final InteractorWidgetLink mlLink = new InteractorWidgetLink(interactor, fieldName, ml, attributes) {
+		final InteractorWidgetLink<Map<String, Serializable>> mlLink = new InteractorWidgetLink<Map<String, Serializable>>(interactor, fieldName, ml, attributes) {
 			
 			@Override
 			public void toDialog(Map<String, Serializable> item) {

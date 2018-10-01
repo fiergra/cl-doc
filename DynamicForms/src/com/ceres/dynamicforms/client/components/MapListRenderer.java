@@ -35,7 +35,7 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 			this.act = act;
 		}
 
-		final Interactor interactor = new Interactor() {
+		final Interactor<Map<String, Serializable>> interactor = new Interactor<Map<String, Serializable>>() {
 
 			@Override
 			public void hilite(boolean isValid) {
@@ -51,16 +51,16 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 	}
 	
 	private final List<LineContext> lineContexts = new ArrayList<LineContext>();
-	private final List<Interactor> interactors = new ArrayList<Interactor>();
+	private final List<Interactor<Map<String, Serializable>>> interactors = new ArrayList<>();
 	private final List<Map<String, Serializable>> deleted = new ArrayList<Map<String,Serializable>>();
 
 	
 	private final String[] labels;
 	private Runnable changeHandler;
 	private LineContext lc;
-	private ITranslator translator;
+	private ITranslator<Map<String, Serializable>> translator;
 
-	public MapListRenderer(ITranslator translator, String[] labels, Runnable changeHandler) {
+	public MapListRenderer(ITranslator<Map<String, Serializable>> translator, String[] labels, Runnable changeHandler) {
 		this.translator = translator;
 		this.labels = labels;
 		setStyleName("namedValuesList");
@@ -110,9 +110,9 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 
 	protected abstract Map<String, Serializable> newAct();
 	
-	protected abstract boolean isValid(Interactor interactor);
+	protected abstract boolean isValid(Interactor<Map<String, Serializable>> interactor);
 	
-	public List<Interactor> getInteractors() {
+	public List<Interactor<Map<String, Serializable>>> getInteractors() {
 		return interactors;
 	}
 	
@@ -136,10 +136,10 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 	private LineContext addRow(Map<String, Serializable> newAct) {
 		final LineContext lineContext = new LineContext(this, newAct);
 
-		lineContext.interactor.addChangeHandler(new LinkChangeHandler() {
+		lineContext.interactor.addChangeHandler(new LinkChangeHandler<Map<String, Serializable>>() {
 			
 			@Override
-			public void onChange(InteractorLink link) {
+			public void onChange(InteractorLink<Map<String, Serializable>> link) {
 				if (changeHandler != null) {
 					changeHandler.run();
 				}
@@ -169,12 +169,12 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 		PushButton pbDelete = new PushButton(img);
 		pbDelete.setPixelSize(18, 18);
 		pbDelete.setStyleName("mapListDeleteButton");
-		final InteractorLink link = new PushButtonLink(lineContext.interactor, "$pbDelete", pbDelete, null);
+		final InteractorLink<Map<String, Serializable>> link = new PushButtonLink(lineContext.interactor, "$pbDelete", pbDelete, null);
 		lineContext.interactor.addLink(link);
-		lineContext.interactor.addChangeHandler(new LinkChangeHandler() {
+		lineContext.interactor.addChangeHandler(new LinkChangeHandler<Map<String, Serializable>>() {
 			
 			@Override
-			protected void onChange(InteractorLink l) {
+			protected void onChange(InteractorLink<Map<String, Serializable>> l) {
 				if (l == link && !isLastLine(lineContext)) {
 					removeRow(lineContext);
 				}
@@ -211,7 +211,7 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 
 	protected abstract boolean canRemove(Map<String, Serializable> act);
 
-	protected abstract void createNewRow(int row, Interactor interactor);
+	protected abstract void createNewRow(int row, Interactor<Map<String, Serializable>> interactor);
 
 	protected boolean isLastLine(LineContext interactor) {
 		return lineContexts.indexOf(interactor) == lineContexts.size() - 1;

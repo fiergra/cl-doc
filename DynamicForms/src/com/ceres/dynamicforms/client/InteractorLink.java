@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public abstract class InteractorLink {
+public abstract class InteractorLink<T> {
 
-	public static final InteractorLink DUMMY = new InteractorLink(null, "dummy") {
+	public static final InteractorLink<Object> DUMMY = new InteractorLink<Object>(null, "dummy") {
 		
 		@Override
-		public void toDialog(Map<String, Serializable> item) {
+		public void toDialog(Object item) {
 		}
 		
 		@Override
@@ -22,7 +22,7 @@ public abstract class InteractorLink {
 		}
 		
 		@Override
-		public void fromDialog(Map<String, Serializable> item) {
+		public void fromDialog(Object item) {
 		}
 		
 		@Override
@@ -31,16 +31,17 @@ public abstract class InteractorLink {
 	};
 	
 	protected final String name;
-	protected final Interactor interactor;
+	protected final Interactor<T> interactor;
 	protected static Logger logger = Logger.getLogger("InteractorLink");
 
-	public InteractorLink(Interactor interactor, String name) {
+	public InteractorLink(Interactor<T> interactor, String name) {
 		this.interactor = interactor;
 		this.name = name;
 	}
 
-	public abstract void toDialog(Map<String, Serializable> item);
-	public abstract void fromDialog(Map<String, Serializable> item);
+	public abstract void toDialog(T item);
+	public abstract void fromDialog(T item);
+	
 	public abstract void enable(boolean enabled);
 	protected abstract void hilite(boolean isValid);
 	public abstract boolean isEmpty();
@@ -80,16 +81,30 @@ public abstract class InteractorLink {
 
 	@Override
 	public int hashCode() {
-		return name != null ? name.hashCode() : super.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (name != null && obj instanceof InteractorLink) {
-			return name.equals(((InteractorLink)obj).name);
-		}
-		return super.equals(obj);
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		@SuppressWarnings("rawtypes")
+		InteractorLink other = (InteractorLink) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
 	}
+
 
 	
 }

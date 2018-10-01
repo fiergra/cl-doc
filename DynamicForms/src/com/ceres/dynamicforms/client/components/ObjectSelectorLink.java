@@ -8,7 +8,7 @@ import com.ceres.dynamicforms.client.Interactor;
 import com.ceres.dynamicforms.client.InteractorWidgetLink;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ObjectSelectorLink<T extends Serializable> extends InteractorWidgetLink {
+public class ObjectSelectorLink<T extends Serializable> extends InteractorWidgetLink<Map<String, Serializable>> {
 
 	public ObjectSelectorLink(Interactor interactor, String name, Widget widget, HashMap<String, String> attributes) {
 		super(interactor, name, widget, attributes);

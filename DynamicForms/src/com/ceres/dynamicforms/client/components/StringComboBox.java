@@ -13,25 +13,25 @@ import com.google.gwt.user.client.ui.ListBox;
 
 public class StringComboBox extends ListBox {
 	
-	public static class Factory extends AbstractFactory {
+	public static class Factory extends AbstractFactory<Map<String, Serializable>> {
 		
 		public static final String HAS_NULL = "hasNull";
 		public static final String VALUES = "values";
 		public static final String SELECTED = "selected";
 
-		public Factory(ITranslator tl) {
+		public Factory(ITranslator<Map<String, Serializable>> tl) {
 			super(tl);
 		}
 
 		@Override
-		public InteractorWidgetLink createLink(Interactor interactor, final String fieldName, HashMap<String, String> attributes) {
+		public InteractorWidgetLink<Map<String, Serializable>> createLink(Interactor<Map<String, Serializable>> interactor, final String fieldName, HashMap<String, String> attributes) {
 			final StringComboBox sBox = new StringComboBox(translator, getStrings(attributes, VALUES), getBoolean(attributes, HAS_NULL));
 			
 			if (attributes.containsKey(SELECTED)) {
 				sBox.setSelected(attributes.get(SELECTED));
 			}
 			
-			InteractorWidgetLink link = new InteractorWidgetLink(interactor, fieldName, sBox, attributes) {
+			InteractorWidgetLink<Map<String, Serializable>> link = new InteractorWidgetLink<Map<String, Serializable>>(interactor, fieldName, sBox, attributes) {
 				
 				@Override
 				public void toDialog(Map<String, Serializable> item) {

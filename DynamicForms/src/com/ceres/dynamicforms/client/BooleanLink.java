@@ -8,9 +8,9 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 
-public class BooleanLink extends InteractorWidgetLink {
+public class BooleanLink extends InteractorWidgetLink<Map<String, Serializable>> {
 
-	public BooleanLink(final Interactor interactor, String fieldName, CheckBox widget,
+	public BooleanLink(final Interactor<Map<String, Serializable>> interactor, String fieldName, CheckBox widget,
 			HashMap<String, String> attributes) {
 		super(interactor, fieldName, widget, attributes);
 		widget.addClickHandler(new ClickHandler() {

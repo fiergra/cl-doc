@@ -1,10 +1,7 @@
 package com.ceres.dynamicforms.client;
 
-import java.io.Serializable;
-import java.util.Map;
-
-public interface ITranslator {
+public interface ITranslator<T> {
 	String getLabel(String key);
-	boolean isVisible(Map<String, Serializable> item, String objectType);
-	boolean isEnabled(Map<String, Serializable> item, String objectType);
+	boolean isVisible(T item, String objectType);
+	boolean isEnabled(T item, String objectType);
 }

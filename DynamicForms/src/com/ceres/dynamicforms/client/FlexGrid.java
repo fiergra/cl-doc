@@ -1,7 +1,9 @@
 package com.ceres.dynamicforms.client;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.ceres.dynamicforms.client.components.EnabledHorizontalPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -11,12 +13,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class FlexGrid extends FlexTable {
 	
-	public static class Factory implements ILinkFactory {
+	public static class Factory implements ILinkFactory<Map<String, Serializable>> {
 
 		@Override
-		public InteractorWidgetLink createLink(Interactor interactor, String fieldName, HashMap<String, String> attributes) {
+		public InteractorWidgetLink<Map<String, Serializable>> createLink(Interactor<Map<String, Serializable>> interactor, String fieldName, HashMap<String, String> attributes) {
 			Widget widget = new FlexGrid();
-			return new PassiveInteractorLink(interactor, fieldName, widget, attributes);
+			return new PassiveInteractorLink<Map<String, Serializable>>(interactor, fieldName, widget, attributes);
 		}
 		
 	}
@@ -29,12 +31,12 @@ public class FlexGrid extends FlexTable {
 	
 	public static class GridItem extends EnabledHorizontalPanel {
 		
-		public static class Factory implements ILinkFactory {
+		public static class Factory implements ILinkFactory<Map<String, Serializable>> {
 
 			@Override
-			public InteractorWidgetLink createLink(Interactor interactor, String fieldName, HashMap<String, String> attributes) {
+			public InteractorWidgetLink<Map<String, Serializable>> createLink(Interactor<Map<String, Serializable>> interactor, String fieldName, HashMap<String, String> attributes) {
 				Widget widget = new GridItem(attributes.get("colSpan"));
-				return new PassiveInteractorLink(interactor, fieldName, widget, attributes);
+				return new PassiveInteractorLink<Map<String, Serializable>>(interactor, fieldName, widget, attributes);
 			}
 			
 		}
@@ -51,12 +53,12 @@ public class FlexGrid extends FlexTable {
 	
 	public static class GridRow extends Panel {
 
-		public static class Factory implements ILinkFactory {
+		public static class Factory implements ILinkFactory<Map<String, Serializable>> {
 
 			@Override
-			public InteractorWidgetLink createLink(Interactor interactor, String fieldName, HashMap<String, String> attributes) {
+			public InteractorWidgetLink<Map<String, Serializable>> createLink(Interactor<Map<String, Serializable>> interactor, String fieldName, HashMap<String, String> attributes) {
 				Widget widget = new GridRow();
-				return new PassiveInteractorLink(interactor, fieldName, widget, attributes);
+				return new PassiveInteractorLink<Map<String, Serializable>>(interactor, fieldName, widget, attributes);
 			}
 			
 		}
