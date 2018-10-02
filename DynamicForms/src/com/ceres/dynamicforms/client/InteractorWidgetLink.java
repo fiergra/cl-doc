@@ -24,7 +24,7 @@ public abstract class InteractorWidgetLink<T> extends InteractorLink<T> {
 	private String objectType;
 	private String sDefault;
 
-	public InteractorWidgetLink(Interactor interactor, String name, Widget widget, HashMap<String, String> attributes) {
+	public InteractorWidgetLink(Interactor<T> interactor, String name, Widget widget, HashMap<String, String> attributes) {
 		super(interactor, name);
 		this.widget = widget;
 		this.attributes = attributes;
