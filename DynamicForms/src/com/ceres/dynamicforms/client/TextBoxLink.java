@@ -14,6 +14,7 @@ public class TextBoxLink<T> extends InteractorWidgetLink<T> {
 		super(interactor, "TextBoxLink#" + (count++), txtBox, makeAttributes(required, false, false, false));
 		this.getter = getter;
 		this.setter = setter;
+		txtBox.addChangeHandler(e -> interactor.onChange(this));
 	}
 
 	public static HashMap<String, String> makeAttributes(boolean required, boolean enabled, boolean focus, boolean isDefault) {

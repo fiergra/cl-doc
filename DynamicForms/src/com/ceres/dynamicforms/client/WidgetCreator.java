@@ -261,6 +261,7 @@ public class WidgetCreator {
 			//			ScriptInjector.fromString();
 		} else if ("ScrollPanel".equals(localName)){
 			widget = new ScrollPanel();
+			widget.addStyleName("scrollPanel");
 		} else if ("Image".equals(localName)){
 			String source = attributes.get("source");
 			widget = new Image(source);
@@ -387,11 +388,23 @@ public class WidgetCreator {
 		} else if ("HTML".equals(localName)){
 			final HTML html = new HTML();
 			widget = html;
+			String nullValue = attributes.containsKey("nullValue") ? attributes.get("nullValue") : "---";
+			String style = attributes.get("style");
+			if (style != null) {
+				String[] styles = style.split(";");
+				for (String s:styles) {
+					String[] nv = s.split(":");
+					if (nv != null && nv.length == 2) {
+						widget.getElement().getStyle().setProperty(nv[0], nv[1]);
+					}
+				}
+			}
 			wLink = new InteractorWidgetLink<Map<String, Serializable>>(interactor, fieldName, widget, attributes) {
 				
 				@Override
 				public void toDialog(Map<String, Serializable> item) {
-					html.setHTML((String) item.get(fieldName));
+					Object value = item.get(fieldName);
+					html.setHTML(value == null ? nullValue : String.valueOf(value));
 				}
 				
 				public boolean isEmpty() {

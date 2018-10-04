@@ -85,14 +85,14 @@ public class TabbedLayoutPanel extends DockLayoutPanel {
 	public void add(Widget tabContent, String tabLabel, boolean asHtml) {
 		HTML tl = new HTML();
 		tl.setHTML(tabLabel);
-		tl.setHeight("100%");
+//		tl.setHeight("100%");
 		tl.setStyleName("tabTextLabel");
 		add(tabContent, tl);
 	}
 
 	public void add(Widget tabContent, String tabLabel) {
 		Label tl = new Label(tabLabel);
-		tl.setHeight("100%");
+//		tl.setHeight("100%");
 		tl.setStyleName("tabTextLabel");
 		add(tabContent, tl);
 	}

@@ -106,10 +106,7 @@ public class Interactor<T> {
 
 	public static abstract class LinkChangeHandler<T> {
 		protected void afterToDialog(T item) {}
-		public void beforeToDialog(T item) {
-			// TODO Auto-generated method stub
-			
-		}
+		public void beforeToDialog(T item) {}
 		protected void fromDialog(T item) {}
 		protected abstract void onChange(InteractorLink<T> link);
 	}
@@ -147,15 +144,16 @@ public class Interactor<T> {
 
 	public void onChange(InteractorLink<T> link) {
 		isModified = true;
-		link.hilite(link.isValid());
-		if (!link.isValid()) {
-			isValid = false;
-		} else {
-			if (isValid == null || !isValid){
-				validateAll();
+		if (link != null) {
+			link.hilite(link.isValid());
+			if (!link.isValid()) {
+				isValid = false;
+			} else {
+				if (isValid == null || !isValid){
+					validateAll();
+				}
 			}
 		}
-
 		if (changeHandlers != null) {
 			for (LinkChangeHandler<T> changeHandler:changeHandlers) {
 				changeHandler.onChange(link);
