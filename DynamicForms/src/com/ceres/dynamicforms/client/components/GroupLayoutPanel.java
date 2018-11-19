@@ -18,6 +18,7 @@ public class GroupLayoutPanel extends DockLayoutPanel implements GroupPanel {
 	private Label titleLabel;
 	private boolean enabled;
 	private Widget content;
+	private int busyCount = 0;
 	
 	public GroupLayoutPanel(String title, Widget content) {
 		super(Unit.PX);
@@ -70,7 +71,13 @@ public class GroupLayoutPanel extends DockLayoutPanel implements GroupPanel {
 
 	@Override
 	public void setBusy(boolean isBusy) {
-		busyImage.setVisible(isBusy);
+		if (isBusy) {
+			busyCount++;
+		} else {
+			busyCount--;
+		}
+		
+		busyImage.setVisible(busyCount > 0);
 	}
 	
 	public void setTitleText(String text) {
