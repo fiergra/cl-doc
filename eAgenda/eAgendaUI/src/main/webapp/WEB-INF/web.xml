@@ -25,8 +25,7 @@
 
  	
     
-	<!-- ecas security constraint -->
-	<!-- 
+	<!-- ecas security constraint 
 	
 	<security-constraint>
 		<web-resource-collection>
@@ -66,7 +65,10 @@
         <auth-method>ECAS</auth-method>
         <realm-name>eAgenda Realm</realm-name>
     </login-config>
+    
     -->
+    
+
     <!--  
     <security-role>
         <description>Application-defined role</description>

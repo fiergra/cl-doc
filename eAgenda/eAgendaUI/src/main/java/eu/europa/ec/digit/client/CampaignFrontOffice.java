@@ -35,6 +35,7 @@ import eu.europa.ec.digit.eAgenda.Appointment;
 import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.Day;
 import eu.europa.ec.digit.eAgenda.IResource;
+import eu.europa.ec.digit.eAgenda.Room;
 import eu.europa.ec.digit.eAgenda.Slot;
 import eu.europa.ec.digit.eAgenda.User;
 import eu.europa.ec.digit.eAgenda.WorkPattern;
@@ -49,6 +50,8 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 	private List<Appointment> personalAppointments;
 	private List<Widget> personalAppointmentRenderers = new ArrayList<>();
 	private VerticalPanel vpSlots = new VerticalPanel();
+	private VerticalPanel vpMain = new VerticalPanel();
+
 
 	private final ApplicationHeader ah;
 
@@ -84,7 +87,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		
 		FlexTable ftMain = new FlexTable();
 		ftMain.setStyleName("ftMain");
-		VerticalPanel vpMain = new VerticalPanel();
+		vpMain.setStyleName("city");
 		ftMain.setWidget(0, 0, vpMain);
 		vpMain.setSpacing(3);
 		add(ftMain);
@@ -420,6 +423,13 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			disableDatePicker();
 			vpSlots.clear();
 		} else {
+			
+			if (iResource instanceof Room) {
+				vpMain.setStyleName("city-" + ((Room)iResource).city.code.toLowerCase());
+			} else {
+				vpMain.removeStyleName("city");
+			}
+			
 			datePicker.setVisible(true);
 			wpHelper.setPatterns(campaign.startDelayInH, campaign.resourcePatterns(iResource));
 			Date preferredDate = wpHelper.getPreferredDate(datePicker.getValue()); 

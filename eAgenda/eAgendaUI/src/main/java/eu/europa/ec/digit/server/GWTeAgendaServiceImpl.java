@@ -129,7 +129,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		
 		try {
 			
-			String[] recipients = new String[] { a.guest.emailAddress != null ? a.guest.emailAddress : getConnectedUserEmail() };
+			String[] recipients = new String[] { a.guest.getEMailAddress() != null ? a.guest.getEMailAddress() : getConnectedUserEmail() };
 			
 			String messageBody;
 			
@@ -170,7 +170,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	private Date checkUntil(Date from, Date until) {
 		if (until == null) {
 			try {
-				until = new Date(df.parse(df.format(from)).getTime()  + 24 * 60 * 60 * 1000);
+				until = new Date(df.parse(df.format(from)).getTime()  + 24L * 60L * 60L * 1000L);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -223,7 +223,6 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	@Override
 	public UserContext login() {
 		DetailedUser du = getDetailedUser();
-		
 		return du != null ? login(du.getName()) : null;
 	}
 	

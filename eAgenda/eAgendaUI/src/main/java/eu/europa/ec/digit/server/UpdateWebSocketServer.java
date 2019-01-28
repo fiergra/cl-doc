@@ -24,6 +24,9 @@ import org.eclipse.jetty.websocket.jsr356.JsrSession;
 //import org.eclipse.jetty.websocket.jsr356.JsrAsyncRemote;
 //import org.eclipse.jetty.websocket.jsr356.JsrSession;
 
+//import org.eclipse.jetty.websocket.jsr356.JsrAsyncRemote;
+//import org.eclipse.jetty.websocket.jsr356.JsrSession;
+
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.impl.ServerSerializationStreamReader;
 import com.google.gwt.user.server.rpc.impl.ServerSerializationStreamWriter;
@@ -131,12 +134,12 @@ public class UpdateWebSocketServer {
 	
 	private static void sendText(Session session, String text) {
 		if (session instanceof JsrSession) {
-		JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
-		ar.sendText(text);
-	} else {
-		Async ar = session.getAsyncRemote();
-		ar.sendText(text);
-	}
+			JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
+			ar.sendText(text);
+		} else {
+			Async ar = session.getAsyncRemote();
+			ar.sendText(text);
+		}
 	}
 
 	private static <T> String serialize(final T a) throws SerializationException {

@@ -77,9 +77,8 @@ public class UpdateWebSocketClient {
 				}
 				break;
 			case delete:
-				if (appointments.remove(a)) {
-					callback.action(n.actionType, a);
-				}
+				appointments.remove(a);
+				callback.action(n.actionType, a);
 				break;
 			case subscribe:
 				break;
