@@ -48,7 +48,8 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	private synchronized EmailCalendarService getEmailCalendarService() {
 		if (ecs == null) {
 			try {
-				ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
+				ecs = new ExchangeEmailCalendarService("digit-eag-auto-proc", "Aut0Pr0cess01", "DIGIT-EAGENDA-AUTO-PROCESS@ec.europa.eu");
+//				ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
 			} catch (Exception e) {
 				ecs = new EmailCalendarService() {
 					

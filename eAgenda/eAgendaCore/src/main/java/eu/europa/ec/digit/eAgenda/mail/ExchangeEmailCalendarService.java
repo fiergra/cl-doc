@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,7 @@ import microsoft.exchange.webservices.data.core.enumeration.availability.Availab
 import microsoft.exchange.webservices.data.core.enumeration.availability.FreeBusyViewType;
 import microsoft.exchange.webservices.data.core.enumeration.availability.SuggestionQuality;
 import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
+import microsoft.exchange.webservices.data.core.enumeration.misc.TraceFlags;
 import microsoft.exchange.webservices.data.core.enumeration.property.BasePropertySet;
 import microsoft.exchange.webservices.data.core.enumeration.property.Importance;
 import microsoft.exchange.webservices.data.core.enumeration.property.LegacyFreeBusyStatus;
@@ -35,6 +37,7 @@ import microsoft.exchange.webservices.data.core.service.item.Item;
 import microsoft.exchange.webservices.data.core.service.schema.AppointmentSchema;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
+import microsoft.exchange.webservices.data.misc.ITraceListener;
 import microsoft.exchange.webservices.data.misc.availability.AttendeeInfo;
 import microsoft.exchange.webservices.data.misc.availability.AvailabilityOptions;
 import microsoft.exchange.webservices.data.misc.availability.GetUserAvailabilityResults;
@@ -87,14 +90,36 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		service.setExchange2007CompatibilityMode(true);
 		ExchangeCredentials credentials = new WebCredentials(keyUser, keyPass);
 		service.setCredentials(credentials);
-		//service.setEnableScpLookup(true);
 		service.setTraceEnabled(true);
+		service.setTraceFlags(EnumSet.allOf(TraceFlags.class)); 
+		service.setTraceListener(new ITraceListener() {
+			
+			@Override
+			public void trace(String traceType, String traceMessage) {
+				if(initialized == false) {
+					log.info("Type:" + traceType + " Message:" + traceMessage);
+				}
+			}
+		});
 		service.autodiscoverUrl(emailAddress);
-		//service.setUrl(new java.net.URI("https://webmail.ec.europa.eu/EWS/Exchange.asmx"));
 		mailBox = new Mailbox(emailAddress);
 		this.emailAddress = emailAddress;
 		initialized = true;
 		
+		
+		
+//		service = new ExchangeService(ExchangeVersion.Exchange2007_SP1);
+//		service.setExchange2007CompatibilityMode(true);
+//		ExchangeCredentials credentials = new WebCredentials(keyUser, keyPass);
+//		service.setCredentials(credentials);
+//		//service.setEnableScpLookup(true);
+//		service.setTraceEnabled(true);
+//		service.autodiscoverUrl(emailAddress);
+//		//service.setUrl(new java.net.URI("https://webmail.ec.europa.eu/EWS/Exchange.asmx"));
+//		mailBox = new Mailbox(emailAddress);
+//		this.emailAddress = emailAddress;
+//		initialized = true;
+//		
 		monitorInbox();
 	}
 
