@@ -29,7 +29,7 @@ public class DropDownSearchBox <T> extends EnabledHorizontalPanel {
 		HorizontalPanel hpImage = new HorizontalPanel();
 		hpImage.setSpacing(3);
 		setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		searchBox = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, lf, lf);
+		searchBox = new RemoteSearchBox<>(new SimpleTranslator<T>(), runSearch, lf, lf);
 		add(searchBox);
 
 		lbDropDown = new ObjectSelectorComboBox<T>(false, lf);

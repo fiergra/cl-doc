@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.ceres.dynamicforms.client.MessageBox;
+import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;
 import com.ceres.dynamicforms.client.SimpleTranslator;
 import com.ceres.dynamicforms.client.command.CommandoButtons;
 import com.ceres.dynamicforms.client.components.LabelFunc;
@@ -15,6 +17,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PushButton;
@@ -34,6 +37,7 @@ import eu.europa.ec.digit.client.i18n.StringResources;
 import eu.europa.ec.digit.eAgenda.AppointmentType;
 import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.IResource;
+import eu.europa.ec.digit.eAgenda.Person;
 import eu.europa.ec.digit.eAgenda.User;
 import eu.europa.ec.digit.eAgenda.WorkPattern;
 import eu.europa.ec.digit.shared.UserContext;
@@ -169,12 +173,18 @@ public class HomeScreen extends DockLayoutPanel {
 		vpTopMenuItems.setSpacing(5);
 		menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", null, (m) -> displayWidget(cmbCampaigns.getSelectedItem()));
 		
-//		FlexTable hpResources = new FlexTable();
-//		hpResources.setWidth("100%");
+
+		HorizontalPanel hpResources = new HorizontalPanel();
+		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		I18NLabel lbResourcesHeader = new I18NLabel("Resources");
 		lbResourcesHeader.setStyleName("menuItemHeader");
+		PushButton pbNewResource = new PushButton(new Image("assets/images/24x24/add.white.png"));
+		pbNewResource.setStyleName("flatButton");
+		hpResources.add(lbResourcesHeader);
+		hpResources.add(pbNewResource);
 		
-		RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
+		RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator<IResource>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
+		pbNewResource.addClickHandler(e -> addNewResource(sbResources));
 		sbResources.setStyleName("menuResourceSearchBox");
 		sbResources.addStyleDependentName("empty");
 		sbResources.setWidth("100%");
@@ -215,7 +225,7 @@ public class HomeScreen extends DockLayoutPanel {
 //		hpResources.getFlexCellFormatter().setWidth(0, 1, "100%");
 //		vpMenuItems.add(hpResources);
 
-		vpMenuItems.add(lbResourcesHeader);
+		vpMenuItems.add(hpResources);
 		vpMenuItems.add(sbResources);
 
 		vpResourceMenuItems.setSpacing(5);
@@ -223,6 +233,12 @@ public class HomeScreen extends DockLayoutPanel {
 		vpMenuItems.add(vpResourceMenuItems);
 		
 		return vpMenu;
+	}
+
+	private void addNewResource(RemoteSearchBox<IResource> sbResources) {
+		Person resource = new Person();
+		ResourceEditor<Person> re = new ResourceEditor<>(resource);
+		MessageBox.show("New Resource", re, MessageBox.MB_OK | MessageBox.MB_CANCEL, MESSAGE_ICONS.MB_ICON_OK, MessageBox.NOP, 600, 400);
 	}
 
 	class AddRemoveResourceCommand extends CampaignCommand {

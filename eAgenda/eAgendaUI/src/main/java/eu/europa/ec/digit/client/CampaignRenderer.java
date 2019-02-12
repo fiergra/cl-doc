@@ -64,8 +64,8 @@ public class CampaignRenderer extends SplitLayoutPanel {
 	private ListBox lbStartDelay = new ListBox();
 
 	private MultiSelectPanel<User> mspOwners;
-	private ListBox lbCityRestriction = new ListBox();
-	private ListBox lbOrgaRestriction = new ListBox();
+//	private ListBox lbCityRestriction = new ListBox();
+//	private ListBox lbOrgaRestriction = new ListBox();
 	private DropDownSearchBox<IResource> sbResources;
 	private final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
 
@@ -295,17 +295,17 @@ public class CampaignRenderer extends SplitLayoutPanel {
 		hpRestrictions.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hpRestrictions.setSpacing(3);
 
-		hpRestrictions.add(lbCityRestriction);
-		lbCityRestriction.addItem("---", "");
-		lbCityRestriction.addItem("BXL");
-		lbCityRestriction.addItem("LUX");
-		lbCityRestriction.addItem("IPR");
-
-		hpRestrictions.add(l("Organisation"));
-		lbOrgaRestriction.addItem("---");
-		lbOrgaRestriction.addItem("DIGIT.B");
-		lbOrgaRestriction.addItem("DIGIT.C");
-		hpRestrictions.add(lbOrgaRestriction);
+//		hpRestrictions.add(lbCityRestriction);
+//		lbCityRestriction.addItem("---", "");
+//		lbCityRestriction.addItem("BXL");
+//		lbCityRestriction.addItem("LUX");
+//		lbCityRestriction.addItem("IPR");
+//
+//		hpRestrictions.add(l("Organisation"));
+//		lbOrgaRestriction.addItem("---");
+//		lbOrgaRestriction.addItem("DIGIT.B");
+//		lbOrgaRestriction.addItem("DIGIT.C");
+//		hpRestrictions.add(lbOrgaRestriction);
 
 		tblCampaignDetails.setWidget(row, 0, l("Owner"));
 		mspOwners = new MultiSelectPanel<User>(campaign.owners, u -> u.userId) {
@@ -494,7 +494,7 @@ public class CampaignRenderer extends SplitLayoutPanel {
 
 	private void addOwner(MultiSelectPanel<User> multiSelectPanel) {
 		PopupPanel popUp = new PopupPanel(true, false);
-		SearchBox<IResource> sb = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
+		SearchBox<IResource> sb = new RemoteSearchBox<>(new SimpleTranslator<IResource>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
 		sb.addSelectionHandler(s -> {
 			IResource r = sb.getSelected();
 

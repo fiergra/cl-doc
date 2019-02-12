@@ -198,6 +198,11 @@ public class MongoAgendaService {
 		return rooms;
 	}
 
+//	public User findUser(String userId) {
+//		IResource user = resources().find(Filters.eq("userId", userId)).first();
+//		return user instanceof User ? (User)user : null;
+//	}
+
 	public List<IResource> findResources(String filter) {
 		List<IResource> resources = new ArrayList<>();
 		resources().find(Filters.text(filter)).projection(Projections.metaTextScore("score")).sort(Sorts.metaTextScore("score")).limit(25).forEach((Block <IResource>) p -> resources.add(p));

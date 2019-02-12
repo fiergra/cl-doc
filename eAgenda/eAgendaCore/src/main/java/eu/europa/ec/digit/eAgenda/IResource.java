@@ -8,4 +8,8 @@ public interface IResource extends Serializable {
 
 	String getEMailAddress();
 
+	void setDisplayName(String name);
+
+	void setEMailAddress(String name);
+
 }

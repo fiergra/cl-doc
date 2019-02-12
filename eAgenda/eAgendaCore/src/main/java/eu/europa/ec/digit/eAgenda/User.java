@@ -1,11 +1,10 @@
 package eu.europa.ec.digit.eAgenda;
 
-public class User implements IResource {
+public class User extends AbstractResource {
 
 	private static final long serialVersionUID = 21549982441754892L;
 
 	public String userId;
-	public String emailAddress;
 	public Person person;
 	
 	public String searchString;
@@ -14,21 +13,11 @@ public class User implements IResource {
 	protected User() {}
 
 	public User(String userId, String emailAddress, Person person) {
+		super(userId + " " + (person != null ? person.getDisplayName() : ""), emailAddress);
 		this.userId = userId;
 		this.emailAddress = emailAddress;
 		this.person = person;
 		searchString = userId + " " + (person != null ? person.searchString : "");
-	}
-
-	@Override
-	public String getDisplayName() {
-		return userId + " " + (person != null ? person.getDisplayName() : "");
-	}
-
-
-	@Override
-	public String getEMailAddress() {
-		return emailAddress;
 	}
 
 	@Override

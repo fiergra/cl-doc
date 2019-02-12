@@ -2,7 +2,7 @@ package eu.europa.ec.digit.eAgenda;
 
 import java.util.Date;
 
-public class Person implements IResource {
+public class Person extends AbstractResource {
 
 	private static final long serialVersionUID = 21549982441754892L;
 
@@ -12,13 +12,13 @@ public class Person implements IResource {
 	public String lastName;
 	public String gender;
 	public Date dateOfBirth;
-	public String emailAddress;
 	public String searchString;
 
-	protected Person() {}
+	public Person() {}
 
 	@SuppressWarnings("deprecation")
 	public Person(long perId, String sysperNo, String firstName, String lastName, String gender, Date dateOfBirth) {
+		super(firstName + " " + lastName, null);
 		this.perId = perId;
 		this.sysperNo = sysperNo;
 		this.firstName = firstName;
@@ -27,11 +27,6 @@ public class Person implements IResource {
 		this.dateOfBirth = dateOfBirth;
 		
 		searchString = lastName + " " + firstName + " " + perId + " " + dateOfBirth.getDate() +"/" +  + (dateOfBirth.getMonth()+1) + "/" + (1900 + dateOfBirth.getYear());
-	}
-
-	@Override
-	public String getDisplayName() {
-		return firstName + " " + lastName;
 	}
 
 	@Override
@@ -56,11 +51,5 @@ public class Person implements IResource {
 		return true;
 	}
 
-	@Override
-	public String getEMailAddress() {
-		return emailAddress;
-	}
-	
-	
 	
 }

@@ -6,6 +6,8 @@ import com.ceres.dynamicforms.client.SimpleForm;
 import com.ceres.dynamicforms.client.SimpleTranslator;
 import com.ceres.dynamicforms.client.TextBoxLink;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 
 import eu.europa.ec.digit.eAgenda.IResource;
@@ -14,9 +16,14 @@ import eu.europa.ec.digit.eAgenda.Room;
 
 public class ResourceEditor<T extends IResource> extends SimpleForm {
 	
+	private static final String TYPEOFRESOURCE = "TYPEOFRESOURCE";
 	private T resource;
 	private Interactor<T> interactor = new Interactor<>();
 	private ITranslator<T> translator = new SimpleTranslator<>();
+	
+	private RadioButton rbPerson = new RadioButton(TYPEOFRESOURCE, "Person");
+	private RadioButton rbUser = new RadioButton(TYPEOFRESOURCE, "User");
+	private RadioButton rbRoom = new RadioButton(TYPEOFRESOURCE, "Room");
 	
 	public ResourceEditor(T resource) {
 		this.resource = resource;
@@ -25,6 +32,14 @@ public class ResourceEditor<T extends IResource> extends SimpleForm {
 	}
 
 	private void setup() {
+		
+		HorizontalPanel hpTypes = new HorizontalPanel();
+		hpTypes.add(rbPerson);
+		hpTypes.add(rbUser);
+		hpTypes.add(rbRoom);
+		
+		addLine("Type", hpTypes);
+		
 		if (resource instanceof Person) {
 			addLine("", new HTML("<b>PERSON</b>"));
 		} else if (resource instanceof Room) {

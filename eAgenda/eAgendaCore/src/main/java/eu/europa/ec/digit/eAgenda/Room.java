@@ -1,6 +1,6 @@
 package eu.europa.ec.digit.eAgenda;
 
-public class Room implements IResource {
+public class Room extends AbstractResource {
 
 	private static final long serialVersionUID = 4314997830055603572L;
 	
@@ -13,22 +13,11 @@ public class Room implements IResource {
 	
 	
 	public Room(String name, City city) {
+		super(name, null);
 		this.name = name;
 		this.city = city;
 		
 		searchString = name + " " + city.code;
-	}
-
-
-	@Override
-	public String getEMailAddress() {
-		return emailAddress;
-	}
-
-
-	@Override
-	public String getDisplayName() {
-		return name;
 	}
 
 
