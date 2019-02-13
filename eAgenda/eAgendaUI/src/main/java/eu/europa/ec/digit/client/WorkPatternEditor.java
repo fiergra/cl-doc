@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import com.ceres.dynamicforms.client.ClientDateHelper;
 import com.ceres.dynamicforms.client.MessageBox;
 import com.ceres.dynamicforms.client.MessageBox.MESSAGE_ICONS;
 import com.ceres.dynamicforms.client.SimpleTranslator;
@@ -80,7 +81,7 @@ public class WorkPatternEditor extends DockLayoutPanel {
 		
 		public SetWPDatesCommand(Campaign campaign, WorkPattern pattern, DateBox dpFrom, DateBox dpUntil) {
 			super(campaign, "set validity dates");
-			this.initialFrom = pattern.from;
+			this.initialFrom = pattern.getFrom();
 			this.initialUntil = pattern.until;
 			this.newFrom = dpFrom.getValue();
 			this.newUntil = dpUntil.getValue();
@@ -90,14 +91,14 @@ public class WorkPatternEditor extends DockLayoutPanel {
 
 		@Override
 		public void exec() {
-			pattern.from = newFrom;
-			pattern.until = newUntil;
+			pattern.setFrom(ClientDateHelper.trunc(newFrom));
+			pattern.until = ClientDateHelper.trunc(newUntil);
 			saveAndUpdate();
 		}
 
 		private void saveAndUpdate() {
 			saveCampaign();
-			dpFrom.setValue(pattern.from);
+			dpFrom.setValue(pattern.getFrom());
 			dpUntil.setValue(pattern.until);
 			
 			if (changeHandler != null) {
@@ -107,7 +108,7 @@ public class WorkPatternEditor extends DockLayoutPanel {
 		
 		@Override
 		public void undo() {
-			pattern.from = initialFrom;
+			pattern.setFrom(initialFrom);
 			pattern.until = initialUntil;
 			saveAndUpdate();
 		}
@@ -209,7 +210,7 @@ public class WorkPatternEditor extends DockLayoutPanel {
 		DateBox dpFrom = new DateBox();
 		dpFrom.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("dd/MM/yyyy")));
 		dpFrom.setWidth("7em");
-		dpFrom.setValue(pattern.from);
+		dpFrom.setValue(pattern.getFrom());
 		
 		DateBox dpUntil = new DateBox();
 		dpUntil.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("dd/MM/yyyy")));

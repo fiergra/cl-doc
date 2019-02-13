@@ -370,7 +370,9 @@ public class CampaignSettings extends DockLayoutPanel {
 		hpAppointmentType.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hpAppointmentType.setSpacing(3);
 		hpAppointmentType.add(txtType);
+		hpAppointmentType.add(new I18NLabel("Duration"));
 		hpAppointmentType.add(lbDuration);
+		hpAppointmentType.add(new I18NLabel("minutes"));
 
 		ChangeHandler ch = e -> eAgendaUI.commando.execute(new SetAppointmentTypeCommand(campaign, new AppointmentType(txtType.getText(), getDuration(), "white")));
 		txtType.addChangeHandler(ch);

@@ -4,8 +4,6 @@ html, html a {
 }
 
 body, table td, select, button {
-/*	font-family: 'Roboto', sans-serif;*/
-
 	font-family: 'Calibri', sans-serif;
 	font-smooth: always;
 	font-size: medium;
@@ -165,8 +163,10 @@ body, table td, select, button {
 
 .appointmentRenderer {
 	box-shadow: 2px 2px 2px #DDD;
+	border: 1px solid #DDD;
 	width: 100%;
-	height: 3.5em;
+	min-width: 15em;
+	height: 3em;
 }
 
 .mainLabel {
@@ -254,6 +254,18 @@ body, table td, select, button {
 	border: none;
 }
 
+.gwt-DialogBox .Caption {
+    background: #0057c0;
+    color: white;
+    padding: 4px 8px 4px 4px;
+    cursor: default;
+    font-family: Calibri;
+    font-size: x-large;
+    font-weight: bold;
+    border-bottom: none;
+    border-top: none;
+}
+
 .gwt-ListBox {
 	border: none;
 	height: 2em;
@@ -292,8 +304,6 @@ body, table td, select, button {
 .slotMinuteLabel {
 	font-weight: normal;
 	font-size: small;
-	color: #AAA;	
-	
 	width: 2em;
 	height: 2em;
 }
@@ -301,26 +311,38 @@ body, table td, select, button {
 .theSlot {
 	width: 25em;
 	height: 1em;
-	border-bottom: 1px solid black;
 	font-family: Segoe Script;
 	font-size: x-large;
 }
 
-.theSlot:hover {
-	background-color: #DDD;
+.dailySlotsPanel {
+	width: 100%;
+	background-color: white;
 }
 
 .placesAvailable {
-	background-color: #C7FFC7;
+	background-color: #00CF3F40;
 }
 
+.placesAvailable:hover {
+	background-color: #DDD;
+}
+
+
 .complete {
-	background-color: #FFC7C7;
+	background-color: #FF2300;
 }
 
 .slotsHeaderDayName {
 	font-size: xx-large;
 	border: none;
+}
+
+.slotSelectionHeader {
+	height: 2em;
+	font-size: xx-large;
+	border-bottom: 1px solid #DDD;
+	width: 100%;
 }
 
 .slotsHeaderLocation {
@@ -349,7 +371,7 @@ body, table td, select, button {
 
 .hilite {
 	background-color: red;
-	border-radius: 16px;
+	border-radius: 20px;
 }
 
 .vExpandable {
@@ -411,7 +433,8 @@ body, table td, select, button {
 }
 
 .gwt-PopupPanel {
-  border: none;
+  border: 1px solid #DDD;
+  box-shadow: 5px 5px 10px black;
   padding: 3px;
   background: white;
 }

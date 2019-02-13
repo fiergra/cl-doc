@@ -417,7 +417,9 @@ public class CampaignRenderer extends SplitLayoutPanel {
 		hpAppointmentType.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hpAppointmentType.setSpacing(3);
 		hpAppointmentType.add(txtType);
+		hpAppointmentType.add(new I18NLabel("Duration"));
 		hpAppointmentType.add(lbDuration);
+		hpAppointmentType.add(new I18NLabel("minutes"));
 
 		ChangeHandler ch = e -> eAgendaUI.commando.execute(new SetAppointmentTypeCommand(campaign, new AppointmentType(txtType.getText(), getDuration(), "white")));
 		txtType.addChangeHandler(ch);
@@ -673,14 +675,14 @@ public class CampaignRenderer extends SplitLayoutPanel {
 	private String getWpName(WorkPattern wp) {
 		String wpName;
 
-		if (wp.from == null && wp.until == null) {
+		if (wp.getFrom() == null && wp.until == null) {
 			wpName = "\u221E";
-		} else if (wp.from == null) {
+		} else if (wp.getFrom() == null) {
 			wpName = "\u2192 " + ClientDateFormatter.format(wp.until);
 		} else if (wp.until == null) {
-			wpName = ClientDateFormatter.format(wp.from) + " \u2192 \u221E";
+			wpName = ClientDateFormatter.format(wp.getFrom()) + " \u2192 \u221E";
 		} else {
-			wpName = ClientDateFormatter.format(wp.from, wp.until);
+			wpName = ClientDateFormatter.format(wp.getFrom(), wp.until);
 		}
 
 		return wpName;

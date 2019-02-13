@@ -61,8 +61,8 @@ public class WorkPatternHelper {
 		maxDate = new Date(0);
 		
 		patterns.forEach(p -> {
-			if (p.from == null || getMinDate() == null || getMinDate().getTime() > p.from.getTime()) {
-				minDate = p.from;
+			if (p.getFrom() == null || getMinDate() == null || getMinDate().getTime() > p.getFrom().getTime()) {
+				minDate = p.getFrom();
 			}
 			
 			if (p.until == null || maxDate == null || maxDate.getTime() < p.until.getTime()) {

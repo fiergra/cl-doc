@@ -48,30 +48,30 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 
 	private DateBox dateBox = new DateBox();
 	private Campaign campaign;
-	
+
 	private IResource host = null;
 	private List<WorkPattern> patterns;
-	
+
 	private FlexTable slotTable = new FlexTable();
-	private WorkPatternHelper wpHelper = new WorkPatternHelper();
-	
+	private final WorkPatternHelper wpHelper;
+
 	private UpdateWebSocketClient wsClient = new UpdateWebSocketClient();
-	
+
 	public SlotAppointmentsView(Campaign campaign) {
 		super(Unit.PX);
 		this.campaign = campaign;
+		wpHelper = new WorkPatternHelper();
 		addNorth(createHeader(), 42);
 		slotTable.addStyleName("slotTable");
 		add(new ScrollPanel(slotTable));
 	}
-
 
 	private Widget createHeader() {
 		HorizontalPanel hpHeader = new HorizontalPanel();
 		hpHeader.setHeight("100%");
 		hpHeader.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hpHeader.setSpacing(3);
-		
+
 		dateBox.setWidth("7em");
 		dateBox.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat("dd/MM/yyyy")));
 		dateBox.getDatePicker().addShowRangeHandler(e -> {
@@ -83,47 +83,25 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 				curr += 24 * 60 * 60 * 1000;
 			}
 
-			
-//			if (wpHelper.getMinDate() != null) {
-//				long curr = e.getStart().getTime();
-//				while (curr < wpHelper.getMinDate().getTime() && curr <= e.getEnd().getTime()) {
-//					dateBox.getDatePicker().setTransientEnabledOnDates(false, new Date(curr));
-//					curr += 24 * 60 * 60 * 1000;
-//				}
-//			}
-//			
-//			if (wpHelper.getMaxDate() != null) {
-//				long curr = wpHelper.getMaxDate().getTime() + 24 * 60 * 60 * 1000;
-//				
-//				if (curr <= e.getStart().getTime()) {
-//					curr = e.getStart().getTime();
-//				}
-//				
-//				while (curr < e.getEnd().getTime()) {
-//					dateBox.getDatePicker().setTransientEnabledOnDates(false, new Date(curr));
-//					curr += 24 * 60 * 60 * 1000;
-//				}
-//			}
 		});
 		dateBox.setFireNullValues(true);
 		dateBox.addValueChangeHandler(e -> showPatternAndAppointments(dateBox.getValue()));
 		hpHeader.add(dateBox);
-		
+
 		return hpHeader;
 	}
-
 
 	public void setHost(IResource host) {
 		this.host = host;
 		patterns = campaign.resourcePatterns(host);
-		
+
 		wpHelper.setPatterns(campaign.startDelayInH, patterns);
 		Date d = wpHelper.getPreferredDate(dateBox.getValue());
 		dateBox.setValue(d, true);
 		showPatternAndAppointments(d);
-		
+
 		wsClient.unsubscribe();
-		wsClient.subscribe(eAgendaUI.userContext.user, host, d, (t, id) -> { 
+		wsClient.subscribe(eAgendaUI.userContext.user, host, d, (t, id) -> {
 //			showPatternAndAppointments(dateBox.getValue());
 			Date date = dateBox.getValue();
 			WorkPattern pattern = wpHelper.getPatternForDay(date);
@@ -134,31 +112,29 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 		});
 
 	}
-	
 
-	
 	private void showPatternAndAppointments(Date d) {
 		if (d != null) {
 			WorkPattern pattern = wpHelper.getPatternForDay(d);
-			
+
 			slotTable.removeAllRows();
 			appointmentPanels.clear();
-			
+
 			if (pattern != null) {
 				Day day = pattern.getDay(d);
 				if (day.slots != null && !day.slots.isEmpty()) {
-					
+
 					addHeader(d, day.slots);
 					eAgendaUI.service.getAppointments(d, host, null, new RPCCallback<List<Appointment>>() {
-	
+
 						@Override
 						protected void onResult(List<Appointment> appointments) {
 							wsClient.setAppointments(appointments);
 							showAppointments(d, day, appointments);
 						}
 
-					} );
-					
+					});
+
 				}
 			}
 		}
@@ -170,46 +146,63 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 			for (int index = 0; index < day.slots.size(); index++) {
 				if (index < appointmentPanels.size()) {
 					Panel panel = appointmentPanels.get(index);
-					List<Appointment> appointmentsInSlot = wpHelper.getAppointmentsInSlot(wsClient.getAppointments(), d, day.slots.get(index));
+					List<Appointment> appointmentsInSlot = wpHelper.getAppointmentsInSlot(wsClient.getAppointments(), d,
+							day.slots.get(index));
 					appointmentsInSlot.forEach(a -> panel.add(createAppointmentRenderer(a, panel)));
 				}
-			};
-		}		
+			}
+			;
+		}
 	}
 
 	List<Panel> appointmentPanels = new ArrayList<>();
+
+	private boolean horizontal = false;
 	
 	private void addHeader(Date d, List<Slot> slots) {
-		int column = 0;
 		int appointmentsRow = 0;
-		
-		for (Slot slot:slots) {
+
+		if (horizontal) {
+			int column = 0;
+			for (Slot slot : slots) {
+				int row = 0;
+				slotTable.setWidget(row++, column, createSlotHeader(slot, column));
+				VerticalPanel vpAppointments = new VerticalPanel();
+				vpAppointments.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+				vpAppointments.setStyleName("slotAppointmentPanel");
+				appointmentPanels.add(vpAppointments);
+				appointmentsRow = row;
+				slotTable.setWidget(row++, column, vpAppointments);
+				column++;
+			}
+			slotTable.getRowFormatter().addStyleName(appointmentsRow, "slotAppointmentRow");
+		} else {
 			int row = 0;
-			slotTable.setWidget(row++, column, createSlotHeader(slot, column));
-//			slotTable.setWidget(row++, column, createPersonSearchBox(column, slot));
-			VerticalPanel vpAppointments = new VerticalPanel();
-			vpAppointments.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
-//			vpAppointments.setSpacing(3);
-			vpAppointments.setStyleName("slotAppointmentPanel");
-			appointmentPanels.add(vpAppointments);
-			appointmentsRow = row;
-			slotTable.setWidget(row++, column, vpAppointments);
-			column++;
+			for (Slot slot : slots) {
+				int column = 0;
+				slotTable.setWidget(row, column++, createSlotHeader(slot, row));
+				HorizontalPanel vpAppointments = new HorizontalPanel();
+				vpAppointments.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+				vpAppointments.setStyleName("slotAppointmentPanel");
+				appointmentPanels.add(vpAppointments);
+				slotTable.setWidget(row, column++, vpAppointments);
+				slotTable.getRowFormatter().addStyleName(row, "slotAppointmentRow");
+				row++;
+			}
 		}
-		
-		slotTable.getRowFormatter().addStyleName(appointmentsRow, "slotAppointmentRow");
+
 	}
 
 	private Widget createAppointmentRenderer(Appointment a, Panel panel) {
 		AppointmentRenderer ar = new AppointmentRenderer(a);
 		ar.setOnDelete(() -> {
-			 eAgendaUI.service.cancelAppointment(a, new RPCCallback<Appointment>() {
+			eAgendaUI.service.cancelAppointment(a, new RPCCallback<Appointment>() {
 
-					@Override
-					protected void onResult(Appointment result) {
-						panel.remove(ar);
-					}
-				});			
+				@Override
+				protected void onResult(Appointment result) {
+					panel.remove(ar);
+				}
+			});
 		});
 		return ar;
 	}
@@ -223,26 +216,20 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 				@Override
 				protected void onResult(List<User> resources) {
 					Collection<Suggestion> suggestions = new ArrayList<SuggestOracle.Suggestion>();
-					for (User p:resources) {
-						MultiWordSuggestion suggestion = new SearchSuggestion<IResource>(p, replacement.label(p), display.label(p));
+					for (User p : resources) {
+						MultiWordSuggestion suggestion = new SearchSuggestion<IResource>(p, replacement.label(p),
+								display.label(p));
 						suggestions.add(suggestion);
 					}
 					Response response = new Response(suggestions);
-					callback.onSuggestionsReady(request, response );
-					
+					callback.onSuggestionsReady(request, response);
+
 				}
 			});
 		}
-	}; 
+	};
 
 	private LabelFunc<User> lf = r -> r.getDisplayName();
-			
-//	private Widget createPersonSearchBox(int column, Slot slot) {
-//		RemoteSearchBox<User> searchBox = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, lf, lf);
-//		searchBox.addSelectionHandler(r -> createAppointment(column, slot, searchBox));
-//		searchBox.setWidth("18em");
-//		return searchBox;
-//	}
 
 	private void createAppointment(int column, Slot slot, SearchBox<User> searchBox) {
 		User guest = searchBox.getSelected();
@@ -254,26 +241,26 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 			txtComment.setSize("100%", "100%");
 			sf.addLine("Comment", txtComment);
 			MessageBox.show("Create Appointment", sf, MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION, i -> {
-				
+
 				if (i == MessageBox.MB_YES) {
-					
+
 					Date d = dateBox.getValue();
 					Date from = slot.getFrom(d);
 					Date until = new Date(from.getTime() + campaign.appointmentType.duration * 60 * 1000L);
 					Appointment a = new Appointment(host, guest, null, from, until, campaign.appointmentType);
 					a.comment = txtComment.getText();
 					eAgendaUI.service.saveAppointment(campaign, a, new RPCCallback<Appointment>() {
-	
+
 						@Override
 						protected void onResult(Appointment result) {
 //							Panel panel = appointmentPanels.get(column);
 //							Widget renderer = createAppointmentRenderer(result, panel);
 //							panel.add(renderer);
-							
-							Scheduler.get().scheduleDeferred(()-> {
+
+							Scheduler.get().scheduleDeferred(() -> {
 								searchBox.setSelected(null);
 								searchBox.setFocus(true);
-							} );
+							});
 						}
 					});
 				}
@@ -284,71 +271,21 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 	private String prefix(int i) {
 		return i < 10 ? "0" + i : String.valueOf(i);
 	}
-	
+
 	private Widget createSlotHeader(Slot slot, int column) {
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		hp.setSpacing(3);
 		Label l = new I18NLabel(prefix(slot.h) + ":" + prefix(slot.m));
-		
-		RemoteSearchBox<User> searchBox = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, lf, lf);
+
+		RemoteSearchBox<User> searchBox = new RemoteSearchBox<>(new SimpleTranslator<User>(), runSearch, lf, lf);
 		searchBox.addSelectionHandler(r -> createAppointment(column, slot, searchBox));
 		searchBox.setWidth("18em");
-		
+
 		hp.add(l);
 		hp.add(searchBox);
-		
-		
+
 		return hp;
 	}
-
-//	private WorkPattern getPatternForDay(Date d) {
-//		WorkPattern wp = null;
-//		Iterator<WorkPattern> i = patterns.iterator();
-//		
-//		while (i.hasNext() && wp == null) {
-//			WorkPattern curr = i.next();
-//			
-//			if (curr.applies(d)) {
-//				wp = curr;
-//			}
-//		}
-//			
-//		return wp;
-//	}
-//
-//	private Date getPreferredDate() {
-//		Date preferredDate = dateBox.getValue();
-//		
-//		if (dateBox.getValue() == null) {
-//			preferredDate = minDate;
-//		} else {
-//			if (minDate != null && dateBox.getValue().getTime() < minDate.getTime()) {
-//				preferredDate = minDate;
-//			} else if (maxDate != null && dateBox.getValue().getTime() > maxDate.getTime()) {
-//				preferredDate = maxDate;
-//			}
-//		}
-//		
-//		return preferredDate == null ? new Date() : preferredDate;
-//	}
-//
-//	public void updateMinMaxDates() {
-//		
-//		minDate = new Date(System.currentTimeMillis() + 365 * 24 * 60 * 60 * 1000);
-//		maxDate = new Date(0);
-//		
-//		patterns.forEach(p -> {
-//			if (p.from == null || minDate == null || minDate.getTime() > p.from.getTime()) {
-//				minDate = p.from;
-//			}
-//			
-//			if (p.until == null || maxDate == null || maxDate.getTime() < p.until.getTime()) {
-//				maxDate = p.until;
-//			}
-//		});
-//	}
-//	
-	
 
 }

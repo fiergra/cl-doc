@@ -62,7 +62,7 @@ public class UpdateWebSocketClient {
 
 	private void processMessage(String data) {
 		WebSocketNotification n = deserialize(data);
-//		GWT.log(n.actionType.name());
+		GWT.log(n.actionType.name());
 		
 		if (n.actionType.equals(ActionType.subscribe)) {
 		} else {

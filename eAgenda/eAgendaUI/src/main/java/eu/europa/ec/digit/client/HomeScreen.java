@@ -178,13 +178,13 @@ public class HomeScreen extends DockLayoutPanel {
 		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		I18NLabel lbResourcesHeader = new I18NLabel("Resources");
 		lbResourcesHeader.setStyleName("menuItemHeader");
-		PushButton pbNewResource = new PushButton(new Image("assets/images/24x24/add.white.png"));
-		pbNewResource.setStyleName("flatButton");
+//		PushButton pbNewResource = new PushButton(new Image("assets/images/24x24/add.white.png"));
+//		pbNewResource.setStyleName("flatButton");
 		hpResources.add(lbResourcesHeader);
-		hpResources.add(pbNewResource);
+//		hpResources.add(pbNewResource);
 		
 		RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator<IResource>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
-		pbNewResource.addClickHandler(e -> addNewResource(sbResources));
+//		pbNewResource.addClickHandler(e -> addNewResource(sbResources));
 		sbResources.setStyleName("menuResourceSearchBox");
 		sbResources.addStyleDependentName("empty");
 		sbResources.setWidth("100%");
@@ -293,7 +293,7 @@ public class HomeScreen extends DockLayoutPanel {
 	private void addResource(Campaign campaign, IResource resource) {
 		WorkPattern wp = new WorkPattern();
 		wp.resource = resource;
-		wp.from = new Date();
+		wp.setFrom(new Date());
 		List<WorkPattern> list = new ArrayList<>(1);
 		list.add(wp);
 		eAgendaUI.commando.execute(new AddRemoveResourceCommand(campaign, list, false));
