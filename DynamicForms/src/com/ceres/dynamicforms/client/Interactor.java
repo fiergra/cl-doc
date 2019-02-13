@@ -18,8 +18,9 @@ public class Interactor<T> {
 	private Boolean isValid = null;
 	private T displayedItem;
 	
-	public void addLink(InteractorLink<T> link) {
+	public InteractorLink<T> addLink(InteractorLink<T> link) {
 		links.add(link);
+		return link;
 	}
 
 	
