@@ -42,7 +42,7 @@ public class MongoAgendaService {
 		init();
 	}
 	
-	private final boolean useLocal = false;
+	private final boolean useLocal = true;
 
 	private void init() {
 		ClassModel<IResource> cmResource = ClassModel.builder(IResource.class).enableDiscriminator(true).build();

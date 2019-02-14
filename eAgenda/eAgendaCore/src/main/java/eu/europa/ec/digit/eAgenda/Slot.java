@@ -39,6 +39,7 @@ public class Slot implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	public Date getFrom(Date d) {
+		d = new Date(d.getTime());
 		d.setHours(h);
 		d.setMinutes(m);
 		d.setSeconds(0);

@@ -13,7 +13,7 @@ public class WorkPattern implements Serializable {
 	public IResource resource;
 	public Room location;
 
-	public Date from;
+	private Date from;
 	public Date until;
 	public int minuteGrid = 15;
 	
@@ -21,7 +21,8 @@ public class WorkPattern implements Serializable {
 	public List<Day> days;
 
 	
-	public WorkPattern() {}
+	public WorkPattern() {
+	}
 	
 	public void setDay(int i, Day day) {
 		if (days == null || days.size() == 0) {
@@ -43,18 +44,19 @@ public class WorkPattern implements Serializable {
 	}
 
 	public boolean applies(Date d) {
-		return (from == null || from.getTime() <= d.getTime()) && (until == null || until.getTime() >= d.getTime()) ;
+		System.out.println(this.getFrom());
+		return (getFrom() == null || getFrom().getTime() <= d.getTime()) && (until == null || until.getTime() >= d.getTime()) ;
 	}
 
 	public Long duration() {
 		long duration;
 
-		if (from == null && until == null) {
+		if (getFrom() == null && until == null) {
 			duration = Long.MAX_VALUE;
-		} else if (from == null || until == null) {
+		} else if (getFrom() == null || until == null) {
 			duration = Long.MAX_VALUE - 1L;
 		} else {
-			duration = until.getTime() - from.getTime();
+			duration = until.getTime() - getFrom().getTime();
 		}
 		return duration;
 	}
@@ -67,6 +69,14 @@ public class WorkPattern implements Serializable {
 		}
 		Day day = getDay(dDay);
 		return day;
+	}
+
+	public Date getFrom() {
+		return from;
+	}
+
+	public void setFrom(Date from) {
+		this.from = from;
 	}
 	
 }
