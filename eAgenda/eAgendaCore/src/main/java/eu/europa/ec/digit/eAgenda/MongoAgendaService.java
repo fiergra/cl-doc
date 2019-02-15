@@ -42,7 +42,7 @@ public class MongoAgendaService {
 		init();
 	}
 	
-	private final boolean useLocal = true;
+	private final boolean useLocal = false;
 
 	private void init() {
 		ClassModel<IResource> cmResource = ClassModel.builder(IResource.class).enableDiscriminator(true).build();
@@ -57,14 +57,25 @@ public class MongoAgendaService {
 			mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
 			db = mongoClient.getDatabase("mydb");
 		} else {
+//			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
+//			seeds.add( new ServerAddress( "dpetlab0.cc.cec.eu.int"));
+//			
+//			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+//			credentials.add(
+//			    MongoCredential.createCredential(
+//			        "eagenda",
+//			        "eagenda",
+//			        "eagenda".toCharArray()
+//			    )
+//			);
 			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
-			seeds.add( new ServerAddress( "dpetlab0.cc.cec.eu.int"));
+			seeds.add( new ServerAddress( "MongoProd"));
 			
 			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
 			credentials.add(
 			    MongoCredential.createCredential(
 			        "eagenda",
-			        "eagenda",
+			        "admin",
 			        "eagenda".toCharArray()
 			    )
 			);
