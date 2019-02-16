@@ -34,7 +34,7 @@ public class UpdateWebSocketClient {
 	public UpdateWebSocketClient() {
 		String url = GWT.getHostPageBaseURL();
 		int index = url.indexOf("://");
-		url = "ws" + url.substring(index) + "appointments";
+		url = getProtocol(url) + url.substring(index) + "appointments";
 		socket = new WebSocket(url);
 
 		socket.onmessage = (evt) -> {
@@ -58,6 +58,10 @@ public class UpdateWebSocketClient {
 			return evt;
 		};
 
+	}
+
+	private String getProtocol(String url) {
+		return url.startsWith("https:") ? "wss" : "ws";
 	}
 
 	private void processMessage(String data) {
