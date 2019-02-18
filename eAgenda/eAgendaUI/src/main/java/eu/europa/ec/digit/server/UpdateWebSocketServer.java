@@ -3,6 +3,7 @@ package eu.europa.ec.digit.server;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.websocket.CloseReason;
 import javax.websocket.OnClose;
@@ -11,9 +12,6 @@ import javax.websocket.OnOpen;
 import javax.websocket.RemoteEndpoint.Async;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
-
-import org.eclipse.jetty.websocket.jsr356.JsrAsyncRemote;
-import org.eclipse.jetty.websocket.jsr356.JsrSession;
 
 //import org.eclipse.jetty.websocket.jsr356.JsrAsyncRemote;
 //import org.eclipse.jetty.websocket.jsr356.JsrSession;
@@ -39,6 +37,7 @@ import eu.europa.ec.digit.shared.WebSocketNotification;
 @ServerEndpoint("/appointments")
 public class UpdateWebSocketServer {
 
+	private static Logger logger = Logger.getLogger("UpdateWebSocketServer");
 	private static Set<Session> sessions = new HashSet<>();
 	
 	static {
@@ -46,12 +45,14 @@ public class UpdateWebSocketServer {
 	}
 
 	public UpdateWebSocketServer() {
-		System.out.println(sessions.size() + " open sessions");
+		logger.info(sessions.size() + " open sessions");
 	}
 
 	@OnOpen
 	public void onOpen(Session session) {
-		System.out.println("WebSocket opened: " + session.getId());
+		String s = "WebSocket opened: " + session.getId() + " @ " + session.getRequestURI();
+		System.out.println(s);
+		logger.info(s);
 		// JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
 		// ar.sendText(sessions.size() + " open sessions");
 		sessions.add(session);
@@ -133,13 +134,13 @@ public class UpdateWebSocketServer {
 
 	
 	private static void sendText(Session session, String text) {
-		if (session instanceof JsrSession) {
-			JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
-			ar.sendText(text);
-		} else {
+//		if (session instanceof JsrSession) {
+//			JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
+//			ar.sendText(text);
+//		} else {
 			Async ar = session.getAsyncRemote();
 			ar.sendText(text);
-		}
+//		}
 	}
 
 	private static <T> String serialize(final T a) throws SerializationException {

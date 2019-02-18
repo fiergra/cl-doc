@@ -8,12 +8,15 @@ import com.ceres.dynamicforms.client.command.Commando;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
 import eu.europa.ec.digit.client.RPCCallback;
 import eu.europa.ec.digit.client.eAgendaUI;
 
 public class StringResources {
+
+	public static final String TITLE = "___$";
 
 	
 	private static Commando commando;
@@ -99,22 +102,32 @@ public class StringResources {
 	public static void edit(String key) {
 		if (stringResources != null) {
 			StringResource sr = stringResources.containsKey(key) ? stringResources.get(key) : new StringResource(key, null, null, null);
+			StringResource srTitle = stringResources.containsKey(StringResources.TITLE + key) ? stringResources.get(StringResources.TITLE + key) : new StringResource(key, null, null, null);
 			
 			SimpleForm sf = new SimpleForm();
 			sf.addLine("locale", new Label(getNavigatorLanguage()));
 			sf.addLine("key", new Label(key));
 			
 			TextBox txtEn = new TextBox();
+			TextArea titleEn = new TextArea();
 			TextBox txtFr = new TextBox();
+			TextArea titleFr = new TextArea();
 			TextBox txtDe = new TextBox();
+			TextArea titleDe = new TextArea();
 
 			txtEn.setWidth("100%");
 			txtFr.setWidth("100%");
 			txtDe.setWidth("100%");
+			titleEn.setWidth("100%");
+			titleFr.setWidth("100%");
+			titleDe.setWidth("100%");
 
 			txtEn.setText(sr.en);
 			txtFr.setText(sr.fr);
 			txtDe.setText(sr.de);
+			titleEn.setText(srTitle.en);
+			titleFr.setText(srTitle.fr);
+			titleDe.setText(srTitle.de);
 			
 			
 			ChangeHandler ch = e -> updateSr(sr, new StringResource(key, txtEn.getText(), txtFr.getText(), txtDe.getText()));
@@ -123,8 +136,11 @@ public class StringResources {
 			txtDe.addChangeHandler(ch);
 			
 			sf.addLine("en", txtEn);
+			sf.addLine("", titleEn);
 			sf.addLine("fr", txtFr);
+			sf.addLine("", titleEn);
 			sf.addLine("de", txtDe);
+			sf.addLine("", titleEn);
 			
 			PopupPanel popUp = new PopupPanel(true);
 			popUp.add(sf);

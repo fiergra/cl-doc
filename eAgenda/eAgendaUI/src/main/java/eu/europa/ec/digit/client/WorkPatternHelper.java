@@ -26,16 +26,18 @@ public class WorkPatternHelper {
 	
 	public WorkPattern getPatternForDay(Date d) {
 		WorkPattern wp = null;
-		Iterator<WorkPattern> i = patterns.iterator();
 		
-		while (i.hasNext() && wp == null) {
-			WorkPattern curr = i.next();
+		if (patterns != null) {
+			Iterator<WorkPattern> i = patterns.iterator();
 			
-			if (curr.applies(d)) {
-				wp = curr;
+			while (i.hasNext() && wp == null) {
+				WorkPattern curr = i.next();
+				
+				if (curr.applies(d)) {
+					wp = curr;
+				}
 			}
-		}
-			
+		}			
 		return wp;
 	}
 

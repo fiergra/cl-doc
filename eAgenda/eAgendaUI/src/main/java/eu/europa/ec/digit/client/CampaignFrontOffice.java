@@ -167,6 +167,8 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 			if (resources.size() == 1) {
 				setSelectedResource(campaign, datePicker, resources.get(0));
+			} else {
+				subscribeToWebSocket(null);
 			}
 		}
 
@@ -272,45 +274,48 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 	private void setSelectedDate(Date d) {
 		WorkPattern pattern = wpHelper.getPatternForDay(d);
-
+		
 		vpSlots.clear();
-		vpSlots.add(createSlotsHeader(pattern, d));
+		
 		if (pattern != null) {
-			Day day = pattern.getDay(d);
-			if (day != null && day.slots != null) {
-
-				List<Slot> combinedSlots = getCombinedSlots(day.slots, campaign.appointmentType.duration);
-
-				Slot prevSlot = null;
-				for (Slot slot : combinedSlots) {
-					boolean placesAvailable = false;
-
-					Panel slotRenderer;
-					if (slot.capacity == null || slot.capacity == 0) {
-						slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
-								false, null);
-						slotRenderer.setStyleName(STYLE_DISABLED);
-					} else {
-						List<Appointment> appointmentsInSlot = wpHelper
-								.getAppointmentsInSlot(wsClient.getAppointments(), d, slot); // wsClient.getAppointments().parallelStream().filter(a
-																								// -> inSlot(a, d,
-																								// slot)).collect(Collectors.toList());
-						placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
-
-						String content = "";
-//						if (containsMyAppointment(appointmentsInSlot)) {
-//							Date sd = slot.getFrom(d);
-//							content = "</img src=\"assets/images/add.png\">" + ClientDateFormatter.dtfMonth.format(sd) + " " + ClientDateFormatter.dtfTime.format(sd) + "@" + host.getDisplayName();
-//						}
-
-						slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
-								placesAvailable, content);
-						slotRenderer.setStyleName(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE);
+			vpSlots.add(createSlotsHeader(pattern, d));
+			if (pattern != null) {
+				Day day = pattern.getDay(d);
+				if (day != null && day.slots != null) {
+	
+					List<Slot> combinedSlots = getCombinedSlots(day.slots, campaign.appointmentType.duration);
+	
+					Slot prevSlot = null;
+					for (Slot slot : combinedSlots) {
+						boolean placesAvailable = false;
+	
+						Panel slotRenderer;
+						if (slot.capacity == null || slot.capacity == 0) {
+							slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
+									false, null);
+							slotRenderer.setStyleName(STYLE_DISABLED);
+						} else {
+							List<Appointment> appointmentsInSlot = wpHelper
+									.getAppointmentsInSlot(wsClient.getAppointments(), d, slot); // wsClient.getAppointments().parallelStream().filter(a
+																									// -> inSlot(a, d,
+																									// slot)).collect(Collectors.toList());
+							placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
+	
+							String content = "";
+	//						if (containsMyAppointment(appointmentsInSlot)) {
+	//							Date sd = slot.getFrom(d);
+	//							content = "</img src=\"assets/images/add.png\">" + ClientDateFormatter.dtfMonth.format(sd) + " " + ClientDateFormatter.dtfTime.format(sd) + "@" + host.getDisplayName();
+	//						}
+	
+							slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
+									placesAvailable, content);
+							slotRenderer.setStyleName(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE);
+						}
+						vpSlots.add(slotRenderer);
+						prevSlot = slot;
 					}
-					vpSlots.add(slotRenderer);
-					prevSlot = slot;
+	
 				}
-
 			}
 		}
 	}
@@ -427,6 +432,34 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		});
 
 	}
+	
+	private void subscribeToWebSocket(IResource iResource) {
+		wsClient.unsubscribe();
+		wsClient.subscribe(eAgendaUI.userContext.user, host, null, (t, a) -> {
+			switch (t) {
+			case update:
+				break;
+			case insert:
+				if (a.guest.equals(guest)) {
+					personalAppointments.add(a);
+					displayPersonalAppointments();
+				}
+				checkAvailability();
+				setSelectedDate(datePicker.getValue());
+				break;
+			case delete:
+				checkAvailability();
+				setSelectedDate(datePicker.getValue());
+				if (personalAppointments.remove(a)) {
+					displayPersonalAppointments();
+				}
+				break;
+			default:
+				loadAppointmentsAndCheckAvailability(iResource);
+			}
+
+		});
+	}
 
 	private void setSelectedResource(Campaign campaign, DatePicker datePicker, IResource iResource) {
 		host = iResource;
@@ -447,33 +480,9 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 			datePicker.setValue(preferredDate);
 			datePicker.setCurrentMonth(preferredDate);
-
-			wsClient.unsubscribe();
-			wsClient.subscribe(eAgendaUI.userContext.user, host, null, (t, a) -> {
-				switch (t) {
-				case update:
-					break;
-				case insert:
-					if (a.guest.equals(guest)) {
-						personalAppointments.add(a);
-						displayPersonalAppointments();
-					}
-					checkAvailability();
-					setSelectedDate(datePicker.getValue());
-					break;
-				case delete:
-					checkAvailability();
-					setSelectedDate(datePicker.getValue());
-					if (personalAppointments.remove(a)) {
-						displayPersonalAppointments();
-					}
-					break;
-				default:
-					loadAppointmentsAndCheckAvailability(iResource);
-				}
-
-			});
-
+			
+			subscribeToWebSocket(iResource);
+			
 			loadAppointmentsAndCheckAvailability(iResource);
 		}
 	}
