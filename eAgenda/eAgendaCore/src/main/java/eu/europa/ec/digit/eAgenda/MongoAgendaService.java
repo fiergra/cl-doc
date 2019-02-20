@@ -69,7 +69,7 @@ public class MongoAgendaService {
 //			    )
 //			);
 			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
-			seeds.add( new ServerAddress( "eagendamongodev"));//""MongoProd"));
+			seeds.add( new ServerAddress("mongoprod.net1.cec.eu.int"));//""eagendamongodev"));
 			
 			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
 			credentials.add(

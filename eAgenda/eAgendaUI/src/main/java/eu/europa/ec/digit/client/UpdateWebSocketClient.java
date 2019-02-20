@@ -35,6 +35,8 @@ public class UpdateWebSocketClient {
 		String url = GWT.getHostPageBaseURL();
 		int index = url.indexOf("://");
 		url = getProtocol(url) + url.substring(index) + "appointments";
+		url = setPort(url, 1041);
+		GWT.log("connecting websocket: " + url);
 		socket = new WebSocket(url);
 
 		socket.onmessage = (evt) -> {
@@ -59,7 +61,17 @@ public class UpdateWebSocketClient {
 		};
 
 	}
+	
+	
+	// 'ws://tcsn0133.cc.cec.eu.int:1061/eAgenda/appointments' 
 
+	private String setPort(String url, int i) {
+		int lastColon = url.lastIndexOf(":");
+		int offset = url.substring(lastColon).indexOf("/");
+		String newUrl = url.substring(0, lastColon + 1) + i + url.substring(lastColon + offset);  		
+		return newUrl;
+	}
+	
 	private String getProtocol(String url) {
 		return url.startsWith("https:") ? "wss" : "ws";
 	}
