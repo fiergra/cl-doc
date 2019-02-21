@@ -62,7 +62,7 @@ public class UpdateWebSocketServer {
 
 	private static void keepAlive() {
 		Thread t = new Thread(() -> {
-			System.out.println("keep " + sessions.size() + " session(s) alive.");
+//			System.out.println("keep " + sessions.size() + " session(s) alive.");
 			notifyAll(ActionType.keepAlive, null);
 			try {
 				Thread.sleep(60L * 1000L);
