@@ -16,6 +16,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -367,9 +368,9 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 //		return appointmentsInSlot.stream().anyMatch(a -> a.guest != null && a.guest.equals(guest));
 //	}
 
-	private Panel createSlotRenderer(boolean sameHour, WorkPattern pattern, Slot slot, boolean enabled,
-			String content) {
+	private Panel createSlotRenderer(boolean sameHour, WorkPattern pattern, Slot slot, boolean enabled,	String content) {
 		HorizontalPanel hpSlot = new HorizontalPanel();
+		FocusPanel fpSlot = new FocusPanel(hpSlot);
 		hpSlot.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
 		hpSlot.setWidth("100%");
 
@@ -385,14 +386,14 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		theSlot.setStyleName("theSlot");
 
 		if (enabled) {
-			theSlot.addClickHandler(c -> saveAppointment(pattern, slot));
+			fpSlot.addClickHandler(c -> saveAppointment(pattern, slot));
 		}
 
 		hpSlot.add(lbHour);
 		hpSlot.add(lbMinute);
 		hpSlot.add(theSlot);
 
-		return hpSlot;
+		return fpSlot;
 	}
 
 	private void saveAppointment(WorkPattern pattern, Slot slot) {

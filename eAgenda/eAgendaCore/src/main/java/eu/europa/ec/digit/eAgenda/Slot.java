@@ -39,11 +39,14 @@ public class Slot implements Serializable {
 
 	@SuppressWarnings("deprecation")
 	public Date getFrom(Date d) {
-		d = new Date(d.getTime());
-		d.setHours(h);
-		d.setMinutes(m);
-		d.setSeconds(0);
-		return d;
+		Date newDate = new Date(0);
+		newDate.setYear(d.getYear());
+		newDate.setMonth(d.getMonth());
+		newDate.setDate(d.getDate());
+		newDate.setHours(h);
+		newDate.setMinutes(m);
+		newDate.setSeconds(0);
+		return newDate;
 	}
 
 	public Date getUntil(Date d) {

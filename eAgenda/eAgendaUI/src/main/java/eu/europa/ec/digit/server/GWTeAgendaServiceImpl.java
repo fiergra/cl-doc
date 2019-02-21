@@ -29,6 +29,7 @@ import eu.europa.ec.digit.eAgenda.Room;
 import eu.europa.ec.digit.eAgenda.User;
 import eu.europa.ec.digit.eAgenda.mail.EmailCalendarService;
 import eu.europa.ec.digit.eAgenda.mail.ExchangeEmailCalendarService;
+import eu.europa.ec.digit.eAgenda.mail.ExchangeEmailCalendarService.IAppointmentListener;
 import eu.europa.ec.digit.shared.IAppointmentAction.ActionType;
 import eu.europa.ec.digit.shared.UserContext;
 
@@ -48,7 +49,35 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	private synchronized EmailCalendarService getEmailCalendarService() {
 		if (ecs == null) {
 			try {
-				ecs = new ExchangeEmailCalendarService("digit-eag-auto-proc", "Aut0Pr0cess01", "DIGIT-EAGENDA-AUTO-PROCESS@ec.europa.eu");
+				IAppointmentListener listener = new IAppointmentListener() {
+
+					private void setState(String objectId, String state) {
+						Appointment a = getMc().findAppointment(objectId);
+						if (a != null) {
+							a.state = state;
+							getMc().saveAppointment(a);
+						}
+					}
+
+					@Override
+					public void accepted(String objectId) {
+						setState(objectId, "ACCEPTED");
+					}
+
+					@Override
+					public void decline(String objectId) {
+						Appointment a = getMc().findAppointment(objectId);
+						if (a != null) {
+							cancelAppointment(a);
+						}
+					}
+
+					@Override
+					public void tentative(String objectId) {
+						setState(objectId, "TENTATIVE");
+					}
+				};
+				ecs = new ExchangeEmailCalendarService("digit-eag-auto-proc", "Aut0Pr0cess01", "DIGIT-EAGENDA-AUTO-PROCESS@ec.europa.eu", listener);
 //				ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
 			} catch (Exception e) {
 				ecs = new EmailCalendarService() {
@@ -128,24 +157,25 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		getMc().saveAppointment(a);
 		UpdateWebSocketServer.notifyAll(actionType, a);
 		
-		try {
-			
-			String[] recipients = new String[] { a.guest.getEMailAddress() != null ? a.guest.getEMailAddress() : getConnectedUserEmail() };
-			
-			String messageBody;
-			
-			if (!getUserContext().user.equals(a.guest)) {
-				messageBody = "<b>" + " this appointment has been created by " + getUserContext().user.getDisplayName() + " on behalf of " + a.guest.getDisplayName() + "</b><br/><br/>";
-			} else {
-				messageBody = "";
+		if (c != null) {
+			try {
+				
+				String[] recipients = new String[] { a.guest.getEMailAddress() != null ? a.guest.getEMailAddress() : getConnectedUserEmail() };
+				
+				String messageBody;
+				
+				if (!getUserContext().user.equals(a.guest)) {
+					messageBody = "<b>" + " this appointment has been created by " + getUserContext().user.getDisplayName() + " on behalf of " + a.guest.getDisplayName() + "</b><br/><br/>";
+				} else {
+					messageBody = "";
+				}
+				
+				messageBody += c.emailSettings.body;
+				getEmailCalendarService().addAppointmentIntoCalendar(recipients, c.emailSettings.subject, messageBody, a);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			
-			messageBody += c.emailSettings.body;
-			getEmailCalendarService().addAppointmentIntoCalendar(recipients, c.emailSettings.subject, messageBody, a);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
-
 		return a;
 	}
 

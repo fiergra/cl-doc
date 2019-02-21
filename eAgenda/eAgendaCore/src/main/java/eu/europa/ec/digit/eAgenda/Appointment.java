@@ -23,6 +23,8 @@ public class Appointment implements Serializable {
 
 	public String comment;
 	
+	public String state;
+	
 	public Appointment() {}
 
 	public Appointment(IResource host, User guest, Room location, Date from, Date until, AppointmentType type) {

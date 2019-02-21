@@ -19,10 +19,12 @@ import microsoft.exchange.webservices.data.core.enumeration.availability.FreeBus
 import microsoft.exchange.webservices.data.core.enumeration.availability.SuggestionQuality;
 import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
 import microsoft.exchange.webservices.data.core.enumeration.misc.TraceFlags;
+import microsoft.exchange.webservices.data.core.enumeration.notification.EventType;
 import microsoft.exchange.webservices.data.core.enumeration.property.BasePropertySet;
 import microsoft.exchange.webservices.data.core.enumeration.property.Importance;
 import microsoft.exchange.webservices.data.core.enumeration.property.LegacyFreeBusyStatus;
 import microsoft.exchange.webservices.data.core.enumeration.property.MapiPropertyType;
+import microsoft.exchange.webservices.data.core.enumeration.property.MeetingResponseType;
 import microsoft.exchange.webservices.data.core.enumeration.property.Sensitivity;
 import microsoft.exchange.webservices.data.core.enumeration.property.WellKnownFolderName;
 import microsoft.exchange.webservices.data.core.enumeration.service.ConflictResolutionMode;
@@ -34,6 +36,7 @@ import microsoft.exchange.webservices.data.core.response.AttendeeAvailability;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
 import microsoft.exchange.webservices.data.core.service.item.EmailMessage;
 import microsoft.exchange.webservices.data.core.service.item.Item;
+import microsoft.exchange.webservices.data.core.service.item.MeetingResponse;
 import microsoft.exchange.webservices.data.core.service.schema.AppointmentSchema;
 import microsoft.exchange.webservices.data.credential.ExchangeCredentials;
 import microsoft.exchange.webservices.data.credential.WebCredentials;
@@ -42,12 +45,21 @@ import microsoft.exchange.webservices.data.misc.availability.AttendeeInfo;
 import microsoft.exchange.webservices.data.misc.availability.AvailabilityOptions;
 import microsoft.exchange.webservices.data.misc.availability.GetUserAvailabilityResults;
 import microsoft.exchange.webservices.data.misc.availability.TimeWindow;
+import microsoft.exchange.webservices.data.notification.ItemEvent;
+import microsoft.exchange.webservices.data.notification.NotificationEvent;
+import microsoft.exchange.webservices.data.notification.NotificationEventArgs;
+import microsoft.exchange.webservices.data.notification.StreamingSubscription;
+import microsoft.exchange.webservices.data.notification.StreamingSubscriptionConnection;
+import microsoft.exchange.webservices.data.notification.StreamingSubscriptionConnection.INotificationEventDelegate;
+import microsoft.exchange.webservices.data.notification.StreamingSubscriptionConnection.ISubscriptionErrorDelegate;
+import microsoft.exchange.webservices.data.notification.SubscriptionErrorEventArgs;
 import microsoft.exchange.webservices.data.property.complex.Attendee;
 import microsoft.exchange.webservices.data.property.complex.AttendeeCollection;
 import microsoft.exchange.webservices.data.property.complex.EmailAddress;
 import microsoft.exchange.webservices.data.property.complex.ExtendedProperty;
 import microsoft.exchange.webservices.data.property.complex.FileAttachment;
 import microsoft.exchange.webservices.data.property.complex.FolderId;
+import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.property.complex.Mailbox;
 import microsoft.exchange.webservices.data.property.complex.MessageBody;
 import microsoft.exchange.webservices.data.property.complex.availability.CalendarEvent;
@@ -58,6 +70,16 @@ import microsoft.exchange.webservices.data.search.ItemView;
 import microsoft.exchange.webservices.data.search.filter.SearchFilter;
 
 public class ExchangeEmailCalendarService implements EmailCalendarService {
+	
+	public interface IAppointmentListener {
+
+		void accepted(String objectId);
+
+		void decline(String objectId);
+
+		void tentative(String objectId);}
+	
+	private final IAppointmentListener appointmentListener;
 
 	public static Logger log = Logger.getLogger(ExchangeEmailCalendarService.class.getName());
 
@@ -86,11 +108,11 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 	private ExchangeService service;
 
 	private synchronized void setExchangeService(String keyUser, String keyPass, String emailAddress) throws Exception {
-		service = new ExchangeService(ExchangeVersion.Exchange2007_SP1);
+		service = new ExchangeService(ExchangeVersion.Exchange2010_SP2);// Exchange2007_SP1);
 		service.setExchange2007CompatibilityMode(true);
 		ExchangeCredentials credentials = new WebCredentials(keyUser, keyPass);
 		service.setCredentials(credentials);
-		service.setTraceEnabled(true);
+		service.setTraceEnabled(false);
 		service.setTraceFlags(EnumSet.allOf(TraceFlags.class)); 
 		service.setTraceListener(new ITraceListener() {
 			
@@ -123,7 +145,8 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		monitorInbox();
 	}
 
-	public ExchangeEmailCalendarService(String exchangeUser, String exchangePass, String fmb) throws Exception {
+	public ExchangeEmailCalendarService(String exchangeUser, String exchangePass, String fmb, IAppointmentListener appointmentListener) throws Exception {
+		this.appointmentListener = appointmentListener;
 		init(exchangeUser, exchangePass, fmb);
 	}
 
@@ -185,15 +208,14 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 	}
 
 	@Override
-	public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, eu.europa.ec.digit.eAgenda.Appointment outlookAppointment) throws Exception {
+	public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, eu.europa.ec.digit.eAgenda.Appointment agendaAppointment) throws Exception {
 		boolean createdNew = false;
 
 		synchronized (service) {
-//			String appointmentId = outlookAppointment.objectId.toHexString();
-			String appointmentId = outlookAppointment.objectId;
-			Date dateFrom = outlookAppointment.from;
-			Date dateTo = outlookAppointment.until;
-			String place = outlookAppointment.location != null ? outlookAppointment.location.getDisplayName() : null;
+			String appointmentId = agendaAppointment.objectId;
+			Date dateFrom = agendaAppointment.from;
+			Date dateTo = agendaAppointment.until;
+			String place = agendaAppointment.location != null ? agendaAppointment.location.getDisplayName() : null;
 			FolderId fid1 = new FolderId(WellKnownFolderName.Calendar, mailBox);
 
 			Appointment existingAppointment = getExistingOutlookAppointment(appointmentId);
@@ -396,38 +418,86 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 	}
 	
 	private void monitorInbox() throws Exception {
-//		Set<FolderId> folderIds = new HashSet<>();
-//		folderIds.add(new FolderId(WellKnownFolderName.Calendar, mailBox));
-//		StreamingSubscription subscription = service.subscribeToStreamingNotifications(folderIds, EventType.Modified);
-//		
-//		AsyncCallback callback = new AsyncCallbackImplementation() {
-//
-//			@Override
-//			public Object processMe(Future<?> task) {
-//				try {
-//					System.out.println(task.get());
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//				return null;
-//			}};
-//			
-//		StreamingSubscriptionConnection con = new StreamingSubscriptionConnection(service, 30);
-//		con.addSubscription(subscription);
-//		con.addOnNotificationEvent(new StreamingSubscriptionConnection.INotificationEventDelegate() {
-//            @Override
-//            public void notificationEventDelegate(Object sender, NotificationEventArgs args) {
-//				System.out.println("notification");
-//                for (NotificationEvent event : args.getEvents()) {
-//                    if (event instanceof FolderEvent) {
-//                        FolderEvent folderEvent = (FolderEvent) event;
-//                    } else if (event instanceof ItemEvent) {                        
-//                        ItemEvent itemEvent = (ItemEvent) event;
-//                    } else {
-//                    }
-//                }
-//            }
-//        });
+		WellKnownFolderName sd = WellKnownFolderName.Inbox;
+		FolderId folderid = new FolderId(sd);
+		List<FolderId> folder = new ArrayList<FolderId>();
+		folder.add(folderid);
+		StreamingSubscription subscription = service.subscribeToStreamingNotifications(folder, EventType.NewMail, EventType.Created, EventType.Deleted, EventType.Modified);
+		@SuppressWarnings("resource")
+		StreamingSubscriptionConnection conn = new StreamingSubscriptionConnection(service, 30);
+		conn.addSubscription(subscription);
+		INotificationEventDelegate listener = new INotificationEventDelegate() {
+
+			@Override
+			public void notificationEventDelegate(Object arg0, NotificationEventArgs eArgs) {
+				Iterator<NotificationEvent> events = eArgs.getEvents().iterator();
+				
+				while (events.hasNext()) {
+					NotificationEvent e = events.next();
+					if (e instanceof ItemEvent) {
+						ItemEvent ie = (ItemEvent)e;
+						if (e.getEventType().equals(EventType.Created)) {
+							try {
+								synchronized (service) {
+									Item item = Item.bind(service, ie.getItemId());
+									if (item instanceof MeetingResponse) {
+										MeetingResponse mr = (MeetingResponse)item;
+										MeetingResponseType rt = mr.getResponseType();
+										
+										ItemId appointmentId = mr.getAssociatedAppointmentId();
+										ExtendedPropertyDefinition extPropDef = new ExtendedPropertyDefinition(_UUID, _CUSTOM_PROPERTY_GEN_ITEM, MapiPropertyType.String);
+										PropertySet extendedPropertySet = new PropertySet(BasePropertySet.FirstClassProperties, extPropDef);
+
+										Appointment appointment = Appointment.bind(service, appointmentId, extendedPropertySet);
+										ExtendedProperty prop = appointment.getExtendedProperties().getPropertyAtIndex(0);
+										String objectId = prop.getValue().toString();
+										
+										if (appointmentListener != null) {
+											switch (rt) {
+											case Accept:
+												appointmentListener.accepted(objectId);
+												break;
+											case Decline:
+												appointmentListener.decline(objectId);
+												break;
+											case Tentative:
+												appointmentListener.tentative(objectId);
+												break;
+											case NoResponseReceived:
+											case Organizer:
+											case Unknown:
+											default:
+												break;
+											} 
+										}
+										System.err.println(objectId + ": " + rt);
+									}
+									item.getBody();
+								}
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+			
+		};
+		conn.addOnNotificationEvent(listener);
+		conn.addOnDisconnect(new ISubscriptionErrorDelegate() {
+
+			@Override
+			public void subscriptionErrorDelegate(Object arg0, SubscriptionErrorEventArgs eArgs) {
+				try {
+					if (!conn.getIsOpen()) {
+						conn.open();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}});
+		conn.open();
+
 	}
 
 }

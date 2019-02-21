@@ -69,7 +69,7 @@ public class MongoAgendaService {
 //			    )
 //			);
 			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
-			seeds.add( new ServerAddress("mongoprod.net1.cec.eu.int"));//""eagendamongodev"));
+			seeds.add(new ServerAddress("mongoprod.net1.cec.eu.int"));
 			
 			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
 			credentials.add(
@@ -165,6 +165,10 @@ public class MongoAgendaService {
 		}
 	}
 
+	public Appointment findAppointment(String objectId) {
+		return appointments().find(Filters.eq("objectId", objectId)).first();
+	}
+	
 	public Appointment saveAppointment(Appointment a) {
 		if (a.objectId == null) {
 			a.objectId = new ObjectId().toHexString();
