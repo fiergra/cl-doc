@@ -14,6 +14,10 @@ public class AppointmentRenderer extends LayoutPanel {
 
 	public AppointmentRenderer(Appointment a) {
 		setStyleName("appointmentRenderer");
+		if (a.state != null) {
+			addStyleDependentName(a.state);
+		}
+		
 		setBackgroundColor(a);
 		if (a.guest != null) {
 			Label userId = new I18NLabel(a.guest.userId);

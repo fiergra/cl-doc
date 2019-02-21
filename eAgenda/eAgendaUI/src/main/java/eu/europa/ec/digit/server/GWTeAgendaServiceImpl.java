@@ -1,5 +1,6 @@
 package eu.europa.ec.digit.server;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -56,6 +57,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 						if (a != null) {
 							a.state = state;
 							getMc().saveAppointment(a);
+							UpdateWebSocketServer.notifyAll(ActionType.update, a);
 						}
 					}
 
@@ -116,7 +118,12 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	
 	private MongoAgendaService getMc() {
 		if (mc == null) {
-			mc = new MongoAgendaService();
+			try {
+				mc = new MongoAgendaService();
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}
 		}
 		return mc;
 	}

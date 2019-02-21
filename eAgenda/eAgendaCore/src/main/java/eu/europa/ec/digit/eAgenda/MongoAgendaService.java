@@ -1,10 +1,14 @@
 package eu.europa.ec.digit.eAgenda;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -38,12 +42,12 @@ public class MongoAgendaService {
 	private MongoDatabase db;
 	private MongoClient mongoClient;
 
-	public MongoAgendaService() {
+	public MongoAgendaService() throws IOException {
 		init();
 	}
 	
-	private final boolean useLocal = false;
-
+	private static Logger logger = Logger.getLogger("MongoAgendaService");
+	
 	private void init() {
 		ClassModel<IResource> cmResource = ClassModel.builder(IResource.class).enableDiscriminator(true).build();
 		ClassModel<User> cmUser = ClassModel.builder(User.class).enableDiscriminator(true).build();
@@ -53,10 +57,34 @@ public class MongoAgendaService {
 		PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder().automatic(true).register(cmResource, cmUser, cmPerson, cmRoom).build();
 		CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(), CodecRegistries.fromProviders(pojoCodecProvider));
 		
-		if (useLocal) {
+		try {
+			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("mongodb.properties");
+			Properties properties = new Properties();
+			properties.load(in);
+			String userName = properties.getProperty("userName"); 
+			String dataBase = properties.getProperty("dataBase"); 
+			String adminDataBase = properties.getProperty("adminDataBase"); 
+			String passWord = properties.getProperty("passWord"); 
+			String host = properties.getProperty("host"); 
+
+			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
+			seeds.add(new ServerAddress(host));
+		
+			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+			credentials.add(
+			    MongoCredential.createCredential(
+			        userName, adminDataBase, passWord.toCharArray()
+			    )
+			);
+			
+			mongoClient = new MongoClient(seeds, credentials, MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
+			db = mongoClient.getDatabase(dataBase);
+		} catch (IOException x) {
+			logger.severe("error loading mongodb.properties: " + x.getMessage());
 			mongoClient = new MongoClient("localhost", MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
 			db = mongoClient.getDatabase("mydb");
-		} else {
+		}
+		
 //			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
 //			seeds.add( new ServerAddress( "dpetlab0.cc.cec.eu.int"));
 //			
@@ -68,21 +96,6 @@ public class MongoAgendaService {
 //			        "eagenda".toCharArray()
 //			    )
 //			);
-			List<ServerAddress> seeds = new ArrayList<ServerAddress>();
-			seeds.add(new ServerAddress("mongoprod.net1.cec.eu.int"));
-			
-			List<MongoCredential> credentials = new ArrayList<MongoCredential>();
-			credentials.add(
-			    MongoCredential.createCredential(
-			        "eagenda",
-			        "admin",
-			        "eagenda".toCharArray()
-			    )
-			);
-			
-			mongoClient = new MongoClient(seeds, credentials, MongoClientOptions.builder().codecRegistry(pojoCodecRegistry).build());
-			db = mongoClient.getDatabase("eagenda");
-		}
 		
 	}
 

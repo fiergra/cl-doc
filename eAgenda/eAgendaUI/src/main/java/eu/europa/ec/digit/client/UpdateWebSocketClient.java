@@ -35,7 +35,7 @@ public class UpdateWebSocketClient {
 		String url = GWT.getHostPageBaseURL();
 		int index = url.indexOf("://");
 		url = getProtocol(url) + url.substring(index) + "appointments";
-		url = setPort(url, 1041);
+//		url = setPort(url, 1041);
 		GWT.log("connecting websocket: " + url);
 		socket = new WebSocket(url);
 
@@ -85,7 +85,8 @@ public class UpdateWebSocketClient {
 			Appointment a = n.appointment;
 			
 			switch (n.actionType) {
-			case update:break;
+			case update:
+				appointments.remove(a);
 			case insert:
 				if (a.guest.equals(guest) || a.host.equals(host)) {
 					appointments.add(a);

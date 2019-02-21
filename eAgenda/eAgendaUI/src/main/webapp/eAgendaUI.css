@@ -164,9 +164,22 @@ body, table td, select, button {
 .appointmentRenderer {
 	box-shadow: 2px 2px 2px #DDD;
 	border: 1px solid #DDD;
+	border-left: 5px solid #DDD;
 	width: 100%;
 	min-width: 15em;
 	height: 3em;
+}
+
+.appointmentRenderer-ACCEPTED {
+	border-left: 5px solid #1DA284;
+}
+
+.appointmentRenderer-TENTATIVE {
+	border-left: 5px solid #0057c0;
+}
+
+.appointmentRenderer-DECLINED {
+	border-left: 5px solid #FF2300;
 }
 
 .mainLabel {
