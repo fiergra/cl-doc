@@ -130,17 +130,22 @@ public class StringResources {
 			titleDe.setText(srTitle.de);
 			
 			
-			ChangeHandler ch = e -> updateSr(sr, new StringResource(key, txtEn.getText(), txtFr.getText(), txtDe.getText()));
-			txtEn.addChangeHandler(ch);
-			txtFr.addChangeHandler(ch);
-			txtDe.addChangeHandler(ch);
-			
+			ChangeHandler chText = e -> updateSr(sr, new StringResource(key, txtEn.getText(), txtFr.getText(), txtDe.getText()));
+			txtEn.addChangeHandler(chText);
+			txtFr.addChangeHandler(chText);
+			txtDe.addChangeHandler(chText);
+
+			ChangeHandler chTitle = e -> updateSr(sr, new StringResource(StringResources.TITLE + key, titleEn.getText(), titleFr.getText(), titleDe.getText()));
+			titleEn.addChangeHandler(chTitle);
+			titleFr.addChangeHandler(chTitle);
+			titleDe.addChangeHandler(chTitle);
+
 			sf.addLine("en", txtEn);
 			sf.addLine("", titleEn);
 			sf.addLine("fr", txtFr);
-			sf.addLine("", titleEn);
+			sf.addLine("", titleFr);
 			sf.addLine("de", txtDe);
-			sf.addLine("", titleEn);
+			sf.addLine("", titleDe);
 			
 			PopupPanel popUp = new PopupPanel(true);
 			popUp.add(sf);

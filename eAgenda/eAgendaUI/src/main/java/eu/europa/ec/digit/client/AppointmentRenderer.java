@@ -2,8 +2,10 @@ package eu.europa.ec.digit.client;
 
 import com.google.gwt.layout.client.Layout.Alignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.PushButton;
 
 import eu.europa.ec.digit.client.i18n.I18NLabel;
 import eu.europa.ec.digit.eAgenda.Appointment;
@@ -49,10 +51,10 @@ public class AppointmentRenderer extends LayoutPanel {
 		setWidgetHorizontalPosition(comment, Alignment.END);
 		setWidgetVerticalPosition(comment, Alignment.BEGIN);
 		
-		FAIcon pbDelete = new FAIcon("trash-alt", 2);
+//		FAIcon pbDelete = new FAIcon("trash-alt", 2);
 
-//		Image imgDelete = new Image("assets/images/delete.png");
-//		PushButton pbDelete = new PushButton(imgDelete);
+		Image imgDelete = new Image("assets/images/delete.png");
+		PushButton pbDelete = new PushButton(imgDelete);
 		pbDelete.addClickHandler(e -> onDelete.run());
 		pbDelete.setStyleName("blankButton");
 //		imgDelete.setPixelSize(14, 14);
