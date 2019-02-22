@@ -199,4 +199,8 @@ public class TabbedLayoutPanel extends DockLayoutPanel {
 		selectionHandlers.add(selectionHandler);
 		return null;
 	}
+
+	public int getTabCount() {
+		return tabs.size();
+	}
 }

@@ -7,8 +7,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MessageBox {
@@ -86,7 +89,13 @@ public class MessageBox {
 		}
 		
 		dlgWidget.addSouth(buttonsPanel, 32);
-		dlgWidget.add(content);
+		VerticalPanel vpContent = new VerticalPanel();
+		vpContent.setStyleName("vpContent");
+		vpContent.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		vpContent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		vpContent.setSize("100%", "100%");
+		vpContent.add(content);
+		dlgWidget.add(vpContent);
 		
 		dlg.setWidget(dlgWidget);
 		dlg.center();
