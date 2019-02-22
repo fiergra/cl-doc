@@ -50,13 +50,13 @@ public class UpdateWebSocketServer {
 
 	@OnOpen
 	public void onOpen(Session session) {
-		String s = "WebSocket opened: " + session.getId() + " @ " + session.getRequestURI();
-		System.out.println(s);
+		String s = "*WebSocket opened: " + session.getId() + " @ " + session.getRequestURI();
+//		System.out.println(s);
 		logger.info(s);
 		// JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
 		// ar.sendText(sessions.size() + " open sessions");
 		sessions.add(session);
-		System.out.println(sessions.size() + " open sessions");
+//		System.out.println(sessions.size() + " open sessions");
 		
 	}
 

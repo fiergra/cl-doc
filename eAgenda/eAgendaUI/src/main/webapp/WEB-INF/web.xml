@@ -66,12 +66,11 @@
         <realm-name>eAgenda Realm</realm-name>
     </login-config>
      
-    <!--  
     <security-role>
         <description>Application-defined role</description>
         <role-name>INTERNET</role-name>
     </security-role>
-    -->
+    
   <!-- Default page to serve -->
   
   <welcome-file-list>
