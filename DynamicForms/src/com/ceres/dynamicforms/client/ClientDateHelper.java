@@ -68,10 +68,13 @@ public class ClientDateHelper {
 	private static DateTimeFormat dateOnly = DateTimeFormat.getFormat("dd/MM/yyyy");
 
 	public static Date trunc(Date date) {
-		String sDate = dateOnly.format(date);
-		Date newDate = dateOnly.parse(sDate);
-
-		return newDate;
+		if (date != null) {
+			String sDate = dateOnly.format(date);
+			Date newDate = dateOnly.parse(sDate);
+			return newDate;
+		} else {
+			return null;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
