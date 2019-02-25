@@ -44,7 +44,6 @@ public class WorkPattern implements Serializable {
 	}
 
 	public boolean applies(Date d) {
-		System.out.println(this.getFrom());
 		return (getFrom() == null || getFrom().getTime() <= d.getTime()) && (until == null || until.getTime() >= d.getTime()) ;
 	}
 
