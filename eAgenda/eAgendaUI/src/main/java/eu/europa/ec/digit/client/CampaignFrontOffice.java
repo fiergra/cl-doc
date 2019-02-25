@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DatePicker;
@@ -180,7 +181,12 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 			vpMain.setWidth("20%");
 			vpSlots.setStyleName("dailySlotsPanel");
-			ftMain.setWidget(0, 1, vpSlots);
+			
+			ScrollPanel spSlots = new ScrollPanel(vpSlots);
+			spSlots.setStyleName("slotsScrollPanel");
+			spSlots.setSize("100%", "100%");
+			ftMain.setWidget(0, 1, spSlots);
+			ftMain.setHeight("100%");
 			ftMain.getFlexCellFormatter().setWidth(0, 1, "100%");
 			ftMain.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
 			ftMain.getFlexCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_TOP);
@@ -293,48 +299,48 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 	}
 
 	private void setSelectedDate(Date d) {
-		WorkPattern pattern = wpHelper.getPatternForDay(d);
-		
 		vpSlots.clear();
-		
-		if (pattern != null) {
-			vpSlots.add(createSlotsHeader(pattern, d));
+		if (d != null) {
+			WorkPattern pattern = wpHelper.getPatternForDay(d);
 			if (pattern != null) {
-				Day day = pattern.getDay(d);
-				if (day != null && day.slots != null) {
-	
-					List<Slot> combinedSlots = getCombinedSlots(day.slots, campaign.appointmentType.duration);
-	
-					Slot prevSlot = null;
-					for (Slot slot : combinedSlots) {
-						boolean placesAvailable = false;
-	
-						Panel slotRenderer;
-						if (slot.capacity == null || slot.capacity == 0) {
-							slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
-									false, null);
-							slotRenderer.setStyleName(STYLE_DISABLED);
-						} else {
-							List<Appointment> appointmentsInSlot = wpHelper
-									.getAppointmentsInSlot(wsClient.getAppointments(), d, slot); // wsClient.getAppointments().parallelStream().filter(a
-																									// -> inSlot(a, d,
-																									// slot)).collect(Collectors.toList());
-							placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
-	
-							String content = "";
-	//						if (containsMyAppointment(appointmentsInSlot)) {
-	//							Date sd = slot.getFrom(d);
-	//							content = "</img src=\"assets/images/add.png\">" + ClientDateFormatter.dtfMonth.format(sd) + " " + ClientDateFormatter.dtfTime.format(sd) + "@" + host.getDisplayName();
-	//						}
-	
-							slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
-									placesAvailable, content);
-							slotRenderer.setStyleName(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE);
+				vpSlots.add(createSlotsHeader(pattern, d));
+				if (pattern != null) {
+					Day day = pattern.getDay(d);
+					if (day != null && day.slots != null) {
+		
+						List<Slot> combinedSlots = getCombinedSlots(day.slots, campaign.appointmentType.duration);
+		
+						Slot prevSlot = null;
+						for (Slot slot : combinedSlots) {
+							boolean placesAvailable = false;
+		
+							Panel slotRenderer;
+							if (slot.capacity == null || slot.capacity == 0) {
+								slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
+										false, null);
+								slotRenderer.setStyleName(STYLE_DISABLED);
+							} else {
+								List<Appointment> appointmentsInSlot = wpHelper
+										.getAppointmentsInSlot(wsClient.getAppointments(), d, slot); // wsClient.getAppointments().parallelStream().filter(a
+																										// -> inSlot(a, d,
+																										// slot)).collect(Collectors.toList());
+								placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
+		
+								String content = "";
+		//						if (containsMyAppointment(appointmentsInSlot)) {
+		//							Date sd = slot.getFrom(d);
+		//							content = "</img src=\"assets/images/add.png\">" + ClientDateFormatter.dtfMonth.format(sd) + " " + ClientDateFormatter.dtfTime.format(sd) + "@" + host.getDisplayName();
+		//						}
+		
+								slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
+										placesAvailable, content);
+								slotRenderer.setStyleName(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE);
+							}
+							vpSlots.add(slotRenderer);
+							prevSlot = slot;
 						}
-						vpSlots.add(slotRenderer);
-						prevSlot = slot;
+		
 					}
-	
 				}
 			}
 		}
@@ -464,12 +470,10 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 					personalAppointments.add(a);
 					displayPersonalAppointments();
 				}
-				checkAvailability();
-				setSelectedDate(datePicker.getValue());
+				checkAndSet();
 				break;
 			case delete:
-				checkAvailability();
-				setSelectedDate(datePicker.getValue());
+				checkAndSet();
 				if (personalAppointments.remove(a)) {
 					displayPersonalAppointments();
 				}
@@ -479,6 +483,12 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			}
 
 		});
+	}
+
+	private void checkAndSet() {
+		Date d = checkAvailability();
+		datePicker.setValue(d);
+		setSelectedDate(d);
 	}
 
 	private void setSelectedResource(Campaign campaign, DatePicker datePicker, IResource iResource) {
@@ -513,8 +523,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			@Override
 			protected void onResult(List<Appointment> result) {
 				wsClient.setAppointments(result);
-				checkAvailability();
-				setSelectedDate(datePicker.getValue());
+				checkAndSet();
 			}
 		};
 		eAgendaUI.service.getAppointments(ClientDateHelper.trunc(datePicker.getFirstDate()),
@@ -522,11 +531,13 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 				callback);
 	}
 
-	private void checkAvailability() {
+	private Date checkAvailability() {
 		Date dCurr = datePicker.getFirstDate();
+		Date minDate = new Date(new Date().getTime() + campaign.startDelayInH * 60L * 60L * 1000L);
+		Date selectDate = null;
+		
 		long curr = dCurr.getTime();
-		long end = ClientDateHelper.trunc(new Date(datePicker.getLastDate().getTime() + ClientDateHelper.DAY_MS))
-				.getTime();
+		long end = ClientDateHelper.trunc(new Date(datePicker.getLastDate().getTime() + ClientDateHelper.DAY_MS)).getTime();
 
 		while (curr < end) {
 			Date d = new Date(curr);
@@ -554,14 +565,19 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 						if (datePicker.isDateEnabled(d)) {
 							datePicker.removeStyleFromDates(STYLE_COMPLETE, d);
 							datePicker.removeStyleFromDates(STYLE_PLACES_AVAILABLE, d);
-							datePicker.addTransientStyleToDates(
-									placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE, d);
+							datePicker.addTransientStyleToDates(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE, d);
+							
+							if (selectDate == null && placesAvailable && d.getTime() >= minDate.getTime()) {
+								selectDate = d;
+							}
 						}
 					}
 				}
 			}
 			curr += ClientDateHelper.DAY_MS;
 		}
+		
+		return selectDate;
 	}
 
 	private boolean isHoliday(Date d) {

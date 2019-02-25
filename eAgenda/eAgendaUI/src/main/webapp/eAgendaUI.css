@@ -288,7 +288,7 @@ body, table td, select, button {
 	border: 1px solid white;
 	font-family: font-family: 'Roboto', sans-serif;
 	font-smooth: always;
-	font-size: medium;
+	font-size: large;
 	font-weight: normal;
 }
 
@@ -306,6 +306,9 @@ body, table td, select, button {
 	font-weight: bold;
 }
 
+.datePickerDayIsWeekend {
+    background: #ffdbdb;
+}
 
 .slotHourLabel {
 	font-weight: bold;
@@ -347,13 +350,14 @@ body, table td, select, button {
 }
 
 .slotsHeaderDayName {
-	font-size: xx-large;
+	font-size: x-large;
+	font-weight: bold;
 	border: none;
 }
 
 .slotSelectionHeader {
 	height: 2em;
-	font-size: xx-large;
+	font-size: x-large;
 	border-bottom: 1px solid #DDD;
 	width: 100%;
 }
