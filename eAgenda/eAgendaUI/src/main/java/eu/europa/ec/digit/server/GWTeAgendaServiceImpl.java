@@ -1,6 +1,7 @@
 package eu.europa.ec.digit.server;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -10,6 +11,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +22,7 @@ import javax.websocket.server.ServerEndpointConfig;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import eu.cec.digit.ecas.client.jaas.DetailedUser;
+import eu.europa.ec.digit.client.ClientDateFormatter;
 import eu.europa.ec.digit.client.GWTeAgendaService;
 import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.eAgenda.Appointment;
@@ -45,70 +49,89 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	}
 
 	
+	private static class DummyEmailService implements EmailCalendarService {
+		
+		private static Logger logger = Logger.getLogger("DummyEmailService");
+
+		@Override
+		public void removeAppointmentFromCalendar(String id) throws Exception {
+			logger.info("removeAppointmentFromCalendar: " + id);
+		}
+
+		@Override
+		public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message,	Appointment appointment) throws Exception {
+			logger.info("addAppointmentIntoCalendar: to: " + recipients + " subject: " + subject + " message: " + message + " id: " + appointment.objectId);
+			return true;
+		}
+
+		@Override
+		public void sendMessage(String requesterEmail, String[] recipients, String[] cc, String[] bcc, String subject, String message, String attachmentName, byte[] content) throws Exception {
+			logger.info("sendMessage: to: " + recipients + " subject: " + subject + " message: " + message);
+		}
+
+		@Override
+		public List<Appointment> getFreeBusyInfo(IResource host, Date startDate) throws Exception {
+			logger.info("getFreeBusyInfo of " + host.getDisplayName() + " at " + ClientDateFormatter.format(startDate));
+			return null;
+		}
+		
+	}
+	
 	private EmailCalendarService ecs;
+	
+	private boolean isProduction() {
+		String serverName = getThreadLocalRequest().getServerName();
+		
+		return serverName.contains("tccp0060");
+		
+	}
 	
 	private synchronized EmailCalendarService getEmailCalendarService() {
 		if (ecs == null) {
-			try {
-				IAppointmentListener listener = new IAppointmentListener() {
-
-					private void setState(String objectId, String state) {
-						Appointment a = getMc().findAppointment(objectId);
-						if (a != null) {
-							a.state = state;
-							getMc().saveAppointment(a);
-							UpdateWebSocketServer.notifyAll(ActionType.update, a);
+			if (isProduction()) {
+				try {
+					InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("email.properties");
+					Properties properties = new Properties();
+					properties.load(in);
+					String userName = properties.getProperty("userName"); 
+					String passWord = properties.getProperty("passWord"); 
+					String emailAddress = properties.getProperty("emailAddress"); 
+					IAppointmentListener listener = new IAppointmentListener() {
+	
+						private void setState(String objectId, String state) {
+							Appointment a = getMc().findAppointment(objectId);
+							if (a != null) {
+								a.state = state;
+								getMc().saveAppointment(a);
+								UpdateWebSocketServer.notifyAll(ActionType.update, a);
+							}
 						}
-					}
-
-					@Override
-					public void accepted(String objectId) {
-						setState(objectId, "ACCEPTED");
-					}
-
-					@Override
-					public void decline(String objectId) {
-						Appointment a = getMc().findAppointment(objectId);
-						if (a != null) {
-							cancelAppointment(a);
+	
+						@Override
+						public void accepted(String objectId) {
+							setState(objectId, "ACCEPTED");
 						}
-					}
-
-					@Override
-					public void tentative(String objectId) {
-						setState(objectId, "TENTATIVE");
-					}
-				};
-				ecs = new ExchangeEmailCalendarService("digit-eag-auto-proc", "Aut0Pr0cess01", "DIGIT-EAGENDA-AUTO-PROCESS@ec.europa.eu", listener);
-//				ecs = new ExchangeEmailCalendarService("hr-health", "SermedAut0Pr0cess082013", "HR-HEALTH-AUTO-PROCESS@ec.europa.eu");
-			} catch (Exception e) {
-				ecs = new EmailCalendarService() {
-					
-					@Override
-					public void sendMessage(String requesterEmail, String[] recipients, String[] cc, String[] bcc, String subject, String bodyContent, String attachmentName, byte[] content) throws Exception {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public void removeAppointmentFromCalendar(String id) throws Exception {
-						// TODO Auto-generated method stub
-						
-					}
-					
-					@Override
-					public List<Appointment> getFreeBusyInfo(IResource host, Date startDate) throws Exception {
-						// TODO Auto-generated method stub
-						return null;
-					}
-					
-					@Override
-					public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, Appointment appointment) throws Exception {
-						// TODO Auto-generated method stub
-						return false;
-					}
-				};
-				e.printStackTrace();
+	
+						@Override
+						public void decline(String objectId) {
+							Appointment a = getMc().findAppointment(objectId);
+							if (a != null) {
+								cancelAppointment(a);
+							}
+						}
+	
+						@Override
+						public void tentative(String objectId) {
+							setState(objectId, "TENTATIVE");
+						}
+					};
+					ecs = new ExchangeEmailCalendarService(userName, passWord, emailAddress, listener);
+				} catch (Exception e) {
+					ecs = new DummyEmailService();			
+					e.printStackTrace();
+				}
+			} else {
+				ecs = new DummyEmailService();
 			}
 		}
 		return ecs;

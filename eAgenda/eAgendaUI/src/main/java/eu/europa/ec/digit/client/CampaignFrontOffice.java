@@ -36,6 +36,7 @@ import eu.europa.ec.digit.eAgenda.Appointment;
 import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.Day;
 import eu.europa.ec.digit.eAgenda.IResource;
+import eu.europa.ec.digit.eAgenda.Person;
 import eu.europa.ec.digit.eAgenda.Room;
 import eu.europa.ec.digit.eAgenda.Slot;
 import eu.europa.ec.digit.eAgenda.User;
@@ -144,7 +145,25 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 				@Override
 				protected String labelFunc(IResource r) {
-					return r != null ? r.getDisplayName() : StringResources.getLabel("<select>");
+					return r != null ? r.getDisplayName() : getLabel("<select>");
+				}
+
+				private String getLabel(String string) {
+					String label = StringResources.getLabel("<select>");
+					
+					boolean hasPerson = entities.stream().anyMatch(e -> e instanceof Person);
+					boolean hasUser = entities.stream().anyMatch(e -> e instanceof User);
+					boolean hasRoom = entities.stream().anyMatch(e -> e instanceof Room);
+					
+					if ((hasPerson || hasUser) && hasRoom) {
+						label = StringResources.getLabel("<select host or location>");
+					} else if (hasRoom) {
+						label = StringResources.getLabel("<select location>");
+					} else if (hasPerson || hasUser) {
+						label = StringResources.getLabel("<select host>");
+					}
+					
+					return label;
 				}
 
 			};
