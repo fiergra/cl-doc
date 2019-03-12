@@ -70,6 +70,15 @@ public class ObjectSelectorComboBox<T> extends ListBox {
 		});
 	}
 
+	
+	
+	@Override
+	public void clear() {
+		super.clear();
+		entities.clear();
+		selectedEntity = null;
+	}
+
 	public void populate(Collection<T> result) {
 		
 		int index = 0;
