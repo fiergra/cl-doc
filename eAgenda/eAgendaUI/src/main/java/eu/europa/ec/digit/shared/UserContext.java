@@ -13,6 +13,8 @@ public class UserContext implements Serializable {
 	public static final String ADMIN = "$admin";
 	
 	public User user;
+	
+	public String builtAt; 
 
 	public Collection<String> roles;
 

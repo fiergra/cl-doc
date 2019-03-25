@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
@@ -126,6 +127,7 @@ public class eAgendaUI implements EntryPoint {
 		
 		if (idOrName == null) {
 			setMainWidget(new HomeScreen(userContext));
+			addVersionAndDisclaimer();
 		} else {
 			
 			service.loadHolidays(null, new RPCCallback<Collection<Date>>() {
@@ -139,11 +141,14 @@ public class eAgendaUI implements EntryPoint {
 							if (campaign != null) {
 								if (name != null && !campaign.published) {
 									setMainWidget(new I18NLabel("specified campaign is not yet published"));
+									addVersionAndDisclaimer();
 								} else {
 									setMainWidget(new CampaignFrontOffice(campaign, holidays));
+									addVersionAndDisclaimer();
 								}
 							} else {
 								setMainWidget(new I18NLabel("specified campaign cannot be loaded"));
+								addVersionAndDisclaimer();
 							}
 						}
 					});
@@ -158,6 +163,26 @@ public class eAgendaUI implements EntryPoint {
 		r.add(widget);
 		r.setWidgetTopBottom(widget, 0, Unit.PX, 0, Unit.PX);
 		r.setWidgetLeftRight(widget, 0, Unit.PX, 0, Unit.PX);
+	}
+	
+	private void addVersionAndDisclaimer() {
+		RootLayoutPanel r = RootLayoutPanel.get();
+		HorizontalPanel hp = new HorizontalPanel();
+		
+		Label lbdisclaimer = new I18NLabel("Disclaimer");
+		lbdisclaimer.addClickHandler(e -> {
+			MessageBox.show(StringResources.getLabel("Disclaimer"), StringResources.getLabel("Data Protection Notification goes here..."), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO, MessageBox.NOP);
+		});
+		
+		Label lbVersion = new Label(userContext.builtAt);
+		lbVersion.setStyleName("versionText");
+		hp.add(lbVersion);
+		hp.add(lbdisclaimer);
+		lbdisclaimer.setStyleName("disclaimerLink");
+		
+		r.add(hp);
+		r.setWidgetBottomHeight(hp, 10, Unit.PX, 2, Unit.EM);
+		r.setWidgetLeftWidth(hp, 10, Unit.PX, 100, Unit.PCT);
 	}
 	
 	
@@ -200,8 +225,4 @@ public class eAgendaUI implements EntryPoint {
 	}
 
 
-
-	public static String getLabel(String text) {
-		return text;
-	}
 }

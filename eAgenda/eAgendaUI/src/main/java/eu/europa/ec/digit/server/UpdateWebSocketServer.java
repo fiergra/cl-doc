@@ -51,13 +51,8 @@ public class UpdateWebSocketServer {
 	@OnOpen
 	public void onOpen(Session session) {
 		String s = "*WebSocket opened: " + session.getId() + " @ " + session.getRequestURI();
-//		System.out.println(s);
 		logger.info(s);
-		// JsrAsyncRemote ar = (JsrAsyncRemote) session.getAsyncRemote();
-		// ar.sendText(sessions.size() + " open sessions");
 		sessions.add(session);
-//		System.out.println(sessions.size() + " open sessions");
-		
 	}
 
 	private static void keepAlive() {
@@ -76,8 +71,9 @@ public class UpdateWebSocketServer {
 
 	@OnMessage
 	public void onMessage(String txt, Session session) throws IOException, SerializationException {
+		@SuppressWarnings("unused")
 		WebSocketNotification wsn = deserialize(txt);
-		System.out.println("Message received: " + wsn);
+//		System.out.println("Message received: " + wsn);
 	}
 
 	static class Subscription {
@@ -115,9 +111,9 @@ public class UpdateWebSocketServer {
 
 	@OnClose
 	public void onClose(CloseReason reason, Session session) {
-		System.out.println("Closing a WebSocket due to " + reason.getReasonPhrase());
+		logger.info("Closing a WebSocket due to " + reason.getReasonPhrase());
 		sessions.remove(session);
-		System.out.println(sessions.size() + " open sessions");
+		logger.info(sessions.size() + " open sessions");
 	}
 
 	public static void notifyAll(ActionType aType, Appointment a) {
@@ -127,7 +123,7 @@ public class UpdateWebSocketServer {
 				String text = serialize(n);
 				sendText(s, text);
 			} catch (SerializationException e) {
-				e.printStackTrace();
+				logger.warning("error sending text: " + e.getMessage());
 			}
 		});
 	}

@@ -43,6 +43,8 @@ import eu.europa.ec.digit.shared.UserContext;
 @SuppressWarnings("serial")
 public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeAgendaService {
 
+	private static Logger logger = Logger.getLogger("GWTeAgendaService");
+
 	static {
 		ServerEndpointConfig.Builder.create(UpdateWebSocketServer.class, "/appointments").build();
 	}
@@ -80,8 +82,16 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	
 	private boolean isProduction() {
 		String serverName = getThreadLocalRequest().getServerName();
+		boolean isProd = serverName.contains("tccp0060");
 		
-		return serverName.contains("tccp0060");
+		if (isProd) {
+			logger.info("*******************************************");
+			logger.info("***** running on production server ********");
+			logger.info("*******************************************");
+		} else {
+			logger.info("running on server: " + serverName);
+		}
+		return isProd;
 		
 	}
 	
@@ -298,6 +308,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		
 		if (user != null ) {
 			userContext = new UserContext(user, getRoles(user));
+			userContext.builtAt = getBuildTimestamp();
 			HttpSession httpSession = getThreadLocalRequest().getSession();
 			httpSession.setAttribute(UserContext.USERCONTEXT, userContext);
 		}
@@ -305,6 +316,19 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		return userContext;
 	}
 	
+	private String getBuildTimestamp() {
+		String timestamp = "<unknown>";
+		try {
+			InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("build.properties");
+			Properties properties = new Properties();
+			properties.load(in);
+			timestamp = properties.getProperty("build.timestamp", "<unknown>");
+		} catch (IOException x) {
+			timestamp = x.getMessage();
+		}
+		return timestamp;
+	}
+
 	private UserContext getUserContext() {
 		HttpSession httpSession = getThreadLocalRequest().getSession();
 		return (UserContext) httpSession.getAttribute(UserContext.USERCONTEXT);
@@ -313,7 +337,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	private Collection<String> getRoles(User user) {
 		Collection<String> roles = new ArrayList<String>();
 		
-		if (user.userId.equals("fiergra")) {
+		if (user.userId.equals("fiergra") || user.userId.equals("lilpepe")) {
 			roles.add(UserContext.ADMIN);
 			roles.add("campaignmanager");
 		}

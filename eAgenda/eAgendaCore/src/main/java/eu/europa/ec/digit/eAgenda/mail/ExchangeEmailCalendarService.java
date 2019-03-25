@@ -426,6 +426,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		@SuppressWarnings("resource")
 		StreamingSubscriptionConnection conn = new StreamingSubscriptionConnection(service, 30);
 		conn.addSubscription(subscription);
+		log.info("streaming subscription added.");
 		INotificationEventDelegate listener = new INotificationEventDelegate() {
 
 			@Override
@@ -436,6 +437,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 					NotificationEvent e = events.next();
 					if (e instanceof ItemEvent) {
 						ItemEvent ie = (ItemEvent)e;
+						log.info("received item event: " + ie.getEventType().name());
 						if (e.getEventType().equals(EventType.Created)) {
 							try {
 								synchronized (service) {
@@ -443,7 +445,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 									if (item instanceof MeetingResponse) {
 										MeetingResponse mr = (MeetingResponse)item;
 										MeetingResponseType rt = mr.getResponseType();
-										
+
 										ItemId appointmentId = mr.getAssociatedAppointmentId();
 										ExtendedPropertyDefinition extPropDef = new ExtendedPropertyDefinition(_UUID, _CUSTOM_PROPERTY_GEN_ITEM, MapiPropertyType.String);
 										PropertySet extendedPropertySet = new PropertySet(BasePropertySet.FirstClassProperties, extPropDef);
@@ -451,7 +453,9 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 										Appointment appointment = Appointment.bind(service, appointmentId, extendedPropertySet);
 										ExtendedProperty prop = appointment.getExtendedProperties().getPropertyAtIndex(0);
 										String objectId = prop.getValue().toString();
-										
+
+										log.info("meeting response for ID " + objectId + " ==> " + rt.name());
+
 										if (appointmentListener != null) {
 											switch (rt) {
 											case Accept:
@@ -470,12 +474,10 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 												break;
 											} 
 										}
-										System.err.println(objectId + ": " + rt);
 									}
-									item.getBody();
 								}
 							} catch (Exception e1) {
-								e1.printStackTrace();
+								log.severe(e1.getLocalizedMessage());
 							}
 						}
 					}
@@ -488,15 +490,25 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 
 			@Override
 			public void subscriptionErrorDelegate(Object arg0, SubscriptionErrorEventArgs eArgs) {
+				log.severe("re-open after disconnect...");
 				try {
 					if (!conn.getIsOpen()) {
 						conn.open();
+						log.info("connection re-opened.");
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.severe("error re-opening connection: " + e.getMessage());
+					try {
+						log.severe("re-start monitoring...");
+						monitorInbox();
+					} catch (Exception e1) {
+						log.severe("error re-opening connection: " + e1.getMessage());
+						e1.printStackTrace();
+					}
 				}
 			}});
 		conn.open();
+		log.info("connection opened first time.");
 
 	}
 

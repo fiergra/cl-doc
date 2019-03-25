@@ -78,7 +78,7 @@ body, table td, select, button {
 }
 
 .emptySlotRenderer:hover {
-	background-color: #DDD;
+	background-color: #FBC02D;
 }
 
 .tabbedPanel {
@@ -292,6 +292,12 @@ body, table td, select, button {
 	font-weight: normal;
 }
 
+.datePickerDayIsDisabled {
+    color: #AAAAAA;
+    font-style: italic;
+    cursor: no-drop;
+}
+
 .datePickerDayIsToday {
 	padding: 3px;
 	color: #1DA284;
@@ -307,7 +313,7 @@ body, table td, select, button {
 }
 
 .datePickerDayIsWeekend {
-    background: #ffdbdb;
+    background: #ffb5ae;
 }
 
 .slotHourLabel {
@@ -337,16 +343,21 @@ body, table td, select, button {
 }
 
 .placesAvailable {
-	background-color: #4dff82;
+	background-color: #c2ffc2;
 }
 
 .placesAvailable:hover {
-	background-color: #DDD;
+	background-color: #FBC02D;
 }
 
 
 .complete {
-	background-color: #FF2300;
+	background-color: #ffb5ae;
+}
+
+.slotDisabled {
+	background-color: #DFDFDF;
+	cursor: no-drop;
 }
 
 .slotsHeaderDayName {
@@ -548,4 +559,50 @@ body, table td, select, button {
 
 .city-LUX {
 	background-image: "assets/images/lux.jpg"
+}
+
+.dynamicHyperLink {
+	color: black;
+}
+
+.dynamicHyperLink:hover {
+	cursor: pointer;
+	color: blue;
+	text-decoration: underline;
+}
+
+.postItText {
+	font-weight: bolder;
+	font-size: larger;
+}
+
+.instructionsHeading {
+	font-size: xx-large;
+	font-weight: bold;
+}
+
+.instructionsBullet {
+	background-color: #004494;
+	width: 24px;
+	height: 24px;
+	border-radius: 12px;
+	font-size: 18px;
+	font-weight: bold;
+	color: white;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.instructionsBulletText {
+	font-size: large;
+	font-weight: bold;
+}
+
+.disclaimerLink {
+	color: white;
+}
+
+.versionText {
+	color: white;
+	font-family: Courier;
 }

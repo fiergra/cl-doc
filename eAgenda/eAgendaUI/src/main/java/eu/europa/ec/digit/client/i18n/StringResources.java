@@ -61,7 +61,7 @@ public class StringResources {
 	}
 
 	public static boolean canEdit() {
-		return true;
+		return eAgendaUI.userContext.isAdmin();
 	}
 	
 	

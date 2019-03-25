@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.ceres.dynamicforms.client.ClientDateHelper;
@@ -53,7 +54,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 	private List<Appointment> personalAppointments;
 	private List<Widget> personalAppointmentRenderers = new ArrayList<>();
 	private VerticalPanel vpSlots = new VerticalPanel();
-	private VerticalPanel vpMain = new VerticalPanel();
+	private VerticalPanel vpResourceAndCalendar = new VerticalPanel();
 
 	private final ApplicationHeader ah;
 
@@ -78,6 +79,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 		if (campaign.allowDelegation) {
 			HTML clickHere = new HTML(getClickHereText(eAgendaUI.userContext.user));
+			clickHere.addStyleName("dynamicHyperLink");
 			clickHere.setHeight("100%");
 			clickHere.addClickHandler(e -> impersonate(clickHere));
 			ah.hpRight.add(clickHere);
@@ -91,10 +93,12 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 		FlexTable ftMain = new FlexTable();
 		ftMain.setStyleName("ftMain");
-		vpMain.setStyleName("city");
-		ftMain.setWidget(0, 0, vpMain);
+		vpResourceAndCalendar.setStyleName("city");
+		ftMain.setWidget(0, 0, vpResourceAndCalendar);
 //		vpMain.setSpacing(3);
-		add(ftMain);
+		
+		
+		add(new ScrollPanel(ftMain));
 
 		if (campaign.patterns != null) {
 			List<IResource> resources = campaign.assignedResources();
@@ -173,19 +177,15 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			cmbResources.addStyleName("slotSelectionHeader");
 			cmbResources.populate(resources);
 			cmbResources.addChangeHandler(e -> setSelectedResource(campaign, datePicker, cmbResources.getValue()));
-			vpMain.add(cmbResources);
-//			HTML spacer = new HTML();
-//			spacer.setHeight("3px");
-//			vpMain.add(spacer);
-			vpMain.add(datePicker);
+			vpResourceAndCalendar.add(cmbResources);
+			vpResourceAndCalendar.add(datePicker);
 
-			vpMain.setWidth("20%");
+			vpResourceAndCalendar.add(createInstructions());
+
+			vpResourceAndCalendar.setWidth("20%");
 			vpSlots.setStyleName("dailySlotsPanel");
 			
-			ScrollPanel spSlots = new ScrollPanel(vpSlots);
-			spSlots.setStyleName("slotsScrollPanel");
-			spSlots.setSize("100%", "100%");
-			ftMain.setWidget(0, 1, spSlots);
+			ftMain.setWidget(0, 1, vpSlots);
 			ftMain.setHeight("100%");
 			ftMain.getFlexCellFormatter().setWidth(0, 1, "100%");
 			ftMain.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
@@ -202,8 +202,38 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 
 	}
 
+	private Widget createInstructions() {
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(10);
+		Label heading = new I18NLabel("Instructions");
+		heading.setStyleName("instructionsHeading");
+		vp.add(heading);
+		vp.add(createInstruction(1, "Select the location"));
+		vp.add(createInstruction(2, "Chose a date"));
+		vp.add(createInstruction(3, "Pick your preferred time"));
+		
+		return vp;
+	}
+
+	private Widget createInstruction(int i, String string) {
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setSpacing(3);
+		hp.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		Label number = new Label(String.valueOf(i));
+		number.setStyleName("instructionsBullet");
+		hp.add(number);
+		Label text = new I18NLabel(string); 
+		hp.add(text);
+		
+		return hp;
+	}
+
 	private String getClickHereText(User user) {
-		return "Click <b>here</b> to fix appointments</br> for someone else than <b>" + user.userId + "</b>";
+		return "Click <b>here</b> to fix appointments for </br>someone else than <b>" + getUserName(user) + "</b>";
+	}
+
+	private String getUserName(User user) {
+		return user.person != null ? user.person.firstName + " " + user.person.lastName : user.userId;
 	}
 
 	private void disableDatePicker() {
@@ -306,19 +336,24 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 				vpSlots.add(createSlotsHeader(pattern, d));
 				if (pattern != null) {
 					Day day = pattern.getDay(d);
-					if (day != null && day.slots != null) {
-		
-						List<Slot> combinedSlots = getCombinedSlots(day.slots, campaign.appointmentType.duration);
-		
+					if (day != null) {
+						List<Slot> combinedSlots;
+						if (day.slots == null) {
+							combinedSlots = new ArrayList<>();
+						} else {
+							combinedSlots = getCombinedSlots(day.slots, campaign.appointmentType.duration);
+						}
+						combinedSlots = fillUp(pattern, combinedSlots); 
+						
 						Slot prevSlot = null;
 						for (Slot slot : combinedSlots) {
 							boolean placesAvailable = false;
 		
 							Panel slotRenderer;
 							if (slot.capacity == null || slot.capacity == 0) {
-								slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
-										false, null);
+								slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot, false, null);
 								slotRenderer.setStyleName(STYLE_DISABLED);
+								slotRenderer.setTitle(StringResources.getLabel("no places available at this time slot"));
 							} else {
 								List<Appointment> appointmentsInSlot = wpHelper
 										.getAppointmentsInSlot(wsClient.getAppointments(), d, slot); // wsClient.getAppointments().parallelStream().filter(a
@@ -327,14 +362,17 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 								placesAvailable = placesAvailable || appointmentsInSlot.size() < slot.capacity;
 		
 								String content = "";
-		//						if (containsMyAppointment(appointmentsInSlot)) {
-		//							Date sd = slot.getFrom(d);
-		//							content = "</img src=\"assets/images/add.png\">" + ClientDateFormatter.dtfMonth.format(sd) + " " + ClientDateFormatter.dtfTime.format(sd) + "@" + host.getDisplayName();
-		//						}
 		
 								slotRenderer = createSlotRenderer(prevSlot != null && prevSlot.h == slot.h, pattern, slot,
 										placesAvailable, content);
-								slotRenderer.setStyleName(placesAvailable ? STYLE_PLACES_AVAILABLE : STYLE_COMPLETE);
+								
+								if (placesAvailable) {
+									slotRenderer.setStyleName(STYLE_PLACES_AVAILABLE);
+									slotRenderer.setTitle(StringResources.getLabel("Click here to book this time slot"));
+								} else {
+									slotRenderer.setStyleName(STYLE_COMPLETE);
+									slotRenderer.setTitle(StringResources.getLabel("Sorry, but this time slot is already booked"));
+								}
 							}
 							vpSlots.add(slotRenderer);
 							prevSlot = slot;
@@ -344,6 +382,48 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 				}
 			}
 		}
+	}
+
+	private List<Slot> fillUp(WorkPattern pattern, List<Slot> slots) {
+		List<Slot> filledUp = new ArrayList<>();
+		if (slots.isEmpty()) {
+			int h = 9, m = 0, time = h * 100 + m;
+			while (time < 1700) {
+				Slot s = new Slot(h, m, pattern.minuteGrid, null);
+				filledUp.add(s);
+				m += pattern.minuteGrid;
+				if (m >= 60) {
+					h++;
+					m = 0;
+				}
+				time = h * 100 + m;
+			}
+		} else {
+			int h = slots.get(0).h >= 12 ? 12 : slots.get(0).h < 9 ? slots.get(0).h : 9;
+			int m = 0, time = h * 100 + m;
+			int endH = slots.get(slots.size() - 1).h + 1;
+			
+			if (endH < 12) {
+				endH = 12;
+			}
+			
+			while (time < endH * 100) {
+				Slot s = getSlot(slots, h, m, pattern.minuteGrid); 
+				filledUp.add(s);
+				m += pattern.minuteGrid;
+				if (m >= 60) {
+					h++;
+					m = 0;
+				}
+				time = h * 100 + m;
+			}
+		}
+		return filledUp;
+	}
+
+	private Slot getSlot(List<Slot> slots, int h, int m, int minuteGrid) {
+		Optional<Slot> slot = slots.stream().filter(s -> s.h == h && s.m == m).findFirst();
+		return slot.isPresent() ? slot.get() : new Slot(h, m, minuteGrid, null);
 	}
 
 	private List<Slot> getCombinedSlots(List<Slot> slots, int duration) {
@@ -470,10 +550,12 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 					personalAppointments.add(a);
 					displayPersonalAppointments();
 				}
-				checkAndSet();
+				checkAvailability();
+				setSelectedDate(datePicker.getValue());
 				break;
 			case delete:
-				checkAndSet();
+				checkAvailability();
+				setSelectedDate(datePicker.getValue());
 				if (personalAppointments.remove(a)) {
 					displayPersonalAppointments();
 				}
@@ -499,9 +581,9 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 		} else {
 
 			if (iResource instanceof Room) {
-				vpMain.setStyleName("city-" + ((Room) iResource).city.code.toLowerCase());
+				vpResourceAndCalendar.setStyleName("city-" + ((Room) iResource).city.code.toLowerCase());
 			} else {
-				vpMain.removeStyleName("city");
+				vpResourceAndCalendar.removeStyleName("city");
 			}
 
 			datePicker.setVisible(true);
@@ -527,8 +609,7 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 			}
 		};
 		eAgendaUI.service.getAppointments(ClientDateHelper.trunc(datePicker.getFirstDate()),
-				ClientDateHelper.trunc(ClientDateHelper.addDays(datePicker.getLastDate(), 1)), iResource, null,
-				callback);
+				ClientDateHelper.trunc(ClientDateHelper.addDays(datePicker.getLastDate(), 1)), iResource, null, callback);
 	}
 
 	private Date checkAvailability() {
