@@ -55,8 +55,8 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		private static Logger logger = Logger.getLogger("DummyEmailService");
 
 		@Override
-		public void removeAppointmentFromCalendar(String id) throws Exception {
-			logger.info("removeAppointmentFromCalendar: " + id);
+		public void removeAppointmentFromCalendar(String id, String cancellationMessageText) throws Exception {
+			logger.info("removeAppointmentFromCalendar: " + id + ". " + cancellationMessageText);
 		}
 
 		@Override
@@ -86,17 +86,19 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	private EmailCalendarService ecs;
 	
 	private boolean isProduction() {
-		String serverName = getThreadLocalRequest().getServerName();
-		boolean isProd = serverName.contains("tccp0060");
-		
-		if (isProd) {
-			logger.info("*******************************************");
-			logger.info("***** running on production server ********");
-			logger.info("*******************************************");
-		} else {
-			logger.info("running on server: " + serverName);
-		}
-		return isProd;
+		return true;
+//		
+//		String serverName = getThreadLocalRequest().getServerName();
+//		boolean isProd = serverName.contains("tccp0060");
+//		
+//		if (isProd) {
+//			logger.info("*******************************************");
+//			logger.info("***** running on production server ********");
+//			logger.info("*******************************************");
+//		} else {
+//			logger.info("running on server: " + serverName);
+//		}
+//		return isProd;
 		
 	}
 	
@@ -228,7 +230,13 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		getMc().deleteAppointment(a);
 		UpdateWebSocketServer.notifyAll(ActionType.delete, a);
 		try {
-			getEmailCalendarService().removeAppointmentFromCalendar(a.objectId);//.toHexString());
+			String cancellationText;
+			if (!getUserContext().user.equals(a.guest)) {
+				cancellationText = "This appointment has been cancelled by " + getUserContext().user.getDisplayName() + " on behalf of " + a.guest.getDisplayName();
+			} else {
+				cancellationText = null;
+			}
+			getEmailCalendarService().removeAppointmentFromCalendar(a.objectId, cancellationText);//.toHexString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -157,11 +157,14 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 	}
 
 	@Override
-	public void removeAppointmentFromCalendar(final String id) throws Exception {
+	public void removeAppointmentFromCalendar(final String id, String cancellationMessageText) throws Exception {
 
 		synchronized (service) {
 			Appointment ooApt = getExistingOutlookAppointment(id);
 			if (ooApt != null) {
+				if (cancellationMessageText != null) {
+					ooApt.cancelMeeting(cancellationMessageText);
+				}
 				ooApt.delete(DeleteMode.MoveToDeletedItems, SendCancellationsMode.SendOnlyToAll);
 			}
 		}
