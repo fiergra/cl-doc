@@ -171,7 +171,9 @@ public class eAgendaUI implements EntryPoint {
 		
 		Label lbdisclaimer = new I18NLabel("Disclaimer");
 		lbdisclaimer.addClickHandler(e -> {
-			MessageBox.show(StringResources.getLabel("Disclaimer"), StringResources.getLabel("Data Protection Notification goes here..."), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO, MessageBox.NOP);
+			int w = RootLayoutPanel.get().getOffsetWidth() * 8 / 10;
+			int h = RootLayoutPanel.get().getOffsetHeight() * 8 / 10;
+			MessageBox.show(StringResources.getLabel("Disclaimer"), new I18NLabel("Data Protection Notification goes here..."), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO, MessageBox.NOP, w, h);
 		});
 		
 		Label lbVersion = new Label(userContext.builtAt);
