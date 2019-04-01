@@ -449,7 +449,7 @@ public class CampaignSettings extends DockLayoutPanel {
 
 	private void addOwner(MultiSelectPanel<User> multiSelectPanel) {
 		PopupPanel popUp = new PopupPanel(true, false);
-		SearchBox<IResource> sb = new RemoteSearchBox<>(new SimpleTranslator(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
+		SearchBox<IResource> sb = new RemoteSearchBox<>(new SimpleTranslator<>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
 		sb.addSelectionHandler(s -> {
 			IResource r = sb.getSelected();
 

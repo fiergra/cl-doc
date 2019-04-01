@@ -13,7 +13,7 @@ public class User extends AbstractResource {
 	protected User() {}
 
 	public User(String userId, String emailAddress, Person person) {
-		super(userId + " " + (person != null ? person.getDisplayName() : ""), emailAddress);
+		super( (person != null ? person.getDisplayName() : "") + "(" + userId + ")", emailAddress);
 		this.userId = userId;
 		this.emailAddress = emailAddress;
 		this.person = person;

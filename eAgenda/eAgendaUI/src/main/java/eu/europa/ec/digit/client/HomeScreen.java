@@ -19,7 +19,6 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -145,24 +144,26 @@ public class HomeScreen extends DockLayoutPanel {
 		hpMainItem.setWidget(0, 0, image);
 		hpMainItem.setWidget(0, 1, cmbCampaigns);
 
-		PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.white.png"));
-		pbAdd.setStyleName("flatButton");
-		pbAdd.addClickHandler(e -> { 
-			Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", eAgendaUI.userContext.user, new AppointmentType("default",  15, "white"));
-			if (eAgendaUI.commando != null) {
-				eAgendaUI.commando.execute(new AddCampaignCommand(new CampaignSettings(newCampaign), cmbCampaigns));
-			}
-		});
-
-		hpMainItem.setWidget(0, 2, pbAdd);
-		pbAdd.setTitle(StringResources.getLabel("add new campaign"));
 		
-		PushButton pbRemove = new PushButton(new Image("assets/images/24x24/remove.white.png"));
-		pbRemove.setStyleName("flatButton");
-		hpMainItem.setWidget(0, 3, pbRemove);
-		pbRemove.setTitle(StringResources.getLabel("remove current campaign"));
-		pbRemove.addClickHandler(e -> eAgendaUI.commando.execute(new DeleteCampaignCommand(cmbCampaigns.getSelectedItem(), cmbCampaigns)));
-
+		if (eAgendaUI.userContext.isAdmin()) {
+			PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.white.png"));
+			pbAdd.setStyleName("flatButton");
+			pbAdd.addClickHandler(e -> { 
+				Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", eAgendaUI.userContext.user, new AppointmentType("default",  15, "white"));
+				if (eAgendaUI.commando != null) {
+					eAgendaUI.commando.execute(new AddCampaignCommand(new CampaignSettings(newCampaign), cmbCampaigns));
+				}
+			});
+	
+			hpMainItem.setWidget(0, 2, pbAdd);
+			pbAdd.setTitle(StringResources.getLabel("add new campaign"));
+			
+			PushButton pbRemove = new PushButton(new Image("assets/images/24x24/remove.white.png"));
+			pbRemove.setStyleName("flatButton");
+			hpMainItem.setWidget(0, 3, pbRemove);
+			pbRemove.setTitle(StringResources.getLabel("remove current campaign"));
+			pbRemove.addClickHandler(e -> eAgendaUI.commando.execute(new DeleteCampaignCommand(cmbCampaigns.getSelectedItem(), cmbCampaigns)));
+		}
 		
 		cmbCampaigns.getTextBox().setStyleName("mainMenuItemTextBox");
 		hpMainItem.getFlexCellFormatter().setWidth(0, 1, "100%");
@@ -172,8 +173,10 @@ public class HomeScreen extends DockLayoutPanel {
 		vpMenuItems.add(hpMainItem);
 		vpMenuItems.add(vpTopMenuItems);
 		vpTopMenuItems.setSpacing(5);
-		menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", null, (m) -> displayWidget(cmbCampaigns.getSelectedItem()));
-		
+
+		if (eAgendaUI.userContext.isAdmin()) {
+			menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", null, (m) -> displayWidget(cmbCampaigns.getSelectedItem()));
+		}
 
 		HorizontalPanel hpResources = new HorizontalPanel();
 		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -184,51 +187,51 @@ public class HomeScreen extends DockLayoutPanel {
 		hpResources.add(lbResourcesHeader);
 //		hpResources.add(pbNewResource);
 		
-		RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator<IResource>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
-//		pbNewResource.addClickHandler(e -> addNewResource(sbResources));
-		sbResources.setStyleName("menuResourceSearchBox");
-		sbResources.addStyleDependentName("empty");
-		sbResources.setWidth("100%");
-		sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
-		sbResources.addSelectionHandler(s -> {
-			IResource r = sbResources.getSelected();
-
-			if (r == null) {
-				sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
-				sbResources.addStyleDependentName("empty");
-			} else {
-				sbResources.removeStyleDependentName("empty");
-			}
-			
-			if (cmbCampaigns.getSelectedItem() != null) {
-				Campaign campaign = cmbCampaigns.getSelectedItem().campaign; 
-				List<WorkPattern> patterns = campaign.resourcePatterns(r);
-				if (patterns.isEmpty()) {
-					addResource(campaign, r);
-					sbResources.setSelected(null);
-				} else {
-// TODO select menu item
-				}
-			}
-			
-		});
-		
-		sbResources.getValueBox().addFocusHandler(e -> { 
-			sbResources.removeStyleDependentName("empty");
-			sbResources.setText(null); 
-		});
-		sbResources.getValueBox().addBlurHandler(e -> {
+		if (eAgendaUI.userContext.isAdmin()) {
+			RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator<IResource>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
+	//		pbNewResource.addClickHandler(e -> addNewResource(sbResources));
+			sbResources.setStyleName("menuResourceSearchBox");
 			sbResources.addStyleDependentName("empty");
+			sbResources.setWidth("100%");
 			sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
-		});
-//		hpResources.setWidget(0, 0, lbResourcesHeader);
-//		hpResources.setWidget(1, 0, sbResources);
-//		hpResources.getFlexCellFormatter().setWidth(0, 1, "100%");
-//		vpMenuItems.add(hpResources);
-
-		vpMenuItems.add(hpResources);
-		vpMenuItems.add(sbResources);
-
+			sbResources.addSelectionHandler(s -> {
+				IResource r = sbResources.getSelected();
+	
+				if (r == null) {
+					sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
+					sbResources.addStyleDependentName("empty");
+				} else {
+					sbResources.removeStyleDependentName("empty");
+				}
+				
+				if (cmbCampaigns.getSelectedItem() != null) {
+					Campaign campaign = cmbCampaigns.getSelectedItem().campaign; 
+					List<WorkPattern> patterns = campaign.resourcePatterns(r);
+					if (patterns.isEmpty()) {
+						addResource(campaign, r);
+						sbResources.setSelected(null);
+					} else {
+	// TODO select menu item
+					}
+				}
+				
+			});
+			
+			sbResources.getValueBox().addFocusHandler(e -> { 
+				sbResources.removeStyleDependentName("empty");
+				sbResources.setText(null); 
+			});
+			sbResources.getValueBox().addBlurHandler(e -> {
+				sbResources.addStyleDependentName("empty");
+				sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
+			});
+	//		hpResources.setWidget(0, 0, lbResourcesHeader);
+	//		hpResources.setWidget(1, 0, sbResources);
+	//		hpResources.getFlexCellFormatter().setWidth(0, 1, "100%");
+	//		vpMenuItems.add(hpResources);
+			vpMenuItems.add(hpResources);
+			vpMenuItems.add(sbResources);
+		}
 		vpResourceMenuItems.setSpacing(5);
 		vpResourceMenuItems.setWidth("100%");
 		vpMenuItems.add(vpResourceMenuItems);
@@ -330,18 +333,23 @@ public class HomeScreen extends DockLayoutPanel {
 	private MenuItem addResourceMenuItem(Campaign campaign, IResource r) {
 		MenuItem mItem = menu.addItem(vpResourceMenuItems, getImage(r), r.getDisplayName(), new PatternsAndAppointments(campaign, r), (i) -> displayWidget(i.widget));
 
-		PushButton pbDelete = new PushButton(StringResources.getLabel("delete"));
-		pbDelete.setStyleName("menuItemDeleteButton");
-		pbDelete.setVisible(false);
-		pbDelete.addClickHandler(e -> {
-			e.stopPropagation();
-			removeResource(campaign, r);
-		});
-		
-		mItem.hpRight.add(pbDelete);
-		
-		mItem.addMouseOverHandler(e -> pbDelete.setVisible(true));
-		mItem.addMouseOutHandler(e -> pbDelete.setVisible(false));
+		if (eAgendaUI.userContext.isAdmin()) {
+			PushButton pbDelete = new PushButton(StringResources.getLabel("delete"));
+			pbDelete.setStyleName("menuItemDeleteButton");
+			pbDelete.setVisible(false);
+			pbDelete.addClickHandler(e -> {
+				e.stopPropagation();
+				MessageBox.show(StringResources.getLabel("Cancel Appointment"), StringResources.getLabel("Do you want to cancel this appointment?"), MessageBox.MB_YESNO, MESSAGE_ICONS.MB_ICON_QUESTION, mr -> {
+					if (mr == MessageBox.MB_YES) {
+						removeResource(campaign, r);
+					}
+				});
+
+			});
+			mItem.hpRight.add(pbDelete);
+			mItem.addMouseOverHandler(e -> pbDelete.setVisible(true));
+			mItem.addMouseOutHandler(e -> pbDelete.setVisible(false));
+		}		
 		
 		return mItem;
 	}

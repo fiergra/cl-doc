@@ -74,15 +74,15 @@ public class PatternsAndAppointments extends DockLayoutPanel {
 		pbAdd.setTitle(StringResources.getLabel("add new working pattern for") +  " " + resource.getDisplayName());
 
 		slotAppointmentsView = new SlotAppointmentsView(campaign);
-		HorizontalPanel hpPatternsLabel = new HorizontalPanel();
-		Label lbPatterns = new I18NLabel("Patterns");
-		lbPatterns.setStyleName("tabTextLabelSize");
-		hpPatternsLabel.add(lbPatterns);
-		hpPatternsLabel.add(pbAdd);
-		tabMain.add(tabPatterns, hpPatternsLabel);
-		
-//		tabPatterns.addWidget(pbAdd);
 
+		if (eAgendaUI.userContext.isAdmin()) {
+			HorizontalPanel hpPatternsLabel = new HorizontalPanel();
+			Label lbPatterns = new I18NLabel("Patterns");
+			lbPatterns.setStyleName("tabTextLabelSize");
+			hpPatternsLabel.add(lbPatterns);
+			hpPatternsLabel.add(pbAdd);
+			tabMain.add(tabPatterns, hpPatternsLabel);
+		}		
 		tabMain.add(slotAppointmentsView, "Appointments");
 
 		setSelectedResource(resource);

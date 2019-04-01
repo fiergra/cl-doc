@@ -194,7 +194,10 @@ public class CampaignRenderer extends SplitLayoutPanel {
 		dlpCampaign.add(tabCampaignDetails);
 
 		slotAppointmentsView = new SlotAppointmentsView(campaign);
-		tabMain.add(tabPatterns, "Patterns");
+		
+		if (eAgendaUI.userContext.isAdmin()) {
+			tabMain.add(tabPatterns, "Patterns");
+		}
 
 		pbAdd.setStyleName("blankButton");
 		pbAdd.setPixelSize(24, 24);
