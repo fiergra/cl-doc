@@ -44,7 +44,15 @@ public class WorkPattern implements Serializable {
 	}
 
 	public boolean applies(Date d) {
-		return (getFrom() == null || getFrom().getTime() <= d.getTime()) && (until == null || until.getTime() >= d.getTime()) ;
+		long lFrom = getLdate(from);
+		long lUntil = getLdate(until);
+		long lDate = getLdate(d);
+		return (lFrom == -1L || lFrom <= lDate) && (until == null || lUntil >= lDate) ;
+	}
+
+	@SuppressWarnings("deprecation")
+	private long getLdate(Date d) {
+		return d != null ? d.getYear() * 10000 + d.getMonth() * 100 + d.getDate() : -1L;
 	}
 
 	public Long duration() {

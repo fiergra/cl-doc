@@ -120,9 +120,11 @@ public class CampaignFrontOffice extends DockLayoutPanel {
 						minDate = now;
 					}
 
-					long curr = ClientDateHelper.trunc(e.getStart()).getTime();
+					Date start = e.getStart();
+					long curr = ClientDateHelper.trunc(start).getTime();
 					while (curr < minDate.getTime() && curr <= e.getEnd().getTime()) {
-						datePicker.setTransientEnabledOnDates(false, new Date(curr));
+						Date currDate = new Date(curr);
+						datePicker.setTransientEnabledOnDates(false, currDate);
 						curr += ClientDateHelper.DAY_MS;
 					}
 
