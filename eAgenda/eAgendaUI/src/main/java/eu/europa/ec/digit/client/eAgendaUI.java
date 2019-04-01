@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -173,7 +174,7 @@ public class eAgendaUI implements EntryPoint {
 		lbdisclaimer.addClickHandler(e -> {
 			int w = RootLayoutPanel.get().getOffsetWidth() * 8 / 10;
 			int h = RootLayoutPanel.get().getOffsetHeight() * 8 / 10;
-			MessageBox.show(StringResources.getLabel("Disclaimer"), new I18NLabel("Data Protection Notification goes here..."), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO, MessageBox.NOP, w, h);
+			MessageBox.show(StringResources.getLabel("Disclaimer"), new ScrollPanel(new I18NLabel("Data Protection Notification goes here...")), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO, MessageBox.NOP, w, h);
 		});
 		
 		Label lbVersion = new Label(userContext.builtAt);
