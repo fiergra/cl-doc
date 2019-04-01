@@ -75,6 +75,11 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 			logger.info("getFreeBusyInfo of " + host.getDisplayName() + " at " + startDate);
 			return null;
 		}
+
+		@Override
+		public void monitorInbox() throws Exception {
+			logger.info("monitorInbox...");
+		}
 		
 	}
 	
@@ -361,5 +366,16 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		HashSet<Date> sHolidays = new HashSet<>();
 		holidays.forEach(h -> sHolidays.add(h.date));
 		return sHolidays;
+	}
+
+	@Override
+	public boolean monitorInbox() {
+		try {
+			getEmailCalendarService().monitorInbox();
+			return true;
+		} catch (Exception e) {
+			logger.warning(e.getMessage());
+			return false;
+		}
 	}
 }

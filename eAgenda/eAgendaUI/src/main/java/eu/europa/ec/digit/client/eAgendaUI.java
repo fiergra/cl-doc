@@ -176,13 +176,13 @@ public class eAgendaUI implements EntryPoint {
 		
 		Label lbVersion = new Label(userContext.builtAt);
 		lbVersion.setStyleName("versionText");
-		hp.add(lbVersion);
+//		hp.add(lbVersion);
 		hp.add(lbdisclaimer);
 		lbdisclaimer.setStyleName("disclaimerLink");
 		
 		r.add(hp);
 		r.setWidgetBottomHeight(hp, 10, Unit.PX, 2, Unit.EM);
-		r.setWidgetLeftWidth(hp, 10, Unit.PX, 100, Unit.PCT);
+		r.setWidgetLeftWidth(hp, 10, Unit.PX, 5, Unit.EM);
 	}
 	
 	

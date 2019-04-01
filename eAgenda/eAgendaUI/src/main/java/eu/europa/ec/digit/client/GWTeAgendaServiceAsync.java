@@ -39,5 +39,6 @@ public interface GWTeAgendaServiceAsync {
 	void cancelAppointment(Appointment a, AsyncCallback<Appointment> rpcCallback);
 	
 	void loadHolidays(String cityCode, AsyncCallback<Collection<Date>> callback);
-	
+
+	void monitorInbox(AsyncCallback<Boolean> callback);
 }

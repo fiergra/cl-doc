@@ -15,4 +15,6 @@ public interface EmailCalendarService {
 
 	List<Appointment> getFreeBusyInfo(IResource host, Date startDate) throws Exception;
 
+	void monitorInbox() throws Exception;
+
 }

@@ -417,7 +417,9 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		return a;
 	}
 	
-	private void monitorInbox() throws Exception {
+	
+	@Override
+	public void monitorInbox() throws Exception {
 		WellKnownFolderName sd = WellKnownFolderName.Inbox;
 		FolderId folderid = new FolderId(sd);
 		List<FolderId> folder = new ArrayList<FolderId>();
@@ -509,7 +511,6 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 			}});
 		conn.open();
 		log.info("connection opened first time.");
-
 	}
 
 }

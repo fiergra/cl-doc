@@ -3,7 +3,7 @@
  *
  */
 public class MasterDataImport {
-
+//
 //	static int counter = 0;
 //
 //	private static void loadHolidays(Connection con, MongoCollection<Holiday> holidayCollection) throws SQLException {
@@ -55,8 +55,7 @@ public class MasterDataImport {
 //	}
 //
 //	
-//	public static void main(String[] args) throws InterruptedException {
-//		
+//	public static void main(String[] args) throws InterruptedException, IOException {
 //		MongoAgendaService mas = new MongoAgendaService();
 //
 //		JDBC.execute(new SimpleSession(), new ITransactional<Void>() {

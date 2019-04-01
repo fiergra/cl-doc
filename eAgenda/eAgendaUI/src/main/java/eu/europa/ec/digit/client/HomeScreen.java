@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimpleLayoutPanel;
@@ -231,10 +232,16 @@ public class HomeScreen extends DockLayoutPanel {
 		vpResourceMenuItems.setSpacing(5);
 		vpResourceMenuItems.setWidth("100%");
 		vpMenuItems.add(vpResourceMenuItems);
+
+		if (eAgendaUI.userContext.isAdmin()) {
+			Widget adminWidget = new AdminStuff();
+			menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/gears.white.png"), "Administration", null, (m) -> displayWidget(adminWidget));
+		}
 		
 		return vpMenu;
 	}
 
+	@SuppressWarnings("unused")
 	private void addNewResource(RemoteSearchBox<IResource> sbResources) {
 		Person resource = new Person();
 		ResourceEditor<Person> re = new ResourceEditor<>(resource);
