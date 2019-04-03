@@ -12,7 +12,7 @@ public class Appointment implements Serializable {
 
 	public IResource host;
 	public User guest;
-	public Room location;
+	private Room location;
 	
 	public Date from;
 	public Date until;
@@ -68,6 +68,8 @@ public class Appointment implements Serializable {
 		return true;
 	}
 	
-	
+	public Room getLocation() {
+		return location != null ? location : (host instanceof Room ? (Room)host : null);
+	}
 	
 }

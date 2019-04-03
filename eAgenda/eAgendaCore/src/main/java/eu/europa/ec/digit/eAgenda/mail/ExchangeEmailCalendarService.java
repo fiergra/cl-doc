@@ -218,7 +218,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 			String appointmentId = agendaAppointment.objectId;
 			Date dateFrom = agendaAppointment.from;
 			Date dateTo = agendaAppointment.until;
-			String place = agendaAppointment.location != null ? agendaAppointment.location.getDisplayName() : null;
+			String place = agendaAppointment.getLocation() != null ? agendaAppointment.getLocation().getDisplayName() : null;
 			FolderId fid1 = new FolderId(WellKnownFolderName.Calendar, mailBox);
 
 			Appointment existingAppointment = getExistingOutlookAppointment(appointmentId);

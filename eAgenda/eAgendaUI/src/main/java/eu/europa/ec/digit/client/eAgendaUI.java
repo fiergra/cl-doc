@@ -15,13 +15,11 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -167,25 +165,25 @@ public class eAgendaUI implements EntryPoint {
 	}
 	
 	private void addVersionAndDisclaimer() {
-		RootLayoutPanel r = RootLayoutPanel.get();
-		HorizontalPanel hp = new HorizontalPanel();
-		
-		Label lbdisclaimer = new I18NLabel("Disclaimer");
-		lbdisclaimer.addClickHandler(e -> {
-			int w = RootLayoutPanel.get().getOffsetWidth() * 8 / 10;
-			int h = RootLayoutPanel.get().getOffsetHeight() * 8 / 10;
-			MessageBox.show(StringResources.getLabel("Disclaimer"), new ScrollPanel(new I18NLabel("Data Protection Notification goes here...")), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO, MessageBox.NOP, w, h);
-		});
-		
-		Label lbVersion = new Label(userContext.builtAt);
-		lbVersion.setStyleName("versionText");
-//		hp.add(lbVersion);
-		hp.add(lbdisclaimer);
-		lbdisclaimer.setStyleName("disclaimerLink");
-		
-		r.add(hp);
-		r.setWidgetBottomHeight(hp, 10, Unit.PX, 2, Unit.EM);
-		r.setWidgetLeftWidth(hp, 10, Unit.PX, 5, Unit.EM);
+//		RootLayoutPanel r = RootLayoutPanel.get();
+//		HorizontalPanel hp = new HorizontalPanel();
+//		
+//		Label lbdisclaimer = new I18NLabel("Disclaimer");
+//		lbdisclaimer.addClickHandler(e -> {
+//			int w = RootLayoutPanel.get().getOffsetWidth() * 8 / 10;
+//			int h = RootLayoutPanel.get().getOffsetHeight() * 8 / 10;
+//			MessageBox.show(StringResources.getLabel("Disclaimer"), new ScrollPanel(new I18NLabel("Data Protection Notification goes here...")), MessageBox.MB_OK, MESSAGE_ICONS.MB_ICON_INFO, MessageBox.NOP, w, h);
+//		});
+//		
+//		Label lbVersion = new Label(userContext.builtAt);
+//		lbVersion.setStyleName("versionText");
+////		hp.add(lbVersion);
+//		hp.add(lbdisclaimer);
+//		lbdisclaimer.setStyleName("disclaimerLink");
+//		
+//		r.add(hp);
+//		r.setWidgetBottomHeight(hp, 10, Unit.PX, 2, Unit.EM);
+//		r.setWidgetLeftWidth(hp, 10, Unit.PX, 5, Unit.EM);
 	}
 	
 	

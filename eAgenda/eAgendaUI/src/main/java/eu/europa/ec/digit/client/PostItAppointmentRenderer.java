@@ -38,8 +38,8 @@ public class PostItAppointmentRenderer extends LayoutPanel {
 		setWidgetTopBottom(vp, 40, Unit.PX, 40, Unit.PX);
 		
 		String sDate = ClientDateFormatter.dtfDayTime.format(appointment.from);
-		String sLocation = appointment.location != null? appointment.location.getDisplayName() : "";
-		String sDoctor = appointment.host != null? appointment.host.getDisplayName() : "";
+		String sLocation = appointment.getLocation() != null? appointment.getLocation().getDisplayName() : "";
+		String sDoctor = appointment.host != null && appointment.host != appointment.getLocation() ? appointment.host.getDisplayName() : "";
 		
 		Label lDate = new Label(sDate); 
 		Label lDoctor = new Label(sDoctor);
