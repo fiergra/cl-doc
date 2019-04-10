@@ -44,4 +44,5 @@ public interface GWTeAgendaService extends RemoteService {
 	UserContext login();
 	
 	boolean monitorInbox();
+	byte[] export(Campaign campaign);
 }

@@ -1,5 +1,8 @@
 package eu.europa.ec.digit.server;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
@@ -15,11 +18,15 @@ import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.websocket.server.ServerEndpointConfig;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.ibm.icu.util.Calendar;
 
 import eu.cec.digit.ecas.client.jaas.DetailedUser;
 import eu.europa.ec.digit.client.GWTeAgendaService;
@@ -29,6 +36,7 @@ import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.Holiday;
 import eu.europa.ec.digit.eAgenda.IResource;
 import eu.europa.ec.digit.eAgenda.MongoAgendaService;
+import eu.europa.ec.digit.eAgenda.Person;
 import eu.europa.ec.digit.eAgenda.Room;
 import eu.europa.ec.digit.eAgenda.User;
 import eu.europa.ec.digit.eAgenda.mail.EmailCalendarService;
@@ -36,6 +44,15 @@ import eu.europa.ec.digit.eAgenda.mail.ExchangeEmailCalendarService;
 import eu.europa.ec.digit.eAgenda.mail.ExchangeEmailCalendarService.IAppointmentListener;
 import eu.europa.ec.digit.shared.IAppointmentAction.ActionType;
 import eu.europa.ec.digit.shared.UserContext;
+import jxl.Workbook;
+import jxl.format.Colour;
+import jxl.write.DateTime;
+import jxl.write.Label;
+import jxl.write.WritableCell;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 /**
  * The server-side implementation of the RPC service.
@@ -49,9 +66,8 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		ServerEndpointConfig.Builder.create(UpdateWebSocketServer.class, "/appointments").build();
 	}
 
-	
 	private static class DummyEmailService implements EmailCalendarService {
-		
+
 		private static Logger logger = Logger.getLogger("DummyEmailService");
 
 		@Override
@@ -60,7 +76,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		}
 
 		@Override
-		public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message,	Appointment appointment) throws Exception {
+		public boolean addAppointmentIntoCalendar(String[] recipients, String subject, String message, Appointment appointment) throws Exception {
 			logger.info("addAppointmentIntoCalendar: to: " + recipients + " subject: " + subject + " message: " + message + " id: " + appointment.objectId);
 			return true;
 		}
@@ -80,28 +96,28 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		public void monitorInbox() throws Exception {
 			logger.info("monitorInbox...");
 		}
-		
+
 	}
-	
+
 	private EmailCalendarService ecs;
-	
+
 	private boolean isProduction() {
-		return true;
-//		
-//		String serverName = getThreadLocalRequest().getServerName();
-//		boolean isProd = serverName.contains("tccp0060");
-//		
-//		if (isProd) {
-//			logger.info("*******************************************");
-//			logger.info("***** running on production server ********");
-//			logger.info("*******************************************");
-//		} else {
-//			logger.info("running on server: " + serverName);
-//		}
-//		return isProd;
-		
+		// return true;
+
+		String serverName = getThreadLocalRequest().getServerName();
+		boolean isProd = serverName.contains("tccp0060");
+
+		if (isProd) {
+			logger.info("*******************************************");
+			logger.info("***** running on production server ********");
+			logger.info("*******************************************");
+		} else {
+			logger.info("running on server: " + serverName);
+		}
+		return isProd;
+
 	}
-	
+
 	private synchronized EmailCalendarService getEmailCalendarService() {
 		if (ecs == null) {
 			if (isProduction()) {
@@ -109,11 +125,11 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 					InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("email.properties");
 					Properties properties = new Properties();
 					properties.load(in);
-					String userName = properties.getProperty("userName"); 
-					String passWord = properties.getProperty("passWord"); 
-					String emailAddress = properties.getProperty("emailAddress"); 
+					String userName = properties.getProperty("userName");
+					String passWord = properties.getProperty("passWord");
+					String emailAddress = properties.getProperty("emailAddress");
 					IAppointmentListener listener = new IAppointmentListener() {
-	
+
 						private void setState(String objectId, String state) {
 							Appointment a = getMc().findAppointment(objectId);
 							if (a != null) {
@@ -122,12 +138,12 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 								UpdateWebSocketServer.notifyAll(ActionType.update, a);
 							}
 						}
-	
+
 						@Override
 						public void accepted(String objectId) {
 							setState(objectId, "ACCEPTED");
 						}
-	
+
 						@Override
 						public void decline(String objectId) {
 							Appointment a = getMc().findAppointment(objectId);
@@ -135,7 +151,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 								cancelAppointment(a);
 							}
 						}
-	
+
 						@Override
 						public void tentative(String objectId) {
 							setState(objectId, "TENTATIVE");
@@ -143,7 +159,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 					};
 					ecs = new ExchangeEmailCalendarService(userName, passWord, emailAddress, listener);
 				} catch (Exception e) {
-					ecs = new DummyEmailService();			
+					ecs = new DummyEmailService();
 					e.printStackTrace();
 				}
 			} else {
@@ -152,9 +168,9 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		}
 		return ecs;
 	}
-	
+
 	private MongoAgendaService mc;
-	
+
 	private MongoAgendaService getMc() {
 		if (mc == null) {
 			try {
@@ -166,7 +182,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		}
 		return mc;
 	}
-	
+
 	@Override
 	public List<Campaign> listCampaigns() {
 		if (getUserContext() != null) {
@@ -202,20 +218,20 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		ActionType actionType = a.objectId != null ? ActionType.update : ActionType.insert;
 		getMc().saveAppointment(a);
 		UpdateWebSocketServer.notifyAll(actionType, a);
-		
+
 		if (c != null) {
 			try {
-				
+
 				String[] recipients = new String[] { a.guest.getEMailAddress() != null ? a.guest.getEMailAddress() : getConnectedUserEmail() };
-				
+
 				String messageBody;
-				
+
 				if (!getUserContext().user.equals(a.guest)) {
 					messageBody = "<b>" + " this appointment has been created by " + getUserContext().user.getDisplayName() + " on behalf of " + a.guest.getDisplayName() + "</b><br/><br/>";
 				} else {
 					messageBody = "";
 				}
-				
+
 				messageBody += c.emailSettings.body;
 				getEmailCalendarService().addAppointmentIntoCalendar(recipients, c.emailSettings.subject, messageBody, a);
 			} catch (Exception e) {
@@ -236,7 +252,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 			} else {
 				cancellationText = null;
 			}
-			getEmailCalendarService().removeAppointmentFromCalendar(a.objectId, cancellationText);//.toHexString());
+			getEmailCalendarService().removeAppointmentFromCalendar(a.objectId, cancellationText);// .toHexString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -253,7 +269,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	private Date checkUntil(Date from, Date until) {
 		if (until == null) {
 			try {
-				until = new Date(df.parse(df.format(from)).getTime()  + 24L * 60L * 60L * 1000L);
+				until = new Date(df.parse(df.format(from)).getTime() + 24L * 60L * 60L * 1000L);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -261,25 +277,25 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 
 		return until;
 	}
-	
+
 	@Override
 	public List<Appointment> getAppointments(Date from, Date until, IResource host, IResource guest) {
 		List<Appointment> appointments = getMc().getAppointments(from, checkUntil(from, until), host, guest);
-		
+
 		return addFreeBusyInfo(appointments, from, until, host);
 	}
 
 	private List<Appointment> addFreeBusyInfo(List<Appointment> appointments, Date from, Date until, IResource host) {
 		if (host != null) {
-		try {
-			List<Appointment> freeBusy = getEmailCalendarService().getFreeBusyInfo(host, from);
-			if (freeBusy != null) {
-				freeBusy = freeBusy.parallelStream().filter(a -> a.from.getTime() < until.getTime() && a.until.getTime() >= from.getTime()).collect(Collectors.toList());
-				appointments.addAll(freeBusy);
-			} 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+			try {
+				List<Appointment> freeBusy = getEmailCalendarService().getFreeBusyInfo(host, from);
+				if (freeBusy != null) {
+					freeBusy = freeBusy.parallelStream().filter(a -> a.from.getTime() < until.getTime() && a.until.getTime() >= from.getTime()).collect(Collectors.toList());
+					appointments.addAll(freeBusy);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return appointments;
 	}
@@ -297,38 +313,38 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	}
 
 	private DetailedUser getDetailedUser() {
-		HttpServletRequest request = getThreadLocalRequest(); 		
+		HttpServletRequest request = getThreadLocalRequest();
 		Principal principal = request != null ? request.getUserPrincipal() : null;
-		
-		return principal instanceof DetailedUser ? (DetailedUser)principal : null;
+
+		return principal instanceof DetailedUser ? (DetailedUser) principal : null;
 	}
-	
+
 	@Override
 	public UserContext login() {
 		DetailedUser du = getDetailedUser();
 		return du != null ? login(du.getName()) : null;
 	}
-	
+
 	private String getConnectedUserEmail() {
 		DetailedUser du = getDetailedUser();
 		return du != null ? du.getEmail() : "ralph.fiergolla@ec.europa.eu";
 	}
-	
+
 	@Override
 	public UserContext login(String userName) {
 		User user = getMc().getUser(userName);
 		UserContext userContext = null;
-		
-		if (user != null ) {
+
+		if (user != null) {
 			userContext = new UserContext(user, getRoles(user));
 			userContext.builtAt = getBuildTimestamp();
 			HttpSession httpSession = getThreadLocalRequest().getSession();
 			httpSession.setAttribute(UserContext.USERCONTEXT, userContext);
 		}
-	
+
 		return userContext;
 	}
-	
+
 	private String getBuildTimestamp() {
 		String timestamp = "<unknown>";
 		try {
@@ -349,20 +365,20 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 
 	private Collection<String> getRoles(User user) {
 		Collection<String> roles = new ArrayList<String>();
-		
+
 		if (user.userId.equals("fiergra") || user.userId.equals("lilpepe")) {
 			roles.add(UserContext.ADMIN);
 			roles.add("campaignmanager");
 		}
-		
+
 		return roles;
 	}
-	
+
 	@Override
 	public void saveStringResource(StringResource sr) {
 		getMc().saveStringResource(sr);
 	}
-	
+
 	@Override
 	public HashMap<String, StringResource> getStringResources() {
 		return getMc().getStringResources();
@@ -384,6 +400,184 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		} catch (Exception e) {
 			logger.warning(e.getMessage());
 			return false;
+		}
+	}
+	
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String export = req.getParameter("export");
+		
+		if (export == null) {
+			super.doGet(req, resp);
+		} else {
+			List<Campaign> campaigns = listCampaigns().stream().filter(c -> c.objectId.equals(export)).collect(Collectors.toList());
+			Campaign campaign = campaigns.isEmpty() ? null : campaigns.get(0);
+			if (campaign != null) {
+				byte[] data = export(campaign);
+				serveBytes(resp, campaign.name + ".xls", "application/vnd.ms-excel", data);
+			} else {
+				resp.sendError(404);
+			}
+					
+		}
+	}
+	
+	private void serveBytes(HttpServletResponse resp, String name, String mimeType, byte[] data) throws IOException {
+		logger.info("serving " + data.length + " bytes.");
+		resp.setHeader("Content-Disposition", "inline; filename=" + name);
+		resp.setContentType(mimeType);
+		resp.setContentLength(data.length);
+		ServletOutputStream out = resp.getOutputStream();
+		out.write(data);
+		out.flush();
+	}
+
+
+	@Override
+	public byte[] export(Campaign campaign) {
+		List<IResource> hosts = campaign.assignedResources();
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.MONTH, -1);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		Date start = calendar.getTime();
+		calendar.add(Calendar.MONTH, 2);
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		Date end = calendar.getTime();
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		try {
+			WritableWorkbook workbook = Workbook.createWorkbook(outputStream);
+
+			for (IResource host : hosts) {
+//				List<WorkPattern> patterns = campaign.resourcePatterns(host);
+				List<Appointment> appointments = getMc().getAppointments(start, end, host, null);
+				addSheet(workbook, host, appointments);
+			}
+			workbook.write();
+			workbook.close();
+
+		} catch (Exception e) {
+			logger.severe(e.getMessage());
+		}
+		return outputStream.toByteArray();
+	}
+
+	private void addSheet(WritableWorkbook workbook, IResource host, List<Appointment> appointments) throws Exception {
+		WritableSheet sheet = workbook.createSheet(host.getDisplayName(), 0);
+		addHeaderCell(sheet, 0, "Date");
+		addHeaderCell(sheet, 1, "Time");
+		addHeaderCell(sheet, 2, "Last name");
+		addHeaderCell(sheet, 3, "First name");
+		addHeaderCell(sheet, 4, "email");
+
+		int row = 0;
+
+		WritableCellFormat dateFormat = new jxl.write.WritableCellFormat(new jxl.write.DateFormat("d/m/yyyy"));
+		WritableCellFormat timeFormat = new jxl.write.WritableCellFormat(new jxl.write.DateFormat("h:mm"));
+		appointments.sort((a1, a2) -> a1.from.compareTo(a2.from));
+		for (Appointment a : appointments) {
+			int col = 0;
+			row++;
+
+			Person guest = a.guest.person;
+
+			sheet.addCell(new DateTime(col, row, a.from, dateFormat));
+			sheet.setColumnView(col, 20);
+			col++;
+			sheet.addCell(new DateTime(col, row, a.from, timeFormat));
+			sheet.setColumnView(col, 20);
+			col++;
+			sheet.addCell(new Label(col, row, guest.lastName));
+			sheet.setColumnView(col, 50);
+			col++;
+			sheet.addCell(new Label(col, row, guest.firstName));
+			sheet.setColumnView(col, 50);
+			col++;
+			sheet.addCell(new Label(col, row, a.guest.getEMailAddress()));
+			sheet.setColumnView(col, 50);
+			col++;
+		}
+
+	}
+
+	private byte[] exportToExcel(List<Appointment> items) {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		WritableWorkbook workbook;
+		WritableSheet sheet;
+		int row = 0;
+
+		try {
+			workbook = Workbook.createWorkbook(outputStream);
+			sheet = workbook.createSheet("Invoicing", 0);
+			addHeaderCell(sheet, 0, "PER_ID");
+			addHeaderCell(sheet, 1, "AMOUNT");
+			addHeaderCell(sheet, 2, "LAST NAME");
+			addHeaderCell(sheet, 3, "FIRST NAME");
+			addHeaderCell(sheet, 4, "ORG");
+			addHeaderCell(sheet, 5, "LIENSTAT");
+			addHeaderCell(sheet, 6, "");
+
+			for (Appointment item : items) {
+				int col = 0;
+				row++;
+				// BigDecimal price = item.getPrice();
+				//
+				// WritableCell cellP = new
+				// jxl.write.Number(col,row,item.getPatient().getPerId());
+				// sheet.addCell(cellP);
+				// sheet.setColumnView(col, 10);
+				// WritableCell cellAm = new jxl.write.Number(++col,row, price.doubleValue());
+				// sheet.addCell(cellAm);
+				// sheet.setColumnView(col, 11);
+				// WritableCell cellLNa = new Label(++col,row,item.getPatient().getLastname());
+				// sheet.addCell(cellLNa);
+				// sheet.setColumnView(col, 40);
+				// WritableCell cellFNa = new Label(++col,row,item.getPatient().getFirstname());
+				// sheet.addCell(cellFNa);
+				// sheet.setColumnView(col, 40);
+				WritableCell cell1 = new Label(++col, row, "CCR-S");
+				sheet.addCell(cell1);
+				sheet.setColumnView(col, 11);
+				WritableCell cellL = new Label(++col, row, "FP");
+				sheet.addCell(cellL);
+				sheet.setColumnView(col, 11);
+				WritableCell cell2 = new Label(++col, row, "1");
+				sheet.addCell(cell2);
+				sheet.setColumnView(col, 11);
+
+			}
+			workbook.write();
+			workbook.close();
+		} catch (Exception e) {
+			logger.severe(e.getMessage());
+		}
+
+		return outputStream.toByteArray();
+	}
+
+	public void addHeaderCell(WritableSheet sheet, int column, String label) throws Exception {
+		WritableFont cellFont = new WritableFont(WritableFont.ARIAL);
+		cellFont.setBoldStyle(WritableFont.BOLD);
+		cellFont.setColour(Colour.WHITE);
+		WritableCellFormat cellFormat = new WritableCellFormat(cellFont);
+		cellFormat.setBackground(Colour.GRAY_80);
+		sheet.addCell(new Label(column, 0, label, cellFormat));
+	}
+
+	public static void main(String[] args) throws IOException {
+		GWTeAgendaServiceImpl service = new GWTeAgendaServiceImpl();
+		
+		List<Campaign> campaigns = service.getMc().getCampaigns(service.getMc().getUser("fiergra"));
+		for (Campaign c:campaigns) {
+			byte[] data = service.export(c);
+			File file = File.createTempFile(c.objectId, ".xls");
+			System.out.println(file.getAbsolutePath());
+			FileOutputStream fout = new FileOutputStream(file);
+			fout.write(data);
+			fout.close();
 		}
 	}
 }

@@ -48,7 +48,7 @@ public class HomeScreen extends DockLayoutPanel {
 	private SimpleLayoutPanel contentPanel = new SimpleLayoutPanel();
 	
 	private EditableComboBox<CampaignSettings> cmbCampaigns = new EditableComboBox<>();
-
+	private AdminStuff adminStuff = new AdminStuff();
 
 	public HomeScreen(UserContext userContext) {
 		super(Unit.PX);
@@ -237,7 +237,7 @@ public class HomeScreen extends DockLayoutPanel {
 		vpMenuItems.add(vpResourceMenuItems);
 
 		if (eAgendaUI.userContext.isAdmin()) {
-			Widget adminWidget = new AdminStuff();
+			Widget adminWidget = adminStuff;
 			menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/gears.white.png"), "Administration", null, (m) -> displayWidget(adminWidget));
 		}
 		
@@ -316,6 +316,7 @@ public class HomeScreen extends DockLayoutPanel {
 
 	private void setSelectedCampaign(Campaign campaign) {
 		populateResourcesMenu(campaign);
+		adminStuff.setCampaign(campaign);
 		menu.selectItem(0);
 	}
 

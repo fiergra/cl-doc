@@ -1,58 +1,60 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
- 
-    <groupId>eu.europa.ec.digit</groupId>
-    <artifactId>eAgenda</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
- 
-    <name>eAgenda</name>
-    <url>http://maven.apache.org</url>
-    <scm>
-	<connection>scm:svn:https://github.com/fiergra/cl-doc/trunk</connection>
-	<url>https://github.com/fiergra/cl-doc/trunk/</url>
-    </scm>
+	<modelVersion>4.0.0</modelVersion>
 
-    <properties>
-	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<groupId>eu.europa.ec.digit</groupId>
+	<artifactId>eAgenda</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
-	<isProd>false</isProd>
-	<maven.compiler.source>1.8</maven.compiler.source>
-	<maven.compiler.target>1.8</maven.compiler.target>
+	<name>eAgenda</name>
+	<url>http://maven.apache.org</url>
+	<scm>
+		<connection>scm:svn:https://github.com/fiergra/cl-doc/trunk</connection>
+		<url>https://github.com/fiergra/cl-doc/trunk/</url>
+	</scm>
 
-	<junit.version>4.11</junit.version>
-	<gwt.version>2.8.2</gwt.version>
+	<properties>
+		<mavenBuildTimestamp>${maven.build.timestamp}</mavenBuildTimestamp>
 
-    </properties>
- 
-   <modules>
-	<module>eAgendaCore</module>
-	<module>eAgendaUI</module>
-   </modules>
-   <build>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-	<sourceDirectory>src/main/java</sourceDirectory>
-	<outputDirectory>target/classes</outputDirectory>
+		<isProd>false</isProd>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 
-	<pluginManagement> 
-	</pluginManagement>
+		<junit.version>4.11</junit.version>
+		<gwt.version>2.8.2</gwt.version>
 
-	<plugins>
-		<plugin>
-            		<groupId>org.apache.maven.plugins</groupId>
-            		<artifactId>maven-source-plugin</artifactId>
-            		<version>3.0.1</version>
-            				<executions>
-              					<execution>
-                					<id>attach-sources</id>
-                					<goals>
-                  						<goal>jar-no-fork</goal>
-                					</goals>
-              					</execution>
-            				</executions>
-          			</plugin>
-				<!--
+	</properties>
+
+	<modules>
+		<module>eAgendaCore</module>
+		<module>eAgendaUI</module>
+	</modules>
+	<build>
+
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<outputDirectory>target/classes</outputDirectory>
+
+		<pluginManagement> 
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!--
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-install-plugin</artifactId>
@@ -77,141 +79,141 @@
 					</executions>
 				</plugin>
 				-->
-	</plugins>
-   </build>
+		</plugins>
+	</build>
 
-   <dependencyManagement>
-	<dependencies>
+	<dependencyManagement>
+		<dependencies>
 
-		<dependency>
-			<groupId>eu.europa.ec.digit</groupId>
-			<artifactId>eAgendaCore</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+			<dependency>
+				<groupId>eu.europa.ec.digit</groupId>
+				<artifactId>eAgendaCore</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
-		<!-- ensure all GWT deps use the same version (unless overridden) -->
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt</artifactId>
-			<version>${gwt.version}</version>
-			<type>pom</type>
-			<scope>import</scope>	
-		</dependency>
- 		<dependency>
-            		<groupId>junit</groupId>
-		        <artifactId>junit</artifactId>
-            		<version>${junit.version}</version>
-            		<scope>provided</scope>
-        	</dependency>
-		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
-		</dependency>
-       		<dependency>
-	    		<groupId>org.mongodb</groupId>
-	    		<artifactId>mongodb-driver</artifactId>
-	    		<version>3.5.0</version>
-		</dependency>
-		<dependency>
-    			<groupId>org.mongodb</groupId>
-    			<artifactId>bson</artifactId>
-    			<version>3.5.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.ceres.dynamicforms</groupId>
-			<artifactId>dynamicForms</artifactId>
-			<version>${project.version}</version>
-			<scope>system</scope>
-        		<systemPath>${user.dir}/eAgendaSharedLibs/dynamicForms-1.0-SNAPSHOT.jar</systemPath>
-		</dependency>
+			<!-- ensure all GWT deps use the same version (unless overridden) -->
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwt</artifactId>
+				<version>${gwt.version}</version>
+				<type>pom</type>
+				<scope>import</scope>	
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.0.0.GA</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>mongodb-driver</artifactId>
+				<version>3.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>bson</artifactId>
+				<version>3.5.0</version>
+			</dependency>
+			<dependency>
+				<groupId>com.ceres.dynamicforms</groupId>
+				<artifactId>dynamicForms</artifactId>
+				<version>${project.version}</version>
+				<scope>system</scope>
+				<systemPath>${user.dir}/eAgendaSharedLibs/dynamicForms-1.0-SNAPSHOT.jar</systemPath>
+			</dependency>
 
-		<dependency>
-			<groupId>microsoft.exchange</groupId>
-			<artifactId>ews.jar</artifactId>
-			<version>1.1.5</version>
-	    	</dependency> 
+			<dependency>
+				<groupId>microsoft.exchange</groupId>
+				<artifactId>ews.jar</artifactId>
+				<version>1.1.5</version>
+			</dependency> 
 
-		<!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
-		<dependency>
-	    		<groupId>com.sun.mail</groupId>
-	    		<artifactId>javax.mail</artifactId>
-	    		<version>1.6.1</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.microsoft.ews-java-api/ews-java-api -->
-		<dependency>
-	    		<groupId>com.microsoft.ews-java-api</groupId>
-	    		<artifactId>ews-java-api</artifactId>
-	    		<version>2.0</version>
-		</dependency>
-		<dependency>
-	    		<groupId>org.jasypt</groupId>
-	    		<artifactId>jasypt</artifactId>
-	    		<version>1.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-			<version>${gwt.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-user</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-dev</artifactId>
-			<version>${gwt.version}</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-webapp</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-servlets</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.jetty</groupId>
-					<artifactId>jetty-annotations</artifactId>
-				</exclusion>
-			</exclusions>		
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-webapp -->
-		<dependency>
-		    <groupId>org.eclipse.jetty</groupId>
-		    <artifactId>jetty-webapp</artifactId>
-		    <version>9.4.10.v20180503</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-annotations -->
-		<dependency>
-    			<groupId>org.eclipse.jetty</groupId>
-    			<artifactId>jetty-annotations</artifactId>
-    			<version>8.1.17.v20150415</version>
-		</dependency>
+			<!-- https://mvnrepository.com/artifact/com.sun.mail/javax.mail -->
+			<dependency>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>javax.mail</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/com.microsoft.ews-java-api/ews-java-api -->
+			<dependency>
+				<groupId>com.microsoft.ews-java-api</groupId>
+				<artifactId>ews-java-api</artifactId>
+				<version>2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt</artifactId>
+				<version>1.9.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwt-servlet</artifactId>
+				<version>${gwt.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwt-user</artifactId>
+				<version>${gwt.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.google.gwt</groupId>
+				<artifactId>gwt-dev</artifactId>
+				<version>${gwt.version}</version>
+				<scope>provided</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-webapp</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-servlets</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-annotations</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-annotations</artifactId>
+					</exclusion>
+				</exclusions>		
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-webapp -->
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-webapp</artifactId>
+				<version>9.4.10.v20180503</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-annotations -->
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-annotations</artifactId>
+				<version>8.1.17.v20150415</version>
+			</dependency>
 
-		<!-- https://mvnrepository.com/artifact/javax.websocket/javax.websocket-api -->
-		<dependency>
-    			<groupId>javax.websocket</groupId>
-			<artifactId>javax.websocket-api</artifactId>
-    			<version>1.0-rc4</version>
-    			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>eu.europa.ec.digit.iam.ecas.client</groupId>
-			<artifactId>ecas-tomcat-8.0</artifactId>
-			<version>4.26.3</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-server-impl -->
-		<!--
+			<!-- https://mvnrepository.com/artifact/javax.websocket/javax.websocket-api -->
+			<dependency>
+				<groupId>javax.websocket</groupId>
+				<artifactId>javax.websocket-api</artifactId>
+				<version>1.0-rc4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>eu.europa.ec.digit.iam.ecas.client</groupId>
+				<artifactId>ecas-tomcat-8.0</artifactId>
+				<version>4.26.3</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.eclipse.jetty.websocket/javax-websocket-server-impl -->
+			<!--
 		<dependency>
     			<groupId>org.eclipse.jetty.websocket</groupId>
     			<artifactId>javax-websocket-server-impl</artifactId>
@@ -238,25 +240,25 @@
 		</dependency>
 -->
 		</dependencies>
-    </dependencyManagement>
-   
-    <profiles>
+	</dependencyManagement>
 
-	<profile>
-		<id>local</id>
-		<activation>
-			<activeByDefault>true</activeByDefault>
-		</activation>
-		<build>
-		</build>
-	</profile>
-	<profile>
-		<id>tomcat</id>
-		<properties>
-			
-		</properties>
-		<build>
-		</build>
-	</profile>
-    </profiles>
+	<profiles>
+
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+			</build>
+		</profile>
+		<profile>
+			<id>tomcat</id>
+			<properties>
+
+			</properties>
+			<build>
+			</build>
+		</profile>
+	</profiles>
 </project>

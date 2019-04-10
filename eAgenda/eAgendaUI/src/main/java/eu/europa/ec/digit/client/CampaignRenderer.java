@@ -191,6 +191,7 @@ public class CampaignRenderer extends SplitLayoutPanel {
 		tabCampaignDetails.add(createCampaignDetailsGeneral(), StringResources.getLabel("General"));
 		tabCampaignDetails.add(createCampaignDetailsAccess(), StringResources.getLabel("Access"));
 		tabCampaignDetails.add(createCampaignDetailsEmail(), StringResources.getLabel("Email"));
+		tabCampaignDetails.add(createExport(), StringResources.getLabel("Export"));
 		dlpCampaign.add(tabCampaignDetails);
 
 		slotAppointmentsView = new SlotAppointmentsView(campaign);
@@ -280,6 +281,23 @@ public class CampaignRenderer extends SplitLayoutPanel {
 		cbIncludeHost.addClickHandler(clickHandler);
 
 		return tblCampaignDetails;
+	}
+
+	private Widget createExport() {
+		FlexTable tblExportoptions = new FlexTable();
+		tblExportoptions.setWidth("100%");
+		tblExportoptions.getColumnFormatter().setWidth(0, "20%");
+		tblExportoptions.getColumnFormatter().setWidth(1, "80%");
+
+		int row = 0;
+
+		PushButton pbExportExcel = new PushButton(new Image("assets/images/excel.png"));
+		txtSubject.setWidth("100%");
+		tblExportoptions.setWidget(row, 0, l("export"));
+		tblExportoptions.setWidget(row, 1, pbExportExcel);
+		row++;
+
+		return tblExportoptions;
 	}
 
 	private Widget createCampaignDetailsAccess() {

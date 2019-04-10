@@ -14,4 +14,6 @@ public interface EAgendaCoreService {
 
 	void deleteCampaign(Campaign c);
 
+	byte[] exportToExcel(Campaign c);
+	
 }

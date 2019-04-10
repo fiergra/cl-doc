@@ -41,4 +41,5 @@ public interface GWTeAgendaServiceAsync {
 	void loadHolidays(String cityCode, AsyncCallback<Collection<Date>> callback);
 
 	void monitorInbox(AsyncCallback<Boolean> callback);
+	void export(Campaign c, AsyncCallback<byte[]> callback);
 }
