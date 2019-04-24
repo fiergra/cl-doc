@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
 import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.eAgenda.Appointment;
 import eu.europa.ec.digit.eAgenda.Campaign;
@@ -33,7 +34,7 @@ public interface GWTeAgendaService extends RemoteService {
 	Appointment cancelAppointment(Appointment a);
 	Appointment saveAppointment(Campaign c, Appointment a);
 	List<Appointment> getAppointments(Date d, IResource host, IResource guest);
-	List<Appointment> getAppointments(Date d, Date until, IResource host, IResource guest);
+	List<Appointment> getAppointments(Date d, Date until, IResource host, IResource guest, boolean complete);
 	
 	Collection<Date> loadHolidays(String cityCode);
 	
@@ -45,4 +46,5 @@ public interface GWTeAgendaService extends RemoteService {
 	
 	boolean monitorInbox();
 	byte[] export(Campaign campaign);
+	Appointment applyAction(String workflowName, FiniteStateMachine workflowDefinition, Appointment appointment, String action);
 }

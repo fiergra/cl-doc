@@ -101,7 +101,7 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 		showPatternAndAppointments(d);
 
 		wsClient.unsubscribe();
-		wsClient.subscribe(eAgendaUI.userContext.user, host, d, (t, id) -> {
+		wsClient.subscribe(campaign, eAgendaUI.userContext.user, host, d, (t, id) -> {
 //			showPatternAndAppointments(dateBox.getValue());
 			Date date = dateBox.getValue();
 			WorkPattern pattern = wpHelper.getPatternForDay(date);
@@ -194,7 +194,7 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 	}
 
 	private Widget createAppointmentRenderer(Appointment a, Panel panel) {
-		AppointmentRenderer ar = new AppointmentRenderer(a);
+		AppointmentRenderer ar = new AppointmentRenderer(campaign, a);
 		ar.setOnDelete(() -> {
 			eAgendaUI.service.cancelAppointment(a, new RPCCallback<Appointment>() {
 
@@ -247,7 +247,7 @@ public class SlotAppointmentsView extends DockLayoutPanel {
 					Date d = dateBox.getValue();
 					Date from = slot.getFrom(d);
 					Date until = new Date(from.getTime() + campaign.appointmentType.duration * 60 * 1000L);
-					Appointment a = new Appointment(host, guest, null, from, until, campaign.appointmentType);
+					Appointment a = new Appointment(campaign, host, guest, null, from, until, campaign.appointmentType);
 					a.comment = txtComment.getText();
 					eAgendaUI.service.saveAppointment(campaign, a, new RPCCallback<Appointment>() {
 

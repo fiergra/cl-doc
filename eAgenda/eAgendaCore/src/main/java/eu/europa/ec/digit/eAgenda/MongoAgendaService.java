@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
+import javax.print.Doc;
+
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.ClassModel;
@@ -17,6 +21,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
+import com.google.gson.Gson;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -30,6 +35,9 @@ import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.model.UpdateOptions;
 
+import eu.europa.ec.digit.athena.workflow.WorkflowDefinition;
+import eu.europa.ec.digit.athena.workflow.WorkflowState.StateType;
+import eu.europa.ec.digit.athena.workflow.WorkflowTransition;
 import eu.europa.ec.digit.client.i18n.StringResource;
 
 public class MongoAgendaService {
@@ -37,6 +45,7 @@ public class MongoAgendaService {
 	public static final String STRING_RESOURCES = "stringResources";
 	public static final String CAMPAIGNS = "campaigns";
 	public static final String RESOURCES = "resources";
+	public static final String WORKFLOWDEFINITIONS = "workflowdefinitions";
 	public static final String APPOINTMENTS = "appointments";
 	public static final String HOLIDAYS = "holidays";
 	private MongoDatabase db;
@@ -155,7 +164,7 @@ public class MongoAgendaService {
 	public List<Campaign> getCampaigns(User owner) {
 		List<Campaign> result = new ArrayList<>();
 
-		campaigns().find(Filters.in("owners", owner)).forEach((Block<Campaign>) c -> result.add(c));
+		campaigns().find(Filters.or(Filters.in("owners", owner),Filters.in("roles.admin", owner),Filters.in("roles.owner", owner),Filters.in("roles.operator", owner))).forEach((Block<Campaign>) c -> result.add(c));
 		
 		return result;
 	}
@@ -325,6 +334,50 @@ public class MongoAgendaService {
 	public MongoDatabase getDatabase() {
 		return null;
 	}
+
+	public void log(Object ...objects) {
+		Gson gson = new Gson();
+		Document document = new Document("log", new Date());
+		for (Object o:objects) {
+			String json = gson.toJson(o);
+			if (json != null && !"null".equals(json)) {
+				Document subDoc = Document.parse(json);
+				document.append(o.getClass().getSimpleName(), subDoc);
+			}
+		}
+		
+		db.getCollection("logEntries").insertOne(document);
+	}
+
+	public void saveWorkflowDefinition(WorkflowDefinition wDef) {
+		Document doc = new Document();
+		doc.append("name", wDef.getName())
+		.append("initial", wDef.getStates().stream().filter(s -> s.type.equals(StateType.INITIAL)).map(s -> s.name).collect(Collectors.toList()))
+		.append("terminal", wDef.getStates().stream().filter(s -> s.type.equals(StateType.TERMINAL)).map(s -> s.name).collect(Collectors.toList()))
+		.append("regular", wDef.getStates().stream().filter(s -> s.type.equals(StateType.REGULAR)).map(s -> s.name).collect(Collectors.toList()))
+		.append("transitions", wDef.getTransitions().stream().map(t -> new Document().append("action", t.action).append("from", t.fromState.name).append("to", t.toState.name)).collect(Collectors.toList()));
+		
+		System.out.println(doc.toJson());
+		
+		MongoCollection<Document> wfs = getDb().getCollection(WORKFLOWDEFINITIONS);
+		wfs.replaceOne(Filters.eq("name", wDef.getName()), doc, new UpdateOptions().upsert(true));
+	}
+
+	public List<WorkflowDefinition> getWorkflowDefinitions() {
+		List<WorkflowDefinition> result = new ArrayList<>();
+		MongoCollection<Document> wfs = getDb().getCollection(WORKFLOWDEFINITIONS);
+		wfs.find().forEach((Block<Document>)doc -> {
+			WorkflowDefinition wDef = new WorkflowDefinition(doc.getString("name"));
+			List<Document> transitions = doc.get("transitions", List.class);
+			for (Document d:(List<Document>)transitions) {
+				wDef.addTransition(new WorkflowTransition(null, d.getString("from"), d.getString("to"), d.getString("action")));
+			}
+			result.add(wDef);
+		});
+
+		return result;
+	}
+
 
 
 }

@@ -1,8 +1,4 @@
-/**
- * Hello world!
- *
- */
-public class MasterDataImport {
+//public class MasterDataImport {
 //
 //	static int counter = 0;
 //
@@ -79,7 +75,7 @@ public class MasterDataImport {
 //		
 //		mas.close();
 //	}
-}
+//}
 
 
 //db.persons.find( { $text: { $search: "ralph 5/8/1969" } } , { score: { $meta: "textScore" } }).sort( { score: { $meta: "textScore" } } ).limit(50)

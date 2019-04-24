@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import eu.europa.ec.digit.eAgenda.AppointmentType;
+import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.IResource;
 import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.PropertySet;
@@ -401,7 +402,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 			}
 			// set dummy ID to avoid adding the same calendar event multiple times
 //			String sId = ce.toString() + ce.getStartTime() + ce.getEndTime();
-			a = new eu.europa.ec.digit.eAgenda.Appointment(host, null, null, ce.getStartTime(), ce.getEndTime(), new AppointmentType(itemClass, 0, "yellow"));
+			a = new eu.europa.ec.digit.eAgenda.Appointment(new Campaign(), host, null, null, ce.getStartTime(), ce.getEndTime(), new AppointmentType(itemClass, 0, "yellow"));
 			a.objectId = ce.toString();//new ObjectId();
 			String comment = "";
 			CalendarEventDetails details = ce.getDetails();

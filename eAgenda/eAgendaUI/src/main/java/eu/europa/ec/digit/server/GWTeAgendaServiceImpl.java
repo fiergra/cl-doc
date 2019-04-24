@@ -29,6 +29,15 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ibm.icu.util.Calendar;
 
 import eu.cec.digit.ecas.client.jaas.DetailedUser;
+import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
+import eu.europa.ec.digit.athena.workflow.FiniteStateMachine.Transition;
+import eu.europa.ec.digit.athena.workflow.WorkflowDefinition;
+import eu.europa.ec.digit.athena.workflow.WorkflowInstance;
+import eu.europa.ec.digit.athena.workflow.WorkflowState;
+import eu.europa.ec.digit.athena.workflow.WorkflowTransition;
+import eu.europa.ec.digit.athena.workflow.service.AbstractTransitionListener;
+import eu.europa.ec.digit.athena.workflow.service.AbstractWorkflowService;
+import eu.europa.ec.digit.athena.workflow.service.TransitionListener;
 import eu.europa.ec.digit.client.GWTeAgendaService;
 import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.eAgenda.Appointment;
@@ -39,6 +48,7 @@ import eu.europa.ec.digit.eAgenda.MongoAgendaService;
 import eu.europa.ec.digit.eAgenda.Person;
 import eu.europa.ec.digit.eAgenda.Room;
 import eu.europa.ec.digit.eAgenda.User;
+import eu.europa.ec.digit.eAgenda.WorkflowService;
 import eu.europa.ec.digit.eAgenda.mail.EmailCalendarService;
 import eu.europa.ec.digit.eAgenda.mail.ExchangeEmailCalendarService;
 import eu.europa.ec.digit.eAgenda.mail.ExchangeEmailCalendarService.IAppointmentListener;
@@ -48,7 +58,6 @@ import jxl.Workbook;
 import jxl.format.Colour;
 import jxl.write.DateTime;
 import jxl.write.Label;
-import jxl.write.WritableCell;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
@@ -279,8 +288,12 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	}
 
 	@Override
-	public List<Appointment> getAppointments(Date from, Date until, IResource host, IResource guest) {
+	public List<Appointment> getAppointments(Date from, Date until, IResource host, IResource guest, boolean complete) {
 		List<Appointment> appointments = getMc().getAppointments(from, checkUntil(from, until), host, guest);
+		
+		if (!complete) {
+			appointments.forEach(a -> a.guest = null);
+		}
 
 		return addFreeBusyInfo(appointments, from, until, host);
 	}
@@ -411,8 +424,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		if (export == null) {
 			super.doGet(req, resp);
 		} else {
-			List<Campaign> campaigns = listCampaigns().stream().filter(c -> c.objectId.equals(export)).collect(Collectors.toList());
-			Campaign campaign = campaigns.isEmpty() ? null : campaigns.get(0);
+			Campaign campaign = getMc().findCampaign(export);
 			if (campaign != null) {
 				byte[] data = export(campaign);
 				serveBytes(resp, campaign.name + ".xls", "application/vnd.ms-excel", data);
@@ -450,11 +462,13 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		try {
 			WritableWorkbook workbook = Workbook.createWorkbook(outputStream);
 
+			List<Appointment> appointments = getMc().getAppointments(start, end, null, null);
+			addSheet(workbook, null, appointments);
 			for (IResource host : hosts) {
-//				List<WorkPattern> patterns = campaign.resourcePatterns(host);
-				List<Appointment> appointments = getMc().getAppointments(start, end, host, null);
+				appointments = getMc().getAppointments(start, end, host, null);
 				addSheet(workbook, host, appointments);
 			}
+			
 			workbook.write();
 			workbook.close();
 
@@ -465,12 +479,18 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	}
 
 	private void addSheet(WritableWorkbook workbook, IResource host, List<Appointment> appointments) throws Exception {
-		WritableSheet sheet = workbook.createSheet(host.getDisplayName(), 0);
-		addHeaderCell(sheet, 0, "Date");
-		addHeaderCell(sheet, 1, "Time");
-		addHeaderCell(sheet, 2, "Last name");
-		addHeaderCell(sheet, 3, "First name");
-		addHeaderCell(sheet, 4, "email");
+		WritableSheet sheet = workbook.createSheet(host != null ? host.getDisplayName() : "All", 0);
+		int col = 0;
+		
+		if (host == null) {
+			addHeaderCell(sheet, col++, "Location");
+		}
+		addHeaderCell(sheet, col++, "Date");
+		addHeaderCell(sheet, col++, "Time");
+		addHeaderCell(sheet, col++, "Last name");
+		addHeaderCell(sheet, col++, "First name");
+		addHeaderCell(sheet, col++, "Email");
+		addHeaderCell(sheet, col++, "Login");
 
 		int row = 0;
 
@@ -478,10 +498,15 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 		WritableCellFormat timeFormat = new jxl.write.WritableCellFormat(new jxl.write.DateFormat("h:mm"));
 		appointments.sort((a1, a2) -> a1.from.compareTo(a2.from));
 		for (Appointment a : appointments) {
-			int col = 0;
+			col = 0;
 			row++;
 
 			Person guest = a.guest.person;
+			if (host == null) {
+				sheet.addCell(new Label(col, row, a.host.getDisplayName()));
+				sheet.setColumnView(col, 20);
+				col++;
+			}
 
 			sheet.addCell(new DateTime(col, row, a.from, dateFormat));
 			sheet.setColumnView(col, 20);
@@ -498,64 +523,11 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 			sheet.addCell(new Label(col, row, a.guest.getEMailAddress()));
 			sheet.setColumnView(col, 50);
 			col++;
+			sheet.addCell(new Label(col, row, a.guest.userId));
+			sheet.setColumnView(col, 50);
+			col++;
 		}
 
-	}
-
-	private byte[] exportToExcel(List<Appointment> items) {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-		WritableWorkbook workbook;
-		WritableSheet sheet;
-		int row = 0;
-
-		try {
-			workbook = Workbook.createWorkbook(outputStream);
-			sheet = workbook.createSheet("Invoicing", 0);
-			addHeaderCell(sheet, 0, "PER_ID");
-			addHeaderCell(sheet, 1, "AMOUNT");
-			addHeaderCell(sheet, 2, "LAST NAME");
-			addHeaderCell(sheet, 3, "FIRST NAME");
-			addHeaderCell(sheet, 4, "ORG");
-			addHeaderCell(sheet, 5, "LIENSTAT");
-			addHeaderCell(sheet, 6, "");
-
-			for (Appointment item : items) {
-				int col = 0;
-				row++;
-				// BigDecimal price = item.getPrice();
-				//
-				// WritableCell cellP = new
-				// jxl.write.Number(col,row,item.getPatient().getPerId());
-				// sheet.addCell(cellP);
-				// sheet.setColumnView(col, 10);
-				// WritableCell cellAm = new jxl.write.Number(++col,row, price.doubleValue());
-				// sheet.addCell(cellAm);
-				// sheet.setColumnView(col, 11);
-				// WritableCell cellLNa = new Label(++col,row,item.getPatient().getLastname());
-				// sheet.addCell(cellLNa);
-				// sheet.setColumnView(col, 40);
-				// WritableCell cellFNa = new Label(++col,row,item.getPatient().getFirstname());
-				// sheet.addCell(cellFNa);
-				// sheet.setColumnView(col, 40);
-				WritableCell cell1 = new Label(++col, row, "CCR-S");
-				sheet.addCell(cell1);
-				sheet.setColumnView(col, 11);
-				WritableCell cellL = new Label(++col, row, "FP");
-				sheet.addCell(cellL);
-				sheet.setColumnView(col, 11);
-				WritableCell cell2 = new Label(++col, row, "1");
-				sheet.addCell(cell2);
-				sheet.setColumnView(col, 11);
-
-			}
-			workbook.write();
-			workbook.close();
-		} catch (Exception e) {
-			logger.severe(e.getMessage());
-		}
-
-		return outputStream.toByteArray();
 	}
 
 	public void addHeaderCell(WritableSheet sheet, int column, String label) throws Exception {
@@ -579,5 +551,52 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 			fout.write(data);
 			fout.close();
 		}
+	}
+	
+	private AbstractWorkflowService<Object> workflowService;
+	
+	public AbstractWorkflowService<Object> getWorkflowService() {
+		if (workflowService == null) {
+			workflowService = new WorkflowService();
+			TransitionListener<Object> listener = new AbstractTransitionListener<Object>() {
+
+				@Override
+				public void onTransition(WorkflowInstance instance, WorkflowTransition t, Object payload) {
+					getMc().log(instance, t, payload);
+				}
+			};
+			workflowService.addTransititionListener(listener);		
+		}
+		return workflowService;
+	}
+	
+	
+	@Override
+	public Appointment applyAction(String workflowName, FiniteStateMachine fsm, Appointment appointment, String action) {
+		if (getWorkflowService().apply(new WorkflowInstance(asWorkflowDefinition(fsm), appointment.state != null ? appointment.state : "invited") {
+
+			@Override
+			public void setCurrentState(WorkflowState currentState) {
+				if (appointment.states != null) {
+					appointment.states.put(workflowName, currentState.name);
+				} else {
+					appointment.state = currentState.name;
+				}
+			}
+			
+		}, action, null)) {
+			getMc().saveAppointment(appointment);
+			UpdateWebSocketServer.notifyAll(ActionType.update, appointment);
+
+		};
+		return appointment;
+	}
+
+	private WorkflowDefinition asWorkflowDefinition(FiniteStateMachine workflowDefinition) {
+		WorkflowDefinition wDef = new WorkflowDefinition("fsm");
+		for (Transition t:workflowDefinition.getTransitions()) {
+			wDef.addTransition(new WorkflowTransition(null, t.currentState, t.nextState, t.input));
+		}
+		return wDef;
 	}
 }

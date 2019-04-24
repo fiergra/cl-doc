@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 
+import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
+
 public class Appointment implements Serializable {
 	private static final long serialVersionUID = -2665822851932873724L;
 
 //	public ObjectId id;
+	public String campaignId;
 	public String objectId;
 
 	public IResource host;
@@ -24,18 +27,27 @@ public class Appointment implements Serializable {
 	public String comment;
 	
 	public String state;
+	public HashMap<String, String> states;
 	
 	public Appointment() {}
 
-	public Appointment(IResource host, User guest, Room location, Date from, Date until, AppointmentType type) {
+	public Appointment(Campaign campaign, IResource host, User guest, Room location, Date from, Date until, AppointmentType type) {
+		this.campaignId = campaign.objectId;
 		this.host = host;
 		this.guest = guest;
 		this.location = location;
 		this.from = from;
 		this.until = until != null ? until : (from != null ? new Date(from.getTime() + (type != null ? type.duration : 15L) * 60 * 1000L) : null);
 		this.type = type;
+		
+		initStates(campaign.workflows);
 	}
 	
+	private void initStates(HashMap<String, FiniteStateMachine> workflows) {
+		states = new HashMap<>();
+		workflows.entrySet().forEach(e -> states.put(e.getKey(), e.getValue().initial));
+	}
+
 	public void put(String key, Serializable value) {
 		if (fields == null) {
 			fields = new HashMap<>();

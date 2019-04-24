@@ -81,7 +81,7 @@ public class HomeScreen extends DockLayoutPanel {
 
 	
 	private void createEmptyCampaign(UserContext userContext) {
-		Campaign campaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
+		Campaign campaign = new Campaign("<new campaign>", "<enter description here>", new AppointmentType("default",  15, "white"));
 		eAgendaUI.service.saveCampaign(campaign, new RPCCallback<Campaign>() {
 
 			@Override
@@ -119,8 +119,11 @@ public class HomeScreen extends DockLayoutPanel {
 	private VerticalPanel vpTopMenuItems = new VerticalPanel();
 	private VerticalPanel vpResourceMenuItems = new VerticalPanel();
 	
+	private PushButton pbRemoveCampaign = new PushButton(new Image("assets/images/24x24/remove.white.png"));
+	
 	private Widget createMenu() {
 		VerticalPanel vpMenu = new VerticalPanel();
+
 		vpMenu.addStyleName("menuPanel");
 		vpMenu.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 		
@@ -145,25 +148,22 @@ public class HomeScreen extends DockLayoutPanel {
 		hpMainItem.setWidget(0, 1, cmbCampaigns);
 
 		
-		if (eAgendaUI.userContext.isAdmin()) {
-			PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.white.png"));
-			pbAdd.setStyleName("flatButton");
-			pbAdd.addClickHandler(e -> { 
-				Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", eAgendaUI.userContext.user, new AppointmentType("default",  15, "white"));
-				if (eAgendaUI.commando != null) {
-					eAgendaUI.commando.execute(new AddCampaignCommand(new CampaignSettings(newCampaign), cmbCampaigns));
-				}
-			});
-	
-			hpMainItem.setWidget(0, 2, pbAdd);
-			pbAdd.setTitle(StringResources.getLabel("add new campaign"));
+		PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.white.png"));
+		pbAdd.setStyleName("flatButton");
+		pbAdd.addClickHandler(e -> { 
+			Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", new AppointmentType("default",  15, "white"));
+			if (eAgendaUI.commando != null) {
+				eAgendaUI.commando.execute(new AddCampaignCommand(new CampaignSettings(newCampaign), cmbCampaigns));
+			}
+		});
+
+		hpMainItem.setWidget(0, 2, pbAdd);
+		pbAdd.setTitle(StringResources.getLabel("add new campaign"));
 			
-			PushButton pbRemove = new PushButton(new Image("assets/images/24x24/remove.white.png"));
-			pbRemove.setStyleName("flatButton");
-			hpMainItem.setWidget(0, 3, pbRemove);
-			pbRemove.setTitle(StringResources.getLabel("remove current campaign"));
-			pbRemove.addClickHandler(e -> eAgendaUI.commando.execute(new DeleteCampaignCommand(cmbCampaigns.getSelectedItem(), cmbCampaigns)));
-		}
+		pbRemoveCampaign.setStyleName("flatButton");
+		hpMainItem.setWidget(0, 3, pbRemoveCampaign);
+		pbRemoveCampaign.setTitle(StringResources.getLabel("remove current campaign"));
+		pbRemoveCampaign.addClickHandler(e -> eAgendaUI.commando.execute(new DeleteCampaignCommand(cmbCampaigns.getSelectedItem(), cmbCampaigns)));
 		
 		cmbCampaigns.getTextBox().setStyleName("mainMenuItemTextBox");
 		hpMainItem.getFlexCellFormatter().setWidth(0, 1, "100%");
@@ -172,24 +172,35 @@ public class HomeScreen extends DockLayoutPanel {
 
 		vpMenuItems.add(hpMainItem);
 		vpMenuItems.add(vpTopMenuItems);
-		vpTopMenuItems.setSpacing(5);
+		vpTopMenuItems.setWidth("100%");
 
-		if (eAgendaUI.userContext.isAdmin()) {
+		vpResourceMenuItems.setSpacing(5);
+		vpResourceMenuItems.setWidth("100%");
+		vpMenuItems.add(vpResourceMenuItems);
+		vpTopMenuItems.setSpacing(5);
+		
+		return vpMenu;
+	}
+	
+
+	private void createMenu(Campaign campaign) {
+		if (eAgendaUI.isOwner(campaign)) {
 			menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/menu.white.png"), "Settings", null, (m) -> displayWidget(cmbCampaigns.getSelectedItem()));
+		}
+
+		if (eAgendaUI.isAdmin(campaign)) {
+			Widget adminWidget = adminStuff;
+			menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/gears.white.png"), "Administration", null, (m) -> displayWidget(adminWidget));
 		}
 
 		HorizontalPanel hpResources = new HorizontalPanel();
 		hpResources.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		I18NLabel lbResourcesHeader = new I18NLabel("Resources");
 		lbResourcesHeader.setStyleName("menuItemHeader");
-//		PushButton pbNewResource = new PushButton(new Image("assets/images/24x24/add.white.png"));
-//		pbNewResource.setStyleName("flatButton");
 		hpResources.add(lbResourcesHeader);
-//		hpResources.add(pbNewResource);
 		
-		if (eAgendaUI.userContext.isAdmin()) {
+		if (eAgendaUI.isOwner(campaign)) {
 			RemoteSearchBox<IResource> sbResources = new RemoteSearchBox<>(new SimpleTranslator<IResource>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
-	//		pbNewResource.addClickHandler(e -> addNewResource(sbResources));
 			sbResources.setStyleName("menuResourceSearchBox");
 			sbResources.addStyleDependentName("empty");
 			sbResources.setWidth("100%");
@@ -204,14 +215,11 @@ public class HomeScreen extends DockLayoutPanel {
 					sbResources.removeStyleDependentName("empty");
 				}
 				
-				if (cmbCampaigns.getSelectedItem() != null) {
-					Campaign campaign = cmbCampaigns.getSelectedItem().campaign; 
+				if (campaign != null) { 
 					List<WorkPattern> patterns = campaign.resourcePatterns(r);
 					if (patterns.isEmpty()) {
 						addResource(campaign, r);
 						sbResources.setSelected(null);
-					} else {
-	// TODO select menu item
 					}
 				}
 				
@@ -225,23 +233,12 @@ public class HomeScreen extends DockLayoutPanel {
 				sbResources.addStyleDependentName("empty");
 				sbResources.setText(StringResources.getLabel("<click here to search and add new>"));
 			});
-	//		hpResources.setWidget(0, 0, lbResourcesHeader);
-	//		hpResources.setWidget(1, 0, sbResources);
-	//		hpResources.getFlexCellFormatter().setWidth(0, 1, "100%");
-	//		vpMenuItems.add(hpResources);
-			vpMenuItems.add(hpResources);
-			vpMenuItems.add(sbResources);
+//			vpMenuItems.add(hpResources);
+//			vpMenuItems.add(sbResources);
+			vpTopMenuItems.add(hpResources);
+			vpTopMenuItems.add(sbResources);
 		}
-		vpResourceMenuItems.setSpacing(5);
-		vpResourceMenuItems.setWidth("100%");
-		vpMenuItems.add(vpResourceMenuItems);
 
-		if (eAgendaUI.userContext.isAdmin()) {
-			Widget adminWidget = adminStuff;
-			menu.addItem(vpTopMenuItems, new Image("assets/images/24x24/gears.white.png"), "Administration", null, (m) -> displayWidget(adminWidget));
-		}
-		
-		return vpMenu;
 	}
 
 	@SuppressWarnings("unused")
@@ -315,10 +312,20 @@ public class HomeScreen extends DockLayoutPanel {
 	}
 
 	private void setSelectedCampaign(Campaign campaign) {
+		vpTopMenuItems.clear();
+		vpResourceMenuItems.clear();
+		menu = new SingleSelectionMenu();
+		
+		createMenu(campaign);
 		populateResourcesMenu(campaign);
 		adminStuff.setCampaign(campaign);
 		menu.selectItem(0);
+
+		boolean enabled = eAgendaUI.isOwner(campaign);
+		pbRemoveCampaign.setEnabled(enabled);
+		pbRemoveCampaign.setVisible(enabled);
 	}
+
 
 
 	private void populateResourcesMenu(Campaign campaign) {

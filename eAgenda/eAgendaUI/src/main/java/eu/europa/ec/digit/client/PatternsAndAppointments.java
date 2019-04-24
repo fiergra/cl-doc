@@ -1,5 +1,7 @@
 package eu.europa.ec.digit.client;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.ceres.dynamicforms.client.components.TabbedLayoutPanel;
@@ -11,6 +13,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -18,7 +21,6 @@ import eu.europa.ec.digit.client.i18n.I18NLabel;
 import eu.europa.ec.digit.client.i18n.StringResources;
 import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.IResource;
-import eu.europa.ec.digit.eAgenda.User;
 import eu.europa.ec.digit.eAgenda.WorkPattern;
 
 public class PatternsAndAppointments extends DockLayoutPanel {
@@ -27,7 +29,7 @@ public class PatternsAndAppointments extends DockLayoutPanel {
 
 	private TabbedLayoutPanel tabMain = new TabbedLayoutPanel(42, Unit.PX);
 	private TabbedLayoutPanel tabPatterns = new TabbedLayoutPanel(10, Unit.EM, OrientationValue.VERTICAL);
-	private SlotAppointmentsView slotAppointmentsView;
+//	private SlotAppointmentsView slotAppointmentsView;
 
 	private Campaign campaign;
 
@@ -73,9 +75,8 @@ public class PatternsAndAppointments extends DockLayoutPanel {
 		pbAdd.setVisible(false);
 		pbAdd.setTitle(StringResources.getLabel("add new working pattern for") +  " " + resource.getDisplayName());
 
-		slotAppointmentsView = new SlotAppointmentsView(campaign);
 
-		if (eAgendaUI.userContext.isAdmin()) {
+		if (eAgendaUI.isOwner(campaign)) {
 			HorizontalPanel hpPatternsLabel = new HorizontalPanel();
 			Label lbPatterns = new I18NLabel("Patterns");
 			lbPatterns.setStyleName("tabTextLabelSize");
@@ -83,67 +84,25 @@ public class PatternsAndAppointments extends DockLayoutPanel {
 			hpPatternsLabel.add(pbAdd);
 			tabMain.add(tabPatterns, hpPatternsLabel);
 		}		
-		tabMain.add(slotAppointmentsView, "Appointments");
+
+//		slotAppointmentsView = new SlotAppointmentsView(campaign);
+//		tabMain.add(slotAppointmentsView, "Appointments");
+		DailySlots dailySlots = new DailySlots(campaign, resource, new ArrayList<Date>(), false);
+		dailySlots.setSelectedResource(campaign, resource);
+		tabMain.add(new ScrollPanel(dailySlots), "Appointments");
 
 		setSelectedResource(resource);
-	}
-
-	class AddRemoveOwner extends CampaignCommand {
-
-		private User owner;
-		private boolean add;
-		private MultiSelectPanel<User> msp;
-
-		public AddRemoveOwner(Campaign campaign, User owner, boolean add, MultiSelectPanel<User> multiSelectPanel) {
-			super(campaign, (add ? "add " : "remove") + " owner '" + owner.userId + "' on campaign '" + campaign.name + "'");
-			this.add = add;
-			this.owner = owner;
-			this.msp = multiSelectPanel;
-		}
-
-		private void addOwner() {
-			if (campaign.addOwner(owner)) {
-				saveCampaign();
-				msp.refresh(campaign.owners);
-			}
-		}
-
-		private void removeOwner() {
-			if (campaign.removeOwner(owner)) {
-				saveCampaign();
-				msp.refresh(campaign.owners);
-			}
-		}
-
-		@Override
-		public void exec() {
-			if (add) {
-				addOwner();
-			} else {
-				removeOwner();
-			}
-		}
-
-		@Override
-		public void undo() {
-			if (add) {
-				removeOwner();
-			} else {
-				addOwner();
-			}
-		}
-
 	}
 
 	private void setSelectedResource(IResource resource) {
 		pbAdd.setVisible(resource != null);
 		doDisplayPatterns(resource);
-		doDisplayAppointments(resource);
+//		doDisplayAppointments(resource);
 	}
 
-	private void doDisplayAppointments(IResource resource) {
-		slotAppointmentsView.setHost(resource);
-	}
+//	private void doDisplayAppointments(IResource resource) {
+//		slotAppointmentsView.setHost(resource);
+//	}
 
 	private void doDisplayPatterns(IResource resource) {
 		tabPatterns.clear();

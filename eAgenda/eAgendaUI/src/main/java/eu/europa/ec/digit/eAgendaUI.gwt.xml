@@ -19,6 +19,7 @@
 	<!-- Other module inherits -->
 	<inherits name="com.ceres.dynamicforms.DynamicForms" />
 	<inherits name='eu.europa.ec.digit.eAgendaCore' />
+    <inherits name="eu.europa.ec.digit.athena.Workflow"/>
 	<!-- Specify the app entry point class. -->
 	<entry-point class='eu.europa.ec.digit.client.eAgendaUI' />
 

@@ -8,7 +8,7 @@ body, table td, select, button {
 	font-smooth: always;
 	font-size: medium;
 	-webkit-font-smoothing: antialiased;
-	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004); 
+	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
 }
 
 .applicationHeader {
@@ -19,10 +19,10 @@ body, table td, select, button {
 .applicationBackground {
 	background-color: #CACACA;
 }
+
 .campaignRenderer {
 	width: 100%;
 	box-shadow: 3px 3px 5px #DDD;
-	padding: 5px;
 }
 
 .campaignList {
@@ -82,6 +82,7 @@ body, table td, select, button {
 }
 
 .tabbedPanel {
+	
 }
 
 .tabsWrapper {
@@ -124,7 +125,7 @@ body, table td, select, button {
 
 .tabLabel:hover {
 	border-bottom-width: 5px;
-	border-bottom-color: #004494; 
+	border-bottom-color: #004494;
 	border-bottom-style: solid;
 }
 
@@ -162,12 +163,10 @@ body, table td, select, button {
 }
 
 .appointmentRenderer {
-	box-shadow: 2px 2px 2px #DDD;
 	border: 1px solid #DDD;
 	border-left: 5px solid #DDD;
-	width: 100%;
-	min-width: 15em;
-	height: 3em;
+	min-width: 20em;
+	height: 2em;
 }
 
 .appointmentRenderer-ACCEPTED {
@@ -268,15 +267,15 @@ body, table td, select, button {
 }
 
 .gwt-DialogBox .Caption {
-    background: #0057c0;
-    color: white;
-    padding: 4px 8px 4px 4px;
-    cursor: default;
-    font-family: Calibri;
-    font-size: x-large;
-    font-weight: bold;
-    border-bottom: none;
-    border-top: none;
+	background: #0057c0;
+	color: white;
+	padding: 4px 8px 4px 4px;
+	cursor: default;
+	font-family: Calibri;
+	font-size: x-large;
+	font-weight: bold;
+	border-bottom: none;
+	border-top: none;
 }
 
 .gwt-ListBox {
@@ -286,16 +285,16 @@ body, table td, select, button {
 
 .datePickerDay {
 	border: 1px solid white;
-	font-family: font-family: 'Roboto', sans-serif;
+	font-family: font-family : 'Roboto', sans-serif;
 	font-smooth: always;
 	font-size: large;
 	font-weight: normal;
 }
 
 .datePickerDayIsDisabled {
-    color: #AAAAAA;
-    font-style: italic;
-    cursor: no-drop;
+	color: #AAAAAA;
+	font-style: italic;
+	cursor: no-drop;
 }
 
 .datePickerDayIsToday {
@@ -313,12 +312,12 @@ body, table td, select, button {
 }
 
 .datePickerDayIsWeekend {
-    background: #ffb5ae;
+	background: #ffb5ae;
 }
 
 .slotHourLabel {
 	font-weight: bold;
-	font-size: xx-large;	
+	font-size: xx-large;
 	width: 1em;
 	height: 1em;
 }
@@ -349,7 +348,6 @@ body, table td, select, button {
 .placesAvailable:hover {
 	background-color: #FBC02D;
 }
-
 
 .complete {
 	background-color: #ffb5ae;
@@ -385,8 +383,9 @@ body, table td, select, button {
 }
 
 .tabContent {
-/*	border-top: 1px #DDD solid;
+	/*	border-top: 1px #DDD solid;
 	border-left: 1px #DDD solid;*/
+	
 }
 
 .applicationTitle {
@@ -406,7 +405,7 @@ body, table td, select, button {
 	z-index: 3000;
 	background-color: white;
 	transition: height 0.75s;
-/*	box-shadow: 3px 3px 5px #DDD; */
+	/*	box-shadow: 3px 3px 5px #DDD; */
 }
 
 .tExpandable {
@@ -414,38 +413,38 @@ body, table td, select, button {
 }
 
 .gwt-DatePicker {
-    border: none;
-    cursor: default;
+	border: none;
+	cursor: default;
 }
 
 .gwt-TextBox {
-    padding: 0px;
-    border: none;
-    font-size: inherit;
-    font-family: inherit;
-    height: 2em;
+	padding: 0px;
+	border: none;
+	font-size: inherit;
+	font-family: inherit;
+	height: 2em;
 }
 
 .gwt-PasswordTextBox {
-    padding: 0px;
-    border: none;
-    font-size: inherit;
-    font-family: inherit;
-    height: 2em;
+	padding: 0px;
+	border: none;
+	font-size: inherit;
+	font-family: inherit;
+	height: 2em;
 }
 
 .gwt-TextArea {
-    padding: 0px; 
-    border: none;
-    font-size: inherit;
-    font-family: inherit;
+	padding: 0px;
+	border: none;
+	font-size: inherit;
+	font-family: inherit;
 }
 
 .menuPanel {
 	background-color: #004494;
 	width: 100%;
 	height: 100%;
-}  
+}
 
 .mainMenuItemTextBox {
 	color: white;
@@ -461,10 +460,10 @@ body, table td, select, button {
 }
 
 .gwt-PopupPanel {
-  border: 1px solid #DDD;
-  box-shadow: 5px 5px 10px black;
-  padding: 3px;
-  background: white;
+	border: 1px solid #DDD;
+	box-shadow: 5px 5px 10px black;
+	padding: 3px;
+	background: white;
 }
 
 .editableComboBoxPopupItem {
@@ -483,7 +482,7 @@ body, table td, select, button {
 	color: white;
 	font-size: xx-large;
 	font-style: italic;
-	padding: 3px;	
+	padding: 3px;
 }
 
 .menuItem {
@@ -491,14 +490,14 @@ body, table td, select, button {
 	color: white;
 	border-left: 5px solid transparent;
 	font-size: x-large;
-	padding: 5px;	
+	padding: 5px;
 	width: 100%;
 }
 
 .menuItem:focus {
 	outline: none;
 }
- 
+
 .menuItem:hover {
 	border-left: 5px solid #FBC02D;
 	cursor: pointer;
@@ -606,3 +605,57 @@ body, table td, select, button {
 	color: white;
 	font-family: Courier;
 }
+
+.disabled {
+	background-color: #DDD;
+	opacity: 0.7;
+}
+
+.mspButton {
+	border-radius: 8px;
+	height: 16px;
+	width: 16px;
+}
+
+.mspButton:hover {
+	background-color: #FBC02D;
+	cursor: pointer;
+}
+
+.resourceNameWrapper {
+	background-color: white;
+}
+
+.slotSearchBox {
+	height: 2em;
+	font-size: medium;
+	font-family: Calibri;
+	border: 1px solid #DDD;
+	border-left: 5px solid #DDD;
+}
+
+.stateLabel {
+	width: 24px;
+	height: 24px;
+	border-radius: 12px;
+	font-size: 18px;
+	font-weight: bold;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.stateLabel-regular {
+	background-color: blue;
+	color:white;
+}
+
+.stateLabel-terminal {
+	background-color: green;
+	color:white;
+}
+
+.stateLabel-initial {
+	background-color: orange;
+	color:black;
+}
+

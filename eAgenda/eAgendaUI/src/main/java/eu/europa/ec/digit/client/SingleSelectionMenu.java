@@ -25,8 +25,10 @@ public class SingleSelectionMenu {
 	}
 
 	public void selectItem(int index) {
-		MenuItem mItem = menuItems.get(index);
-		selectItem(mItem);
+		if (menuItems.size() > index) {
+			MenuItem mItem = menuItems.get(index);
+			selectItem(mItem);
+		}
 	}
 	
 	public void selectItem(MenuItem mItem) {

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
 import eu.europa.ec.digit.client.i18n.StringResource;
 import eu.europa.ec.digit.eAgenda.Appointment;
 import eu.europa.ec.digit.eAgenda.Campaign;
@@ -34,7 +35,7 @@ public interface GWTeAgendaServiceAsync {
 	void deleteCampaign(Campaign campaign, AsyncCallback<Campaign> callback);
 	
 	void saveAppointment(Campaign c, Appointment a, AsyncCallback<Appointment> callback);
-	void getAppointments(Date d, Date until, IResource host, IResource guest, AsyncCallback<List<Appointment>> callback);
+	void getAppointments(Date d, Date until, IResource host, IResource guest, boolean complete, AsyncCallback<List<Appointment>> callback);
 	void getAppointments(Date d, IResource host, IResource guest, AsyncCallback<List<Appointment>> callback);
 	void cancelAppointment(Appointment a, AsyncCallback<Appointment> rpcCallback);
 	
@@ -42,4 +43,7 @@ public interface GWTeAgendaServiceAsync {
 
 	void monitorInbox(AsyncCallback<Boolean> callback);
 	void export(Campaign c, AsyncCallback<byte[]> callback);
+
+//	void getWorkflowDefinitions(AsyncCallback<List<WorkflowDefinition>> callback);
+	void applyAction(String workflowName, FiniteStateMachine wdef, Appointment a, String action, AsyncCallback<Appointment> rpcCallback);
 }

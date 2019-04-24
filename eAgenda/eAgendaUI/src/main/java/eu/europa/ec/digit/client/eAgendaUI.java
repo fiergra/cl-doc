@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import eu.europa.ec.digit.client.i18n.I18NLabel;
 import eu.europa.ec.digit.client.i18n.StringResources;
 import eu.europa.ec.digit.eAgenda.Campaign;
+import eu.europa.ec.digit.eAgenda.User;
 import eu.europa.ec.digit.shared.UserContext;
 
 /**
@@ -225,5 +226,23 @@ public class eAgendaUI implements EntryPoint {
 		stopBusy();
 	}
 
+	public static boolean isOperator(Campaign campaign) {
+		return isOwner(campaign) || hasRole(campaign, CampaignSettings.OPERATOR); 
+	}
 
+	public static boolean isOwner(Campaign campaign) {
+		return hasRole(campaign, CampaignSettings.ADMIN) || hasRole(campaign, CampaignSettings.OWNER); 
+	}
+
+	public static boolean isAdmin(Campaign campaign) {
+		return hasRole(campaign, CampaignSettings.ADMIN); 
+	}
+
+	public static boolean hasRole(Campaign campaign, String role) {
+		Collection<User> owners = campaign.roles.get(role); 
+		return owners != null && owners.contains(eAgendaUI.userContext.user);
+	}
+
+
+	
 }

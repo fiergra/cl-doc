@@ -3,6 +3,7 @@ package eu.europa.ec.digit.client;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import com.ceres.dynamicforms.client.SimpleTranslator;
@@ -46,6 +47,9 @@ import eu.europa.ec.digit.eAgenda.User;
 
 public class CampaignSettings extends DockLayoutPanel {
 
+	public final static String ADMIN = "admin", OWNER ="owner", OPERATOR ="operator";
+	private String[] roles = { ADMIN, OWNER, OPERATOR };
+
 	private Label lbURL = new I18NLabel();
 	private TextArea lbDescription = new TextArea();
 	private CheckBox cbPublished = new CheckBox();
@@ -56,9 +60,10 @@ public class CampaignSettings extends DockLayoutPanel {
 	private CheckBox cbIncludeHost = new CheckBox();
 	private ListBox lbStartDelay = new ListBox();
 
-	private MultiSelectPanel<User> mspOwners;
-	private ListBox lbCityRestriction = new ListBox();
-	private ListBox lbOrgaRestriction = new ListBox();
+//	private MultiSelectPanel<User> mspOwners;
+	private HashMap<String, MultiSelectPanel<User>> mspOwners = new HashMap<>();
+//	private ListBox lbCityRestriction = new ListBox();
+//	private ListBox lbOrgaRestriction = new ListBox();
 
 	private TextBox txtType = new TextBox();
 	private Integer[] durations = new Integer[] { 10, 15, 30, 45, 60, 90 };
@@ -157,7 +162,7 @@ public class CampaignSettings extends DockLayoutPanel {
 		int row = 0;
 		row = addHeading(row, "General");
 		row = createCampaignDetailsGeneral(row);
-		row = addHeading(row, "Access");
+		row = addHeading(row, "Access control");
 		row = createCampaignDetailsAccess(row);
 		row = addHeading(row, "E-mail");
 		row = createCampaignDetailsEmail(row);
@@ -247,39 +252,79 @@ public class CampaignSettings extends DockLayoutPanel {
 		cbPublished.setTitle("published");
 		cbPublished.addClickHandler(e -> publish(cbPublished.getValue()));
 
-		HorizontalPanel hpRestrictions = new HorizontalPanel();
-		hpRestrictions.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		hpRestrictions.setSpacing(3);
+//		HorizontalPanel hpRestrictions = new HorizontalPanel();
+//		hpRestrictions.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//		hpRestrictions.setSpacing(3);
+//
+//		hpRestrictions.add(lbCityRestriction);
+//		lbCityRestriction.addItem("---", "");
+//		lbCityRestriction.addItem("BXL");
+//		lbCityRestriction.addItem("LUX");
+//		lbCityRestriction.addItem("IPR");
+//
+//		hpRestrictions.add(l("Organisation"));
+//		lbOrgaRestriction.addItem("---");
+//		lbOrgaRestriction.addItem("DIGIT.B");
+//		lbOrgaRestriction.addItem("DIGIT.C");
+//		hpRestrictions.add(lbOrgaRestriction);
 
-		hpRestrictions.add(lbCityRestriction);
-		lbCityRestriction.addItem("---", "");
-		lbCityRestriction.addItem("BXL");
-		lbCityRestriction.addItem("LUX");
-		lbCityRestriction.addItem("IPR");
-
-		hpRestrictions.add(l("Organisation"));
-		lbOrgaRestriction.addItem("---");
-		lbOrgaRestriction.addItem("DIGIT.B");
-		lbOrgaRestriction.addItem("DIGIT.C");
-		hpRestrictions.add(lbOrgaRestriction);
-
-		tblCampaignDetails.setWidget(row, 0, l("Owner"));
-		mspOwners = new MultiSelectPanel<User>(campaign.owners, u -> u.userId) {
-
-			@Override
-			protected boolean onAdd() {
-				addOwner(this);
-				return false;
+		if (campaign.owners != null && !campaign.roles.containsKey(OWNER)) {
+			campaign.roles.put(OPERATOR, campaign.owners);
+		}
+		
+		boolean enabled = false;
+		
+		for (String role:roles) {
+			tblCampaignDetails.setWidget(row, 0, l(role));
+			
+			Collection<User> users = campaign.roles.get(role);
+			if (users == null) {
+				users = new ArrayList<>();
+				if (!enabled) {
+					users.add(eAgendaUI.userContext.user);
+				}
+				campaign.roles.put(role, users);
 			}
+			MultiSelectPanel<User> mspRole = new MultiSelectPanel<User>(users, u -> u.userId, u -> u.person != null ? u.person.getDisplayName() : u.getDisplayName()) {
 
-			@Override
-			protected boolean onDelete(User user) {
-				eAgendaUI.commando.execute(new AddRemoveOwner(campaign, user, false, this));
-				return true;
-			}
+				@Override
+				protected boolean onAdd() {
+					addOwner(this, role);
+					return false;
+				}
 
-		};
-		tblCampaignDetails.setWidget(row++, column, mspOwners);
+				@Override
+				protected boolean onDelete(User user) {
+					eAgendaUI.commando.execute(new AddRemoveRole(campaign, role, user, false, this));
+					return true;
+				}
+
+			};
+			mspOwners.put(role, mspRole);
+			enabled = enabled || users.contains(eAgendaUI.userContext.user); 
+			mspRole.setEnabled(enabled);
+			
+			tblCampaignDetails.setWidget(row++, column, mspRole);
+		}
+		
+		
+//		tblCampaignDetails.setWidget(row, 0, l("Owner"));
+//		mspOwners = new MultiSelectPanel<User>(campaign.owners, u -> u.userId) {
+//
+//			@Override
+//			protected boolean onAdd() {
+//				addOwner(this);
+//				return false;
+//			}
+//
+//			@Override
+//			protected boolean onDelete(User user) {
+//				eAgendaUI.commando.execute(new AddRemoveOwner(campaign, user, false, this));
+//				return true;
+//			}
+//
+//		};
+//		tblCampaignDetails.setWidget(row++, column, mspOwners);
 
 		tblCampaignDetails.setWidget(row, 0, l("Allow impersonation"));
 		tblCampaignDetails.setWidget(row++, column, cbDelegation);
@@ -305,8 +350,8 @@ public class CampaignSettings extends DockLayoutPanel {
 			eAgendaUI.commando.execute(command);
 		});
 
-		tblCampaignDetails.setWidget(row, 0, l("Restrictions"));
-		tblCampaignDetails.setWidget(row++, column, hpRestrictions);
+//		tblCampaignDetails.setWidget(row, 0, l("Restrictions"));
+//		tblCampaignDetails.setWidget(row++, column, hpRestrictions);
 
 		return row;
 	}
@@ -400,30 +445,32 @@ public class CampaignSettings extends DockLayoutPanel {
 		return index > -1 ? durations[index] : 15;
 	}
 
-	class AddRemoveOwner extends CampaignCommand {
+	class AddRemoveRole extends CampaignCommand {
 
 		private User owner;
 		private boolean add;
 		private MultiSelectPanel<User> msp;
+		private String role;
 
-		public AddRemoveOwner(Campaign campaign, User owner, boolean add, MultiSelectPanel<User> multiSelectPanel) {
-			super(campaign, (add ? "add " : "remove") + " owner '" + owner.userId + "' on campaign '" + campaign.name + "'");
+		public AddRemoveRole(Campaign campaign, String role, User owner, boolean add, MultiSelectPanel<User> multiSelectPanel) {
+			super(campaign, (add ? "add " : "remove") + role + " '" + owner.userId + "' on campaign '" + campaign.name + "'");
 			this.add = add;
+			this.role = role;
 			this.owner = owner;
 			this.msp = multiSelectPanel;
 		}
 
 		private void addOwner() {
-			if (campaign.addOwner(owner)) {
+			if (campaign.addRole(role, owner)) {
 				saveCampaign();
-				msp.refresh(campaign.owners);
+				msp.refresh(campaign.roles.get(role));
 			}
 		}
 
 		private void removeOwner() {
-			if (campaign.removeOwner(owner)) {
+			if (campaign.removeRole(role, owner)) {
 				saveCampaign();
-				msp.refresh(campaign.owners);
+				msp.refresh(campaign.roles.get(role));
 			}
 		}
 
@@ -447,14 +494,61 @@ public class CampaignSettings extends DockLayoutPanel {
 
 	}
 
-	private void addOwner(MultiSelectPanel<User> multiSelectPanel) {
+//	class AddRemoveOwner extends CampaignCommand {
+//
+//		private User owner;
+//		private boolean add;
+//		private MultiSelectPanel<User> msp;
+//
+//		public AddRemoveOwner(Campaign campaign, User owner, boolean add, MultiSelectPanel<User> multiSelectPanel) {
+//			super(campaign, (add ? "add " : "remove") + " owner '" + owner.userId + "' on campaign '" + campaign.name + "'");
+//			this.add = add;
+//			this.owner = owner;
+//			this.msp = multiSelectPanel;
+//		}
+//
+//		private void addOwner() {
+//			if (campaign.addOwner(owner)) {
+//				saveCampaign();
+//				msp.refresh(campaign.owners);
+//			}
+//		}
+//
+//		private void removeOwner() {
+//			if (campaign.removeOwner(owner)) {
+//				saveCampaign();
+//				msp.refresh(campaign.owners);
+//			}
+//		}
+//
+//		@Override
+//		public void exec() {
+//			if (add) {
+//				addOwner();
+//			} else {
+//				removeOwner();
+//			}
+//		}
+//
+//		@Override
+//		public void undo() {
+//			if (add) {
+//				removeOwner();
+//			} else {
+//				addOwner();
+//			}
+//		}
+//
+//	}
+
+	private void addOwner(MultiSelectPanel<User> multiSelectPanel, String role) {
 		PopupPanel popUp = new PopupPanel(true, false);
 		SearchBox<IResource> sb = new RemoteSearchBox<>(new SimpleTranslator<>(), runSearch, r -> r.getDisplayName(), r -> r.getDisplayName());
 		sb.addSelectionHandler(s -> {
 			IResource r = sb.getSelected();
 
 			if (r instanceof User) {
-				eAgendaUI.commando.execute(new AddRemoveOwner(campaign, (User) r, true, multiSelectPanel));
+				eAgendaUI.commando.execute(new AddRemoveRole(campaign, role, (User) r, true, multiSelectPanel));
 				popUp.hide();
 			}
 		});
@@ -516,7 +610,13 @@ public class CampaignSettings extends DockLayoutPanel {
 
 		setValue(lbStartDelay, String.valueOf(c.startDelayInH));
 		
-		mspOwners.refresh(campaign.owners);
+		campaign.roles.entrySet().forEach(e -> {
+			MultiSelectPanel<User> msp = mspOwners.get(e.getKey());
+			if (msp != null) {
+				msp.refresh(e.getValue());
+			}
+
+		});
 		cbDelegation.setValue(campaign.allowDelegation);
 		
 		if (c.appointmentType != null) {

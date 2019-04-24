@@ -15,6 +15,7 @@ import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 import eu.europa.ec.digit.client.websocket.MessageEvent;
 import eu.europa.ec.digit.client.websocket.WebSocket;
 import eu.europa.ec.digit.eAgenda.Appointment;
+import eu.europa.ec.digit.eAgenda.Campaign;
 import eu.europa.ec.digit.eAgenda.IResource;
 import eu.europa.ec.digit.shared.IAppointmentAction;
 import eu.europa.ec.digit.shared.IAppointmentAction.ActionType;
@@ -108,13 +109,13 @@ public class UpdateWebSocketClient {
 
 	}
 
-	public void subscribe(IResource guest, IResource host, Date d, IAppointmentAction iAction) {
+	public void subscribe(Campaign campaign, IResource guest, IResource host, Date d, IAppointmentAction iAction) {
 		if (socketOpened) {
 			this.guest = guest;
 			this.host = host;
 //			this.date = d;
 			this.callback = iAction;
-			Appointment a = new Appointment(host, null, null, d, null, null);
+			Appointment a = new Appointment(campaign, host, null, null, d, null, null);
 			WebSocketNotification wsn = new WebSocketNotification(ActionType.subscribe, a);
 			String s = serialize(wsn);
 			socket.send(s);
@@ -123,7 +124,7 @@ public class UpdateWebSocketClient {
 
 				@Override
 				public boolean execute() {
-					subscribe(guest, host, d, iAction);
+					subscribe(campaign, guest, host, d, iAction);
 					return !socketOpened;
 				}
 			}, 250);
