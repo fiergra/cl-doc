@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-        	<groupId>eu.europa.ec.digit</groupId>
-        	<version>1.0-SNAPSHOT</version>
-        	<artifactId>eAgenda</artifactId>
+		<groupId>eu.europa.ec.digit</groupId>
+		<version>1.0-SNAPSHOT</version>
+		<artifactId>eAgenda</artifactId>
 	</parent>
 
 	<groupId>eu.europa.ec.digit</groupId>
@@ -42,18 +42,30 @@
 			<artifactId>jasypt</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>eu.europa.ec.digit</groupId>
+			<artifactId>Workflow</artifactId>
+		</dependency>
+
 
 	</dependencies>
 
 	<build>
 		<resources>
-    			<resource>
-        			<directory>src/main/java</directory>
-        			<includes>
-          				<include>**/*.xml</include>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.xml</include>
 					<include>**/*.java</include>
-        			</includes>
-  			</resource>        
-		</resources>    
+				</includes>
+			</resource>
+		</resources>
 	</build>
 </project>

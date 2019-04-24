@@ -129,6 +129,14 @@
 			</dependency>
 
 			<dependency>
+				<groupId>eu.europa.ec.digit</groupId>
+				<artifactId>Workflow</artifactId>
+				<version>${project.version}</version>
+				<scope>system</scope>
+				<systemPath>${user.dir}/eAgendaSharedLibs/Workflow-0.0.1-SNAPSHOT.jar</systemPath>
+			</dependency>
+
+			<dependency>
 				<groupId>microsoft.exchange</groupId>
 				<artifactId>ews.jar</artifactId>
 				<version>1.1.5</version>
