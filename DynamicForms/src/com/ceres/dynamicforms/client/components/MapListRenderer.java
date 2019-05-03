@@ -56,20 +56,21 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 
 	
 	private final String[] labels;
-	private Runnable changeHandler;
+	private Interactor<Map<String, Serializable>> parentInteractor;
 	private LineContext lc;
 	private ITranslator<Map<String, Serializable>> translator;
+	private Runnable onAddRemoveLine;
 
-	public MapListRenderer(ITranslator<Map<String, Serializable>> translator, String[] labels, Runnable changeHandler) {
+	public MapListRenderer(ITranslator<Map<String, Serializable>> translator, String[] labels, Interactor<Map<String, Serializable>> interactor) {
 		this.translator = translator;
 		this.labels = labels;
 		setStyleName("namedValuesList");
-		this.changeHandler = changeHandler;
+		this.parentInteractor = interactor;
 		addHeader();
 	}
 
-	public void setChangeHandler(Runnable changeHandler) {
-		this.changeHandler = changeHandler;
+	public void setChangeHandler(Runnable onAddRemoveLine) {
+		this.onAddRemoveLine = onAddRemoveLine;
 	}
 
 
@@ -140,17 +141,19 @@ public abstract class MapListRenderer extends FlexTable implements HasEnabled {
 			
 			@Override
 			public void onChange(InteractorLink<Map<String, Serializable>> link) {
-				if (changeHandler != null) {
-					changeHandler.run();
-				}
-				
 				if (lineContext.interactor.isValid() && isValid(lineContext.interactor) && isLastLine(lineContext)) {
 					emptyLineContext = null;
 					addEmptyLine();
+					onAddRemoveLine.run();
 				} else if (lineContexts.contains(lineContext) && lineContext.interactor.isEmpty() && !isLastLine(lineContext)) {
 					if (canRemove(lineContext.act)) {
 						removeRow(lineContext);
+						onAddRemoveLine.run();
 					}
+				}
+
+				if (parentInteractor != null) {
+					parentInteractor.onChange(link);
 				}
 			}
 

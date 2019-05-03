@@ -13,8 +13,8 @@ public class MapList extends MapListRenderer {
 
 	private List<String> colDefs = new ArrayList<>();
 	
-	public MapList(ITranslator translator, String[] labels, Runnable changeHandler) {
-		super(translator, labels, changeHandler);
+	public MapList(ITranslator translator, String[] labels, Interactor<Map<String, Serializable>> interactor) {
+		super(translator, labels, interactor);
 	}
 
 	@Override

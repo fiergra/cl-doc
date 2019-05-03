@@ -16,8 +16,8 @@ public class MapLinkFactory implements ILinkFactory<Map<String, Serializable>> {
 		this.translator = translator;
 	}
 	
-	protected MapList createWidget(String[] labels, HashMap<String, String> attributes) {
-		return new MapList(translator, labels, null);
+	protected MapList createWidget(String[] labels, HashMap<String, String> attributes, Interactor<Map<String, Serializable>> interactor) {
+		return new MapList(translator, labels, interactor);
 	}
 	
 	@Override
@@ -25,7 +25,7 @@ public class MapLinkFactory implements ILinkFactory<Map<String, Serializable>> {
 		String sLabels = attributes.get(MapListRenderer.LABELS);
 		String[] labels = sLabels.split(";");
 //		final String className = fieldName;//attributes.get(CLASSNAME);
-		final MapList ml = createWidget(labels, attributes);
+		final MapList ml = createWidget(labels, attributes, interactor);
 		setColDefs(ml, attributes);
 		final InteractorWidgetLink<Map<String, Serializable>> mlLink = new InteractorWidgetLink<Map<String, Serializable>>(interactor, fieldName, ml, attributes) {
 			
@@ -48,13 +48,8 @@ public class MapLinkFactory implements ILinkFactory<Map<String, Serializable>> {
 				item.put(fieldName, (Serializable) acts);
 			}
 		};
-		ml.setChangeHandler(new Runnable() {
-			
-			@Override
-			public void run() {
-				interactor.onChange(mlLink);
-			}
-		});
+		
+		ml.setChangeHandler(() -> interactor.onChange(mlLink));
 
 		return mlLink;
 	}

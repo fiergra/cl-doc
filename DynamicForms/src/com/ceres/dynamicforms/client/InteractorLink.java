@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 public abstract class InteractorLink<T> {
 
-	public static final InteractorLink<Object> DUMMY = new InteractorLink<Object>(null, "dummy") {
+	public static final InteractorLink<Object> DUMMY = new InteractorLink<Object>(new Interactor<>(), "dummy") {
 		
 		@Override
 		public void toDialog(Object item) {
@@ -105,6 +105,10 @@ public abstract class InteractorLink<T> {
 		return true;
 	}
 
+	public Interactor<T> getInteractor() {
+		return interactor;
+	}
 
+	
 	
 }

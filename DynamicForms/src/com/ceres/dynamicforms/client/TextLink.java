@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.TextBoxBase;
@@ -23,7 +24,12 @@ public class TextLink extends InteractorWidgetLink<Map<String, Serializable>> {
 
 	@Override
 	public void toDialog(Map<String, Serializable> item) {
-		getWidget().setText((String) get(item, name));
+		Serializable value = get(item, name);
+		if (value instanceof String || value == null) {
+			getWidget().setText((String)value);
+		} else {
+			GWT.log("cannot cast " + value.getClass().getCanonicalName() + " to String.");
+		}
 	}
 
 	@Override

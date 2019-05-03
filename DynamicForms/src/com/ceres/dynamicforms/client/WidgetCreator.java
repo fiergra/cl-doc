@@ -94,7 +94,7 @@ public class WidgetCreator {
 		if (item instanceof Element) {
 			Element element = (Element)item;
 			
-			GWT.log("pc " + level + levelPrefix(level) + element.getNodeName()+ "(" + element.getNodeType() + "): " + element.getNodeValue());
+//			GWT.log("pc " + level + levelPrefix(level) + element.getNodeName()+ "(" + element.getNodeType() + "): " + element.getNodeValue());
 
 			element = preprocess(document, element);
 			widget = createWidgetFromElement(element, interactor, translator);
@@ -120,13 +120,13 @@ public class WidgetCreator {
 		return widget;
 	}
 
-	private static String levelPrefix(int level) {
-		String prefix = "";
-		for (int i = 0; i < level; i++) {
-			prefix += "   ";
-		}
-		return prefix;
-	}
+//	private static String levelPrefix(int level) {
+//		String prefix = "";
+//		for (int i = 0; i < level; i++) {
+//			prefix += "   ";
+//		}
+//		return prefix;
+//	}
 	
 	
 
