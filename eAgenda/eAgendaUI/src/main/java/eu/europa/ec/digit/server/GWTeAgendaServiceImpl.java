@@ -30,7 +30,7 @@ import com.ibm.icu.util.Calendar;
 
 import eu.cec.digit.ecas.client.jaas.DetailedUser;
 import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
-import eu.europa.ec.digit.athena.workflow.FiniteStateMachine.Transition;
+import eu.europa.ec.digit.athena.workflow.FiniteStateMachine.FSMTransition;
 import eu.europa.ec.digit.athena.workflow.WorkflowDefinition;
 import eu.europa.ec.digit.athena.workflow.WorkflowInstance;
 import eu.europa.ec.digit.athena.workflow.WorkflowState;
@@ -142,7 +142,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 						private void setState(String objectId, String state) {
 							Appointment a = getMc().findAppointment(objectId);
 							if (a != null) {
-								a.state = state;
+								a.setState("email", state);
 								getMc().saveAppointment(a);
 								UpdateWebSocketServer.notifyAll(ActionType.update, a);
 							}
@@ -150,20 +150,21 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 
 						@Override
 						public void accepted(String objectId) {
-							setState(objectId, "ACCEPTED");
+							setState(objectId, "accepted");
 						}
 
 						@Override
 						public void decline(String objectId) {
 							Appointment a = getMc().findAppointment(objectId);
 							if (a != null) {
+								setState(objectId, "declined");
 								cancelAppointment(a);
 							}
 						}
 
 						@Override
 						public void tentative(String objectId) {
-							setState(objectId, "TENTATIVE");
+							setState(objectId, "tentative");
 						}
 					};
 					ecs = new ExchangeEmailCalendarService(userName, passWord, emailAddress, listener);
@@ -573,35 +574,30 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	
 	@Override
 	public Appointment applyAction(String workflowName, FiniteStateMachine fsm, Appointment appointment, String action) {
-		if (getWorkflowService().apply(new WorkflowInstance(asWorkflowDefinition(fsm), appointment.state != null ? appointment.state : "invited") {
+		if (getWorkflowService().apply(new WorkflowInstance(asWorkflowDefinition(fsm), appointment.getState(workflowName, fsm.initial)) {
 
 			@Override
 			public void setCurrentState(WorkflowState currentState) {
-				if (appointment.states != null) {
-					appointment.states.put(workflowName, currentState.name);
-				} else {
-					appointment.state = currentState.name;
-				}
+				appointment.setState(workflowName, currentState.name);
 			}
 			
 		}, action, null)) {
 			getMc().saveAppointment(appointment);
 			UpdateWebSocketServer.notifyAll(ActionType.update, appointment);
-
 		};
 		return appointment;
 	}
 
 	private WorkflowDefinition asWorkflowDefinition(FiniteStateMachine workflowDefinition) {
 		WorkflowDefinition wDef = new WorkflowDefinition("fsm");
-		for (Transition t:workflowDefinition.getTransitions()) {
+		for (FSMTransition t:workflowDefinition.getTransitions()) {
 			wDef.addTransition(new WorkflowTransition(null, t.currentState, t.nextState, t.input));
 		}
 		return wDef;
 	}
 
 	@Override
-	public void send(Date date) {
-		logger.info(date.toString());
+	public void send(Map data) {
+		logger.info(data.getClass().getCanonicalName());
 	}
 }

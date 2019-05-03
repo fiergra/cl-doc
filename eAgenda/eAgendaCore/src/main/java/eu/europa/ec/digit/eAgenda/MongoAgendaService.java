@@ -11,8 +11,6 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.print.Doc;
-
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -368,6 +366,7 @@ public class MongoAgendaService {
 		MongoCollection<Document> wfs = getDb().getCollection(WORKFLOWDEFINITIONS);
 		wfs.find().forEach((Block<Document>)doc -> {
 			WorkflowDefinition wDef = new WorkflowDefinition(doc.getString("name"));
+			@SuppressWarnings("unchecked")
 			List<Document> transitions = doc.get("transitions", List.class);
 			for (Document d:(List<Document>)transitions) {
 				wDef.addTransition(new WorkflowTransition(null, d.getString("from"), d.getString("to"), d.getString("action")));

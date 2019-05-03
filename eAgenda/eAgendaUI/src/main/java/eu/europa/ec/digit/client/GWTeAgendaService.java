@@ -48,6 +48,6 @@ public interface GWTeAgendaService extends RemoteService {
 	byte[] export(Campaign campaign);
 	Appointment applyAction(String workflowName, FiniteStateMachine workflowDefinition, Appointment appointment, String action);
 	
-	void send(Date date);
+	void send(Map data);
 	
 }

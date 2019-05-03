@@ -46,5 +46,5 @@ public interface GWTeAgendaServiceAsync {
 
 	void applyAction(String workflowName, FiniteStateMachine wdef, Appointment a, String action, AsyncCallback<Appointment> rpcCallback);
 	
-	void send(Date date, AsyncCallback<Void> callback);
+	void send(Map data, AsyncCallback<Void> callback);
 }

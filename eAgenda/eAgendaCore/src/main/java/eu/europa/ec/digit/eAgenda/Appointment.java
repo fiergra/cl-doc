@@ -3,13 +3,11 @@ package eu.europa.ec.digit.eAgenda;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
-
-import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
+import java.util.Map;
 
 public class Appointment implements Serializable {
 	private static final long serialVersionUID = -2665822851932873724L;
 
-//	public ObjectId id;
 	public String campaignId;
 	public String objectId;
 
@@ -22,12 +20,12 @@ public class Appointment implements Serializable {
 	
 	public AppointmentType type;
 	
-	public HashMap<String, Serializable> fields;
+	public Map<String, Serializable> fields;
 
 	public String comment;
 	
-	public String state;
-	public HashMap<String, String> states;
+//	private String state;
+//	private Map<String, String> states;
 	
 	public Appointment() {}
 
@@ -40,13 +38,13 @@ public class Appointment implements Serializable {
 		this.until = until != null ? until : (from != null ? new Date(from.getTime() + (type != null ? type.duration : 15L) * 60 * 1000L) : null);
 		this.type = type;
 		
-		initStates(campaign.workflows);
+//		initStates(campaign.workflows);
 	}
 	
-	private void initStates(HashMap<String, FiniteStateMachine> workflows) {
-		states = new HashMap<>();
-		workflows.entrySet().forEach(e -> states.put(e.getKey(), e.getValue().initial));
-	}
+//	private void initStates(Map<String, FiniteStateMachine> workflows) {
+//		states = new HashMap<>();
+//		workflows.entrySet().forEach(e -> states.put(e.getKey(), e.getValue().initial));
+//	}
 
 	public void put(String key, Serializable value) {
 		if (fields == null) {
@@ -82,6 +80,22 @@ public class Appointment implements Serializable {
 	
 	public Room getLocation() {
 		return location != null ? location : (host instanceof Room ? (Room)host : null);
+	}
+
+	public void setState(String workflowName, String state) {
+//		if (states == null) {
+//			states = new HashMap<>();
+//		}
+//		states.put(workflowName, state);
+	}
+
+	public String getState(String workflowName, String initial) {
+//		String localState = states != null ? states.get(workflowName) : null;
+//		if (localState == null) {
+//			localState = initial;
+//		}
+//		return localState;
+		return "draft";
 	}
 	
 }

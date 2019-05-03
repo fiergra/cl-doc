@@ -4,14 +4,12 @@ package eu.europa.ec.digit.eAgenda;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
-import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
 
 public class Campaign implements Serializable {
 	
@@ -26,7 +24,7 @@ public class Campaign implements Serializable {
 
 	public EmailSettings emailSettings = new EmailSettings();
 	
-	public HashMap<String, Collection<User>> roles = new HashMap<>();
+	public Map<String, Collection<User>> roles = new HashMap<>();
 	public Collection<User> owners;
 
 	public boolean allowDelegation;
@@ -35,7 +33,7 @@ public class Campaign implements Serializable {
 
 	public int startDelayInH = 24;
 	
-	public HashMap<String, FiniteStateMachine> workflows;
+//	public Map<String, FiniteStateMachine> workflows;
 
 	public Campaign() {
 		initWorkflows();
@@ -52,17 +50,17 @@ public class Campaign implements Serializable {
 	}
 
 	private void initWorkflows() {
-		if (workflows == null) {
-			workflows = new HashMap<>();
-			workflows.put("presence", new FiniteStateMachine("invited", 
-					new HashSet<>(Arrays.asList("present")), 
-					new FiniteStateMachine.Transition("invited", "show_up", "present"), 
-					new FiniteStateMachine.Transition("present", "revert", "invited")));
-			workflows.put("email", new FiniteStateMachine("sent", 
-					new HashSet<>(Arrays.asList("accepted", "declined")), 
-					new FiniteStateMachine.Transition("sent", "accept", "accepted"), 
-					new FiniteStateMachine.Transition("sent", "decline", "declined")));
-		}
+//		if (workflows == null) {
+//			workflows = new HashMap<>();
+//			workflows.put("presence", new FiniteStateMachine("invited", 
+//					new HashSet<>(Arrays.asList("present")), 
+//					new FiniteStateMachine.FSMTransition("invited", "show_up", "present"), 
+//					new FiniteStateMachine.FSMTransition("present", "revert", "invited")));
+//			workflows.put("email", new FiniteStateMachine("sent", 
+//					new HashSet<>(Arrays.asList("accepted", "declined")), 
+//					new FiniteStateMachine.FSMTransition("sent", "accept", "accepted"), 
+//					new FiniteStateMachine.FSMTransition("sent", "decline", "declined")));
+//		}
 	}
 
 	public void addWorkPattern(WorkPattern workPattern) {

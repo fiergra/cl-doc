@@ -13,7 +13,6 @@ import com.ceres.dynamicforms.client.components.LabelFunc;
 import com.ceres.dynamicforms.client.components.RemoteSearchBox;
 import com.ceres.dynamicforms.client.components.RunSearch;
 import com.ceres.dynamicforms.client.components.SearchSuggestion;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -45,7 +44,6 @@ import eu.europa.ec.digit.shared.UserContext;
 
 public class HomeScreen extends DockLayoutPanel {
 
-//	private TabbedLayoutPanel tabPanel = new TabbedLayoutPanel(42, Unit.PX);
 	private SimpleLayoutPanel contentPanel = new SimpleLayoutPanel();
 	
 	private EditableComboBox<CampaignSettings> cmbCampaigns = new EditableComboBox<>();
@@ -457,31 +455,9 @@ public class HomeScreen extends DockLayoutPanel {
 	}
 	private ApplicationHeader createHeader(UserContext userContext) {
 		ApplicationHeader ah = new ApplicationHeader(userContext, "eAgenda");
-//
-//		
-//		final PushButton pbAdd = new PushButton(new Image("assets/images/24x24/add.png"));
-////		FAIcon pbAdd = new FAIcon("plus-square", 2);
-//		pbAdd.setPixelSize(24, 24);
-//		pbAdd.addClickHandler(e -> { 
-//			Campaign newCampaign = new Campaign("<new campaign>", "<enter description here>", userContext.user, new AppointmentType("default",  15, "white"));
-//			eAgendaUI.commando.execute(new AddCampaignCommand(newCampaign, tabPanel));
-//		
-//		});
-//		ah.hpButtons.add(pbAdd);
-//		tabPanel.addWidget(pbAdd);
 		CommandoButtons cb = new CommandoButtons(eAgendaUI.commando);
 		ah.hpLeft.add(cb);
-//		ah.hpButtons.add(cb);
-//		tabPanel.addWidget(cb);
-		
-		PushButton pbTest = new PushButton("send...");
-		pbTest.addClickHandler(e -> eAgendaUI.service.send(new Date(), new RPCCallback<Void>() {
-
-			@Override
-			protected void onResult(Void result) {
-				GWT.log("result...");
-			}
-		}));
+	
 		
 		return ah;
 	}

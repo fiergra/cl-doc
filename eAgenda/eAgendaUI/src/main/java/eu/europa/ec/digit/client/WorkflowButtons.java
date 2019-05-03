@@ -16,7 +16,7 @@ public class WorkflowButtons extends HorizontalPanel {
 	}
 
 	private void addButtons(Appointment appointment, String workflowName, FiniteStateMachine fsm) {
-		List<String> actions = getActions(appointment, fsm); 
+		List<String> actions = getActions(appointment, workflowName, fsm); 
 		for (String action:actions) {
 			PushButton pbAction = new PushButton(action);
 			add(pbAction);
@@ -34,8 +34,8 @@ public class WorkflowButtons extends HorizontalPanel {
 		
 	}
 	
-	private List<String> getActions(Appointment a, FiniteStateMachine workflow) {
-		return workflow.getTransitions().stream().filter(t -> t.currentState.equals(a.state == null ? "invited" : a.state)).map(t -> t.input).collect(Collectors.toList());
+	private List<String> getActions(Appointment a, String workflowName, FiniteStateMachine fsm) {
+		return fsm.getTransitions().stream().filter(t -> t.currentState.equals(a.getState(workflowName, fsm.initial))).map(t -> t.input).collect(Collectors.toList());
 	}
 
 }
