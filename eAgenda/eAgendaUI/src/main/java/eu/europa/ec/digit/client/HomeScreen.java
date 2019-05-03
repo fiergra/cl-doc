@@ -13,6 +13,7 @@ import com.ceres.dynamicforms.client.components.LabelFunc;
 import com.ceres.dynamicforms.client.components.RemoteSearchBox;
 import com.ceres.dynamicforms.client.components.RunSearch;
 import com.ceres.dynamicforms.client.components.SearchSuggestion;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -472,6 +473,16 @@ public class HomeScreen extends DockLayoutPanel {
 		ah.hpLeft.add(cb);
 //		ah.hpButtons.add(cb);
 //		tabPanel.addWidget(cb);
+		
+		PushButton pbTest = new PushButton("send...");
+		pbTest.addClickHandler(e -> eAgendaUI.service.send(new Date(), new RPCCallback<Void>() {
+
+			@Override
+			protected void onResult(Void result) {
+				GWT.log("result...");
+			}
+		}));
+		
 		return ah;
 	}
 

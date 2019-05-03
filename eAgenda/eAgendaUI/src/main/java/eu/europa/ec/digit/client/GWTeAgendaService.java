@@ -2,8 +2,8 @@ package eu.europa.ec.digit.client;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -41,10 +41,13 @@ public interface GWTeAgendaService extends RemoteService {
 	UserContext login(String userName);
 
 	void saveStringResource(StringResource sr);
-	HashMap<String, StringResource> getStringResources();
+	Map<String, StringResource> getStringResources();
 	UserContext login();
 	
 	boolean monitorInbox();
 	byte[] export(Campaign campaign);
 	Appointment applyAction(String workflowName, FiniteStateMachine workflowDefinition, Appointment appointment, String action);
+	
+	void send(Date date);
+	
 }

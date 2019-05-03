@@ -1,6 +1,6 @@
 package eu.europa.ec.digit.client.i18n;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import com.ceres.dynamicforms.client.SimpleForm;
 import com.ceres.dynamicforms.client.command.AbstractCommand;
@@ -20,14 +20,14 @@ public class StringResources {
 
 	
 	private static Commando commando;
-	private static HashMap<String, StringResource> stringResources;
+	private static Map<String, StringResource> stringResources;
 
 	public static void init(Commando c, Runnable callback) {
 		commando = c;
-		eAgendaUI.service.getStringResources(new RPCCallback<HashMap<String,StringResource>>() {
+		eAgendaUI.service.getStringResources(new RPCCallback<Map<String,StringResource>>() {
 
 			@Override
-			protected void onResult(HashMap<String, StringResource> result) {
+			protected void onResult(Map<String, StringResource> result) {
 				stringResources = result;
 				callback.run();
 			}

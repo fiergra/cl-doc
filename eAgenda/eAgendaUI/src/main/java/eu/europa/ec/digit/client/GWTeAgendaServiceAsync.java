@@ -2,8 +2,8 @@ package eu.europa.ec.digit.client;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -23,7 +23,7 @@ public interface GWTeAgendaServiceAsync {
 	void login(AsyncCallback<UserContext> callback);
 	void login(String userId, AsyncCallback<UserContext> callback);
 	void saveStringResource(StringResource sr, AsyncCallback<Void> callback);
-	void getStringResources(AsyncCallback<HashMap<String, StringResource>> callback);
+	void getStringResources(AsyncCallback<Map<String, StringResource>> callback);
 	
 	void findResources(String filter, AsyncCallback<List<IResource>> callback);
 	void findPersons(String filter, AsyncCallback<List<User>> callback);
@@ -44,6 +44,7 @@ public interface GWTeAgendaServiceAsync {
 	void monitorInbox(AsyncCallback<Boolean> callback);
 	void export(Campaign c, AsyncCallback<byte[]> callback);
 
-//	void getWorkflowDefinitions(AsyncCallback<List<WorkflowDefinition>> callback);
 	void applyAction(String workflowName, FiniteStateMachine wdef, Appointment a, String action, AsyncCallback<Appointment> rpcCallback);
+	
+	void send(Date date, AsyncCallback<Void> callback);
 }

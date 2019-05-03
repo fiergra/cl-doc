@@ -11,9 +11,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -393,7 +393,7 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 	}
 
 	@Override
-	public HashMap<String, StringResource> getStringResources() {
+	public Map<String, StringResource> getStringResources() {
 		return getMc().getStringResources();
 	}
 
@@ -598,5 +598,10 @@ public class GWTeAgendaServiceImpl extends RemoteServiceServlet implements GWTeA
 			wDef.addTransition(new WorkflowTransition(null, t.currentState, t.nextState, t.input));
 		}
 		return wDef;
+	}
+
+	@Override
+	public void send(Date date) {
+		logger.info(date.toString());
 	}
 }
