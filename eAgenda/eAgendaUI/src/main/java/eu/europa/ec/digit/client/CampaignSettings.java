@@ -22,12 +22,16 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle.MultiWordSuggestion;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.SuggestOracle.Callback;
 import com.google.gwt.user.client.ui.SuggestOracle.Request;
@@ -436,8 +440,22 @@ public class CampaignSettings extends DockLayoutPanel {
 		tblCampaignDetails.setWidget(row, 0, l("Start delay"));
 		tblCampaignDetails.setWidget(row++, column, lbStartDelay);
 
+		PushButton pbExportExcel = new PushButton(StringResources.getLabel("export to Excel..."));
+		pbExportExcel.addClickHandler(e -> exportToExcel());
+		tblCampaignDetails.setWidget(row, 0, new Image("assets/images/excel.png"));
+		tblCampaignDetails.getFlexCellFormatter().setHorizontalAlignment(row, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		tblCampaignDetails.setWidget(row++, column, pbExportExcel);
+
 		return row;
 	}
+
+	private void exportToExcel() {
+		if (campaign != null) {
+			String baseUrl = GWT.getModuleBaseURL();
+			Window.open(baseUrl + "eagenda?export=" + campaign.objectId, "_blank", "");
+		}
+	}
+
 
 	private int getDuration() {
 		int index = lbDuration.getSelectedIndex();

@@ -29,8 +29,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.ibm.icu.util.Calendar;
 
 import eu.cec.digit.ecas.client.jaas.DetailedUser;
+import eu.europa.ec.digit.athena.workflow.FSMTransition;
 import eu.europa.ec.digit.athena.workflow.FiniteStateMachine;
-import eu.europa.ec.digit.athena.workflow.FiniteStateMachine.FSMTransition;
 import eu.europa.ec.digit.athena.workflow.WorkflowDefinition;
 import eu.europa.ec.digit.athena.workflow.WorkflowInstance;
 import eu.europa.ec.digit.athena.workflow.WorkflowState;
