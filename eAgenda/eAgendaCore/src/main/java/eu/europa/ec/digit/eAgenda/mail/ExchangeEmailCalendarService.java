@@ -171,7 +171,7 @@ public class ExchangeEmailCalendarService implements EmailCalendarService {
 		}
 	}
 
-	private Appointment getExistingOutlookAppointment(String id) {
+	public Appointment getExistingOutlookAppointment(String id) {
 		Appointment toReturn = null;
 
 		synchronized (service) {

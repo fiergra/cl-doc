@@ -25,7 +25,7 @@ public class Appointment implements Serializable {
 	public String comment;
 	
 //	private String state;
-//	private Map<String, String> states;
+	public Map<String, String> states;
 	
 	public Appointment() {}
 
@@ -83,19 +83,19 @@ public class Appointment implements Serializable {
 	}
 
 	public void setState(String workflowName, String state) {
-//		if (states == null) {
-//			states = new HashMap<>();
-//		}
-//		states.put(workflowName, state);
+		if (states == null) {
+			states = new HashMap<>();
+		}
+		states.put(workflowName, state);
 	}
 
 	public String getState(String workflowName, String initial) {
-//		String localState = states != null ? states.get(workflowName) : null;
-//		if (localState == null) {
-//			localState = initial;
-//		}
-//		return localState;
-		return "draft";
+		String localState = states != null ? states.get(workflowName) : null;
+		if (localState == null) {
+			localState = initial;
+		}
+		return localState;
+//		return "draft";
 	}
 	
 }

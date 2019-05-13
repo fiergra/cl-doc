@@ -19,7 +19,6 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
-import com.google.gson.Gson;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
@@ -334,17 +333,17 @@ public class MongoAgendaService {
 	}
 
 	public void log(Object ...objects) {
-		Gson gson = new Gson();
-		Document document = new Document("log", new Date());
-		for (Object o:objects) {
-			String json = gson.toJson(o);
-			if (json != null && !"null".equals(json)) {
-				Document subDoc = Document.parse(json);
-				document.append(o.getClass().getSimpleName(), subDoc);
-			}
-		}
-		
-		db.getCollection("logEntries").insertOne(document);
+//		Gson gson = new Gson();
+//		Document document = new Document("log", new Date());
+//		for (Object o:objects) {
+//			String json = gson.toJson(o);
+//			if (json != null && !"null".equals(json)) {
+//				Document subDoc = Document.parse(json);
+//				document.append(o.getClass().getSimpleName(), subDoc);
+//			}
+//		}
+//		
+//		db.getCollection("logEntries").insertOne(document);
 	}
 
 	public void saveWorkflowDefinition(WorkflowDefinition wDef) {

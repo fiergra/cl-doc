@@ -659,3 +659,11 @@ body, table td, select, button {
 	color:black;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
+.clickable:hover {
+	background-color: #FBC02D;
+	cursor: pointer;
+}

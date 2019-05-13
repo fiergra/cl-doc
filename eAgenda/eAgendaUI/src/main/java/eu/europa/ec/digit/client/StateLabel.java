@@ -6,10 +6,10 @@ import eu.europa.ec.digit.client.i18n.StringResources;
 
 public class StateLabel extends Label {
 
-	public StateLabel(String state, boolean isInitial, boolean isTerminal) {
+	public StateLabel(String workflowName, String state, boolean isInitial, boolean isTerminal) {
 		setStyleName("stateLabel");
 		setText(state != null ? state.substring(0,  1).toUpperCase() : "?");
-		setTitle(StringResources.getLabel(state));
+		setTitle(StringResources.getLabel(workflowName) + ": " + StringResources.getLabel(state));
 		if (isInitial) {
 			addStyleDependentName("initial");
 		}

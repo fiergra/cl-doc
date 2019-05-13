@@ -60,10 +60,10 @@ public class AppointmentRenderer extends LayoutPanel {
 //		FAIcon pbDelete = new FAIcon("trash-alt", 2);
 
 		HorizontalPanel allButtons = new HorizontalPanel();
-//		campaign.workflows.entrySet().forEach(e -> {
-//			WorkflowButtons buttons = new WorkflowButtons(a, e.getKey(), e.getValue());
-//			allButtons.add(buttons);
-//		});
+		campaign.workflows.entrySet().forEach(e -> {
+			WorkflowButtons buttons = new WorkflowButtons(a, e.getKey(), e.getValue());
+			allButtons.add(buttons);
+		});
 		
 		Image imgDelete = new Image("assets/images/delete.png");
 		PushButton pbDelete = new PushButton(imgDelete);
